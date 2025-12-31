@@ -1,26 +1,288 @@
-const WEB_APP_URL = "URL_DEPLOYMENT_GAS_KAMU"; // Link dari Deploy > Web App
-
-async function apiCall(data) {
-    const response = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify(data)
-    });
-    return await response.json();
-}
-
-// Contoh cara pakai di fungsi Login
-async function handleLogin() {
-    const u = document.getElementById('username').value;
-    const p = document.getElementById('password').value;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAS Tuntas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    showLoading(true);
-    const isSuccess = await apiCall({ action: "login", user: u, pass: p });
-    showLoading(false);
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
+        .emerald-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; padding: 12px 0; z-index: 50; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+        .animate-up { animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-800">
 
-    if(isSuccess) {
-        showPage('admin');
-        loadDataAdmin();
-    } else {
-        alert("Login Gagal!");
-    }
-}
+    <div id="loading" class="loading-overlay">
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+            <p class="mt-3 text-emerald-600 font-medium text-sm">Menghubungkan ke Server...</p>
+        </div>
+    </div>
+
+    <div id="loginPage" class="flex items-center justify-center min-h-screen p-6">
+        <div class="bg-white p-8 rounded-3xl card-shadow w-full max-w-md border border-emerald-50">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 emerald-gradient rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                    <span class="text-white text-2xl font-bold">MT</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Admin Login</h2>
+                <p class="text-slate-400 text-xs">Akses Database KAS Mahika Trans</p>
+            </div>
+            <div class="space-y-4">
+                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm">
+                
+                <div class="relative">
+                    <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm">
+                    <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12.a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <button onclick="handleLogin()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-emerald-200 shadow-lg hover:opacity-90 active:scale-95 transition-all">Masuk</button>
+                <button onclick="showViewerPage()" class="w-full text-slate-400 py-2 text-[10px] font-bold uppercase tracking-widest">Akses Viewer Publik</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewerPage" class="hidden min-h-screen pb-24">
+        <header class="emerald-gradient p-8 pb-20 text-white rounded-b-[40px] shadow-lg">
+            <h1 class="text-xl font-bold italic tracking-wider">MAHIKA TRANS</h1>
+            <p class="opacity-80 text-xs">Laporan Kas Anggota</p>
+        </header>
+
+        <main class="px-6 -mt-10 space-y-4">
+            <div class="bg-white p-6 rounded-3xl card-shadow border border-emerald-50">
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Saldo Saat Ini</p>
+                <h2 id="vSaldo" class="text-3xl font-bold text-emerald-600">Rp 0</h2>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase">Masuk</p>
+                    <p id="vMasuk" class="text-xs font-bold text-blue-600">Rp 0</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase">Keluar</p>
+                    <p id="vKeluar" class="text-xs font-bold text-red-600">Rp 0</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase">Anggota</p>
+                    <p id="vAnggota" class="text-xs font-bold text-slate-700">0</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="adminPage" class="hidden min-h-screen pb-24">
+        <header class="p-6 flex justify-between items-center bg-white border-b border-slate-100">
+            <div>
+                <h1 class="text-lg font-bold text-slate-800">Dashboard Admin</h1>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Mahika Trans Finance</p>
+            </div>
+            <button onclick="downloadPDF()" class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-100">PDF</button>
+        </header>
+
+        <main class="px-6 py-6 space-y-6">
+            <div class="bg-white p-6 rounded-3xl card-shadow border border-slate-100">
+                <p class="text-center text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Perbandingan Arus Kas</p>
+                <div class="h-48 flex justify-center">
+                    <canvas id="kasChart"></canvas>
+                </div>
+            </div>
+
+            <div id="transactionList" class="space-y-3">
+                </div>
+        </main>
+
+        <button onclick="openModal()" class="fixed bottom-24 right-6 w-16 h-16 emerald-gradient text-white rounded-2xl shadow-xl shadow-emerald-200 flex items-center justify-center text-3xl font-light active:scale-90 transition-all z-40">+</button>
+    </div>
+
+    <div id="modalInput" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-[40px] p-8 animate-up">
+            <div class="w-12 h-1 bg-slate-200 mx-auto rounded-full mb-6"></div>
+            <h3 class="text-lg font-bold text-slate-800 mb-6">Input Transaksi</h3>
+            <div class="space-y-4">
+                <div class="flex gap-2">
+                    <button id="btnIn" onclick="setKategori('Masuk')" class="flex-1 py-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 font-bold text-xs">MASUK (+)</button>
+                    <button id="btnOut" onclick="setKategori('Keluar')" class="flex-1 py-3 rounded-2xl border-2 border-transparent bg-slate-100 text-slate-500 font-bold text-xs">KELUAR (-)</button>
+                </div>
+                <input type="number" id="fNominal" placeholder="Nominal (Tanpa titik)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                <input type="text" id="fKet" placeholder="Keterangan Transaksi" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                <button onclick="submitData()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-all">Simpan Data</button>
+                <button onclick="closeModal()" class="w-full text-slate-400 py-2 text-xs font-bold uppercase">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bottom">
+        <button onclick="location.reload()" class="flex flex-col items-center gap-1 text-emerald-600">
+            <span class="text-xl">🏠</span>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Home</span>
+        </button>
+        <button onclick="alert('Laporan ini otomatis terhubung ke Google Sheets.')" class="flex flex-col items-center gap-1 text-slate-300">
+            <span class="text-xl">📄</span>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Info</span>
+        </button>
+    </nav>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxGGTY8Or6-hQ1uEuewZWJIm4F1y58kvJ72lzh_6pYpvUo5NUrhisZb_lU8TzJOQllP8A/exec";
+        let selectedKategori = "Masuk";
+        let allData = [];
+        let myChart;
+
+        function showLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
+        
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />`;
+            } else {
+                passInput.type = 'password';
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12.a3 3 0 11-6 0 3 3 0 016 0z" />`;
+            }
+        }
+
+        async function apiPost(action, payload = {}) {
+            const formData = new FormData();
+            formData.append('action', action);
+            formData.append('payload', JSON.stringify(payload));
+
+            // Kita gunakan pendekatan URLSearchParams agar GAS bisa baca parameter
+            const params = new URLSearchParams();
+            params.append('action', action);
+            for(let key in payload) { params.append(key, payload[key]); }
+
+            const res = await fetch(`${API_URL}?${params.toString()}`, { method: 'POST' });
+            return await res.json();
+        }
+
+        async function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            showLoading(true);
+            try {
+                const res = await apiPost('login', { user: u, pass: p });
+                if(res) {
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('adminPage').classList.remove('hidden');
+                    loadAdminData();
+                } else { alert("Akses Ditolak!"); }
+            } catch(e) { alert("Gagal koneksi ke server"); }
+            showLoading(false);
+        }
+
+        async function showViewerPage() {
+            showLoading(true);
+            try {
+                const res = await apiPost('getStats');
+                document.getElementById('vSaldo').innerText = 'Rp ' + res.saldo.toLocaleString();
+                document.getElementById('vMasuk').innerText = 'Rp ' + res.totalMasuk.toLocaleString();
+                document.getElementById('vKeluar').innerText = 'Rp ' + res.totalKeluar.toLocaleString();
+                document.getElementById('vAnggota').innerText = res.jumlahAnggota;
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('viewerPage').classList.remove('hidden');
+            } catch(e) { alert("Data tidak bisa dimuat"); }
+            showLoading(false);
+        }
+
+        async function loadAdminData() {
+            showLoading(true);
+            const data = await apiPost('getData');
+            allData = data;
+            renderAdminUI();
+            showLoading(false);
+        }
+
+        function renderAdminUI() {
+            const list = document.getElementById('transactionList');
+            list.innerHTML = '';
+            let inT = 0, outT = 0;
+
+            allData.slice().reverse().forEach(item => {
+                const isIn = item.Kategori === 'Masuk';
+                const nom = parseInt(item.Nominal) || 0;
+                if(isIn) inT += nom; else outT += nom;
+
+                list.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 ${isIn ? 'border-emerald-500' : 'border-red-500'} flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${item.Keterangan}</p>
+                            <p class="text-[9px] text-slate-400 font-bold">${item.Tanggal}</p>
+                        </div>
+                        <p class="font-bold text-sm ${isIn ? 'text-emerald-600' : 'text-red-600'}">${isIn ? '+' : '-'} ${nom.toLocaleString()}</p>
+                    </div>
+                `;
+            });
+            updateChart(inT, outT);
+        }
+
+        function updateChart(inVal, outVal) {
+            const ctx = document.getElementById('kasChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Masuk', 'Keluar'],
+                    datasets: [{
+                        data: [inVal, outVal],
+                        backgroundColor: ['#10b981', '#1e293b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { cutout: '80%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            });
+        }
+
+        function setKategori(k) {
+            selectedKategori = k;
+            document.getElementById('btnIn').className = k === 'Masuk' ? 'flex-1 py-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-transparent bg-slate-100 text-slate-500 font-bold text-xs';
+            document.getElementById('btnOut').className = k === 'Keluar' ? 'flex-1 py-3 rounded-2xl border-2 border-red-500 bg-red-50 text-red-600 font-bold text-xs' : 'flex-1 py-3 rounded-2xl border-2 border-transparent bg-slate-100 text-slate-500 font-bold text-xs';
+        }
+
+        function openModal() { document.getElementById('modalInput').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modalInput').style.display = 'none'; }
+
+        async function submitData() {
+            const payload = {
+                tanggal: new Date().toLocaleDateString('id-ID'),
+                kategori: selectedKategori,
+                nominal: document.getElementById('fNominal').value,
+                keterangan: document.getElementById('fKet').value
+            };
+            if(!payload.nominal || !payload.keterangan) return alert("Isi lengkap!");
+            showLoading(true);
+            await apiPost('addData', payload);
+            closeModal();
+            loadAdminData();
+            document.getElementById('fNominal').value = '';
+            document.getElementById('fKet').value = '';
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(14);
+            doc.text("LAPORAN KAS MAHIKA TRANS", 14, 20);
+            const body = allData.map(i => [i.Tanggal, i.Keterangan, i.Kategori, i.Nominal]);
+            doc.autoTable({ head: [['Tgl', 'Ket', 'Tipe', 'Nominal']], body: body, startY: 30, theme: 'grid' });
+            doc.save("Laporan-Kas.pdf");
+        }
+    </script>
+</body>
+            </html>
+    
