@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUNTAS - Turun Tangan Atasi Sampah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .emerald-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="text-slate-800 pb-10">
+
+    <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 flex justify-between items-center border-b border-slate-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 emerald-gradient rounded-xl flex items-center justify-center text-white shadow-lg">
+                <i class="fa-solid fa-recycle text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-emerald-700 leading-tight tracking-tight">TUNTAS</h1>
+                <p class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-tighter">
+                    Turun Tangan Atasi Sampah
+                </p>
+            </div>
+        </div>
+        <button onclick="window.location.href='admin.html'" class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100 shadow-sm active:scale-90 transition-all">
+            <i class="fa-solid fa-user-shield"></i>
+        </button>
+    </header>
+
+    <main class="p-6 space-y-8">
+        <section>
+            <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-emerald-500"></i> Laporan Kas Publik
+            </h2>
+            <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-200 relative overflow-hidden text-center">
+                <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest">Total Saldo Tersedia</p>
+                <h2 id="pubSaldo" class="text-4xl font-bold my-2 tracking-tight">Rp ...</h2>
+                <div class="flex gap-6 mt-6 pt-6 border-t border-white/20">
+                    <div class="flex-1"><p class="text-[9px] font-bold opacity-70 uppercase mb-1">Masuk</p><p id="pubMasuk" class="font-bold text-xs text-emerald-100">Rp 0</p></div>
+                    <div class="flex-1 text-white/30 flex items-center justify-center"><i class="fa-solid fa-arrows-rotate animate-spin-slow"></i></div>
+                    <div class="flex-1"><p class="text-[9px] font-bold opacity-70 uppercase mb-1">Keluar</p><p id="pubKeluar" class="font-bold text-xs text-red-100">Rp 0</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-[2.5rem] card-shadow border border-slate-50">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-10 h-10 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-gavel"></i>
+                </span>
+                <h3 class="font-bold text-slate-700">Peraturan Warga</h3>
+            </div>
+            <ul class="space-y-4">
+                <li class="flex gap-4">
+                    <i class="fa-solid fa-box-open text-emerald-500 mt-1"></i>
+                    <p class="text-[11px] text-slate-500"><span class="font-bold text-slate-700">Pilah Dari Sumber:</span> Pisahkan sampah Organik, Anorganik, dan Residu.</p>
+                </li>
+                <li class="flex gap-4">
+                    <i class="fa-solid fa-calendar-check text-emerald-500 mt-1"></i>
+                    <p class="text-[11px] text-slate-500"><span class="font-bold text-slate-700">Jadwal Jemput:</span> Sampah diletakkan di depan rumah setiap Selasa & Jumat.</p>
+                </li>
+                <li class="flex gap-4">
+                    <i class="fa-solid fa-ban text-red-400 mt-1"></i>
+                    <p class="text-[11px] text-slate-500"><span class="font-bold text-slate-700">Dilarang Membakar:</span> Tidak diperbolehkan membakar sampah di area pemukiman.</p>
+                </li>
+                <li class="flex gap-4">
+                    <i class="fa-solid fa-leaf text-emerald-500 mt-1"></i>
+                    <p class="text-[11px] text-slate-500"><span class="font-bold text-slate-700">Minim Plastik:</span> Kurangi penggunaan plastik sekali pakai di lingkungan kita.</p>
+                </li>
+                <li class="flex gap-4">
+                    <i class="fa-solid fa-clock text-emerald-500 mt-1"></i>
+                    <p class="text-[11px] text-slate-500"><span class="font-bold text-slate-700">Iuran Tepat Waktu:</span> Pembayaran kas sampah maksimal tanggal 10 setiap bulan.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section class="bg-white p-6 rounded-[2.5rem] card-shadow border border-slate-50">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-10 h-10 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-circle-question"></i>
+                </span>
+                <h3 class="font-bold text-slate-700">Tanya Jawab (FAQ)</h3>
+            </div>
+            <div class="space-y-5">
+                <div class="border-b border-slate-50 pb-3">
+                    <p class="text-[11px] font-bold text-slate-700 mb-1">Uang kas digunakan untuk apa?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed italic">Dana digunakan untuk biaya operasional pengangkutan dan pengolahan kompos mandiri.</p>
+                </div>
+                <div class="border-b border-slate-50 pb-3">
+                    <p class="text-[11px] font-bold text-slate-700 mb-1">Mengapa sampah harus dipilah?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed italic">Agar sampah anorganik bisa didaur ulang dan sampah organik tidak membusuk di TPA.</p>
+                </div>
+                <div class="border-b border-slate-50 pb-3">
+                    <p class="text-[11px] font-bold text-slate-700 mb-1">Bagaimana jika telat bayar?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed italic">Harap segera konfirmasi ke pengurus untuk pendataan administrasi yang tertib.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center py-4">
+            <a href="https://wa.me/628123456789" class="inline-flex items-center gap-3 px-8 py-4 emerald-gradient text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all">
+                <i class="fa-brands fa-whatsapp text-xl"></i>
+                <div class="text-left leading-tight">
+                    <p class="text-[10px] opacity-80 font-normal uppercase">Ada Kendala?</p>
+                    <p class="text-sm">Hubungi Pengurus</p>
+                </div>
+            </a>
+        </section>
+    </main>
+
+    <footer class="text-center py-6">
+        <p class="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em]">© 2025 TUNTAS - Managed by Sekawan</p>
+    </footer>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxGGTY8Or6-hQ1uEuewZWJIm4F1y58kvJ72lzh_6pYpvUo5NUrhisZb_lU8TzJOQllP8A/exec";
+        
+        async function loadPublicData() {
+            try {
+                const response = await fetch(`${API_URL}?action=getData`, { method: 'POST' });
+                const data = await response.json();
+                let inT = 0, outT = 0;
+                data.forEach(item => {
+                    const nom = parseInt(item["Nominal"].toString().replace(/[^0-9]/g, '')) || 0;
+                    if(item["Kategori"].trim().toLowerCase() === 'masuk') inT += nom; else outT += nom;
+                });
+                document.getElementById('pubSaldo').innerText = 'Rp ' + (inT - outT).toLocaleString('id-ID');
+                document.getElementById('pubMasuk').innerText = 'Rp ' + inT.toLocaleString('id-ID');
+                document.getElementById('pubKeluar').innerText = 'Rp ' + outT.toLocaleString('id-ID');
+            } catch(e) {
+                document.getElementById('pubSaldo').innerText = 'Offline';
+            }
+        }
+        loadPublicData();
+    </script>
+</body>
+  </html>
+  
