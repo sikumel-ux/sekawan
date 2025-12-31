@@ -1,230 +1,26 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KAS TUNTAS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+const WEB_APP_URL = "URL_DEPLOYMENT_GAS_KAMU"; // Link dari Deploy > Web App
+
+async function apiCall(data) {
+    const response = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+    return await response.json();
+}
+
+// Contoh cara pakai di fungsi Login
+async function handleLogin() {
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
     
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f0fdf4; }
-        .emerald-gradient { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; padding: 10px 0; z-index: 50; }
-        .tab-content { display: none; padding-bottom: 80px; }
-        .active { display: block; }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100; }
-    </style>
-</head>
-<body>
+    showLoading(true);
+    const isSuccess = await apiCall({ action: "login", user: u, pass: p });
+    showLoading(false);
 
-    <div id="loading" class="loading-overlay">
-        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-    </div>
-
-    <div id="loginPage" class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-            <h2 class="text-2xl font-bold text-emerald-700 mb-6 text-center">Admin Login</h2>
-            <input type="text" id="username" placeholder="Username" class="w-full mb-4 p-3 border rounded-lg focus:outline-emerald-500">
-            <input type="password" id="password" placeholder="Password" class="w-full mb-6 p-3 border rounded-lg focus:outline-emerald-500">
-            <button onclick="handleLogin()" class="w-full emerald-gradient text-white py-3 rounded-lg font-bold">Masuk</button>
-            <button onclick="showViewer()" class="w-full text-emerald-600 mt-4 text-sm underline">Masuk sebagai Viewer</button>
-        </div>
-    </div>
-
-    <div id="mainDashboard" class="hidden">
-        <header class="emerald-gradient p-6 pb-20 text-white rounded-b-[30px] shadow-lg">
-            <h1 class="text-xl font-semibold">Halo, Admin 👋</h1>
-            <p class="text-emerald-100 text-sm">Laporan Kas TUNTAS</p>
-        </header>
-
-        <main class="px-4 -mt-14">
-            <div class="grid grid-cols-1 gap-4 mb-6">
-                <div class="bg-white p-5 rounded-2xl shadow-md border-l-4 border-emerald-500">
-                    <p class="text-gray-500 text-xs uppercase font-bold">Total Saldo</p>
-                    <h2 id="totalSaldo" class="text-2xl font-bold text-gray-800">Rp 0</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-2xl shadow-md border-l-4 border-blue-500">
-                        <p class="text-gray-500 text-xs">Pemasukan</p>
-                        <p id="totalMasuk" class="text-lg font-bold text-blue-600">Rp 0</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-md border-l-4 border-red-500">
-                        <p class="text-gray-500 text-xs">Pengeluaran</p>
-                        <p id="totalKeluar" class="text-lg font-bold text-red-600">Rp 0</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-2xl shadow-md mb-6">
-                <canvas id="kasChart" height="200"></canvas>
-            </div>
-
-            <div class="flex justify-between items-center mb-3 px-2">
-                <h3 class="font-bold text-gray-700">Riwayat Transaksi</h3>
-                <button onclick="downloadPDF()" class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200">Cetak PDF</button>
-            </div>
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-20">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-gray-50 text-gray-600 uppercase text-[10px]">
-                        <tr>
-                            <th class="px-4 py-3">Ket</th>
-                            <th class="px-4 py-3">Nominal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        </tbody>
-                </table>
-            </div>
-        </main>
-
-        <button onclick="toggleModal(true)" class="fixed bottom-24 right-6 w-14 h-14 emerald-gradient text-white rounded-full shadow-2xl flex items-center justify-center text-3xl z-40">+</button>
-    </div>
-
-    <nav class="nav-bottom">
-        <button onclick="location.reload()" class="flex flex-col items-center text-emerald-600">
-            <span class="text-xs">Home</span>
-        </button>
-        <button onclick="alert('Halaman Ketentuan: 1. Gunakan dana dengan bijak. 2. Lapor maksimal H+1.')" class="flex flex-col items-center text-gray-400">
-            <span class="text-xs">Syarat</span>
-        </button>
-    </nav>
-
-    <div id="modalInput" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-end">
-        <div class="bg-white w-full rounded-t-[30px] p-6 animate-slide-up">
-            <div class="flex justify-between mb-4">
-                <h3 class="text-lg font-bold">Tambah Transaksi</h3>
-                <button onclick="toggleModal(false)" class="text-gray-400 text-2xl">&times;</button>
-            </div>
-            <select id="fKategori" class="w-full mb-4 p-3 bg-gray-50 border rounded-xl">
-                <option value="Masuk">Pemasukan (+)</option>
-                <option value="Keluar">Pengeluaran (-)</option>
-            </select>
-            <input type="number" id="fNominal" placeholder="Nominal (Contoh: 50000)" class="w-full mb-4 p-3 bg-gray-50 border rounded-xl">
-            <input type="text" id="fKeterangan" placeholder="Keterangan" class="w-full mb-6 p-3 bg-gray-50 border rounded-xl">
-            <button onclick="submitData()" class="w-full emerald-gradient text-white py-4 rounded-xl font-bold shadow-lg">Simpan Transaksi</button>
-        </div>
-    </div>
-
-    <script>
-        let allData = [];
-        let myChart;
-
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-        }
-
-        function handleLogin() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            showLoading(true);
-            google.script.run.withSuccessHandler(res => {
-                showLoading(false);
-                if(res) {
-                    document.getElementById('loginPage').classList.add('hidden');
-                    document.getElementById('mainDashboard').classList.remove('hidden');
-                    refreshData();
-                } else {
-                    alert("Login Gagal!");
-                }
-            }).checkLogin(u, p);
-        }
-
-        function refreshData() {
-            showLoading(true);
-            google.script.run.withSuccessHandler(data => {
-                allData = data;
-                renderUI();
-                showLoading(false);
-            }).getData();
-        }
-
-        function renderUI() {
-            const tbody = document.getElementById('tableBody');
-            let tMasuk = 0, tKeluar = 0;
-            tbody.innerHTML = '';
-
-            allData.reverse().forEach(item => {
-                const nom = parseInt(item.Nominal);
-                const isMasuk = item.Kategori === 'Masuk';
-                if(isMasuk) tMasuk += nom; else tKeluar += nom;
-
-                tbody.innerHTML += `
-                    <tr class="border-b ${isMasuk ? 'bg-green-50' : 'bg-red-50'}">
-                        <td class="px-4 py-3">
-                            <p class="font-semibold text-gray-800">${item.Keterangan}</p>
-                            <p class="text-[10px] text-gray-400">${item.Tanggal}</p>
-                        </td>
-                        <td class="px-4 py-3 font-bold ${isMasuk ? 'text-green-600' : 'text-red-600'}">
-                            ${isMasuk ? '+' : '-'} ${nom.toLocaleString()}
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('totalSaldo').innerText = `Rp ${(tMasuk - tKeluar).toLocaleString()}`;
-            document.getElementById('totalMasuk').innerText = `Rp ${tMasuk.toLocaleString()}`;
-            document.getElementById('totalKeluar').innerText = `Rp ${tKeluar.toLocaleString()}`;
-            updateChart(tMasuk, tKeluar);
-        }
-
-        function updateChart(inVal, outVal) {
-            const ctx = document.getElementById('kasChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Masuk', 'Keluar'],
-                    datasets: [{
-                        data: [inVal, outVal],
-                        backgroundColor: ['#10b981', '#ef4444'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
-            });
-        }
-
-        function toggleModal(show) {
-            document.getElementById('modalInput').style.display = show ? 'flex' : 'none';
-        }
-
-        function submitData() {
-            const payload = {
-                tanggal: new Date().toLocaleDateString('id-ID'),
-                kategori: document.getElementById('fKategori').value,
-                nominal: document.getElementById('fNominal').value,
-                keterangan: document.getElementById('fKeterangan').value
-            };
-
-            if(!payload.nominal || !payload.keterangan) return alert("Isi semua data!");
-
-            showLoading(true);
-            google.script.run.withSuccessHandler(() => {
-                toggleModal(false);
-                refreshData();
-                document.getElementById('fNominal').value = '';
-                document.getElementById('fKeterangan').value = '';
-            }).addData(payload);
-        }
-
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Laporan KAS Mahika Trans", 14, 15);
-            
-            const rows = allData.map(item => [item.Tanggal, item.Keterangan, item.Kategori, item.Nominal]);
-            doc.autoTable({
-                head: [['Tanggal', 'Keterangan', 'Kategori', 'Nominal']],
-                body: rows,
-                startY: 20
-            });
-            doc.save("Laporan_Kas.pdf");
-        }
-    </script>
-</body>
-                          </html>
-              
+    if(isSuccess) {
+        showPage('admin');
+        loadDataAdmin();
+    } else {
+        alert("Login Gagal!");
+    }
+}
