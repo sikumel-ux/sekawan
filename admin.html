@@ -24,7 +24,8 @@
 
     <div id="loginPage" class="flex items-center justify-center min-h-screen p-6">
         <div class="bg-white p-8 rounded-[2.5rem] card-shadow w-full max-w-md border border-emerald-50 text-center">
-            <div class="w-20 h-20 emerald-gradient rounded-3xl mx-auto flex items-center justify-center shadow-lg mb-6 text-white text-3xl font-bold">T</div>
+            <div class="w-20 h-20 emerald-gradient rounded-3xl mx-auto flex items-center justify-center shadow-lg mb-6 text-white text-3xl">
+    <i class="fa-solid fa-recycle"></i> </div>
             <h2 class="text-2xl font-bold text-slate-800 mb-8">Kas TUNTAS</h2>
             <div class="space-y-4">
                 <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -40,7 +41,12 @@
                 <h1 class="text-lg font-bold text-emerald-700">Kas TUNTAS</h1>
                 <p id="dateNow" class="text-[10px] text-slate-400 font-bold uppercase"></p>
             </div>
-            <button onclick="window.location.href='index.html'" class="p-2 bg-red-50 text-red-500 rounded-xl text-xs font-bold">Log Out</button>
+            <button onclick="window.location.href='index.html'" 
+        class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center border border-red-100 active:scale-95 transition-all shadow-sm" 
+        title="Keluar">
+    <i class="fa-solid fa-right-from-bracket text-sm"></i>
+</button>
+
 
         </header>
 
@@ -60,7 +66,7 @@
 
             <div class="space-y-4">
                 <div class="flex justify-between items-center px-2">
-                    <h3 class="font-bold text-slate-700 text-lg">Aktivitas</h3>
+                    <h3 class="font-bold text-slate-700 text-lg">History</h3>
                     <button onclick="loadAdminData()" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-tighter">Refresh</button>
                 </div>
                 <div id="transactionList" class="space-y-3"></div>
