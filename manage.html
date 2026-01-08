@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNTAS</title>
+    <title>Kas TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -36,8 +36,8 @@
                 <i class="fa-solid fa-user-plus"></i>
             </button>
             <div>
-                <h1 class="text-xs font-bold text-emerald-700 uppercase tracking-tight">TUNTAS</h1>
-                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Turun Tangan Atasi Sampah</p>
+                <h1 class="text-xs font-bold text-emerald-700 uppercase tracking-tight">Data Anggota</h1>
+                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Kas TUNTAS</p>
             </div>
         </div>
         <button onclick="window.location.href='index.html'" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center border border-red-100 active:scale-95 transition-all">
@@ -103,7 +103,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxGGTY8Or6-hQ1uEuewZWJIm4F1y58kvJ72lzh_6pYpvUo5NUrhisZb_lU8TzJOQllP8A/exec";
+        // API URL TERBARU YANG KAMU KASIH
+        const API_URL = "https://script.google.com/macros/s/AKfycbygYI_1rC2h3G7D1VX3ZprWLCkJA3RVKmVvcZC0ZV_02jEAzzD-XomourlJlLlBRC8MwQ/exec";
         let masterNames = [];
 
         function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
@@ -118,18 +119,21 @@
 
         async function apiCall(action, payload = {}) {
             const params = new URLSearchParams({ action, ...payload });
+            // Menggunakan mode no-cors terkadang bermasalah, pastikan Deployment di GS sudah "Anyone"
             const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'POST' });
             return await response.json();
         }
 
         async function fetchMasterNames() {
-            try { masterNames = await apiCall('getDaftarNama'); } catch(e) { console.error(e); }
+            try { 
+                masterNames = await apiCall('getDaftarNama'); 
+            } catch(e) { console.error("Cek API: Gagal ambil daftar nama anggota"); }
         }
 
         function searchName(val) {
             const list = document.getElementById('autocompleteList');
             if (!val) { list.classList.add('hidden'); return; }
-            const filtered = masterNames.filter(m => m.Nama.toLowerCase().includes(val.toLowerCase()));
+            const filtered = masterNames.filter(m => m.Nama && m.Nama.toLowerCase().includes(val.toLowerCase()));
             if (filtered.length > 0) {
                 list.innerHTML = filtered.map(m => `<div class="autocomplete-item" onclick="selectName('${m.Nama}')">${m.Nama}</div>`).join('');
                 list.classList.remove('hidden');
@@ -143,14 +147,16 @@
 
         async function submitNewMember() {
             const nama = document.getElementById('newMemberName').value;
-            if(!nama) return;
+            if(!nama) return alert("Masukkan nama!");
             showLoading(true);
             try {
-                await apiCall('addNewMember', { nama });
-                closeModalMember();
-                document.getElementById('newMemberName').value = '';
-                alert("Anggota Baru Tersimpan!");
-            } catch(e) { alert("Gagal Simpan"); }
+                const res = await apiCall('addNewMember', { nama });
+                if(res.status === "success") {
+                    closeModalMember();
+                    document.getElementById('newMemberName').value = '';
+                    alert("Anggota Baru Tersimpan!");
+                }
+            } catch(e) { alert("Gagal Simpan. Pastikan tab 'Anggota' ada di Sheet."); }
             showLoading(false);
         }
 
@@ -162,20 +168,23 @@
 
             showLoading(true);
             try {
-                // Konversi YYYY-MM-DD ke DD-MM-YYYY
                 const [y, m, d] = tgl.split('-');
                 const formattedDate = `${d}-${m}-${y}`;
 
-                await apiCall('addAnggota', { 
+                const res = await apiCall('addAnggota', { 
                     tanggal: formattedDate, 
                     nama: nama, 
                     nominal: nom 
                 });
-                closeModalPay();
-                loadHistory();
-                document.getElementById('fNama').value = '';
-                document.getElementById('fNominal').value = '';
-            } catch(e) { alert("Gagal Simpan"); }
+                
+                if(res.status === "success") {
+                    closeModalPay();
+                    loadHistory();
+                    document.getElementById('fNama').value = '';
+                    document.getElementById('fNominal').value = '';
+                    alert("Transaksi Berhasil!");
+                }
+            } catch(e) { alert("Gagal Simpan. Pastikan tab 'Pembayaran' ada di Sheet."); }
             showLoading(false);
         }
 
@@ -187,7 +196,7 @@
                 let total = 0;
                 list.innerHTML = '';
                 
-                if(data.length > 0) {
+                if(data && data.length > 0) {
                     [...data].reverse().forEach((item, idx) => {
                         const realIdx = data.length - 1 - idx;
                         const nom = parseInt(item.Nominal) || 0;
@@ -206,11 +215,11 @@
                         `);
                     });
                 } else {
-                    list.innerHTML = '<p class="text-center py-10 text-slate-300 text-xs">Belum ada data</p>';
+                    list.innerHTML = '<p class="text-center py-10 text-slate-300 text-xs">Belum ada data pembayaran</p>';
                 }
                 document.getElementById('totalIuran').innerText = 'Rp ' + total.toLocaleString('id-ID');
-                document.getElementById('memberCount').innerText = data.length + " Transaksi";
-            } catch(e) { console.error(e); }
+                document.getElementById('memberCount').innerText = (data ? data.length : 0) + " Transaksi";
+            } catch(e) { console.error("Gagal memuat histori."); }
             showLoading(false);
         }
 
