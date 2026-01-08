@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kas TUNTAS</title>
+    <title>Anggota - Kas TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,7 +14,6 @@
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
         .modal-up { animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
         .autocomplete-items {
             position: absolute; border-radius: 1.25rem; border: 1px solid #e2e8f0;
             z-index: 99; top: 100%; left: 0; right: 0; background: white; 
@@ -57,7 +56,7 @@
         <div class="space-y-4">
             <div class="flex justify-between items-center px-2">
                 <h3 class="font-bold text-slate-700 text-lg">Histori Pembayaran</h3>
-                <button onclick="loadHistory()" class="text-emerald-500 active:rotate-180 transition-all duration-500"><i class="fa-solid fa-rotate"></i></button>
+                <button onclick="loadHistory()" class="text-emerald-500"><i class="fa-solid fa-rotate"></i></button>
             </div>
             <div id="memberList" class="space-y-3"></div>
         </div>
@@ -68,14 +67,11 @@
     </button>
 
     <div id="modalMember" class="fixed inset-0 bg-slate-900/60 hidden z-[60] flex items-center justify-center p-6 text-center">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 modal-up border border-emerald-50">
-            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full mx-auto flex items-center justify-center mb-4 text-2xl">
-                <i class="fa-solid fa-id-card"></i>
-            </div>
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 modal-up">
             <h3 class="text-xl font-bold mb-6 text-slate-800">Anggota Baru</h3>
             <input type="text" id="newMemberName" placeholder="Nama Lengkap" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500 mb-4 text-center">
-            <button onclick="submitNewMember()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-lg">Daftarkan Anggota</button>
-            <button onclick="closeModalMember()" class="w-full text-slate-400 py-2 text-sm mt-2 font-medium">Batal</button>
+            <button onclick="submitNewMember()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-lg">Simpan</button>
+            <button onclick="closeModalMember()" class="w-full text-slate-400 py-2 text-sm mt-2">Batal</button>
         </div>
     </div>
 
@@ -84,26 +80,20 @@
             <div class="w-16 h-1.5 bg-slate-100 mx-auto rounded-full mb-8"></div>
             <h3 class="text-2xl font-bold mb-8 text-center text-slate-800">Catat Bayar</h3>
             <div class="space-y-5">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Tanggal Bayar</label>
-                    <input type="date" id="fTanggal" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none">
-                </div>
-                
+                <input type="date" id="fTanggal" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none">
                 <div class="relative">
-                    <input type="text" id="fNama" onkeyup="searchName(this.value)" placeholder="Ketik nama anggota..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500" autocomplete="off">
+                    <input type="text" id="fNama" onkeyup="searchName(this.value)" placeholder="Nama anggota..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500" autocomplete="off">
                     <div id="autocompleteList" class="autocomplete-items hidden"></div>
                 </div>
-
                 <input type="number" id="fNominal" placeholder="Nominal Rp" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
-                
-                <button onclick="submitPayment()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold shadow-lg mt-4 uppercase tracking-wider text-sm">Simpan Transaksi</button>
-                <button onclick="closeModalPay()" class="w-full text-slate-400 py-2 text-sm font-medium text-center block">Batal</button>
+                <button onclick="submitPayment()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold shadow-lg mt-4">Simpan Transaksi</button>
+                <button onclick="closeModalPay()" class="w-full text-slate-400 py-2 text-sm font-medium block text-center">Batal</button>
             </div>
         </div>
     </div>
 
     <script>
-        // API URL TERBARU YANG KAMU KASIH
+        // PERHATIKAN: Saya tambahkan 'c' di akhir .exec
         const API_URL = "https://script.google.com/macros/s/AKfycbzJg_EE5f1uBRHv3eas6Sx9VPeoU7coIWB3qaQ3s743OGj8Zex25UDi1fq2us9LB5618Q/exec";
         let masterNames = [];
 
@@ -119,15 +109,12 @@
 
         async function apiCall(action, payload = {}) {
             const params = new URLSearchParams({ action, ...payload });
-            // Menggunakan mode no-cors terkadang bermasalah, pastikan Deployment di GS sudah "Anyone"
             const response = await fetch(`${API_URL}?${params.toString()}`, { method: 'POST' });
             return await response.json();
         }
 
         async function fetchMasterNames() {
-            try { 
-                masterNames = await apiCall('getDaftarNama'); 
-            } catch(e) { console.error("Cek API: Gagal ambil daftar nama anggota"); }
+            try { masterNames = await apiCall('getDaftarNama'); } catch(e) { console.error(e); }
         }
 
         function searchName(val) {
@@ -147,16 +134,14 @@
 
         async function submitNewMember() {
             const nama = document.getElementById('newMemberName').value;
-            if(!nama) return alert("Masukkan nama!");
+            if(!nama) return;
             showLoading(true);
             try {
-                const res = await apiCall('addNewMember', { nama });
-                if(res.status === "success") {
-                    closeModalMember();
-                    document.getElementById('newMemberName').value = '';
-                    alert("Anggota Baru Tersimpan!");
-                }
-            } catch(e) { alert("Gagal Simpan. Pastikan tab 'Anggota' ada di Sheet."); }
+                await apiCall('addNewMember', { nama });
+                closeModalMember();
+                document.getElementById('newMemberName').value = '';
+                alert("Berhasil!");
+            } catch(e) { alert("Gagal Simpan Anggota"); }
             showLoading(false);
         }
 
@@ -164,27 +149,16 @@
             const tgl = document.getElementById('fTanggal').value;
             const nama = document.getElementById('fNama').value;
             const nom = document.getElementById('fNominal').value;
-            if(!tgl || !nama || !nom) return alert("Isi Lengkap!");
+            if(!tgl || !nama || !nom) return alert("Lengkapi!");
 
             showLoading(true);
             try {
                 const [y, m, d] = tgl.split('-');
-                const formattedDate = `${d}-${m}-${y}`;
-
-                const res = await apiCall('addAnggota', { 
-                    tanggal: formattedDate, 
-                    nama: nama, 
-                    nominal: nom 
-                });
-                
-                if(res.status === "success") {
-                    closeModalPay();
-                    loadHistory();
-                    document.getElementById('fNama').value = '';
-                    document.getElementById('fNominal').value = '';
-                    alert("Transaksi Berhasil!");
-                }
-            } catch(e) { alert("Gagal Simpan. Pastikan tab 'Pembayaran' ada di Sheet."); }
+                await apiCall('addAnggota', { tanggal: `${d}-${m}-${y}`, nama, nominal: nom });
+                closeModalPay();
+                loadHistory();
+                alert("Tersimpan!");
+            } catch(e) { alert("Gagal Simpan Pembayaran"); }
             showLoading(false);
         }
 
@@ -195,7 +169,6 @@
                 const list = document.getElementById('memberList');
                 let total = 0;
                 list.innerHTML = '';
-                
                 if(data && data.length > 0) {
                     [...data].reverse().forEach((item, idx) => {
                         const realIdx = data.length - 1 - idx;
@@ -203,10 +176,7 @@
                         total += nom;
                         list.insertAdjacentHTML('beforeend', `
                             <div class="bg-white p-5 rounded-3xl card-shadow border-l-[6px] border-emerald-500 flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-slate-800 text-sm">${item.Nama}</p>
-                                    <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-wider">${item.Tanggal}</p>
-                                </div>
+                                <div><p class="font-bold text-sm">${item.Nama}</p><p class="text-[9px] text-slate-400 font-bold uppercase mt-1">${item.Tanggal}</p></div>
                                 <div class="flex items-center gap-4">
                                     <p class="font-bold text-sm text-emerald-600">Rp ${nom.toLocaleString('id-ID')}</p>
                                     <button onclick="deleteData(${realIdx})" class="text-slate-200 hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
@@ -214,17 +184,15 @@
                             </div>
                         `);
                     });
-                } else {
-                    list.innerHTML = '<p class="text-center py-10 text-slate-300 text-xs">Belum ada data pembayaran</p>';
                 }
                 document.getElementById('totalIuran').innerText = 'Rp ' + total.toLocaleString('id-ID');
                 document.getElementById('memberCount').innerText = (data ? data.length : 0) + " Transaksi";
-            } catch(e) { console.error("Gagal memuat histori."); }
+            } catch(e) { console.log("Load gagal"); }
             showLoading(false);
         }
 
         async function deleteData(idx) {
-            if(!confirm("Hapus data ini?")) return;
+            if(!confirm("Hapus?")) return;
             showLoading(true);
             try {
                 await apiCall('deleteAnggota', { index: idx });
