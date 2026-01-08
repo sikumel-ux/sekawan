@@ -24,76 +24,76 @@
     </div>
 
     <div id="loginPage" class="flex items-center justify-center min-h-screen p-6">
-        <div class="bg-white p-8 rounded-[2.5rem] card-shadow w-full max-w-md border border-emerald-50 text-center">
-            <div class="w-20 h-20 emerald-gradient rounded-3xl mx-auto flex items-center justify-center shadow-lg mb-6 text-white text-4xl">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-8">Admin Kas</h2>
+        <div class="bg-white p-8 rounded-[2.5rem] card-shadow w-full max-w-md text-center">
+            <h2 class="text-2xl font-bold mb-8">Admin Kas</h2>
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <button onclick="handleLogin()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-lg">Masuk</button>
+                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <button onclick="handleLogin()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold">Masuk</button>
             </div>
         </div>
     </div>
 
     <div id="adminPage" class="hidden">
-        <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 flex justify-between items-center border-b border-slate-100">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 emerald-gradient rounded-xl flex items-center justify-center text-white shadow-lg"><i class="fa-solid fa-recycle"></i></div>
-                <div><h1 class="text-sm font-bold text-emerald-700 uppercase">Panel Admin</h1></div>
-            </div>
-            <button onclick="location.reload()" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center border border-red-100"><i class="fa-solid fa-power-off"></i></button>
+        <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 flex justify-between items-center border-b">
+            <h1 class="font-bold text-emerald-700">PANEL ADMIN</h1>
+            <button onclick="location.reload()" class="text-red-500"><i class="fa-solid fa-power-off"></i></button>
         </header>
 
         <main class="p-6 space-y-6">
-            <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden text-center">
-                <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest">Saldo Saat Ini</p>
-                <h2 id="aSaldo" class="text-4xl font-bold my-2 tracking-tight">Rp 0</h2>
-                <div class="flex gap-6 mt-4 pt-4 border-t border-white/20">
-                    <div class="flex-1 text-left"><p class="text-[8px] uppercase opacity-70">Masuk</p><p id="aMasuk" class="font-bold text-sm">Rp 0</p></div>
-                    <div class="flex-1 text-right"><p class="text-[8px] uppercase opacity-70">Keluar</p><p id="aKeluar" class="font-bold text-sm">Rp 0</p></div>
+            <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl text-center">
+                <p class="text-[10px] font-bold uppercase opacity-80">Total Saldo</p>
+                <h2 id="aSaldo" class="text-4xl font-bold my-2">Rp 0</h2>
+                <div class="flex justify-between mt-4 pt-4 border-t border-white/20">
+                    <div class="text-left"><p class="text-[8px] uppercase">Masuk</p><p id="aMasuk" class="font-bold">Rp 0</p></div>
+                    <div class="text-right"><p class="text-[8px] uppercase">Keluar</p><p id="aKeluar" class="font-bold">Rp 0</p></div>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-[2.5rem] card-shadow">
-                <div class="h-44 flex justify-center"><canvas id="kasChart"></canvas></div>
+                <canvas id="kasChart"></canvas>
             </div>
 
             <div class="space-y-4">
-                <h3 class="font-bold text-slate-700 text-lg px-2">Histori Kas Utama</h3>
+                <h3 class="font-bold text-slate-700 px-2">Histori Transaksi</h3>
                 <div id="transactionList" class="space-y-3"></div>
             </div>
         </main>
 
-        <button onclick="openModal()" class="fixed bottom-6 right-6 w-14 h-14 emerald-gradient text-white rounded-2xl shadow-xl flex items-center justify-center text-2xl z-40 active:scale-90 shadow-emerald-300">+</button>
+        <button onclick="openModal()" class="fixed bottom-6 right-6 w-14 h-14 emerald-gradient text-white rounded-2xl shadow-xl flex items-center justify-center text-2xl z-40">+</button>
     </div>
 
     <div id="modalInput" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
         <div class="bg-white w-full rounded-t-[3rem] p-10 modal-up">
-            <h3 class="text-xl font-bold mb-6 text-center text-slate-800">Transaksi Baru</h3>
+            <h3 class="text-xl font-bold mb-6 text-center">Tambah Kas</h3>
             <div class="space-y-4">
                 <div class="flex gap-2 p-1 bg-slate-100 rounded-2xl">
                     <button id="btnIn" onclick="setKategori('Masuk')" class="flex-1 py-3 rounded-xl font-bold text-xs bg-white text-emerald-600 shadow-sm">MASUK</button>
                     <button id="btnOut" onclick="setKategori('Keluar')" class="flex-1 py-3 rounded-xl font-bold text-xs text-slate-400">KELUAR</button>
                 </div>
-                <input type="number" id="fNominal" placeholder="Nominal" class="w-full p-4 bg-slate-50 border rounded-2xl">
-                <input type="text" id="fKet" placeholder="Keterangan" class="w-full p-4 bg-slate-50 border rounded-2xl">
-                <button onclick="submitData()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold shadow-lg mt-2">SIMPAN</button>
+                <input type="date" id="fTanggal" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <input type="number" id="fNominal" placeholder="Nominal" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <input type="text" id="fKet" placeholder="Keterangan" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                
+                <button onclick="submitData()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold mt-2">SIMPAN DATA</button>
                 <button onclick="closeModal()" class="w-full text-slate-400 py-2 text-sm">Batal</button>
             </div>
         </div>
     </div>
 
     <script>
-        // GANTI URL DI BAWAH INI DENGAN URL API TERBARU KAMU
         const API_URL = "https://script.google.com/macros/s/AKfycbwgM7FFmRAeSn9Of6KK-hXzfX0Ipu55TjHMN7h1Y13SQqBYblhngJP4yLibuWITaMoz/exec";
         let selectedKategori = "Masuk";
         let allData = [];
         let myChart;
 
         function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-        function openModal() { document.getElementById('modalInput').classList.remove('hidden'); }
+        
+        function openModal() { 
+            document.getElementById('modalInput').classList.remove('hidden'); 
+            document.getElementById('fTanggal').valueAsDate = new Date(); // Set tgl hari ini otomatis
+        }
+        
         function closeModal() { document.getElementById('modalInput').classList.add('hidden'); }
 
         async function apiCall(action, payload = {}) {
@@ -104,7 +104,6 @@
 
         async function handleLogin() {
             const u = document.getElementById('username').value, p = document.getElementById('password').value;
-            if(!u || !p) return alert("Isi form!");
             showLoading(true);
             try {
                 const res = await apiCall('login', { user: u, pass: p });
@@ -112,8 +111,8 @@
                     document.getElementById('loginPage').classList.add('hidden');
                     document.getElementById('adminPage').classList.remove('hidden');
                     loadAdminData();
-                } else alert("Username atau Password Salah!");
-            } catch(e) { alert("Error Server: Cek Deployment atau URL API"); }
+                } else alert("Gagal!");
+            } catch(e) { alert("Error Server"); }
             showLoading(false);
         }
 
@@ -122,7 +121,7 @@
             try {
                 allData = await apiCall('getData');
                 renderUI(allData);
-            } catch(e) { console.error("Gagal load data"); }
+            } catch(e) { console.error(e); }
             showLoading(false);
         }
 
@@ -132,17 +131,23 @@
             let inT = 0, outT = 0;
 
             if(!data || data.length === 0) {
-                list.innerHTML = '<p class="text-center py-10 text-slate-400 text-xs">Belum ada transaksi</p>';
+                list.innerHTML = '<p class="text-center py-10 text-slate-400 text-xs">Kosong</p>';
             } else {
-                data.reverse().forEach((item, idx) => {
+                // Gunakan nama kolom yang SAMA PERSIS dengan baris 1 di Spreadsheet
+                data.slice().reverse().forEach((item, idx) => {
                     const realIdx = data.length - 1 - idx;
-                    const nom = parseInt(item.Nominal) || 0;
-                    const isIn = item.Kategori === "Masuk";
+                    const nom = parseInt(item.Nominal) || 0; 
+                    const kat = (item.Kategori || "").trim().toLowerCase();
+                    const isIn = kat === "masuk";
+                    
                     if(isIn) inT += nom; else outT += nom;
 
                     list.insertAdjacentHTML('beforeend', `
                         <div class="bg-white p-5 rounded-3xl card-shadow border-l-[6px] ${isIn ? 'border-emerald-500' : 'border-red-500'} flex justify-between items-center">
-                            <div><p class="font-bold text-sm text-slate-800">${item.Keterangan}</p><p class="text-[9px] text-slate-400 mt-1">${item.Tanggal}</p></div>
+                            <div>
+                                <p class="font-bold text-sm text-slate-800">${item.Keterangan || '-'}</p>
+                                <p class="text-[9px] text-slate-400 mt-1">${item.Tanggal || '-'}</p>
+                            </div>
                             <div class="flex items-center gap-4">
                                 <p class="font-bold text-sm ${isIn ? 'text-emerald-600' : 'text-red-600'}">Rp ${nom.toLocaleString('id-ID')}</p>
                                 <button onclick="deleteItem(${realIdx})" class="text-slate-200"><i class="fa-solid fa-trash-can"></i></button>
@@ -156,36 +161,44 @@
             document.getElementById('aMasuk').innerText = 'Rp ' + inT.toLocaleString('id-ID');
             document.getElementById('aKeluar').innerText = 'Rp ' + outT.toLocaleString('id-ID');
             
-            const ctx = document.getElementById('kasChart').getContext('2d');
             if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
+            myChart = new Chart(document.getElementById('kasChart'), {
                 type: 'doughnut', 
-                data: { labels: ['Masuk', 'Keluar'], datasets: [{ data: [inT, outT], backgroundColor: ['#10b981', '#f43f5e'], borderWidth: 0 }] },
-                options: { cutout: '80%', plugins: { legend: { display: false } } }
+                data: { datasets: [{ data: [inT, outT], backgroundColor: ['#10b981', '#f43f5e'] }] }
             });
         }
 
         function setKategori(k) {
             selectedKategori = k;
             const bI = document.getElementById('btnIn'), bO = document.getElementById('btnOut');
-            if(k === 'Masuk') {
-                bI.className = 'flex-1 py-3 rounded-xl font-bold text-xs bg-white text-emerald-600 shadow-sm';
-                bO.className = 'flex-1 py-3 rounded-xl font-bold text-xs text-slate-400';
-            } else {
-                bI.className = 'flex-1 py-3 rounded-xl font-bold text-xs text-slate-400';
-                bO.className = 'flex-1 py-3 rounded-xl font-bold text-xs bg-white text-red-600 shadow-sm';
-            }
+            bI.className = k === 'Masuk' ? 'flex-1 py-3 rounded-xl font-bold text-xs bg-white text-emerald-600 shadow-sm border border-emerald-100' : 'flex-1 py-3 rounded-xl font-bold text-xs text-slate-400';
+            bO.className = k === 'Keluar' ? 'flex-1 py-3 rounded-xl font-bold text-xs bg-white text-red-600 shadow-sm border border-red-100' : 'flex-1 py-3 rounded-xl font-bold text-xs text-slate-400';
         }
 
         async function submitData() {
-            const nom = document.getElementById('fNominal').value, ket = document.getElementById('fKet').value;
-            if(!nom || !ket) return alert("Isi form!");
+            const tglVal = document.getElementById('fTanggal').value;
+            const nom = document.getElementById('fNominal').value;
+            const ket = document.getElementById('fKet').value;
+            
+            if(!tglVal || !nom || !ket) return alert("Lengkapi data!");
+
+            // Ubah format YYYY-MM-DD ke DD/MM/YYYY
+            const [y, m, d] = tglVal.split('-');
+            const tglIndo = `${d}/${m}/${y}`;
+
             showLoading(true);
             try {
-                const tgl = new Date().toLocaleDateString('id-ID');
-                await apiCall('addData', { tanggal: tgl, kategori: selectedKategori, nominal: nom, keterangan: ket });
-                closeModal(); loadAdminData();
-            } catch(e) { alert("Gagal Simpan"); }
+                await apiCall('addData', { 
+                    tanggal: tglIndo, 
+                    kategori: selectedKategori, 
+                    nominal: nom, 
+                    keterangan: ket 
+                });
+                closeModal(); 
+                loadAdminData();
+                document.getElementById('fNominal').value = ''; 
+                document.getElementById('fKet').value = '';
+            } catch(e) { alert("Gagal!"); }
             showLoading(false);
         }
 
@@ -195,10 +208,9 @@
             try {
                 await apiCall('deleteData', { index: idx });
                 loadAdminData();
-            } catch(e) { alert("Gagal Hapus"); }
+            } catch(e) { alert("Gagal!"); }
             showLoading(false);
         }
     </script>
 </body>
-                      </html>
-                      
+</html>
