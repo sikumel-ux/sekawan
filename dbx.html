@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard Kas TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .emerald-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .nav-active { color: #10b981; transform: translateY(-5px); font-weight: bold; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-blur: 4px; }
+        .autocomplete-items { position: absolute; border: 1px solid #e2e8f0; z-index: 99; top: 100%; left: 0; right: 0; background: white; border-radius: 1rem; max-height: 150px; overflow-y: auto; }
+        .autocomplete-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <div id="loading" class="loading-overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+    </div>
+
+    <div id="loginPage" class="flex items-center justify-center min-h-screen p-6">
+        <div class="bg-white p-10 rounded-[3rem] card-shadow w-full max-w-md text-center border border-emerald-50">
+            <div class="w-20 h-20 emerald-gradient rounded-3xl mx-auto flex items-center justify-center shadow-lg mb-6 text-white text-4xl"><i class="fa-solid fa-vault"></i></div>
+            <h2 class="text-2xl font-bold text-slate-800">Kas TUNTAS</h2>
+            <div class="mt-8 space-y-4">
+                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <button onclick="handleLogin()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold">MASUK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainDashboard" class="hidden">
+        <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 flex justify-between items-center border-b">
+            <h1 id="pageTitle" class="font-bold text-slate-800 uppercase tracking-tight">Ringkasan</h1>
+            <button onclick="refreshData()" class="text-emerald-600"><i class="fa-solid fa-rotate"></i></button>
+        </header>
+
+        <main class="p-6">
+            <div id="screen-home" class="tab-content active space-y-6">
+                <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl">
+                    <p class="text-[10px] font-bold uppercase opacity-80">Total Saldo Kas</p>
+                    <h2 id="totalSaldo" class="text-4xl font-bold my-2">Rp 0</h2>
+                </div>
+                <div class="bg-white p-6 rounded-[2.5rem] card-shadow border">
+                    <canvas id="mainChart" class="max-h-48"></canvas>
+                </div>
+            </div>
+
+            <div id="screen-kas" class="tab-content space-y-4">
+                <button onclick="openModal('modalKas')" class="w-full p-4 emerald-gradient text-white rounded-2xl font-bold shadow-lg">+ Transaksi Kas Baru</button>
+                <div id="listKas" class="space-y-3"></div>
+            </div>
+
+            <div id="screen-anggota" class="tab-content space-y-4">
+                <div class="flex gap-2">
+                    <button onclick="openModal('modalMember')" class="flex-1 p-4 bg-white border border-emerald-500 text-emerald-600 rounded-2xl font-bold text-sm">Tambah Anggota</button>
+                    <button onclick="openModal('modalBayar')" class="flex-1 p-4 emerald-gradient text-white rounded-2xl font-bold text-sm">Bayar Iuran</button>
+                </div>
+                <div id="listIuran" class="space-y-3"></div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t p-4 flex justify-around z-40 pb-8">
+            <button onclick="changeTab('home')" class="nav-btn nav-active" id="btn-home"><i class="fa-solid fa-house"></i><p class="text-[10px]">Home</p></button>
+            <button onclick="changeTab('kas')" class="nav-btn text-slate-300" id="btn-kas"><i class="fa-solid fa-wallet"></i><p class="text-[10px]">Kas</p></button>
+            <button onclick="changeTab('anggota')" class="nav-btn text-slate-300" id="btn-anggota"><i class="fa-solid fa-users"></i><p class="text-[10px]">Warga</p></button>
+        </nav>
+    </div>
+
+    <div id="modalMember" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8">
+            <h3 class="font-bold mb-4">Nama Anggota Baru</h3>
+            <input type="text" id="mNama" class="w-full p-4 bg-slate-50 border rounded-2xl mb-4 outline-none">
+            <button onclick="submitMember()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold">SIMPAN ANGGOTA</button>
+            <button onclick="closeModal('modalMember')" class="w-full text-slate-400 mt-2 text-sm">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalBayar" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-[3rem] p-8">
+            <h3 class="font-bold mb-4 text-center">Catat Iuran</h3>
+            <div class="space-y-4">
+                <input type="date" id="bTgl" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <div class="relative">
+                    <input type="text" id="bNama" onkeyup="searchMember(this.value)" placeholder="Nama Anggota" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none" autocomplete="off">
+                    <div id="autoList" class="autocomplete-items hidden"></div>
+                </div>
+                <input type="number" id="bNom" placeholder="Nominal" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <button onclick="submitIuran()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold">SIMPAN BAYAR</button>
+                <button onclick="closeModal('modalBayar')" class="w-full text-slate-400 mt-2 text-sm text-center">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalKas" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-[3rem] p-8">
+            <div class="flex gap-2 mb-4 bg-slate-100 p-1 rounded-2xl">
+                <button id="kin" onclick="kKat='Masuk'" class="flex-1 py-3 rounded-xl bg-white text-emerald-600 font-bold">Masuk</button>
+                <button id="kout" onclick="kKat='Keluar'" class="flex-1 py-3 rounded-xl text-slate-400 font-bold">Keluar</button>
+            </div>
+            <div class="space-y-4">
+                <input type="date" id="kTgl" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <input type="number" id="kNom" placeholder="Nominal" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <input type="text" id="kKet" placeholder="Keterangan" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
+                <button onclick="submitKas()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold">SIMPAN TRANSAKSI</button>
+                <button onclick="closeModal('modalKas')" class="w-full text-slate-400 mt-2 text-sm text-center">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwgM7FFmRAeSn9Of6KK-hXzfX0Ipu55TjHMN7h1Y13SQqBYblhngJP4yLibuWITaMoz/exec";
+        let db = { kas:[], anggota:[], pembayaran:[] }, kKat = "Masuk", myChart;
+
+        function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function apiCall(action, p = {}) {
+            const url = `${API_URL}?${new URLSearchParams({action, ...p})}`;
+            const res = await fetch(url, { method:'POST' }); return res.json();
+        }
+
+        async function handleLogin() {
+            showLoading(true);
+            const res = await apiCall('login', {user: document.getElementById('username').value, pass: document.getElementById('password').value});
+            if(res === true) { document.getElementById('loginPage').classList.add('hidden'); document.getElementById('mainDashboard').classList.remove('hidden'); refreshData(); }
+            else alert("Gagal!"); showLoading(false);
+        }
+
+        async function refreshData() {
+            showLoading(true); db = await apiCall('getDashboard'); renderAll(); showLoading(false);
+        }
+
+        function renderAll() {
+            let tin = 0, tout = 0, tiur = 0;
+            const lk = document.getElementById('listKas'), lb = document.getElementById('listIuran');
+            lk.innerHTML = ''; lb.innerHTML = '';
+
+            db.kas.forEach((i, idx) => {
+                const n = parseInt(i.nominal)||0; if(i.kategori.toLowerCase()==='masuk') tin+=n; else tout+=n;
+                lk.insertAdjacentHTML('afterbegin', `<div class="bg-white p-4 rounded-2xl card-shadow border-l-4 ${i.kategori.toLowerCase()==='masuk'?'border-emerald-500':'border-red-500'} flex justify-between"><div><p class="font-bold text-sm">${i.keterangan}</p><p class="text-[10px] text-slate-400">${i.tanggal}</p></div><p class="font-bold text-sm">Rp ${n.toLocaleString()}</p></div>`);
+            });
+
+            db.pembayaran.forEach(i => {
+                const n = parseInt(i.nominal)||0; tiur+=n;
+                lb.insertAdjacentHTML('afterbegin', `<div class="bg-white p-4 rounded-2xl card-shadow border-l-4 border-blue-500 flex justify-between"><div><p class="font-bold text-sm">${i.nama}</p><p class="text-[10px] text-slate-400">${i.tanggal}</p></div><p class="font-bold text-sm text-blue-600">Rp ${n.toLocaleString()}</p></div>`);
+            });
+
+            document.getElementById('totalSaldo').innerText = 'Rp ' + (tin + tiur - tout).toLocaleString();
+            if(myChart) myChart.destroy();
+            myChart = new Chart(document.getElementById('mainChart'), { type:'doughnut', data:{ labels:['Masuk','Keluar','Iuran'], datasets:[{data:[tin, tout, tiur], backgroundColor:['#10b981','#ef4444','#3b82f6']}] } });
+        }
+
+        function changeTab(t) {
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b=>b.classList.replace('text-emerald-600','text-slate-300'));
+            document.getElementById('screen-'+t).classList.add('active');
+            document.getElementById('btn-'+t).classList.replace('text-slate-300','text-emerald-600');
+            document.getElementById('pageTitle').innerText = t;
+        }
+
+        function searchMember(v) {
+            const list = document.getElementById('autoList');
+            const match = db.anggota.filter(a => a.nama.toLowerCase().includes(v.toLowerCase()));
+            list.innerHTML = match.map(m => `<div class="autocomplete-item" onclick="selectMember('${m.nama}')">${m.nama}</div>`).join('');
+            list.classList.remove('hidden');
+        }
+
+        function selectMember(n) { document.getElementById('bNama').value = n; document.getElementById('autoList').classList.add('hidden'); }
+
+        async function submitMember() {
+            showLoading(true); await apiCall('addNewMember', {nama: document.getElementById('mNama').value});
+            closeModal('modalMember'); refreshData();
+        }
+
+        async function submitIuran() {
+            showLoading(true); const t = document.getElementById('bTgl').value.split('-');
+            await apiCall('addAnggota', {tanggal: `${t[2]}/${t[1]}/${t[0]}`, nama: document.getElementById('bNama').value, nominal: document.getElementById('bNom').value});
+            closeModal('modalBayar'); refreshData();
+        }
+
+        async function submitKas() {
+            showLoading(true); const t = document.getElementById('kTgl').value.split('-');
+            await apiCall('addData', {tanggal: `${t[2]}/${t[1]}/${t[0]}`, kategori: kKat, nominal: document.getElementById('kNom').value, keterangan: document.getElementById('kKet').value});
+            closeModal('modalKas'); refreshData();
+        }
+    </script>
+</body>
+</html>
