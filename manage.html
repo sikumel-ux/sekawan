@@ -11,91 +11,83 @@
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
         .emerald-gradient { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
         .modal-up { animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* Style untuk Autocomplete */
+        .autocomplete-items {
+            position: absolute; border-radius: 1rem; border: 1px solid #e2e8f0;
+            z-index: 99; top: 100%; left: 0; right: 0; background: white; max-height: 150px; overflow-y: auto;
+        }
+        .autocomplete-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .autocomplete-item:hover { background-color: #f0fdf4; color: #10b981; }
     </style>
 </head>
 <body class="text-slate-800 pb-24">
 
-    <div id="loading" class="loading-overlay">
-        <div class="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
-    </div>
-
     <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 flex justify-between items-center border-b border-slate-100">
         <div class="flex items-center gap-3">
-            <button onclick="window.location.href='admin.html'" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center border border-slate-100 active:scale-95 transition-all">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <div>
-                <h1 class="text-sm font-bold text-emerald-700">DATA ANGGOTA</h1>
-                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Kas TUNTAS</p>
-            </div>
+            <button onclick="window.location.href='admin.html'" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center border border-slate-100"><i class="fa-solid fa-arrow-left"></i></button>
+            <h1 class="text-sm font-bold text-emerald-700 uppercase">Kas Anggota</h1>
         </div>
-        <div class="w-10 h-10 emerald-gradient rounded-xl flex items-center justify-center text-white shadow-lg">
-            <i class="fa-solid fa-users"></i>
-        </div>
+        <button onclick="openModalMember()" class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[10px] font-bold uppercase border border-emerald-100 italic">+ Anggota Baru</button>
     </header>
 
     <main class="p-6 space-y-6">
-        <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
-            <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest">Total Terkumpul</p>
-            <h2 id="totalIuran" class="text-4xl font-bold my-2 tracking-tight">Rp 0</h2>
-            <div class="mt-4 pt-4 border-t border-white/20">
-                <p class="text-[9px] font-bold opacity-70 uppercase tracking-widest text-center" id="countStatus">Memuat data...</p>
-            </div>
-        </div>
-
-        <div class="bg-white p-2 rounded-2xl card-shadow border border-slate-50 flex items-center px-4">
-            <i class="fa-solid fa-magnifying-glass text-slate-300 mr-3"></i>
-            <input type="text" id="searchName" onkeyup="filterList()" placeholder="Cari nama anggota..." class="w-full py-3 text-sm outline-none bg-transparent">
+        <div class="emerald-gradient p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100">
+            <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest text-center">Total Iuran Terkumpul</p>
+            <h2 id="totalIuran" class="text-4xl text-center font-bold my-2 tracking-tight">Rp 0</h2>
         </div>
 
         <div class="space-y-4">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="font-bold text-slate-700 text-lg">Histori Pembayaran</h3>
-                <button onclick="loadMemberData()" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
-            </div>
-            <div id="memberList" class="space-y-3">
-                </div>
+            <h3 class="font-bold text-slate-700 px-2">Histori Pembayaran</h3>
+            <div id="memberList" class="space-y-3"></div>
         </div>
     </main>
 
-    <button onclick="openModal()" class="fixed bottom-6 right-6 w-14 h-14 emerald-gradient text-white rounded-2xl shadow-xl flex items-center justify-center text-2xl z-40 active:scale-90 transition-all shadow-emerald-300">
-        <i class="fa-solid fa-plus"></i>
+    <button onclick="openModalPay()" class="fixed bottom-6 right-6 w-14 h-14 emerald-gradient text-white rounded-2xl shadow-xl flex items-center justify-center text-2xl z-40 active:scale-90 shadow-emerald-300">
+        <i class="fa-solid fa-hand-holding-dollar"></i>
     </button>
 
-    <div id="modalInput" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+    <div id="modalMember" class="fixed inset-0 bg-slate-900/60 hidden z-[60] flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 modal-up">
+            <h3 class="text-xl font-bold mb-6 text-center">Registrasi Anggota</h3>
+            <input type="text" id="newMemberName" placeholder="Nama Lengkap Baru" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500 mb-4">
+            <button onclick="submitNewMember()" class="w-full emerald-gradient text-white py-4 rounded-2xl font-bold shadow-lg">Daftarkan</button>
+            <button onclick="closeModalMember()" class="w-full text-slate-400 py-2 text-sm mt-2">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalPay" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
         <div class="bg-white w-full rounded-t-[3rem] p-10 modal-up">
             <div class="w-16 h-1.5 bg-slate-100 mx-auto rounded-full mb-8"></div>
-            <h3 class="text-2xl font-bold mb-8 text-center text-slate-800">Tambah Pembayaran</h3>
+            <h3 class="text-2xl font-bold mb-8 text-center">Input Pembayaran</h3>
             <div class="space-y-5">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 mb-1 block">Tanggal</label>
-                    <input type="date" id="fTanggal" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <input type="text" id="fNama" placeholder="Nama Anggota" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <input type="number" id="fNominal" placeholder="Nominal Rp" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="date" id="fTanggal" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none">
                 
-                <button onclick="submitData()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold shadow-lg mt-4">Simpan Data</button>
-                <button onclick="closeModal()" class="w-full text-slate-400 py-2 text-sm font-medium">Batal</button>
+                <div class="relative">
+                    <input type="text" id="fNama" onkeyup="searchName(this.value)" placeholder="Ketik nama anggota..." class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500" autocomplete="off">
+                    <div id="autocompleteList" class="autocomplete-items hidden"></div>
+                </div>
+
+                <input type="number" id="fNominal" placeholder="Nominal Rp" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <button onclick="submitPayment()" class="w-full emerald-gradient text-white py-5 rounded-2xl font-bold shadow-lg">Simpan Kas</button>
+                <button onclick="closeModalPay()" class="w-full text-slate-400 py-2 text-sm font-medium">Batal</button>
             </div>
         </div>
     </div>
 
     <script>
-        // GANTI DENGAN URL WEB APP KAMU
-        const API_URL = "URL_APPS_SCRIPT_KAMU"; 
-        let allMembers = [];
+        const API_URL = "URL_APPS_SCRIPT_KAMU";
+        let masterNames = []; // List nama dari database anggota
 
-        function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-        function openModal() { 
-            document.getElementById('modalInput').classList.remove('hidden');
+        function openModalMember() { document.getElementById('modalMember').classList.remove('hidden'); }
+        function closeModalMember() { document.getElementById('modalMember').classList.add('hidden'); }
+        function openModalPay() { 
+            document.getElementById('modalPay').classList.remove('hidden'); 
             document.getElementById('fTanggal').valueAsDate = new Date();
+            fetchMasterNames();
         }
-        function closeModal() { document.getElementById('modalInput').classList.add('hidden'); }
+        function closeModalPay() { document.getElementById('modalPay').classList.add('hidden'); }
 
         async function apiCall(action, payload = {}) {
             const params = new URLSearchParams({ action, ...payload });
@@ -103,97 +95,73 @@
             return await response.json();
         }
 
-        async function loadMemberData() {
-            showLoading(true);
-            try {
-                allMembers = await apiCall('getAnggota');
-                renderUI(allMembers);
-            } catch(e) { console.error("Gagal load data"); }
-            showLoading(false);
+        // Ambil Daftar Nama Anggota Tetap
+        async function fetchMasterNames() {
+            masterNames = await apiCall('getDaftarNama');
         }
 
-        function renderUI(data) {
-            const list = document.getElementById('memberList');
-            const totalEl = document.getElementById('totalIuran');
-            list.innerHTML = '';
-            let totalNominal = 0;
-
-            if(!data || data.length === 0) {
-                list.innerHTML = '<p class="text-center py-10 text-slate-400 text-xs font-medium">Belum ada data pembayaran</p>';
+        // Fungsi Autocomplete
+        function searchName(val) {
+            const list = document.getElementById('autocompleteList');
+            if (!val) { list.classList.add('hidden'); return; }
+            
+            const filtered = masterNames.filter(m => m.Nama.toLowerCase().includes(val.toLowerCase()));
+            if (filtered.length > 0) {
+                list.innerHTML = filtered.map(m => `<div class="autocomplete-item" onclick="selectName('${m.Nama}')">${m.Nama}</div>`).join('');
+                list.classList.remove('hidden');
             } else {
-                // Reverse agar data terbaru di atas
-                [...data].reverse().forEach((item, idx) => {
-                    const realIdx = data.length - 1 - idx;
-                    const nom = parseInt(item.Nominal) || 0;
-                    totalNominal += nom;
-
-                    list.insertAdjacentHTML('beforeend', `
-                        <div class="bg-white p-5 rounded-3xl card-shadow border-l-[6px] border-emerald-500 flex justify-between items-center animate-fade-in">
-                            <div class="flex-1 pr-4">
-                                <p class="font-bold text-slate-800 text-sm">${item.Nama}</p>
-                                <p class="text-[9px] text-slate-400 font-bold uppercase mt-1">
-                                    <i class="fa-regular fa-calendar-check mr-1"></i> ${item.Tanggal}
-                                </p>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <p class="font-bold text-sm text-emerald-600">Rp ${nom.toLocaleString('id-ID')}</p>
-                                <button onclick="deleteData(${realIdx})" class="text-slate-200 hover:text-red-500 transition-colors">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `);
-                });
+                list.classList.add('hidden');
             }
-
-            totalEl.innerText = 'Rp ' + totalNominal.toLocaleString('id-ID');
-            document.getElementById('countStatus').innerText = data.length + " Total Transaksi Anggota";
         }
 
-        async function submitData() {
+        function selectName(name) {
+            document.getElementById('fNama').value = name;
+            document.getElementById('autocompleteList').classList.add('hidden');
+        }
+
+        // Simpan Member Baru ke database Master
+        async function submitNewMember() {
+            const nama = document.getElementById('newMemberName').value;
+            if(!nama) return alert("Isi nama!");
+            await apiCall('addNewMember', { nama });
+            alert("Anggota berhasil terdaftar!");
+            closeModalMember();
+            document.getElementById('newMemberName').value = '';
+        }
+
+        // Simpan Pembayaran
+        async function submitPayment() {
             const tgl = document.getElementById('fTanggal').value;
             const nama = document.getElementById('fNama').value;
             const nom = document.getElementById('fNominal').value;
+            if(!tgl || !nama || !nom) return alert("Lengkapi data!");
 
-            if(!tgl || !nama || !nom) return alert("Harap isi semua kolom!");
-
-            showLoading(true);
-            try {
-                // Format tanggal ke DD/MM/YYYY
-                const d = tgl.split('-');
-                const formattedDate = `${d[2]}/${d[1]}/${d[0]}`;
-
-                await apiCall('addAnggota', { 
-                    tanggal: formattedDate, 
-                    nama: nama, 
-                    nominal: nom 
-                });
-                
-                closeModal();
-                loadMemberData();
-                document.getElementById('fNama').value = '';
-                document.getElementById('fNominal').value = '';
-            } catch(e) { alert("Gagal menyimpan data"); }
-            showLoading(false);
+            const d = tgl.split('-');
+            await apiCall('addAnggota', { tanggal: `${d[2]}/${d[1]}/${d[0]}`, nama, nominal: nom });
+            closeModalPay();
+            loadHistory();
+            document.getElementById('fNama').value = '';
+            document.getElementById('fNominal').value = '';
         }
 
-        async function deleteData(idx) {
-            if(!confirm("Hapus catatan pembayaran ini?")) return;
-            showLoading(true);
-            try {
-                await apiCall('deleteAnggota', { index: idx });
-                loadMemberData();
-            } catch(e) { alert("Gagal menghapus"); }
-            showLoading(false);
+        async function loadHistory() {
+            const data = await apiCall('getAnggota');
+            const list = document.getElementById('memberList');
+            let total = 0;
+            list.innerHTML = '';
+            data.reverse().forEach(item => {
+                total += parseInt(item.Nominal);
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-5 rounded-3xl card-shadow border-l-[6px] border-emerald-500 flex justify-between items-center">
+                        <div><p class="font-bold text-sm">${item.Nama}</p><p class="text-[9px] text-slate-400 font-bold uppercase">${item.Tanggal}</p></div>
+                        <p class="font-bold text-sm text-emerald-600">Rp ${parseInt(item.Nominal).toLocaleString('id-ID')}</p>
+                    </div>
+                `);
+            });
+            document.getElementById('totalIuran').innerText = 'Rp ' + total.toLocaleString('id-ID');
         }
 
-        function filterList() {
-            const val = document.getElementById('searchName').value.toLowerCase();
-            const filtered = allMembers.filter(m => m.Nama.toLowerCase().includes(val));
-            renderUI(filtered);
-        }
-
-        window.onload = loadMemberData;
+        window.onload = loadHistory;
     </script>
 </body>
 </html>
