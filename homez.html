@@ -27,30 +27,19 @@
             </div>
         </div>
         
-        <a href="db.html" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border hover:text-tuntas hover:border-tuntas transition-all">
+        <a href="db.html" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border hover:text-tuntas transition-all">
             <i class="fa-solid fa-power-off text-lg"></i>
         </a>
     </header>
 
     <main class="p-6 space-y-8">
 
-        <section class="bg-white p-7 rounded-[2.5rem] card-shadow border border-slate-50 relative overflow-hidden">
-            <div class="flex items-center gap-3 mb-4">
-                <i class="fa-solid fa-leaf text-tuntas"></i>
-                <h3 class="font-bold text-slate-700">Tentang TUNTAS</h3>
-            </div>
-            <p class="text-[13px] text-slate-500 leading-relaxed relative z-10">
-                <span class="font-bold text-tuntas">TUNTAS</span> adalah program inovasi dari <span class="font-bold">RT 04</span> yang bertujuan untuk menciptakan lingkungan yang bersih, sehat, dan bebas dari polusi asap sampah. Melalui gerakan ini, kita bersama-sama mengelola sampah secara bertanggung jawab agar tidak ada lagi sampah yang dibakar di lingkungan rumah kita.
-            </p>
-            <i class="fa-solid fa-seedling absolute -right-4 -bottom-4 text-7xl text-slate-50 opacity-50"></i>
-        </section>
-
         <section class="space-y-4">
             <div class="flex items-center gap-2 px-1">
                 <i class="fa-solid fa-receipt text-tuntas text-xs"></i>
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-xs">Transparansi Dana RT 04</h2>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Saldo Kas Transparan</h2>
             </div>
-            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-200">
+            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-200 relative overflow-hidden">
                 <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Total Saldo Terkini</p>
                 <h2 id="pubSaldo" class="text-3xl font-bold tracking-tight mb-6">Rp ...</h2>
                 
@@ -64,13 +53,24 @@
                         <p id="pubKeluar" class="font-bold text-sm">Rp 0</p>
                     </div>
                 </div>
+                <i class="fa-solid fa-vault absolute -right-4 -bottom-4 text-7xl opacity-10"></i>
             </div>
+        </section>
+
+        <section class="bg-white p-7 rounded-[2.5rem] card-shadow border border-slate-50">
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fa-solid fa-leaf text-tuntas text-sm"></i>
+                <h3 class="font-bold text-slate-700 text-sm">Tentang TUNTAS</h3>
+            </div>
+            <p class="text-[12px] text-slate-500 leading-relaxed">
+                <span class="font-bold text-tuntas">TUNTAS</span> adalah program inovasi dari <span class="font-bold">RT 04</span> yang bertujuan untuk menciptakan lingkungan yang bersih, sehat, dan bebas dari polusi asap sampah. Melalui gerakan ini, kita bersama-sama mengelola sampah secara bertanggung jawab agar tidak ada lagi sampah yang dibakar di lingkungan rumah kita.
+            </p>
         </section>
 
         <section class="space-y-4">
             <div class="flex items-center gap-2 px-1">
                 <i class="fa-solid fa-circle-question text-tuntas text-xs"></i>
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-xs">Tanya Jawab (FAQ)</h2>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tanya Jawab (FAQ)</h2>
             </div>
             <div class="space-y-3">
                 <details class="group bg-white rounded-2xl border card-shadow">
@@ -105,16 +105,16 @@
 
                 <details class="group bg-white rounded-2xl border card-shadow">
                     <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                        Apa saja yang tidak boleh ikut dibakar?
+                        Apa yang tidak boleh ikut dibakar?
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="px-5 pb-5 text-[11px] text-slate-500 leading-relaxed border-t pt-3 space-y-2">
-                        <p>Beberapa contoh sampah berbahaya yang dilarang keras untuk dibakar (karena racun/asap pekat):</p>
+                        <p class="font-bold text-red-500">Dilarang keras menyertakan:</p>
                         <ul class="list-disc ml-4 space-y-1">
                             <li>Plastik & Stereofoam</li>
                             <li>Karet & Ban bekas</li>
                             <li>Kabel & Barang elektronik</li>
-                            <li>Botol kaleng/semprotan (Dapat meledak)</li>
+                            <li>Botol kaleng/semprotan (Bahaya ledakan)</li>
                         </ul>
                     </div>
                 </details>
