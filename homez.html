@@ -18,100 +18,83 @@
 
     <header class="bg-white p-6 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/90">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-100">
-                <i class="fa-solid fa-leaf"></i>
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg">
+                <i class="fa-solid fa-recycle"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold leading-none text-slate-800">TUNTAS</h1>
+                <h1 class="text-lg font-bold leading-none text-slate-800 tracking-tight">TUNTAS</h1>
                 <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Turun Tangan Atasi Sampah</p>
             </div>
         </div>
-        <div class="text-right">
-            <p class="text-[9px] font-bold text-slate-400 uppercase">Lingkungan</p>
-            <p class="text-[11px] font-bold text-tuntas">RT 04 / RW 01</p>
-        </div>
+        
+        <a href="db.html" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border hover:text-tuntas hover:border-tuntas transition-all">
+            <i class="fa-solid fa-power-off text-lg"></i>
+        </a>
     </header>
 
     <main class="p-6 space-y-8">
 
         <section class="space-y-4">
             <div class="flex items-center gap-2 px-1">
-                <i class="fa-solid fa-shield-halved text-tuntas text-xs"></i>
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transparansi Kas</h2>
+                <i class="fa-solid fa-receipt text-tuntas text-xs"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kas Transparan RT 04</h2>
             </div>
-            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
-                <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Total Saldo Warga</p>
+            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-200 relative overflow-hidden">
+                <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Total Saldo Terkini</p>
                 <h2 id="pubSaldo" class="text-3xl font-bold tracking-tight mb-6">Rp ...</h2>
                 
                 <div class="grid grid-cols-2 gap-4 pt-6 border-t border-white/20">
                     <div>
-                        <p class="text-[9px] font-bold opacity-70 uppercase mb-1">Iuran Terkumpul</p>
+                        <p class="text-[9px] font-bold opacity-70 uppercase mb-1">Total Iuran</p>
                         <p id="pubIuran" class="font-bold text-sm">Rp 0</p>
                     </div>
                     <div>
-                        <p class="text-[9px] font-bold opacity-70 uppercase mb-1">Biaya Operasional</p>
+                        <p class="text-[9px] font-bold opacity-70 uppercase mb-1">Operasional</p>
                         <p id="pubKeluar" class="font-bold text-sm">Rp 0</p>
                     </div>
                 </div>
-                <i class="fa-solid fa-vault absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
             </div>
         </section>
 
-        <section class="bg-white p-7 rounded-[2rem] card-shadow border border-slate-50">
-            <div class="flex items-center gap-3 mb-4">
-                <i class="fa-solid fa-circle-info text-tuntas"></i>
-                <h3 class="font-bold text-slate-700">Misi Kami</h3>
-            </div>
-            <p class="text-[13px] text-slate-500 leading-relaxed">
-                Mewujudkan lingkungan RT 04 yang bersih dan sehat dengan sistem **Zero Waste**. Sampah dikelola secara mandiri untuk menghindari pembakaran sampah yang merusak udara.
-            </p>
-        </section>
-
-        <section class="space-y-4">
-            <div class="flex items-center gap-2 px-1">
-                <i class="fa-solid fa-calendar-check text-tuntas text-xs"></i>
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Jadwal & Aturan</h2>
-            </div>
-            <div class="grid grid-cols-1 gap-3">
-                <div class="bg-white p-5 rounded-2xl border flex items-start gap-4 card-shadow">
-                    <i class="fa-solid fa-truck-pickup text-tuntas mt-1"></i>
-                    <div>
-                        <p class="text-xs font-bold text-slate-700">Pengambilan Sampah</p>
-                        <p class="text-[11px] text-slate-500 mt-1 italic">Setiap hari Minggu & Kamis (Jam 08:00 WIB)</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border flex items-start gap-4 card-shadow border-l-4 border-l-amber-500">
-                    <i class="fa-solid fa-hand-dots text-amber-500 mt-1"></i>
-                    <div>
-                        <p class="text-xs font-bold text-slate-700">Wajib Dipilah</p>
-                        <p class="text-[11px] text-slate-500 mt-1">Pisahkan antara sampah Basah (Organik) dan Kering (Anorganik).</p>
-                    </div>
+        <section class="grid grid-cols-1 gap-3">
+            <div class="bg-white p-5 rounded-2xl border flex items-start gap-4 card-shadow">
+                <i class="fa-solid fa-clock text-tuntas mt-1"></i>
+                <div>
+                    <p class="text-xs font-bold text-slate-700">Jadwal Pengambilan</p>
+                    <p class="text-[11px] text-slate-500 mt-1 italic font-medium text-tuntas uppercase">Minggu & Kamis (08:00 WIB)</p>
                 </div>
             </div>
         </section>
 
         <section class="space-y-4">
             <div class="flex items-center gap-2 px-1">
-                <i class="fa-solid fa-comments-question text-tuntas text-xs"></i>
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tanya Jawab</h2>
+                <i class="fa-solid fa-circle-question text-tuntas text-xs"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Warga</h2>
             </div>
             <div class="space-y-3">
                 <details class="group bg-white rounded-2xl border card-shadow">
                     <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-xs text-slate-700">
-                        Uang kas digunakan untuk apa?
+                        Bagaimana cara menjadi anggota?
                         <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                     </summary>
                     <div class="px-5 pb-5 text-[11px] text-slate-500 leading-relaxed border-t pt-3">
-                        Digunakan untuk upah petugas angkut, pemeliharaan alat, dan biaya pembuangan akhir di tempat pengolahan sampah.
+                        Layanan ini adalah **Program Khusus Warga RT 04**. Untuk bergabung, Anda cukup menghubungi pengurus melalui WhatsApp untuk pendataan alamat dan nama kepala keluarga.
                     </div>
                 </details>
+
                 <details class="group bg-white rounded-2xl border card-shadow">
                     <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-xs text-slate-700">
-                        Mengapa dilarang membakar sampah?
-                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
+                        Apa saja sampah yang dilarang ikut?
+                        <i class="fa-solid fa-ban text-[10px] text-red-500 transition-all"></i>
                     </summary>
-                    <div class="px-5 pb-5 text-[11px] text-slate-500 leading-relaxed border-t pt-3">
-                        Asap pembakaran mengandung zat berbahaya (dioksin) yang merusak paru-paru dan mengganggu kenyamanan tetangga sekitar.
+                    <div class="px-5 pb-5 text-[11px] text-slate-500 leading-relaxed border-t pt-3 space-y-2">
+                        <p class="font-bold">Dilarang menyertakan sampah berbahaya:</p>
+                        <ul class="list-disc ml-4 space-y-1">
+                            <li>Baterai bekas & komponen elektronik.</li>
+                            <li>Lampu neon/bohlam pecah.</li>
+                            <li>Bahan kimia berbahaya (botol oli/racun).</li>
+                            <li>Puntung rokok yang masih menyala.</li>
+                        </ul>
                     </div>
                 </details>
             </div>
@@ -120,9 +103,14 @@
         <section class="text-center pt-6">
             <a href="https://wa.me/6287812710851" class="inline-flex items-center gap-3 px-10 py-5 bg-tuntas text-white rounded-[2rem] font-bold shadow-lg active:scale-95 transition-all">
                 <i class="fa-brands fa-whatsapp text-2xl"></i>
-                <span class="text-sm">HUBUNGI PENGURUS</span>
+                <span class="text-sm uppercase tracking-wide">Hubungi Pengurus</span>
             </a>
-            <p class="text-[10px] text-slate-300 mt-10 uppercase tracking-[0.2em]">© 2026 TUNTAS - Turun Tangan Atasi Sampah</p>
+            
+            <div class="mt-16 py-8">
+                <p class="text-[10px] font-bold text-tuntas uppercase tracking-[0.3em]">TUNTAS - RT 04</p>
+                <p class="text-[8px] text-tuntas font-medium mt-1">TURUN TANGAN ATASI SAMPAH</p>
+                <p class="text-[8px] text-slate-300 mt-4 italic">© 2026 TUNTAS - Program Swadaya Lingkungan</p>
+            </div>
         </section>
 
     </main>
@@ -134,35 +122,21 @@
             try {
                 const response = await fetch(`${API_URL}?action=getDashboard`, { method: 'POST' });
                 const data = await response.json();
-                
                 let tin = 0, tout = 0, tiur = 0;
-
-                // Hitung Iuran (dari data pembayaran)
-                data.pembayaran.slice(1).forEach(row => {
-                    tiur += Number(row[2]) || 0;
-                });
-
-                // Hitung Kas Masuk & Keluar
+                data.pembayaran.slice(1).forEach(row => { tiur += Number(row[2]) || 0; });
                 data.kas.slice(1).forEach(row => {
                     const n = Number(row[3]) || 0;
-                    if(String(row[2]).trim().toLowerCase() === 'masuk') tin += n; 
-                    else tout += n;
+                    if(String(row[2]).trim().toLowerCase() === 'masuk') tin += n; else tout += n;
                 });
-
                 const totalSaldo = (tin - tout) + tiur;
-
                 document.getElementById('pubSaldo').innerText = 'Rp ' + totalSaldo.toLocaleString('id-ID');
                 document.getElementById('pubIuran').innerText = 'Rp ' + tiur.toLocaleString('id-ID');
                 document.getElementById('pubKeluar').innerText = 'Rp ' + tout.toLocaleString('id-ID');
-
             } catch(e) { 
-                console.error(e);
-                document.getElementById('pubSaldo').innerText = 'Gagal memuat data'; 
+                document.getElementById('pubSaldo').innerText = 'Offline'; 
             }
         }
-        
         loadPublicData();
     </script>
 </body>
-  </html>
-  
+</html>
