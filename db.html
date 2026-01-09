@@ -284,7 +284,7 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-emerald-600','text-slate-300'));
             document.getElementById('screen-'+t).classList.add('active');
             document.getElementById('btn-'+t).classList.replace('text-slate-300','text-emerald-600');
-            document.getElementById('pageTitle').innerText = t === 'home' ? 'Ringkasan' : t === 'kas' ? 'Kas Tuntas' : 'Data Warga';
+            document.getElementById('pageTitle').innerText = t === 'home' ? 'Beranda' : t === 'kas' ? 'Kas Tuntas' : 'Data Anggota';
             document.getElementById('addBtnHeader').style.display = (t === 'kas') ? 'flex' : 'none';
         }
     </script>
