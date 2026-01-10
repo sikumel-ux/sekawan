@@ -7,60 +7,61 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>body { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen font-[Poppins]">
-    <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-        <h1 class="text-xl font-bold text-slate-800 mb-6 italic"><i class="fa-solid fa-bolt text-emerald-500 mr-2"></i>Generator Kwitansi</h1>
+<body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 mt-6">
+        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center italic">Generator Kwitansi</h1>
+        
         <div class="space-y-4">
-            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none focus:ring-2 focus:ring-emerald-500">
+            <div>
+                <label class="text-[10px] font-bold text-slate-400 ml-2 uppercase">WhatsApp Warga (Gunakan 62)</label>
+                <input type="number" id="wa" placeholder="62812345678" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none">
             <div class="grid grid-cols-2 gap-3">
                 <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border outline-none">
                 <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border outline-none">
             </div>
-            <button id="btnKirim" onclick="prosesData()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim Kwitansi</span>
+            
+            <button id="btn" onclick="prosesData()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
+                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim & Simpan</span>
             </button>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyhu1F3N2RlvV8wsvCCeuooHS8IN36HiwXcgAlePr_6-dcFiikSKryCFfYJQgnDAFE/exec"; // GANTI DENGAN URL GAS KAMU
+        const API_URL = "URL_GAS_KAMU"; 
 
         async function prosesData() {
+            const wa = document.getElementById('wa').value;
             const nama = document.getElementById('nama').value;
             const bulan = document.getElementById('bulan').value;
             const nominal = document.getElementById('nominal').value;
-            const btn = document.getElementById('btnKirim');
-            const kodeGenerated = "sekawan-" + Math.floor(1000 + Math.random() * 9000);
+            const kode = "sekawan-" + Math.floor(1000 + Math.random() * 9000);
 
-            if(!nama || !bulan || !nominal) return alert("Isi data dulu!");
+            if(!wa || !nama || !bulan || !nominal) return alert("Lengkapi semua data, bro!");
 
-            btn.disabled = true;
-            btn.querySelector('span').innerText = "Menyimpan...";
+            document.getElementById('btn').disabled = true;
+            document.getElementById('btn').querySelector('span').innerText = "Menyimpan...";
 
-            try {
-                // Simpan ke Google Sheet
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: new URLSearchParams({ nama, bulan, nominal, kode: kodeGenerated })
-                });
+            // Simpan ke Google Sheet
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: new URLSearchParams({ wa, nama, bulan, nominal, kode })
+            });
 
-                // Rakit Link Bersih
-                const folderPath = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-                const linkFinal = folderPath + "view.html?" + kodeGenerated;
-
-                const pesan = `*BUKTI PEMBAYARAN RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* telah diterima.\n\nLihat Kwitansi Digital:\n${linkFinal}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`, '_blank');
-                
-                document.getElementById('nama').value = '';
-                document.getElementById('nominal').value = '';
-            } catch (e) {
-                alert("Gagal konek!");
-            } finally {
-                btn.disabled = false;
-                btn.querySelector('span').innerText = "Kirim Kwitansi";
-            }
+            // Rakit Link & Pesan WA
+            const folder = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const link = folder + "view.html?" + kode;
+            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* telah diterima.\n\nLihat Kwitansi Digital (Resmi):\n${link}`;
+            
+            // Tembak langsung ke No WA warga tanpa simpan kontak
+            setTimeout(() => {
+                window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(pesan)}`, '_blank');
+                location.reload();
+            }, 1000);
         }
     </script>
 </body>
