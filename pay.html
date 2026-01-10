@@ -78,7 +78,7 @@
             if(!waInput || !nama || !nominal) return alert("Data belum lengkap!");
 
             const waFinal = "62" + waInput.replace(/^0+/, '');
-            const kodeFinal = "Tuntas-" + Math.floor(1000 + Math.random() * 9000);
+            const kodeFinal = "TUNTAS-" + Math.floor(1000 + Math.random() * 9000);
             const tglSkrg = new Date().toISOString();
 
             btn.disabled = true;
@@ -98,7 +98,7 @@
                 });
 
                 const linkView = window.location.href.replace('pay.html', 'view.html') + '?' + kodeFinal;
-                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih *${nama}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Resmi:\n${linkView}`;
+                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Resmi:\n${linkView}`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
                 setTimeout(() => location.reload(), 500);
