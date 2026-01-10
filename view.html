@@ -3,69 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Kwitansi TUNTAS</title>
+    <title>Bukti Pembayaran RT 04</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        .receipt { background: white; border-radius: 2.5rem; border-top: 10px solid #059669; }
-    </style>
+    <style>body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }</style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-6">
-    <div id="loading" class="text-slate-400 font-bold animate-pulse">MEMVERIFIKASI...</div>
 
-    <div id="konten" class="receipt w-full max-w-sm p-8 shadow-2xl hidden text-center">
+    <div id="loading" class="text-slate-400 font-bold animate-pulse text-center">
+        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>MEMVERIFIKASI...
+    </div>
+
+    <div id="konten" class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl hidden text-center border-t-[10px] border-emerald-600">
         <div class="flex justify-between mb-6">
-            <span id="d-kode" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border uppercase"></span>
+            <span id="d-kode" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border border-emerald-100 uppercase"></span>
             <i class="fa-solid fa-circle-check text-emerald-500 text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-black text-slate-800 uppercase italic">Lunas</h1>
+
+        <h1 class="text-2xl font-black text-slate-800 uppercase italic leading-none">Lunas</h1>
         <p id="d-bulan" class="text-[10px] text-slate-400 font-bold uppercase mt-2 mb-8 tracking-widest"></p>
+
         <div class="text-left space-y-4 mb-8">
             <div class="border-l-4 border-emerald-500 pl-4">
-                <p class="text-[9px] text-slate-400 font-bold uppercase">Warga</p>
+                <p class="text-[9px] text-slate-400 font-bold uppercase">Nama Warga</p>
                 <p id="d-nama" class="font-bold text-slate-700 text-lg uppercase"></p>
             </div>
             <div class="bg-slate-50 p-5 rounded-[2rem] border text-center border-slate-100">
+                <p class="text-[9px] text-slate-400 font-bold mb-1 uppercase">Total Bayar</p>
                 <p id="d-nominal" class="text-3xl font-black text-emerald-700"></p>
             </div>
         </div>
-        <div class="flex flex-col items-center mb-8">
-            <img id="qr" src="" class="w-24 h-24 p-2 bg-white border-2 border-slate-50 rounded-2xl shadow-sm">
+
+        <div class="flex flex-col items-center mb-6">
+            <img id="qr" src="" class="w-24 h-24 p-2 bg-white border-2 border-slate-50 rounded-2xl">
+            <p class="text-[8px] text-slate-300 font-bold mt-2 uppercase tracking-[0.3em]">Scan to Verify</p>
         </div>
-        <div class="pt-6 border-t border-dashed">
+
+        <div class="pt-6 border-t border-dashed border-slate-200">
             <p class="text-[10px] font-bold text-emerald-600 tracking-[0.4em]">TUNTAS RT 04</p>
-            <p id="d-tgl" class="text-[8px] text-slate-400 mt-1 uppercase"></p>
+            <p id="d-tgl" class="text-[8px] text-slate-400 mt-1"></p>
         </div>
     </div>
 
     <script>
+        // GANTI DENGAN URL GAS TERBARU KAMU
         const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
         const kode = window.location.search.substring(1);
 
-        if(kode) {
-            // Gunakan fetch dengan penanganan error yang lebih kuat
-            fetch(`${API_URL}?kode=${kode}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.result === "found") {
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('konten').classList.remove('hidden');
-                    document.getElementById('d-kode').innerText = kode;
-                    document.getElementById('d-nama').innerText = data.nama;
-                    document.getElementById('d-bulan').innerText = "Iuran " + data.bulan;
-                    document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-                    document.getElementById('d-tgl').innerText = "Verifikasi: " + new Date(data.tgl).toLocaleDateString('id-ID');
-                    document.getElementById('qr').src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.href)}&choe=UTF-8`;
-                } else {
-                    document.getElementById('loading').innerText = "DATA TIDAK DITEMUKAN";
-                }
-            })
-            .catch(e => {
-                document.getElementById('loading').innerText = "TIMEOUT / GAGAL JARINGAN";
-                console.error(e);
-            });
+        if (kode) {
+            // TEKNIK JSONP: Memanggil data tanpa kena blokir CORS
+            const script = document.createElement('script');
+            script.src = `${API_URL}?kode=${kode}&callback=renderData`;
+            document.body.appendChild(script);
+        }
+
+        // Fungsi yang dipanggil saat data sampai
+        function renderData(data) {
+            if (data.result === "found") {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('konten').classList.remove('hidden');
+                
+                document.getElementById('d-kode').innerText = kode;
+                document.getElementById('d-nama').innerText = data.nama;
+                document.getElementById('d-bulan').innerText = "Iuran " + data.bulan;
+                document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
+                
+                const tgl = new Date(data.tgl);
+                document.getElementById('d-tgl').innerText = "DITERBITKAN: " + tgl.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                
+                document.getElementById('qr').src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.href)}&choe=UTF-8`;
+            } else {
+                document.getElementById('loading').innerHTML = "<p class='text-rose-500 font-bold text-xs'>DATA TIDAK DITEMUKAN</p>";
+            }
         }
     </script>
 </body>
