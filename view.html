@@ -3,48 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kwitansi TUNTAS RT 04</title>
+    <title>Kwitansi Digital - TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f1f5f9; }
-        .receipt-card { background: white; border-radius: 1.5rem; border-top: 10px solid #059669; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #ecf3f0; /* Hijau pucat nuansa kas */
+        }
+        .receipt-card { 
+            background: white; 
+            border-radius: 1.5rem; 
+            border-top: 15px solid #065f46; /* Hijau botol gelap */
+            position: relative;
+            overflow: hidden;
+        }
+        .bg-cash {
+            background-color: #f0fdf4; /* Background kotak nominal */
+            border: 1px solid #dcfce7;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-6">
-    <div id="loading" class="text-slate-400 font-bold animate-pulse text-center text-xs uppercase tracking-widest">Memproses Kwitansi...</div>
+    <div id="loading" class="text-emerald-800 font-bold animate-pulse text-center text-xs uppercase tracking-widest">
+        <i class="fa-solid fa-spinner fa-spin mb-2 text-lg"></i><br>Sinkronisasi Data...
+    </div>
 
-    <div id="konten" class="receipt-card w-full max-w-sm p-8 shadow-2xl hidden text-center border border-slate-200">
-        <div class="header-section mb-6">
-            <h1 class="text-2xl font-black text-slate-800 uppercase leading-tight mb-1">Bukti Pembayaran</h1>
-            <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.2em]">TUNTAS - TURUN TANGAN ATASI SAMPAH</p>
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 shadow-2xl hidden border border-emerald-100">
+        <div class="absolute -right-12 top-6 bg-emerald-600 text-white py-1 px-14 rotate-45 text-[10px] font-bold tracking-widest shadow-sm">
+            LUNAS
+        </div>
+
+        <div class="mb-6">
+            <h1 class="text-xl font-black text-slate-800 uppercase leading-tight">Bukti Pembayaran</h1>
+            <p class="text-[9px] text-emerald-700 font-bold uppercase tracking-[0.2em]">TUNTAS - Turun Tangan Atasi Sampah</p>
         </div>
         
-        <div class="border-t border-dashed border-slate-200 my-6"></div>
+        <div class="border-t-2 border-emerald-50 my-6"></div>
 
-        <div class="narasi-section text-left mb-8">
-            <p class="text-[12px] leading-relaxed text-slate-600">
-                Telah diterima uang sebesar <strong id="d-nominal-text" class="text-emerald-700">Rp --</strong> 
-                dari Bapak/Ibu <strong id="d-nama-text" class="text-slate-700 uppercase">--</strong> 
-                guna pembayaran sampah bulan <strong id="d-bulan-text" class="text-slate-700">--</strong>.
+        <div class="text-left mb-6">
+            <p class="text-[12px] leading-relaxed text-slate-500">
+                Telah diterima uang dari Bapak/Ibu:
+            </p>
+            <p id="d-nama-text" class="text-sm font-bold text-slate-800 uppercase mb-4 tracking-wide"></p>
+            
+            <div class="bg-cash p-4 rounded-2xl text-center mb-4">
+                <p class="text-[10px] text-emerald-600 font-bold uppercase mb-1">Sebesar:</p>
+                <p id="d-nominal-text" class="text-3xl font-black text-emerald-800"></p>
+            </div>
+
+            <p class="text-[11px] text-slate-500 italic">
+                Guna pembayaran sampah bulan: <span id="d-bulan-text" class="font-bold text-slate-700 not-italic"></span>
             </p>
         </div>
 
-        <div class="barcode-section mb-8 flex flex-col items-center">
-            <div class="bg-white p-2 rounded-lg">
-                <img id="barcodeimg" alt="Barcode" class="w-full max-w-[220px] h-auto">
-            </div>
+        <div class="flex flex-col items-center mb-6 bg-white p-2 border-2 border-emerald-50 rounded-xl">
+            <img id="barcodeimg" alt="Barcode Transaksi" class="w-full h-auto">
         </div>
 
-        <div class="text-slate-500 text-[11px] mb-8">
-            <p>Terimakasih atas partisipasinya.</p>
-        </div>
+        <p class="text-[10px] text-center text-slate-400 italic mb-8 italic">"Terimakasih atas partisipasinya menjaga kebersihan lingkungan"</p>
 
-        <div class="footer-section pt-6 border-t border-slate-100 text-center">
-            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-1">Pengurus TUNTAS RT 04,</p>
+        <div class="text-center">
+            <p class="text-[9px] font-bold text-emerald-800 uppercase tracking-[0.2em] mb-1">Pengurus TUNTAS RT 04,</p>
             <p class="text-xl font-black text-slate-800 italic uppercase">Wong Ganteng</p>
-            <p id="d-tgl-footer" class="text-[8px] text-slate-400 mt-2 font-mono"></p>
+            <div class="w-12 h-1 bg-emerald-600 mx-auto mt-1 rounded-full"></div>
+            <p id="d-tgl-footer" class="text-[9px] text-slate-400 mt-4 font-mono font-bold"></p>
         </div>
     </div>
 
@@ -53,20 +77,17 @@
         const kode = window.location.search.substring(1);
 
         if (kode) {
-            // Ambil data dari LocalStorage (HP Admin)
             const savedData = JSON.parse(localStorage.getItem("pay_" + kode));
-            
             if (savedData) {
                 render(savedData);
             } else {
-                // Tanya Google jika HP orang lain
                 fetch(`${API_URL}?${kode}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.result === "found") render(data);
                     else document.getElementById('loading').innerText = "KODE TIDAK DITEMUKAN";
                 })
-                .catch(() => document.getElementById('loading').innerText = "MASALAH JARINGAN");
+                .catch(() => document.getElementById('loading').innerText = "MASALAH KONEKSI");
             }
         }
 
@@ -74,16 +95,12 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('konten').classList.remove('hidden');
             
-            const nominalFormatted = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-            const tglFormatted = new Date(data.tgl).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-
-            // Isi Data
-            document.getElementById('d-nominal-text').innerText = nominalFormatted;
+            document.getElementById('d-nominal-text').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
             document.getElementById('d-nama-text').innerText = data.nama;
             document.getElementById('d-bulan-text').innerText = data.bulan;
-            document.getElementById('d-tgl-footer').innerText = "VERIFIED: " + tglFormatted;
+            document.getElementById('d-tgl-footer').innerText = "ID: " + (data.kode || kode) + " | " + new Date(data.tgl).toLocaleDateString('id-ID');
 
-            // Barcode TEC-IT (KODE TERTULIS DI BAWAH BARCODE SECARA OTOMATIS)
+            // Barcode TEC-IT
             const barcodeUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(data.kode || kode) + "&code=code128&dpi=96&databar=true";
             document.getElementById('barcodeimg').src = barcodeUrl;
         }
