@@ -3,134 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Kwitansi Resmi RT 04</title>
+    <title>E-Kwitansi TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
-        .receipt-card { 
-            background: white; 
-            border-radius: 2.5rem; 
-            border-top: 12px solid #059669; 
-            position: relative;
-        }
-        /* Efek robekan kertas di bawah */
-        .receipt-card::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background-image: radial-gradient(circle, transparent 70%, #ffffff 72%);
-            background-size: 20px 20px;
-            background-position: 0 -10px;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .receipt { background: white; border-radius: 2.5rem; border-top: 10px solid #059669; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-6">
+    <div id="loading" class="text-slate-400 font-bold animate-pulse">MEMVERIFIKASI...</div>
 
-    <div id="loading" class="text-center">
-        <div class="animate-spin text-emerald-600 text-4xl mb-2"><i class="fa-solid fa-circle-notch"></i></div>
-        <p class="text-slate-400 font-bold tracking-widest text-xs uppercase">Memverifikasi Data...</p>
-    </div>
-
-    <div id="konten" class="receipt-card w-full max-w-sm p-8 shadow-2xl hidden">
-        <div class="flex justify-between items-start mb-6">
-            <span id="d-kode" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 uppercase tracking-tighter"></span>
-            <div class="text-right">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-3xl"></i>
-            </div>
+    <div id="konten" class="receipt w-full max-w-sm p-8 shadow-2xl hidden text-center">
+        <div class="flex justify-between mb-6">
+            <span id="d-kode" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border uppercase"></span>
+            <i class="fa-solid fa-circle-check text-emerald-500 text-2xl"></i>
         </div>
-
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black text-slate-800 italic leading-none uppercase">Lunas</h1>
-            <p id="d-bulan" class="text-[10px] text-slate-400 font-bold uppercase mt-2 tracking-[0.3em]"></p>
-        </div>
-
-        <div class="space-y-5 mb-8 text-left">
+        <h1 class="text-2xl font-black text-slate-800 uppercase italic">Lunas</h1>
+        <p id="d-bulan" class="text-[10px] text-slate-400 font-bold uppercase mt-2 mb-8 tracking-widest"></p>
+        <div class="text-left space-y-4 mb-8">
             <div class="border-l-4 border-emerald-500 pl-4">
-                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Atas Nama Warga</p>
-                <p id="d-nama" class="font-bold text-slate-700 text-lg uppercase leading-tight"></p>
+                <p class="text-[9px] text-slate-400 font-bold uppercase">Warga</p>
+                <p id="d-nama" class="font-bold text-slate-700 text-lg uppercase"></p>
             </div>
-            
-            <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 text-center shadow-inner">
-                <p class="text-[9px] text-slate-400 font-bold mb-1 uppercase tracking-widest">Jumlah Dibayar</p>
+            <div class="bg-slate-50 p-5 rounded-[2rem] border text-center border-slate-100">
                 <p id="d-nominal" class="text-3xl font-black text-emerald-700"></p>
             </div>
         </div>
-
-        <div class="flex flex-col items-center justify-center mb-8">
-            <div class="p-3 bg-white border-2 border-slate-50 rounded-3xl shadow-sm">
-                <img id="qr" src="" class="w-28 h-28">
-            </div>
-            <p class="text-[8px] font-bold text-slate-300 uppercase tracking-[0.4em] mt-3 italic">Digital Signature Verified</p>
+        <div class="flex flex-col items-center mb-8">
+            <img id="qr" src="" class="w-24 h-24 p-2 bg-white border-2 border-slate-50 rounded-2xl shadow-sm">
         </div>
-
-        <div class="pt-6 border-t border-dashed border-slate-200 text-center">
-            <p class="text-[10px] font-bold text-emerald-600 tracking-[0.5em] uppercase">Tuntas RT 04</p>
-            <p id="d-tgl" class="text-[8px] text-slate-400 mt-1 font-medium italic"></p>
+        <div class="pt-6 border-t border-dashed">
+            <p class="text-[10px] font-bold text-emerald-600 tracking-[0.4em]">TUNTAS RT 04</p>
+            <p id="d-tgl" class="text-[8px] text-slate-400 mt-1 uppercase"></p>
         </div>
-    </div>
-
-    <div id="error-msg" class="hidden text-center p-8">
-        <i class="fa-solid fa-triangle-exclamation text-rose-500 text-4xl mb-4"></i>
-        <h2 class="text-slate-800 font-bold">Data Tidak Ditemukan</h2>
-        <p class="text-slate-400 text-xs mt-2 leading-relaxed">Pastikan link yang Anda buka berasal dari pengurus RT 04 yang sah.</p>
     </div>
 
     <script>
-        // PENTING: Ganti dengan URL Deployment Apps Script kamu yang terbaru!
-        const API_URL = "https://script.google.com/macros/s/AKfycbyhu1F3N2RlvV8wsvCCeuooHS8IN36HiwXcgAlePr_6-dcFiikSKryCFfYJQgnDAFE/exec"; 
-        
+        const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
         const kode = window.location.search.substring(1);
 
-        if (kode) {
-            // Memanggil data menggunakan teknik JSONP (Anti Error Koneksi)
-            const script = document.createElement('script');
-            script.src = `${API_URL}?${kode}&callback=tampilkanData`;
-            
-            // Jika dalam 10 detik tidak ada respon, anggap error
-            const timeout = setTimeout(() => {
-                if (document.getElementById('konten').classList.contains('hidden')) {
-                    document.getElementById('loading').innerHTML = "<p class='text-rose-500 font-bold text-xs'>KONEKSI TIMEOUT<br>Cek URL Script Anda</p>";
+        if(kode) {
+            // Gunakan fetch dengan penanganan error yang lebih kuat
+            fetch(`${API_URL}?kode=${kode}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === "found") {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('konten').classList.remove('hidden');
+                    document.getElementById('d-kode').innerText = kode;
+                    document.getElementById('d-nama').innerText = data.nama;
+                    document.getElementById('d-bulan').innerText = "Iuran " + data.bulan;
+                    document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
+                    document.getElementById('d-tgl').innerText = "Verifikasi: " + new Date(data.tgl).toLocaleDateString('id-ID');
+                    document.getElementById('qr').src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.href)}&choe=UTF-8`;
+                } else {
+                    document.getElementById('loading').innerText = "DATA TIDAK DITEMUKAN";
                 }
-            }, 10000);
-
-            document.body.appendChild(script);
-        } else {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error-msg').classList.remove('hidden');
-        }
-
-        // Fungsi Callback untuk memproses data dari Google Sheets
-        function tampilkanData(data) {
-            document.getElementById('loading').classList.add('hidden');
-            
-            if (data.result === "found") {
-                document.getElementById('konten').classList.remove('hidden');
-                
-                // Isi Data ke Elemen
-                document.getElementById('d-kode').innerText = kode;
-                document.getElementById('d-nama').innerText = data.nama;
-                document.getElementById('d-bulan').innerText = "Iuran " + data.bulan;
-                document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-                
-                // Format Tanggal
-                const tgl = new Date(data.tgl);
-                document.getElementById('d-tgl').innerText = "DITERBITKAN: " + tgl.toLocaleDateString('id-ID', { 
-                    day: 'numeric', month: 'long', year: 'numeric' 
-                });
-
-                // Generate QR Code mengarah ke URL kwitansi ini sendiri
-                const currentURL = window.location.href;
-                document.getElementById('qr').src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(currentURL)}&choe=UTF-8`;
-            } else {
-                document.getElementById('error-msg').classList.remove('hidden');
-            }
+            })
+            .catch(e => {
+                document.getElementById('loading').innerText = "TIMEOUT / GAGAL JARINGAN";
+                console.error(e);
+            });
         }
     </script>
 </body>
-    </html>
-    
+</html>
