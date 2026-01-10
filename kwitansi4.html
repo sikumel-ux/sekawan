@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Kwitansi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .receipt-card { background: white; border-radius: 2rem; border-top: 10px solid #059669; }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-6">
+    <div class="receipt-card w-full max-w-sm p-8 shadow-xl text-center">
+        <i class="fa-solid fa-circle-check text-emerald-500 text-4xl mb-4"></i>
+        <h1 class="font-black text-xl text-slate-800 uppercase italic">Lunas</h1>
+        <p id="tgl" class="text-[10px] text-slate-400 mb-6 font-bold uppercase tracking-widest"></p>
+
+        <div class="text-left space-y-4 mb-8">
+            <div class="border-b pb-2">
+                <p class="text-[9px] text-slate-400 uppercase font-bold">Nama Warga</p>
+                <p id="nama" class="font-bold text-slate-700"></p>
+            </div>
+            <div class="border-b pb-2">
+                <p class="text-[9px] text-slate-400 uppercase font-bold">Keterangan</p>
+                <p id="ket" class="font-bold text-slate-700"></p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl text-center">
+                <p class="text-[9px] text-slate-400 uppercase font-bold mb-1">Total Bayar</p>
+                <p id="nominal" class="text-2xl font-black text-emerald-700"></p>
+            </div>
+        </div>
+        
+        <p class="text-[9px] text-slate-400 italic">ID Transaksi: <span id="kode"></span></p>
+    </div>
+
+    <script>
+        const params = decodeURIComponent(window.location.search.substring(1)).split('|');
+        if(params.length > 1) {
+            document.getElementById('kode').innerText = params[0];
+            document.getElementById('nama').innerText = params[1];
+            document.getElementById('nominal').innerText = 'Rp ' + Number(params[2]).toLocaleString('id-ID');
+            document.getElementById('ket').innerText = 'Iuran Sampah ' + params[3];
+            document.getElementById('tgl').innerText = new Date().toLocaleDateString('id-ID');
+        }
+    </script>
+</body>
+</html>
