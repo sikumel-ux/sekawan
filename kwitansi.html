@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Kwitansi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+        .bg-tuntas { background-color: #059669; }
+        .text-tuntas { color: #059669; }
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 2.5rem;
+            position: relative;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1);
+        }
+        /* Efek Gerigi */
+        .receipt-card::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 20px;
+            right: 20px;
+            height: 24px;
+            background-image: radial-gradient(circle, transparent 70%, #ffffff 72%);
+            background-size: 24px 24px;
+            background-position: 0 -12px;
+        }
+    </style>
+</head>
+<body class="p-6 flex flex-col items-center justify-center min-h-screen">
+
+    <div id="receiptContent" class="receipt-card w-full max-w-sm p-8 border-t-[12px] border-tuntas overflow-hidden">
+        
+        <div class="flex justify-between items-start mb-8">
+            <div class="bg-emerald-50 text-tuntas text-[10px] font-bold px-3 py-1 rounded-lg border border-emerald-100 uppercase tracking-widest" id="noKwitansi">
+                KODE: -
+            </div>
+            <div class="text-right">
+                <i class="fa-solid fa-circle-check text-tuntas text-2xl"></i>
+            </div>
+        </div>
+
+        <div class="text-center mb-10">
+            <div class="w-14 h-14 bg-tuntas rounded-2xl flex items-center justify-center text-white mx-auto mb-4 shadow-lg shadow-emerald-100">
+                <i class="fa-solid fa-recycle text-2xl"></i>
+            </div>
+            <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Lunas</h1>
+            <p class="text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">Iuran Sampah RT 04</p>
+        </div>
+
+        <div class="space-y-6">
+            <div class="border-l-4 border-tuntas pl-4">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Diterima Dari</p>
+                <p id="namaWarga" class="text-lg font-bold text-slate-800">Memuat Data...</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal</p>
+                    <p id="tglBayar" class="text-xs font-bold text-slate-700">-</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</p>
+                    <p class="text-xs font-bold text-tuntas">Verified</p>
+                </div>
+            </div>
+            
+            <div class="bg-slate-50 p-6 rounded-[2rem] text-center border border-slate-100">
+                <p class="text-[10px] text-slate-400 uppercase font-bold mb-2">Total Pembayaran</p>
+                <h2 id="nominal" class="text-3xl font-black text-slate-800 tracking-tighter">Rp 0</h2>
+            </div>
+        </div>
+
+        <div class="text-center mt-10 space-y-4">
+            <p class="text-[10px] text-slate-400 leading-relaxed italic">Bukti digital ini sah dan diterbitkan secara otomatis oleh sistem TUNTAS RT 04.</p>
+            <div class="pt-4 border-t border-dashed">
+                <p class="text-[9px] font-bold text-tuntas uppercase tracking-[0.3em]">TUNTAS - RT 04</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-3 w-full max-w-sm no-print">
+        <button onclick="shareWA()" class="w-full bg-tuntas text-white p-5 rounded-[1.5rem] font-bold text-sm shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+            <i class="fa-brands fa-whatsapp text-xl"></i> Kirim ke WhatsApp
+        </button>
+        <button onclick="window.print()" class="w-full bg-slate-800 text-white p-4 rounded-[1.5rem] font-bold text-xs opacity-50 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-download"></i> Simpan PDF / Gambar
+        </button>
+    </div>
+
+    <script>
+        // Logika Mengambil Parameter Bersih (?tuntas-1234)
+        const queryString = window.location.search;
+        const kodeRaw = queryString.substring(1); // ambil "tuntas-1234"
+
+        // Simulasi Database (Nanti ini bisa ditarik dari Google Sheet)
+        // Untuk contoh ini, kita pecah kodenya saja atau buat logika generator
+        if (kodeRaw) {
+            document.getElementById('noKwitansi').innerText = kodeRaw.toUpperCase();
+            
+            // Contoh simulasi: Jika kode mengandung info tertentu
+            // Kamu bisa kembangkan ini untuk ambil data asli dari Sheet
+            document.getElementById('namaWarga').innerText = "Warga RT 04"; 
+            document.getElementById('nominal').innerText = "Rp 20.000";
+            document.getElementById('tglBayar').innerText = new Date().toLocaleDateString('id-ID');
+        }
+
+        function shareWA() {
+            const nama = document.getElementById('namaWarga').innerText;
+            const kode = document.getElementById('noKwitansi').innerText;
+            const link = window.location.href;
+            
+            const pesan = `Halo Pak/Bu, berikut bukti pembayaran iuran TUNTAS RT 04.\n\n` +
+                          `KODE: ${kode}\n` +
+                          `Status: LUNAS\n\n` +
+                          `Lihat Bukti Digital:\n${link}\n\n` +
+                          `Terima kasih sudah mendukung program kebersihan lingkungan kita!`;
+            
+            window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`, '_blank');
+        }
+    </script>
+
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; display: block; }
+            .receipt-card { box-shadow: none; border: 2px solid #f1f5f9; margin: 0 auto; }
+        }
+    </style>
+</body>
+</html>
