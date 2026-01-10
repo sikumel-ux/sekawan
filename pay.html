@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin TUNTAS</title>
+    <title>Admin - TUNTAS RT 04</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>body { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen font-[Poppins]">
+<body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen">
     <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-sm border mt-6">
-        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center">Generator Kwitansi</h1>
+        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center italic">Generator Kwitansi</h1>
         <div class="space-y-4">
-            <input type="number" id="wa" placeholder="WhatsApp (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
-            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none">
+            <input type="number" id="wa" placeholder="WhatsApp Warga (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
+            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
             <div class="grid grid-cols-2 gap-3">
-                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none">
-                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none">
+                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
             </div>
-            <button id="btn" onclick="proses()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim Kwitansi</span>
+            <button id="btn" onclick="prosesData()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
+                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim & Simpan</span>
             </button>
         </div>
     </div>
@@ -27,29 +28,38 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
 
-        async function proses() {
+        async function prosesData() {
             const wa = document.getElementById('wa').value;
             const nama = document.getElementById('nama').value;
             const bulan = document.getElementById('bulan').value;
             const nominal = document.getElementById('nominal').value;
             const kode = "sekawan-" + Math.floor(1000 + Math.random() * 9000);
 
-            if(!wa || !nama || !bulan || !nominal) return alert("Isi semua bro!");
+            if(!wa || !nama || !bulan || !nominal) return alert("Lengkapi data dulu, bro!");
+
             document.getElementById('btn').disabled = true;
+            document.getElementById('btn').querySelector('span').innerText = "Menyimpan...";
 
-            fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: new URLSearchParams({ wa, nama, bulan, nominal, kode })
-            });
+            // Simpan ke Google Sheet
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams({ wa, nama, bulan, nominal, kode })
+                });
 
-            const link = window.location.href.replace('pay.html', 'view.html') + "?" + kode;
-            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* telah diterima.\n\nLihat Bukti:\n${link}`;
-            
-            setTimeout(() => {
+                // Buat link kwitansi
+                const linkKwitansi = window.location.href.replace('pay.html', 'view.html') + '?' + kode;
+                const pesan = `*BUKTI PEMBAYARAN IURAN RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Digital Anda di sini:\n${linkKwitansi}`;
+                
+                // Buka WhatsApp
                 window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(pesan)}`, '_blank');
-                location.reload();
-            }, 800);
+                
+                setTimeout(() => location.reload(), 1000);
+            } catch (e) {
+                alert("Gagal simpan data!");
+                document.getElementById('btn').disabled = false;
+            }
         }
     </script>
 </body>
