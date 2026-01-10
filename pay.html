@@ -10,44 +10,41 @@
 </head>
 <body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen font-[Poppins]">
     <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-sm border mt-6">
-        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center italic">Generator Kwitansi</h1>
+        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center">Generator Kwitansi</h1>
         <div class="space-y-4">
-            <input type="number" id="wa" placeholder="No WA Warga (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none focus:ring-2 focus:ring-emerald-500">
-            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none">
+            <input type="number" id="wa" placeholder="WhatsApp (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
+            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none">
             <div class="grid grid-cols-2 gap-3">
-                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border outline-none">
-                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border outline-none">
+                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none">
+                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none">
             </div>
-            <button id="btn" onclick="prosesData()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim & Simpan</span>
+            <button id="btn" onclick="proses()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
+                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim Kwitansi</span>
             </button>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyhu1F3N2RlvV8wsvCCeuooHS8IN36HiwXcgAlePr_6-dcFiikSKryCFfYJQgnDAFE/exec"; // <-- GANTI INI
+        const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
 
-        async function prosesData() {
+        async function proses() {
             const wa = document.getElementById('wa').value;
             const nama = document.getElementById('nama').value;
             const bulan = document.getElementById('bulan').value;
             const nominal = document.getElementById('nominal').value;
             const kode = "sekawan-" + Math.floor(1000 + Math.random() * 9000);
 
-            if(!wa || !nama || !bulan || !nominal) return alert("Lengkapi data!");
+            if(!wa || !nama || !bulan || !nominal) return alert("Isi semua bro!");
             document.getElementById('btn').disabled = true;
 
-            // POST ke GAS
             fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: new URLSearchParams({ wa, nama, bulan, nominal, kode })
             });
 
-            // Rakit Link
-            const folder = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            const link = folder + "view.html?" + kode;
-            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* telah diterima.\n\nLihat Kwitansi Digital:\n${link}`;
+            const link = window.location.href.replace('pay.html', 'view.html') + "?" + kode;
+            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* telah diterima.\n\nLihat Bukti:\n${link}`;
             
             setTimeout(() => {
                 window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(pesan)}`, '_blank');
