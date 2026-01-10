@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kwitansi Resmi TUNTAS</title>
+    <title>Kwitansi TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -14,6 +14,9 @@
             position: fixed; 
             width: 100%; 
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .receipt-card { 
             background: white; 
@@ -27,15 +30,20 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div id="loading" class="text-emerald-800 font-bold animate-pulse text-xs uppercase tracking-widest">MEMUAT DATA...</div>
-<div id="penyusup" class="hidden text-center p-8">
+<body class="p-4">
+
+    <div id="loading" class="text-emerald-800 font-bold animate-pulse text-xs uppercase tracking-widest">
+        MEMUAT DATA...
+    </div>
+
+    <div id="penyusup" class="hidden text-center p-8">
         <div class="text-6xl mb-4">🤨</div>
-        <h1 class="text-2xl font-black text-rose-600 uppercase">KAMU SIAPA?!</h1>
-        <p class="text-slate-500 text-sm mt-2">Mau ngintip iuran ya?</p>
+        <h1 class="text-2xl font-black text-rose-600 uppercase italic">KAMU SIAPA?!</h1>
+        <p class="text-slate-500 text-sm mt-2">Mau ngintip iuran ya? </p>
         
-</div>
-    <div id="konten" class="receipt-card w-full max-w-sm p-8 hidden">
+    </div>
+
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 hidden border border-emerald-100">
         <div class="text-center mb-6">
             <h1 class="text-3xl font-black text-ijo-tua leading-none">TUNTAS</h1>
             <h2 class="text-[11px] font-bold text-slate-700 tracking-[0.3em] mt-1 uppercase">Bukti Pembayaran</h2>
@@ -48,7 +56,7 @@
                 guna pembayaran sampah bulan <strong id="d-bulan" class="text-slate-800 uppercase"></strong>, sebesar:
             </p>
 
-            <div class="bg-ijo-muda p-5 rounded-2xl text-center shadow-lg border border-emerald-100 mb-6 transform transition hover:scale-105">
+            <div class="bg-ijo-muda p-5 rounded-2xl text-center shadow-lg border border-emerald-100 mb-6">
                 <p class="text-[8px] text-emerald-600 font-bold uppercase tracking-widest mb-1">Jumlah Nominal</p>
                 <p id="d-nominal" class="text-3xl font-black text-ijo-tua"></p>
                 <div class="w-12 h-[2px] bg-emerald-200 mx-auto my-2 rounded-full"></div>
@@ -72,8 +80,8 @@
                 ID: <span id="d-kode"></span>
             </div>
             <div class="text-right">
-                <p class="text-[9px] font-bold text-slate-400 uppercase">Hormat kami,</p>
-                <p class="text-md font-black text-ijo-tua italic uppercase leading-none mt-1">Pengurus Tuntas</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase leading-none">Hormat kami,</p>
+                <p class="text-md font-black text-ijo-tua italic uppercase mt-1 leading-none">Pengurus Tuntas</p>
             </div>
         </div>
     </div>
@@ -82,6 +90,7 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
         const kodeUrl = window.location.search.substring(1);
 
+        // Fungsi Terbilang Otomatis
         function terbilang(angka) {
             const bilne = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
             if (angka < 12) return bilne[angka];
@@ -94,19 +103,34 @@
             return "";
         }
 
+        // Fungsi Tampilkan Mode Penyusup
+        function tampilkanPenyusup() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('penyusup').classList.remove('hidden');
+            document.getElementById('konten').classList.add('hidden');
+        }
+
+        // Cek apakah ada kode di URL
         if (kodeUrl) {
             const savedData = JSON.parse(localStorage.getItem("pay_" + kodeUrl));
-            if (savedData) render(savedData);
-            else {
+            if (savedData) {
+                render(savedData);
+            } else {
                 fetch(`${API_URL}?${kodeUrl}`)
                 .then(res => res.json())
-                .then(data => data.result === "found" ? render(data) : document.getElementById('loading').innerText = "DATA TIDAK ADA")
-                .catch(() => document.getElementById('loading').innerText = "JARINGAN BERMASALAH");
+                .then(data => {
+                    if (data.result === "found") render(data);
+                    else tampilkanPenyusup();
+                })
+                .catch(() => tampilkanPenyusup());
             }
+        } else {
+            tampilkanPenyusup();
         }
 
         function render(data) {
             document.getElementById('loading').classList.add('hidden');
+            document.getElementById('penyusup').classList.add('hidden');
             document.getElementById('konten').classList.remove('hidden');
             
             document.getElementById('d-nama').innerText = data.nama;
@@ -116,6 +140,7 @@
             document.getElementById('d-tgl').innerText = new Date(data.tgl).toLocaleDateString('id-ID');
             document.getElementById('d-kode').innerText = (data.kode || kodeUrl);
 
+            // Barcode TEC-IT (databar=false agar bersih, kode sudah tertulis di ID bawah)
             const barcodeUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(data.kode || kodeUrl) + "&code=code128&dpi=96&databar=false";
             document.getElementById('barcodeimg').src = barcodeUrl;
         }
