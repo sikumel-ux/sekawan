@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin TUNTAS - RT 04</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .bg-tuntas { background-color: #059669; }
+        .text-tuntas { color: #059669; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="pb-20">
+
+    <header class="bg-white p-6 border-b flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-xl font-bold text-slate-800">Panel Admin</h1>
+        <a href="index.html" class="text-slate-400 hover:text-tuntas"><i class="fa-solid fa-house text-xl"></i></a>
+    </header>
+
+    <main class="p-6 space-y-8">
+        <section class="bg-white p-6 rounded-[2rem] card-shadow border">
+            <h2 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-tuntas"></i> Input Iuran Warga
+            </h2>
+            <form id="formIuran" class="space-y-4">
+                <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border focus:outline-tuntas text-sm" required>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="bulan" placeholder="Bulan (E.g Jan)" class="p-4 bg-slate-50 rounded-2xl border focus:outline-tuntas text-sm" required>
+                    <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border focus:outline-tuntas text-sm" required>
+                </div>
+                <button type="submit" class="w-full bg-tuntas text-white p-4 rounded-2xl font-bold shadow-lg shadow-emerald-100">Simpan Data</button>
+            </form>
+        </section>
+
+        <section>
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Transaksi Terbaru</h2>
+            <div id="listPembayaran" class="space-y-3">
+                <p class="text-center text-slate-400 text-sm py-10">Memuat data transaksi...</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_URL = "ISI_DENGAN_URL_WEB_APP_GOOGLE_SCRIPT_ANDA";
+
+        // LOAD DATA DARI SHEET
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_URL}?action=getDashboard`, { method: 'POST' });
+                const data = await response.json();
+                renderList(data.pembayaran);
+            } catch (e) { console.error("Gagal load", e); }
+        }
+
+        function renderList(pembayaran) {
+            const container = document.getElementById('listPembayaran');
+            container.innerHTML = '';
+            
+            // Tampilkan dari data terbaru (paling bawah di sheet)
+            pembayaran.slice(1).reverse().forEach(row => {
+                const nama = row[0];
+                const bulan = row[1];
+                const nominal = row[2];
+                const kode = 'T-' + Math.floor(1000 + Math.random() * 9000); // Kode unik sementara
+
+                const card = `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 card-shadow flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">${bulan}</p>
+                            <h3 class="font-bold text-slate-800 text-sm">${nama}</h3>
+                            <p class="text-xs font-bold text-tuntas">Rp ${Number(nominal).toLocaleString('id-ID')}</p>
+                        </div>
+                        <button onclick="kirimWA('${nama}', '${bulan}', '${nominal}', '${kode}')" 
+                                class="w-12 h-12 bg-emerald-50 text-tuntas rounded-2xl flex items-center justify-center hover:bg-tuntas hover:text-white transition-all">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                        </button>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function kirimWA(nama, bulan, nominal, kode) {
+            // URL Web kamu (misal: tuntas.github.io)
+            const baseUrl = window.location.origin + window.location.pathname.replace('data.html', 'kwitansi.html');
+            // Gabungkan data ke URL (?KODE|NAMA|NOMINAL|BULAN)
+            const params = `${kode}|${nama}|${nominal}|${bulan}`;
+            const linkKwitansi = `${baseUrl}?${encodeURIComponent(params)}`;
+            
+            const pesan = `*BUKTI BAYAR TUNTAS RT 04*\n\n` +
+                          `Terima kasih Pak/Bu *${nama}*.\n` +
+                          `Iuran sampah bulan *${bulan}* telah diterima.\n\n` +
+                          `*Nominal:* Rp ${Number(nominal).toLocaleString('id-ID')}\n` +
+                          `*Status:* LUNAS (Verified)\n\n` +
+                          `Lihat Kwitansi Digital Anda:\n${linkKwitansi}\n\n` +
+                          `_Mari bersama jaga kebersihan lingkungan!_`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`, '_blank');
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
