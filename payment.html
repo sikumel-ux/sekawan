@@ -9,28 +9,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>body { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body class="bg-slate-100 p-4 min-h-screen flex items-center justify-center">
+<body class="bg-slate-100 p-3 min-h-screen flex items-center justify-center">
 
-    <div class="w-full max-w-md bg-white p-8 rounded-[2rem] shadow-2xl border border-emerald-100">
-        <h2 class="text-2xl font-black text-emerald-800 text-center mb-6 italic uppercase tracking-tighter">Input Kas Tuntas</h2>
+    <div class="w-full max-w-sm bg-white p-6 rounded-[1.5rem] shadow-xl border border-emerald-100">
+        <h2 class="text-lg font-black text-emerald-800 text-center mb-5 italic uppercase tracking-tighter">Input Kas Tuntas</h2>
 
-        <div class="space-y-4">
+        <div class="space-y-3">
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">WhatsApp Warga</label>
-                <div class="flex items-center bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
-                    <span class="pl-4 pr-1 text-slate-400 font-bold">+62</span>
-                    <input type="number" id="wa" placeholder="81234567xxx" class="w-full p-4 bg-transparent outline-none text-slate-700 font-bold">
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">WhatsApp Warga</label>
+                <div class="flex items-center bg-slate-50 rounded-xl border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
+                    <span class="pl-3 pr-1 text-slate-400 font-bold text-xs">+62</span>
+                    <input type="number" id="wa" placeholder="8123..." class="w-full p-3 bg-transparent outline-none text-slate-700 font-bold text-sm">
                 </div>
             </div>
 
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Nama Warga</label>
-                <input type="text" id="nama" placeholder="Masukkan Nama" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold">
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Nama Warga</label>
+                <input type="text" id="nama" placeholder="Nama" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm">
             </div>
 
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Untuk Bulan</label>
-                <select id="bulan" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-slate-700">
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Bulan</label>
+                <select id="bulan" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-slate-700 text-sm">
                     <option value="Januari">Januari</option>
                     <option value="Februari">Februari</option>
                     <option value="Maret">Maret</option>
@@ -47,16 +47,16 @@
             </div>
 
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Nominal Iuran (Rp)</label>
-                <input type="number" id="nominal" placeholder="0" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold mb-2">
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Nominal (Rp)</label>
+                <input type="number" id="nominal" placeholder="0" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm mb-2">
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setNominal(50000)" class="bg-emerald-50 text-emerald-700 font-bold p-3 rounded-xl border border-emerald-200 hover:bg-emerald-100 transition text-sm">50.000</button>
-                    <button onclick="setNominal(70000)" class="bg-emerald-50 text-emerald-700 font-bold p-3 rounded-xl border border-emerald-200 hover:bg-emerald-100 transition text-sm">70.000</button>
+                    <button onclick="setNominal(50000)" class="bg-emerald-50 text-emerald-700 font-bold p-2 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition text-[11px]">50.000</button>
+                    <button onclick="setNominal(70000)" class="bg-emerald-50 text-emerald-700 font-bold p-2 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition text-[11px]">70.000</button>
                 </div>
             </div>
 
-            <button onclick="prosesSimpan()" id="btn-main" class="w-full bg-emerald-700 text-white p-5 rounded-[1.5rem] font-black shadow-lg shadow-emerald-200 active:scale-95 transition-all mt-4 flex items-center justify-center gap-3">
-                <i class="fa-brands fa-whatsapp text-xl"></i> SIMPAN & KIRIM BUKTI
+            <button onclick="prosesSimpan()" id="btn-main" class="w-full bg-emerald-700 text-white p-4 rounded-xl font-bold shadow-lg active:scale-95 transition-all mt-3 flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                <i class="fa-brands fa-whatsapp"></i> SIMPAN & KIRIM
             </button>
         </div>
     </div>
@@ -64,7 +64,6 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
 
-        // Fungsi Tombol Nominal
         function setNominal(angka) {
             document.getElementById('nominal').value = angka;
         }
@@ -76,29 +75,21 @@
             const bulan = document.getElementById('bulan').value;
             const nominal = document.getElementById('nominal').value;
 
-            if(!waInput || !nama || !nominal) return alert("Waduh, data belum lengkap bro!");
+            if(!waInput || !nama || !nominal) return alert("Data belum lengkap!");
 
-            // Gabungkan 62 dengan Input (Menghilangkan 0 di depan jika ada)
             const waFinal = "62" + waInput.replace(/^0+/, '');
-            const kodeFinal = "TUNTAS-" + Math.floor(1000 + Math.random() * 9000);
+            const kodeFinal = "Tuntas-" + Math.floor(1000 + Math.random() * 9000);
             const tglSkrg = new Date().toISOString();
 
             btn.disabled = true;
-            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> MEMPROSES...";
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
 
             const dataObj = {
-                wa: waFinal,
-                nama: nama,
-                bulan: bulan,
-                nominal: nominal,
-                kode: kodeFinal,
-                tgl: tglSkrg
+                wa: waFinal, nama: nama, bulan: bulan, nominal: nominal, kode: kodeFinal, tgl: tglSkrg
             };
 
-            // 1. Simpan di LocalStorage (Supaya Admin bisa lihat instan)
             localStorage.setItem("pay_" + kodeFinal, JSON.stringify(dataObj));
 
-            // 2. Kirim ke Google Sheet (Mode no-cors)
             try {
                 await fetch(API_URL, {
                     method: 'POST',
@@ -106,20 +97,17 @@
                     body: new URLSearchParams(dataObj)
                 });
 
-                // 3. Rakit Link Kwitansi & Kirim WA
                 const linkView = window.location.href.replace('pay.html', 'view.html') + '?' + kodeFinal;
                 const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih *${nama}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Resmi:\n${linkView}`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
-                
-                setTimeout(() => location.reload(), 1000);
+                setTimeout(() => location.reload(), 500);
             } catch (e) {
-                alert("Gagal simpan ke database!");
+                alert("Gagal!");
                 btn.disabled = false;
-                btn.innerHTML = "SIMPAN & KIRIM BUKTI";
+                btn.innerHTML = "SIMPAN & KIRIM";
             }
         }
     </script>
 </body>
-                  </html>
-                  
+</html>
