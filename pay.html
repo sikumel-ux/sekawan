@@ -43,7 +43,7 @@
 
             // 3. KIRIM WA
             const link = window.location.href.replace('pay.html', 'view.html') + '?' + d.kode;
-            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${d.nama}*,\nIuran *${d.bulan}* sukses diterima.\n\nBukti Bayar:\n${link}`;
+            const pesan = `*KWITANSI DIGITAL TUNTAS*\n\nTerima kasih bpk/ibu *${d.nama}*,\nIuran *${d.bulan}* sukses diterima.\n\nBukti Bayar:\n${link}`;
             window.open(`https://api.whatsapp.com/send?phone=${d.wa}&text=${encodeURIComponent(pesan)}`, '_blank');
             
             setTimeout(() => location.reload(), 1000);
