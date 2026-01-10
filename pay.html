@@ -1,65 +1,52 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - TUNTAS RT 04</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>body { font-family: 'Poppins', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 p-6 flex flex-col items-center min-h-screen">
-    <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] shadow-sm border mt-6">
-        <h1 class="text-xl font-bold text-slate-800 mb-6 text-center italic">Generator Kwitansi</h1>
+<body class="bg-slate-100 p-6 font-[Poppins]">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center italic">Input Iuran</h2>
         <div class="space-y-4">
-            <input type="number" id="wa" placeholder="WhatsApp Warga (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
-            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
+            <input type="number" id="wa" placeholder="WhatsApp (628...)" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none focus:ring-2 focus:ring-emerald-500">
+            <input type="text" id="nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border outline-none">
             <div class="grid grid-cols-2 gap-3">
-                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
-                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border-0 outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="text" id="bulan" placeholder="Bulan" class="p-4 bg-slate-50 rounded-2xl border outline-none">
+                <input type="number" id="nominal" placeholder="Nominal" class="p-4 bg-slate-50 rounded-2xl border outline-none">
             </div>
-            <button id="btn" onclick="prosesData()" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-                <i class="fa-brands fa-whatsapp text-xl"></i> <span>Kirim & Simpan</span>
-            </button>
+            <button onclick="simpan()" id="btn" class="w-full bg-emerald-600 text-white p-5 rounded-2xl font-bold shadow-lg active:scale-95 transition-all">SIMPAN & KIRIM WA</button>
         </div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
 
-        async function prosesData() {
-            const wa = document.getElementById('wa').value;
-            const nama = document.getElementById('nama').value;
-            const bulan = document.getElementById('bulan').value;
-            const nominal = document.getElementById('nominal').value;
-            const kode = "sekawan-" + Math.floor(1000 + Math.random() * 9000);
+        async function simpan() {
+            const d = {
+                wa: document.getElementById('wa').value,
+                nama: document.getElementById('nama').value,
+                bulan: document.getElementById('bulan').value,
+                nominal: document.getElementById('nominal').value,
+                kode: "sekawan-" + Math.floor(1000 + Math.random() * 9000),
+                tgl: new Date().toISOString()
+            };
 
-            if(!wa || !nama || !bulan || !nominal) return alert("Lengkapi data dulu, bro!");
+            if(!d.wa || !d.nama) return alert("Isi dulu!");
 
-            document.getElementById('btn').disabled = true;
-            document.getElementById('btn').querySelector('span').innerText = "Menyimpan...";
+            // 1. TITIP DI LOCALSTORAGE (Logika Mahika)
+            localStorage.setItem("pay_" + d.kode, JSON.stringify(d));
 
-            // Simpan ke Google Sheet
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: new URLSearchParams({ wa, nama, bulan, nominal, kode })
-                });
+            // 2. KIRIM KE GOOGLE (Background)
+            fetch(API_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(d)});
 
-                // Buat link kwitansi
-                const linkKwitansi = window.location.href.replace('pay.html', 'view.html') + '?' + kode;
-                const pesan = `*BUKTI PEMBAYARAN IURAN RT 04*\n\nTerima kasih *${nama}*,\nIuran bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Digital Anda di sini:\n${linkKwitansi}`;
-                
-                // Buka WhatsApp
-                window.open(`https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(pesan)}`, '_blank');
-                
-                setTimeout(() => location.reload(), 1000);
-            } catch (e) {
-                alert("Gagal simpan data!");
-                document.getElementById('btn').disabled = false;
-            }
+            // 3. KIRIM WA
+            const link = window.location.href.replace('pay.html', 'view.html') + '?' + d.kode;
+            const pesan = `*KWITANSI DIGITAL RT 04*\n\nTerima kasih *${d.nama}*,\nIuran *${d.bulan}* sukses diterima.\n\nBukti Bayar:\n${link}`;
+            window.open(`https://api.whatsapp.com/send?phone=${d.wa}&text=${encodeURIComponent(pesan)}`, '_blank');
+            
+            setTimeout(() => location.reload(), 1000);
         }
     </script>
 </body>
