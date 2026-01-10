@@ -2,78 +2,100 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Kwitansi TUNTAS</title>
+    <title>Bukti Pembayaran TUNTAS RT 04</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f8fafc; }
-        .ticket { background: white; border-radius: 2rem; border-top: 12px solid #059669; position: relative; }
-        .ticket::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 20px; background: radial-gradient(circle, transparent 70%, #fff 72%); background-size: 20px 20px; }
+        body { font-family: 'Poppins', sans-serif; background: #f1f5f9; }
+        .receipt-card { background: white; border-radius: 2.5rem; border-top: 12px solid #059669; position: relative; }
+        .receipt-card::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 20px; background: radial-gradient(circle, transparent 70%, #fff 72%); background-size: 20px 20px; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-6">
-    <div id="loading" class="text-slate-400 font-bold animate-pulse text-center">MEMVERIFIKASI...</div>
+    <div id="loading" class="text-slate-400 font-bold animate-pulse text-center uppercase tracking-widest text-xs">MEMVERIFIKASI DATA...</div>
 
-    <div id="konten" class="ticket w-full max-w-sm p-8 shadow-2xl hidden text-center">
-        <div class="flex justify-between items-start mb-6">
-            <span id="d-kode" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 uppercase"></span>
-            <i class="fa-solid fa-circle-check text-emerald-500 text-3xl"></i>
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 shadow-2xl hidden text-center">
+        <div class="header-section mb-6">
+            <h1 class="text-2xl font-black text-slate-800 uppercase leading-tight mb-1">Bukti Pembayaran</h1>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mb-4">TUNTAS - TURUN TANGAN ATASI SAMPAH</p>
+            <p class="text-[10px] text-slate-400">Telah diterima uang sebesar <strong id="d-nominal-text" class="text-emerald-700">Rp --</strong> dari Bapak/Ibu <strong id="d-nama-text" class="text-slate-700">--</strong> guna pembayaran sampah bulan <strong id="d-bulan-text" class="text-slate-700">--</strong>.</p>
         </div>
         
-        <h1 class="text-3xl font-black text-slate-800 italic uppercase leading-none">Lunas</h1>
-        <p id="d-bulan" class="text-[10px] text-slate-400 font-bold uppercase mt-2 mb-8 tracking-[0.3em]"></p>
+        <div class="tear-line border-t border-dashed border-slate-200 my-8"></div>
 
-        <div class="space-y-5 mb-8 text-left">
-            <div class="border-l-4 border-emerald-500 pl-4">
-                <p class="text-[9px] text-slate-400 font-bold uppercase">Nama Warga</p>
-                <p id="d-nama" class="font-bold text-slate-700 text-lg uppercase"></p>
-            </div>
-            <div class="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 text-center shadow-inner">
-                <p id="d-nominal" class="text-3xl font-black text-emerald-700"></p>
-            </div>
+        <div class="barcode-section mb-8 flex flex-col items-center">
+            <img id="barcodeimg" alt="Kode Pembayaran" class="w-full max-w-[250px] h-auto p-2 bg-white rounded-lg border-2 border-slate-100 shadow-sm">
+            <p id="d-kode-barcode" class="text-[10px] font-mono text-slate-600 mt-2 font-bold uppercase tracking-widest"></p>
         </div>
 
-        <div class="flex justify-center mb-8"><img id="qr" class="w-28 h-28 border-4 border-slate-50 rounded-2xl shadow-sm"></div>
+        <div class="details-section text-left text-[11px] text-slate-600 space-y-2 mb-8">
+            <p><strong class="text-slate-500 uppercase text-[9px] block">Kode Transaksi:</strong> <span id="d-kode-full" class="font-bold text-slate-800"></span></p>
+            <p><strong class="text-slate-500 uppercase text-[9px] block">Tanggal Verifikasi:</strong> <span id="d-tgl-full" class="font-bold text-slate-800"></span></p>
+            <p class="mt-4 italic text-slate-500">Terimakasih atas partisipasinya.</p>
+        </div>
 
-        <div class="pt-6 border-t border-dashed border-slate-200">
-            <p class="text-[10px] font-bold text-emerald-600 tracking-[0.5em] uppercase">Tuntas RT 04</p>
-            <p id="d-tgl" class="text-[8px] text-slate-400 mt-1 italic"></p>
+        <div class="footer-section pt-6 border-t border-dashed border-slate-200 text-center">
+            <p class="text-[10px] font-bold text-emerald-600 tracking-[0.5em] uppercase mb-1">Pengurus TUNTAS RT 04,</p>
+            <p class="text-lg font-black text-slate-800">Wong Ganteng</p>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyezwC6Rwr3SR0zyJLVqoVEO8e3ot1XRyy2pkraP2FoDXa3iUZfyRC86PsZJzl-Mxcn/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
         const kode = window.location.search.substring(1);
 
         if (kode) {
-            // 1. CEK LOCALSTORAGE (Logika Mahika)
-            const localData = JSON.parse(localStorage.getItem("pay_" + kode));
+            const savedData = JSON.parse(localStorage.getItem("pay_" + kode));
             
-            if (localData) {
-                console.log("Data dari memori HP ditemukan!");
-                render(localData);
+            if (savedData) {
+                render(savedData);
             } else {
-                console.log("Memori HP kosong, tanya Google...");
                 fetch(`${API_URL}?${kode}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response not ok');
+                    return res.json();
+                })
                 .then(data => {
                     if (data.result === "found") render(data);
-                    else document.getElementById('loading').innerText = "KODE TIDAK VALID";
+                    else document.getElementById('loading').innerHTML = "<span class='text-rose-500 uppercase'>Kode Tidak Ditemukan</span>";
                 })
-                .catch(() => document.getElementById('loading').innerText = "GAGAL KONEKSI");
+                .catch(err => {
+                    document.getElementById('loading').innerHTML = `
+                        <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100 mx-auto max-w-xs">
+                            <p class="text-rose-600 text-[10px] font-bold uppercase mb-2">Gagal Akses Data Cloud</p>
+                            <p class="text-slate-500 text-[9px]">Pastikan Deployment Google Script sudah diset ke 'Anyone'.</p>
+                        </div>
+                    `;
+                    console.error('Error:', err);
+                });
             }
+        } else {
+            document.getElementById('loading').innerHTML = "<span class='text-rose-500 uppercase'>Link Tidak Valid</span>";
         }
 
         function render(data) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('konten').classList.remove('hidden');
-            document.getElementById('d-kode').innerText = kode;
-            document.getElementById('d-nama').innerText = data.nama;
-            document.getElementById('d-bulan').innerText = "Iuran " + data.bulan;
-            document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-            document.getElementById('d-tgl').innerText = "VERIFIKASI: " + new Date(data.tgl).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('qr').src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.href)}&choe=UTF-8`;
+            
+            const nominalFormatted = "Rp " + Number(data.nominal).toLocaleString('id-ID');
+            const tglFormatted = new Date(data.tgl).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+
+            // Isi teks narasi
+            document.getElementById('d-nominal-text').innerText = nominalFormatted;
+            document.getElementById('d-nama-text').innerText = data.nama;
+            document.getElementById('d-bulan-text').innerText = data.bulan;
+
+            // Isi detail bawah
+            document.getElementById('d-kode-full').innerText = data.kode || kode;
+            document.getElementById('d-tgl-full').innerText = tglFormatted;
+
+            // Barcode TEC-IT
+            const barcodeUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(data.kode || kode) + "&code=code128&translate-esc=true&dpi=96";
+            document.getElementById('barcodeimg').src = barcodeUrl;
+            document.getElementById('d-kode-barcode').innerText = data.kode || kode;
+
+            document.getElementById('d-bulan').innerText = "Iuran " + data.bulan; // Tetap pakai ini kalau mau ada di tempat lain
         }
     </script>
 </body>
