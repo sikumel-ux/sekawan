@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Kwitansi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .receipt-card { background: white; border-radius: 2.5rem; border-top: 12px solid #059669; position: relative; }
+        .receipt-card::after { content: ""; position: absolute; bottom: -12px; left: 20px; right: 20px; height: 24px; background-image: radial-gradient(circle, transparent 70%, #ffffff 72%); background-size: 24px 24px; background-position: 0 -12px; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+    <div id="loading" class="text-slate-400 text-sm italic">Memverifikasi data...</div>
+
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 shadow-2xl hidden text-center">
+        <div class="flex justify-between items-start mb-6 text-left">
+            <span id="kode-id" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border border-emerald-100 uppercase"></span>
+            <i class="fa-solid fa-circle-check text-emerald-500 text-3xl"></i>
+        </div>
+
+        <h1 class="text-2xl font-black text-slate-800 uppercase italic">Lunas</h1>
+        <p id="bulan-info" class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase mt-2 mb-8"></p>
+
+        <div class="space-y-4 mb-6 text-left">
+            <div class="border-l-4 border-emerald-500 pl-4">
+                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Warga</p>
+                <p id="nama-warga" class="font-bold text-slate-700 text-lg uppercase"></p>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-[2rem] border border-slate-100 text-center">
+                <p class="text-[9px] text-slate-400 font-bold mb-1 uppercase tracking-widest">Total Bayar</p>
+                <p id="nominal-bayar" class="text-3xl font-black text-emerald-700"></p>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center space-y-2 mb-6">
+            <div class="p-2 border-2 border-slate-50 rounded-2xl">
+                <img id="qr-code" src="" class="w-24 h-24">
+            </div>
+            <p class="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Scan to Verify</p>
+        </div>
+
+        <div class="pt-6 border-t border-dashed">
+            <p class="text-[10px] font-bold text-emerald-600 tracking-[0.4em]">TUNTAS - RT 04</p>
+            <p id="tgl-bayar" class="text-[8px] text-slate-400 mt-1"></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "URL_SCRIPT_KAMU"; // GANTI DENGAN URL GAS KAMU
+        const kode = window.location.search.substring(1);
+
+        if (kode) {
+            fetch(`${API_URL}?${kode}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('loading').classList.add('hidden');
+                    if (data.result === "not_found") {
+                        alert("Data tidak ditemukan!");
+                    } else {
+                        document.getElementById('konten').classList.remove('hidden');
+                        document.getElementById('kode-id').innerText = kode;
+                        document.getElementById('nama-warga').innerText = data.nama;
+                        document.getElementById('bulan-info').innerText = "Iuran " + data.bulan;
+                        document.getElementById('nominal-bayar').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
+                        document.getElementById('tgl-bayar').innerText = "Diterbitkan: " + new Date(data.tgl).toLocaleDateString('id-ID');
+                        
+                        // Link QR Code ke URL Kwitansi ini sendiri
+                        document.getElementById('qr-code').src = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(window.location.href)}&choe=UTF-8`;
+                    }
+                }).catch(() => { document.getElementById('loading').innerText = "Gagal mengambil data."; });
+        }
+    </script>
+</body>
+                                                                                                           </html>
+  
