@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Kwitansi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-50 p-6">
+    <div class="max-w-md mx-auto">
+        <h1 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-emerald-600"></i> Generator Kwitansi
+        </h1>
+
+        <div class="bg-white p-6 rounded-[2rem] shadow-sm border mb-8">
+            <div class="space-y-4">
+                <input type="text" id="warga_nama" placeholder="Nama Warga" class="w-full p-4 bg-slate-50 rounded-2xl border text-sm">
+                <input type="text" id="warga_bulan" placeholder="Untuk Bulan (Contoh: Januari)" class="w-full p-4 bg-slate-50 rounded-2xl border text-sm">
+                <input type="number" id="warga_nominal" placeholder="Nominal (Contoh: 20000)" class="w-full p-4 bg-slate-50 rounded-2xl border text-sm">
+                
+                <button onclick="prosesKwitansi()" class="w-full bg-emerald-600 text-white p-4 rounded-2xl font-bold shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp"></i> Generate & Kirim WA
+                </button>
+            </div>
+        </div>
+
+        <p class="text-[10px] text-center text-slate-400 uppercase tracking-widest italic">Modul Mandiri TUNTAS RT 04</p>
+    </div>
+
+    <script>
+        function prosesKwitansi() {
+            const nama = document.getElementById('warga_nama').value;
+            const bulan = document.getElementById('warga_bulan').value;
+            const nominal = document.getElementById('warga_nominal').value;
+            const kode = 'T' + Math.floor(1000 + Math.random() * 9000); // Kode acak 4 angka
+
+            if(!nama || !bulan || !nominal) return alert("Isi semua data dulu, bro!");
+
+            // Link ke file kwitansi terpisah (pastikan kwitansi-view.html sudah ada)
+            const baseUrl = window.location.href.replace('admin-tuntas.html', 'kwitansi-view.html');
+            const dataString = encodeURIComponent(`${kode}|${nama}|${nominal}|${bulan}`);
+            const linkKwitansi = `${baseUrl}?${dataString}`;
+
+            const pesan = `*KWITANSI DIGITAL TUNTAS*\n\n` +
+                          `Halo *${nama}*,\n` +
+                          `Terima kasih, iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\n` +
+                          `Cek bukti bayar di sini:\n${linkKwitansi}\n\n` +
+                          `_Petugas RT 04_`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
