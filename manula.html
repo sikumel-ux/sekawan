@@ -12,163 +12,154 @@
             font-family: 'Poppins', sans-serif; 
             background-color: #f8fafc; 
             color: #1e293b; 
-            font-size: 18px; /* Font dasar lebih besar untuk manula */
+            font-size: 15px; /* Ukuran proporsional, nggak kegedean */
         }
         .bg-tuntas { background-color: #059669; }
         .text-tuntas { color: #059669; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); }
         
-        /* Efek Rumput di Footer */
-        .grass-footer {
-            background: linear-gradient(to top, rgba(5, 150, 105, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        /* Footer Seger Tanpa Gambar Eksternal */
+        .footer-fresh {
+            background: linear-gradient(180deg, #f8fafc 0%, #ecfdf5 100%);
             position: relative;
+            overflow: hidden;
         }
-        .grass-pattern {
+        .grass-circle {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background-image: url('https://www.transparenttextures.com/patterns/grass.png');
+            bottom: -20px;
+            width: 100px;
+            height: 100px;
+            background: #10b981;
+            border-radius: 50%;
             opacity: 0.1;
-            pointer-events: none;
+            filter: blur(20px);
         }
     </style>
 </head>
 <body class="pb-0">
 
-    <header class="bg-white p-6 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-tuntas rounded-2xl flex items-center justify-center text-white shadow-lg">
-                <i class="fa-solid fa-recycle text-xl"></i>
+    <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-100">
+                <i class="fa-solid fa-recycle text-lg"></i>
             </div>
             <div>
-                <h1 class="text-xl font-extrabold leading-none text-slate-800 tracking-tight">TUNTAS</h1>
-                <p class="text-[10px] font-bold text-tuntas uppercase tracking-widest mt-1">RT 04 / RW 01</p>
+                <h1 class="text-lg font-bold leading-none text-slate-800 tracking-tight">TUNTAS</h1>
+                <p class="text-[9px] font-bold text-tuntas uppercase tracking-widest mt-1">RT 04 / RW 01</p>
             </div>
         </div>
         
-        <a href="data.html" class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center border-2 border-transparent hover:border-tuntas hover:text-tuntas transition-all">
-            <i class="fa-solid fa-power-off text-xl"></i>
+        <a href="data.html" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border hover:text-tuntas hover:border-tuntas transition-all">
+            <i class="fa-solid fa-power-off text-lg"></i>
         </a>
     </header>
 
-    <main class="p-6 space-y-8">
+    <main class="p-6 space-y-6">
 
-        <section class="bg-tuntas p-8 rounded-[3rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden border-b-8 border-emerald-800">
+        <section class="bg-tuntas p-7 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 relative overflow-hidden border-b-4 border-emerald-800">
             <div class="relative z-10">
-                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-leaf"></i> Tentang TUNTAS
+                <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-leaf text-sm text-emerald-200"></i> Tentang TUNTAS
                 </h2>
-                <p class="text-base leading-relaxed font-medium opacity-100">
-                    <span class="underline decoration-yellow-400 decoration-2">TUNTAS</span> adalah program swadaya <span class="font-bold">RT 04</span> untuk melokalisir dampak polusi asap. 
-                    Sampah warga dikumpulkan dan dikelola secara <span class="italic">terpadu</span> di satu titik, guna mengurangi risiko kesehatan akibat pembakaran sampah di halaman rumah masing-masing.
+                <p class="text-[13px] leading-relaxed opacity-95">
+                    <span class="font-bold underline decoration-yellow-400">TUNTAS</span> adalah program swadaya <span class="font-bold">RT 04</span> untuk melokalisir dampak polusi asap. Sampah warga dikumpulkan dan dikelola secara <span class="italic font-bold text-emerald-100">terpadu</span> di satu titik, guna mengurangi risiko kesehatan akibat pembakaran sampah di halaman rumah masing-masing.
                 </p>
             </div>
-            <i class="fa-solid fa-fire-burner absolute -right-8 -bottom-8 text-[12rem] opacity-10"></i>
+            <i class="fa-solid fa-fire-burner absolute -right-6 -bottom-6 text-8xl opacity-10"></i>
         </section>
 
-        <section class="grid grid-cols-1 gap-4">
-            <div class="bg-white p-6 rounded-[2rem] border-2 border-slate-100 card-shadow flex items-center gap-5">
-                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-tuntas">
-                    <i class="fa-solid fa-truck-fast text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Jadwal Angkut</p>
-                    <p class="text-lg font-bold text-slate-800">Minggu & Kamis (Pagi)</p>
-                </div>
+        <section class="grid grid-cols-2 gap-3">
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 card-shadow flex flex-col items-center text-center">
+                <i class="fa-solid fa-truck-fast text-tuntas text-xl mb-2"></i>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Jadwal Angkut</p>
+                <p class="text-[12px] font-bold text-slate-800 mt-1 uppercase">Minggu & Kamis</p>
             </div>
             
-            <div class="bg-white p-6 rounded-[2rem] border-2 border-emerald-100 card-shadow flex items-center gap-5 border-l-8 border-l-tuntas">
-                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-tuntas">
-                    <i class="fa-solid fa-hand-holding-dollar text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kontribusi RT</p>
-                    <p class="text-lg font-bold text-slate-800">Mendukung Kas RT 04</p>
-                </div>
+            <div class="bg-white p-5 rounded-3xl border border-emerald-100 card-shadow border-l-4 border-l-tuntas flex flex-col items-center text-center">
+                <i class="fa-solid fa-hand-holding-dollar text-tuntas text-xl mb-2"></i>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Kontribusi RT</p>
+                <p class="text-[12px] font-bold text-slate-800 mt-1 uppercase">Bantu Kas Warga</p>
             </div>
         </section>
 
-        <section class="space-y-5">
-            <div class="flex items-center gap-3 px-2">
-                <i class="fa-solid fa-clipboard-question text-tuntas"></i>
-                <h2 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Pertanyaan Warga</h2>
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-circle-info text-tuntas text-[10px]"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Warga</h2>
             </div>
             
-            <div class="space-y-4">
-                <details class="group bg-white rounded-[2rem] border-2 border-slate-50 card-shadow" open>
-                    <summary class="list-none p-6 flex justify-between items-center cursor-pointer font-bold text-base text-slate-700">
+            <div class="space-y-3">
+                <details class="group bg-white rounded-2xl border border-slate-100 card-shadow" open>
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-slate-700">
                         Apa itu program TUNTAS?
-                        <i class="fa-solid fa-chevron-down text-sm transition-transform group-open:rotate-180"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <div class="px-6 pb-6 text-base text-slate-600 leading-relaxed border-t pt-4">
-                        TUNTAS adalah solusi agar pemukiman kita tidak dikepung asap. Pembakaran dilakukan secara terpadu di lokasi aman oleh petugas, sehingga udara di sekitar rumah kita tetap bersih.
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 leading-relaxed border-t pt-3">
+                        Solusi agar pemukiman kita tidak dikepung asap sampah. Pengelolaan dilakukan secara terpusat oleh petugas agar udara di lingkungan rumah kita tetap asri.
                     </div>
                 </details>
 
-                <details class="group bg-white rounded-[2rem] border-2 border-slate-50 card-shadow">
-                    <summary class="list-none p-6 flex justify-between items-center cursor-pointer font-bold text-base text-slate-700 text-tuntas">
+                <details class="group bg-white rounded-2xl border border-slate-100 card-shadow">
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-tuntas">
                         Ke mana uang iuran warga?
-                        <i class="fa-solid fa-chevron-down text-sm transition-transform group-open:rotate-180"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <div class="px-6 pb-6 text-base text-slate-600 leading-relaxed border-t pt-4 space-y-3">
-                        <p>Iuran warga digunakan untuk:</p>
-                        <ul class="list-disc ml-5 space-y-2">
-                            <li>Upah petugas dan operasional armada.</li>
-                            <li><span class="font-bold text-slate-800 underline">Menambah Kas RT 04</span> untuk keperluan sosial dan pembangunan lingkungan kita bersama.</li>
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 leading-relaxed border-t pt-3 space-y-2">
+                        <p>Iuran digunakan untuk upah petugas & operasional. Sisanya akan <span class="font-bold text-slate-800 underline">Masuk Kas RT 04</span> untuk kegiatan pembangunan lingkungan kita.</p>
+                    </div>
+                </details>
+
+                <details class="group bg-white rounded-2xl border border-slate-100 card-shadow">
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-slate-700">
+                        Sampah yang dilarang ikut?
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-[10px]"></i>
+                    </summary>
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 border-t pt-3 space-y-2">
+                        <p class="font-bold text-red-600 text-[10px] uppercase tracking-wide">Dilarang Keras:</p>
+                        <ul class="grid grid-cols-2 gap-2 text-[11px] font-semibold">
+                            <li class="bg-red-50 text-red-700 p-2 rounded-lg">Plastik & Karet</li>
+                            <li class="bg-red-50 text-red-700 p-2 rounded-lg">Elektronik</li>
+                            <li class="bg-red-50 text-red-700 p-2 rounded-lg">Baterai</li>
+                            <li class="bg-red-50 text-red-700 p-2 rounded-lg">Kaleng Gas</li>
                         </ul>
                     </div>
                 </details>
 
-                <details class="group bg-white rounded-[2rem] border-2 border-slate-50 card-shadow">
-                    <summary class="list-none p-6 flex justify-between items-center cursor-pointer font-bold text-base text-slate-700">
-                        Sampah yang tidak boleh ikut?
-                        <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
-                    </summary>
-                    <div class="px-6 pb-6 text-base text-slate-600 leading-relaxed border-t pt-4">
-                        <p class="font-bold text-red-600 mb-3 uppercase text-xs">Dilarang demi keamanan:</p>
-                        <div class="grid grid-cols-1 gap-2">
-                            <div class="bg-slate-50 p-3 rounded-xl border-l-4 border-red-500 font-bold text-sm">Plastik, Styrofoam, Karet & Ban</div>
-                            <div class="bg-slate-50 p-3 rounded-xl border-l-4 border-red-500 font-bold text-sm">Elektronik, Baterai & Kaleng Gas</div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-[2rem] border-2 border-slate-50 card-shadow">
-                    <summary class="list-none p-6 flex justify-between items-center cursor-pointer font-bold text-base text-slate-700">
+                <details class="group bg-white rounded-2xl border border-slate-100 card-shadow">
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-slate-700">
                         Cara jadi anggota?
-                        <i class="fa-solid fa-chevron-down text-sm transition-transform group-open:rotate-180"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                     </summary>
-                    <div class="px-6 pb-6 text-base text-slate-600 leading-relaxed border-t pt-4">
-                        Khusus <span class="font-bold">Warga RT 04</span>. Silakan hubungi pengelola melalui WhatsApp di bawah untuk pendaftaran iuran dan jadwal pengambilan.
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 border-t pt-3">
+                        Pendaftar wajib <span class="font-bold">Warga RT 04</span>. Silakan klik tombol WhatsApp di bawah untuk pendaftaran.
                     </div>
                 </details>
             </div>
         </section>
 
-        <section class="pt-6">
-            <a href="https://wa.me/6287812710851" class="flex items-center gap-4 p-6 bg-tuntas text-white rounded-[2.5rem] font-bold shadow-xl active:scale-95 transition-all w-full justify-center">
-                <i class="fa-brands fa-whatsapp text-3xl"></i>
-                <span class="text-lg uppercase tracking-wider">Hubungi Pengelola</span>
+        <section class="pt-4">
+            <a href="https://wa.me/6287812710851" class="flex items-center gap-3 p-5 bg-tuntas text-white rounded-3xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all w-full justify-center">
+                <i class="fa-brands fa-whatsapp text-2xl"></i>
+                <span class="text-sm uppercase tracking-wider">Hubungi Pengelola</span>
             </a>
         </section>
 
     </main>
 
-    <footer class="grass-footer mt-12 pb-12 pt-10 text-center border-t border-slate-100">
-        <div class="grass-pattern"></div>
+    <footer class="footer-fresh mt-12 pb-16 pt-10 text-center border-t border-slate-100">
+        <div class="grass-circle" style="left: -20px;"></div>
+        <div class="grass-circle" style="right: 50px; bottom: -40px; opacity: 0.05;"></div>
+        <div class="grass-circle" style="left: 40%; bottom: -60px; width: 150px;"></div>
+        
         <div class="relative z-10 px-6">
-            <p class="text-xs font-black text-tuntas uppercase tracking-[0.4em] mb-1">TUNTAS - RT 04</p>
-            <p class="text-[10px] text-tuntas font-bold uppercase tracking-widest mb-6">Turun Tangan Atasi Sampah</p>
-            
-            <div class="h-[2px] w-12 bg-slate-200 mx-auto mb-6"></div>
+            <p class="text-[10px] font-bold text-tuntas uppercase tracking-[0.4em] mb-1">TUNTAS - RT 04</p>
+            <p class="text-[9px] text-tuntas font-medium uppercase tracking-widest mb-8">Turun Tangan Atasi Sampah</p>
             
             <p class="text-xs text-slate-800 font-bold italic">© 2026 TUNTAS - Program Swadaya Lingkungan</p>
-            <p class="text-[10px] text-slate-500 mt-2 font-medium">Melayani dengan Hati untuk RT 04 yang Asri</p>
+            <p class="text-[10px] text-slate-400 mt-2">Melayani dengan Hati untuk RT 04 yang Asri</p>
         </div>
     </footer>
 
 </body>
-  </html>
-                  
+                </html>
+                
