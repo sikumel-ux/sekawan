@@ -38,7 +38,7 @@
 
     <div id="penyusup" class="hidden text-center p-8">
         <div class="text-6xl mb-4">🤨</div>
-        <h1 class="text-2xl font-black text-rose-600 uppercase italic">KAMU SIAPA?!</h1>
+        <h1 class="text-2xl font-black text-rose-600 uppercase italic">KAMU SIAPA?</h1>
         <p class="text-slate-500 text-sm mt-2">Mau ngintip iuran ya? </p>
         
     </div>
@@ -47,7 +47,7 @@
         <div class="text-center mb-6">
             <h1 class="text-3xl font-black text-ijo-tua leading-none">TUNTAS</h1>
             <h2 class="text-[11px] font-bold text-slate-700 tracking-[0.3em] mt-1 uppercase">Bukti Pembayaran</h2>
-            <p class="text-[9px] text-emerald-600 font-semibold italic">Turun Tangan Atasi Sampah</p>
+            <p class="text-[9px] text-emerald-600 font-semibold">Turun Tangan Atasi Sampah</p>
         </div>
 
         <div class="text-[12px] text-slate-600 leading-relaxed">
@@ -136,7 +136,7 @@
             document.getElementById('d-nama').innerText = data.nama;
             document.getElementById('d-bulan').innerText = data.bulan;
             document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-            document.getElementById('d-terbilang').innerText = "# " + terbilang(data.nominal) + " Rupiah #";
+            document.getElementById('d-terbilang').innerText = "~ " + terbilang(data.nominal) + " Rupiah ~";
             document.getElementById('d-tgl').innerText = new Date(data.tgl).toLocaleDateString('id-ID');
             document.getElementById('d-kode').innerText = (data.kode || kodeUrl);
 
