@@ -12,74 +12,89 @@
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-6">
 
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden">
-        <div class="bg-slate-800 p-4">
-            <h1 class="text-white text-center font-bold text-xl tracking-wide">ꦥꦤꦸꦭꦶꦱ꧀ꦗꦮ</h1>
-            <p class="text-slate-400 text-center text-xs uppercase tracking-widest mt-1">Aksara Jawa Converter</p>
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="bg-slate-800 p-5 text-center">
+            <h1 class="text-white font-bold text-xl tracking-wide aksara-font">ꦥꦤꦸꦭꦶꦱ꧀ꦗꦮ</h1>
+            <p class="text-slate-400 text-[10px] uppercase tracking-[0.2em] mt-1">Aksara Jawa Converter</p>
         </div>
 
         <div class="p-6 space-y-6">
             <div>
-                <label class="block text-slate-600 text-sm font-semibold mb-2">Tulisan Latin</label>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2 tracking-wider">Input Latin</label>
                 <textarea id="inputLatin" 
-                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none text-slate-700" 
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-800 transition-all outline-none text-slate-700 text-lg" 
                     rows="3" 
-                    placeholder="Ketik di sini... (contoh: sugeng enjang)"></textarea>
+                    placeholder="Ketik: mulyaning liyan"></textarea>
             </div>
 
             <div class="relative">
-                <label class="block text-slate-600 text-sm font-semibold mb-2">Hasil Aksara Jawa</label>
+                <label class="block text-slate-500 text-xs font-bold uppercase mb-2 tracking-wider">Hasil Aksara</label>
                 <div id="outputAksara" 
-                    class="aksara-font w-full p-5 bg-indigo-50 border-2 border-indigo-100 rounded-xl min-h-[120px] text-3xl text-indigo-900 break-words">
+                    class="aksara-font w-full p-6 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl min-h-[140px] text-4xl text-slate-800 break-words leading-relaxed">
                 </div>
                 
                 <button id="copyBtn" 
-                    class="absolute bottom-3 right-3 bg-white hover:bg-indigo-600 hover:text-white text-indigo-600 border border-indigo-200 px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-all flex items-center gap-2">
-                    <span>Salin</span>
+                    class="absolute bottom-3 right-3 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md transition-all active:scale-95">
+                    SALIN TEKS
                 </button>
             </div>
-
-            <p class="text-center text-[10px] text-slate-400">
-                Sesuai aturan baku Pustaka Nusatama & Sastra Sriwedari
-            </p>
         </div>
     </div>
 
-    <script src="https://unpkg.com/carakan-js@1.0.4/dist/carakan.min.js"></script>
     <script>
+        const mapping = {
+            'ha':'ꦗ','na':'ꦉ','ca':'ꦊ','ra':'ꦋ','ka':'ꦌ','da':'ꦍ','ta':'ꦎ','sa':'ꦏ','wa':'ꦐ','la':'ꦑ','pa':'ꦒ','dha':'ꦓ','ja':'ꦔ','ya':'ꦕ','nya':'ꦖ','ma':'ꦗ','ga':'ꦘ','ba':'ꦙ','tha':'ꦚ','nga':'ꦛ',
+            'a':'','i':'ꦶ','u':'ꦸ','e':'ꦺ','o':'ꦺꦴ'
+        };
+
         const input = document.getElementById('inputLatin');
         const output = document.getElementById('outputAksara');
         const copyBtn = document.getElementById('copyBtn');
 
-        // Fungsi Konversi Otomatis
+        // Fungsi konversi sederhana tanpa library luar
+        function konversi(str) {
+            let res = "";
+            let i = 0;
+            str = str.toLowerCase();
+            
+            while (i < str.length) {
+                let found = false;
+                // Cek 3 huruf (nga, nya, dha, tha)
+                if (i + 2 < str.length) {
+                    let tiga = str.substring(i, i + 3);
+                    if (mapping[tiga]) { res += mapping[tiga]; i += 3; found = true; }
+                }
+                // Cek 2 huruf (ha, na, ca, dll)
+                if (!found && i + 1 < str.length) {
+                    let dua = str.substring(i, i + 2);
+                    if (mapping[dua]) { res += mapping[dua]; i += 2; found = true; }
+                }
+                // Cek vokal atau spasi
+                if (!found) {
+                    let satu = str[i];
+                    if (mapping[satu]) { res += mapping[satu]; }
+                    else if (satu === ' ') { res += ' '; }
+                    else { res += satu; }
+                    i++;
+                }
+            }
+            return res;
+        }
+
         input.addEventListener('input', (e) => {
-            const val = e.target.value;
-            if (val.trim() === "") {
-                output.innerText = "";
-                return;
-            }
-            // Menggunakan library carakan.js untuk hasil akurat
-            try {
-                output.innerText = carakan.write(val);
-            } catch (err) {
-                console.error("Gagal konversi:", err);
-            }
+            output.innerText = konversi(e.target.value);
         });
 
-        // Fungsi Copy to Clipboard
         copyBtn.addEventListener('click', () => {
-            const textToCopy = output.innerText;
-            if (!textToCopy) return;
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = "<span>Tersalin!</span>";
-                copyBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
-                
+            if (!output.innerText) return;
+            navigator.clipboard.writeText(output.innerText).then(() => {
+                const textAsli = copyBtn.innerText;
+                copyBtn.innerText = "TERSALIN!";
+                copyBtn.classList.replace('bg-slate-800', 'bg-green-600');
                 setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
-                }, 2000);
+                    copyBtn.innerText = textAsli;
+                    copyBtn.classList.replace('bg-green-600', 'bg-slate-800');
+                }, 1500);
             });
         });
     </script>
