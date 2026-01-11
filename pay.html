@@ -107,7 +107,7 @@
                 });
 
                 const linkView = window.location.href.replace('pay.html', 'view.html') + '?' + kodeFinal;
-                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nLihat Kwitansi Resmi:\n${linkView}`;
+                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nBukti Pembayaran:\n${linkView}`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
                 setTimeout(() => location.reload(), 500);
