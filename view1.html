@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwitansi Resmi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #f0f4f2; 
+            overflow: hidden; 
+            position: fixed; 
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .syne { font-family: 'Syne', sans-serif; }
+        .receipt-card { 
+            background: white; border-radius: 1.5rem; 
+            border-top: 12px solid #065f46; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div id="loading" class="text-emerald-800 font-bold animate-pulse text-xs uppercase tracking-widest">MEMUAT...</div>
+
+    <div id="penyusup" class="hidden text-center p-8">
+        <div class="text-6xl mb-4">🤨</div>
+        <h1 class="text-2xl font-black text-rose-600 uppercase italic">KAMU SIAPA?!</h1>
+        <p class="text-slate-500 text-sm mt-2">Masukin kodenya dulu dong, Bos!</p>
+    </div>
+
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 hidden border border-emerald-100">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center text-5xl font-[800] tracking-tighter text-emerald-950 uppercase syne">
+                <span>T</span><span>U</span><span>N</span>
+                <div class="relative flex justify-center">
+                    <span>A</span>
+                    <div class="absolute bg-white w-4 h-2.5 top-[23px]"></div>
+                </div>
+                <span>S</span>
+            </div>
+            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-[0.5em] mt-1">Turun Tangan Atasi Sampah</p>
+            
+            <div class="mt-10">
+                <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Bukti Pembayaran</h2>
+                <div class="w-12 h-1 bg-emerald-500 mx-auto mt-1 rounded-full"></div>
+            </div>
+        </div>
+
+        <div class="text-[12px] text-slate-600">
+            <p class="mb-4 text-center">Telah diterima dari <strong id="d-nama" class="text-slate-800 uppercase"></strong>, untuk iuran sampah bulan <strong id="d-bulan" class="text-slate-800 uppercase"></strong>:</p>
+
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-5 rounded-2xl text-center shadow-lg border border-emerald-200 mb-6">
+                <p id="d-nominal" class="text-3xl font-black text-emerald-900"></p>
+                <div class="w-12 h-[2px] bg-emerald-300 mx-auto my-2"></div>
+                <p id="d-terbilang" class="text-[9px] text-emerald-700 italic font-bold uppercase"></p>
+            </div>
+
+            <div class="flex justify-center mb-6">
+                <div class="p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+                    <img id="barcodeimg" class="w-full max-w-[150px]">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end border-t border-dashed border-slate-200 pt-4">
+            <div class="text-[7px] text-slate-400 font-mono">
+                ID: <span id="d-kode"></span>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] font-bold text-slate-400 uppercase">Hormat kami,</p>
+                <p class="text-sm font-black text-emerald-900 italic uppercase">Pengurus Tuntas</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ... (Script sama seperti sebelumnya, sesuaikan fungsi render) ...
+        const API_URL = "https://script.google.com/macros/s/AKfycbyGq-pOTReNDpcbYZKRpiF8mtFoAa7yjYh-WyqATRuWq9ELMMycHu2edRRB-MXSPCc2/exec";
+        const kodeUrl = window.location.search.substring(1);
+
+        function terbilang(n) {
+            const b = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            if (n < 12) return b[n];
+            if (n < 20) return terbilang(n - 10) + " Belas";
+            if (n < 100) return terbilang(Math.floor(n / 10)) + " Puluh " + terbilang(n % 10);
+            if (n < 200) return "Seratus " + terbilang(n - 100);
+            if (n < 1000) return terbilang(Math.floor(n / 100)) + " Ratus " + terbilang(n % 100);
+            if (n < 2000) return "Seribu " + terbilang(n - 1000);
+            if (n < 1000000) return terbilang(Math.floor(n / 1000)) + " Ribu " + terbilang(n % 1000);
+            return "";
+        }
+
+        if (kodeUrl) {
+            fetch(`${API_URL}?${kodeUrl}`).then(r => r.json()).then(d => d.result === "found" ? render(d) : slip()).catch(slip);
+        } else { slip(); }
+
+        function slip() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('penyusup').classList.remove('hidden');
+        }
+
+        function render(d) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('konten').classList.remove('hidden');
+            document.getElementById('d-nama').innerText = d.nama;
+            document.getElementById('d-bulan').innerText = d.bulan;
+            document.getElementById('d-nominal').innerText = "Rp " + Number(d.nominal).toLocaleString('id-ID');
+            document.getElementById('d-terbilang').innerText = "( " + terbilang(d.nominal) + " Rupiah )";
+            document.getElementById('d-kode').innerText = d.kode || kodeUrl;
+            document.getElementById('barcodeimg').src = "https://barcode.tec-it.com/barcode.ashx?data=" + (d.kode || kodeUrl) + "&code=code128&databar=false";
+        }
+    </script>
+</body>
+</html>
