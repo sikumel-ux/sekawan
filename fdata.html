@@ -2,23 +2,124 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin TUNTAS RT 04</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin TUNTAS - RT 04</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .bg-tuntas { background-color: #059669; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="pb-28">
+
+    <div id="loginPage" class="flex items-center justify-center min-h-screen p-6">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm w-full max-w-md text-center border card-shadow">
+            <div class="w-16 h-16 bg-tuntas rounded-2xl mx-auto flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-emerald-100">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800 uppercase">Admin TUNTAS</h2>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 mb-8">Login Akses RT 04</p>
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <button id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase shadow-lg">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <header class="bg-white/80 backdrop-blur-md p-6 sticky top-0 z-30 border-b flex justify-between items-center">
+            <h1 id="pageTitle" class="font-bold text-slate-800 text-base uppercase tracking-widest">Ringkasan</h1>
+            <button id="btnLogout" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-power-off"></i></button>
+        </header>
+
+        <main class="p-6">
+            <div id="screen-home" class="tab-content active space-y-6">
+                <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-lg">
+                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Total Saldo</p>
+                    <h2 id="totalSaldo" class="text-3xl font-bold">Rp 0</h2>
+                </div>
+                <div class="grid grid-cols-1 gap-3">
+                    <div class="bg-white p-5 rounded-2xl border flex justify-between items-center card-shadow">
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Kas Masuk</p><p id="sumKasIn" class="font-bold text-emerald-600 text-lg">Rp 0</p></div>
+                        <i class="fa-solid fa-arrow-up text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border flex justify-between items-center card-shadow">
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Kas Keluar</p><p id="sumKasOut" class="font-bold text-red-600 text-lg">Rp 0</p></div>
+                        <i class="fa-solid fa-arrow-down text-red-500 bg-red-50 p-3 rounded-xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-[2rem] border card-shadow">
+                    <canvas id="mainChart" style="max-height: 200px;"></canvas>
+                </div>
+            </div>
+
+            <div id="screen-kas" class="tab-content space-y-4">
+                <button onclick="openModal('modalKas')" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase mb-4 shadow-md">+ Tambah Kas</button>
+                <div class="bg-white rounded-2xl border overflow-x-auto card-shadow">
+                    <table class="w-full text-left"><thead class="bg-slate-50"><tr><th class="p-3">Ket</th><th class="p-3">Masuk</th><th class="p-3">Keluar</th></tr></thead><tbody id="tableBodyKas"></tbody></table>
+                </div>
+            </div>
+
+            <div id="screen-anggota" class="tab-content space-y-4">
+                <div class="flex gap-2">
+                    <button onclick="openModal('modalMember')" class="flex-1 p-4 bg-slate-100 rounded-xl font-bold text-[10px] uppercase">Warga Baru</button>
+                    <button onclick="openModal('modalBayar')" class="flex-1 p-4 bg-tuntas text-white rounded-xl font-bold text-[10px] uppercase">Input Iuran</button>
+                </div>
+                <div class="bg-white rounded-2xl border overflow-hidden card-shadow">
+                    <table class="w-full text-left"><thead class="bg-slate-50"><tr><th class="p-3">Nama</th><th class="p-3 text-right">Nominal</th></tr></thead><tbody id="tableIuran"></tbody></table>
+                </div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-around pb-8 z-40">
+            <button onclick="switchTab('home')" class="text-emerald-600"><i class="fa-solid fa-house text-xl"></i></button>
+            <button onclick="switchTab('kas')" class="text-slate-300"><i class="fa-solid fa-wallet text-xl"></i></button>
+            <button onclick="switchTab('anggota')" class="text-slate-300"><i class="fa-solid fa-users text-xl"></i></button>
+        </nav>
+    </div>
+
+    <div id="modalKas" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
+            <div class="flex gap-2 mb-4 bg-slate-100 p-1 rounded-xl">
+                <button id="btnIn" onclick="setKat('Masuk')" class="flex-1 py-3 bg-white rounded-lg font-bold text-emerald-600">Masuk</button>
+                <button id="btnOut" onclick="setKat('Keluar')" class="flex-1 py-3 rounded-lg text-slate-400 font-bold">Keluar</button>
+            </div>
+            <input type="number" id="kNom" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl mb-3 outline-none">
+            <input type="text" id="kKet" placeholder="Keterangan" class="w-full p-4 border rounded-xl mb-3 outline-none">
+            <button id="btnSubmitKas" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase shadow-lg">Simpan</button>
+            <button onclick="closeModal('modalKas')" class="w-full py-4 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalMember" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center p-6">
+        <div class="bg-white w-full rounded-[2rem] p-8 text-center border">
+            <h3 class="font-bold mb-4 uppercase text-sm">Registrasi Warga</h3>
+            <input type="text" id="mNama" placeholder="NAMA LENGKAP" class="w-full p-4 border rounded-xl mb-4 text-center font-bold uppercase outline-none">
+            <button id="btnSubmitMember" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase shadow-lg">Daftarkan</button>
+            <button onclick="closeModal('modalMember')" class="w-full mt-2 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalBayar" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
+            <h3 class="font-bold text-center mb-4 uppercase text-sm">Input Iuran</h3>
+            <select id="bNama" class="w-full p-4 border rounded-xl mb-3 outline-none"></select>
+            <input type="number" id="bNom" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl mb-6 outline-none">
+            <button id="btnSubmitIuran" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase shadow-lg">Konfirmasi</button>
+            <button onclick="closeModal('modalBayar')" class="w-full py-4 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen p-6">
-
-    <div id="loginPage" class="bg-white p-8 rounded-3xl shadow-lg w-full max-w-md text-center border border-slate-100">
-        <h2 class="text-xl font-bold text-slate-800 mb-6 uppercase">Admin TUNTAS</h2>
-        <div class="space-y-4">
-            <input type="email" id="email" placeholder="Email (Contoh: admin@gmail.com)" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-            <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
-            <button id="btnLogin" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold uppercase active:scale-95 transition-all">Masuk</button>
-        </div>
-    </div>
 
     <script>
         const firebaseConfig = {
@@ -32,26 +133,91 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db_fs = firebase.firestore();
+        let currentKat = 'Masuk', chart, members = [];
 
-        document.getElementById('btnLogin').onclick = function() {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-
-            if(!e || !p) {
-                alert("Masukkan Email dan Password!");
-                return;
+        // AUTH
+        document.getElementById('btnLogin').onclick = () => {
+            const e = document.getElementById('email').value, p = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+        };
+        document.getElementById('btnLogout').onclick = () => auth.signOut();
+        auth.onAuthStateChanged(user => {
+            if(user){
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
             }
+        });
 
-            console.log("Mencoba login...");
-            auth.signInWithEmailAndPassword(e, p)
-                .then((userCredential) => {
-                    alert("Berhasil Login! Selamat datang " + userCredential.user.email);
-                    // Disini nanti kamu bisa arahkan ke halaman dashboard
-                })
-                .catch((error) => {
-                    alert("Gagal: " + error.message);
-                });
+        // TAB & MODAL
+        function switchTab(t){
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('screen-'+t).classList.add('active');
+        }
+        function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+        function setKat(k){
+            currentKat = k;
+            document.getElementById('btnIn').className = k==='Masuk' ? 'flex-1 py-3 bg-white rounded-lg font-bold text-emerald-600 shadow-sm' : 'flex-1 py-3 rounded-lg text-slate-400 font-bold';
+            document.getElementById('btnOut').className = k==='Keluar' ? 'flex-1 py-3 bg-white rounded-lg font-bold text-red-600 shadow-sm' : 'flex-1 py-3 rounded-lg text-slate-400 font-bold';
+        }
+
+        // LOAD DATA
+        async function loadData(){
+            const skas = await db_fs.collection("kas").orderBy("tgl","desc").get();
+            const siuran = await db_fs.collection("pembayaran").orderBy("tgl","desc").get();
+            const sanggota = await db_fs.collection("anggota").get();
+            
+            let tin = 0, tout = 0, tiur = 0;
+            const tk = document.getElementById('tableBodyKas'), ti = document.getElementById('tableIuran');
+            tk.innerHTML = ''; ti.innerHTML = ''; members = [];
+
+            skas.docs.forEach(d => {
+                const i = d.data();
+                if(i.kat==='Masuk') tin += i.nom; else tout += i.nom;
+                tk.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 text-[11px]">${i.ket}</td><td class="p-3 text-emerald-600 font-bold">${i.kat==='Masuk' ? i.nom.toLocaleString() : '-'}</td><td class="p-3 text-red-500 font-bold">${i.kat==='Keluar' ? i.nom.toLocaleString() : '-'}</td></tr>`);
+            });
+
+            siuran.docs.forEach(d => {
+                const i = d.data(); tiur += i.nom;
+                ti.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold uppercase text-[11px]">${i.nama}</td><td class="p-3 text-right text-emerald-600 font-bold">Rp ${i.nom.toLocaleString()}</td></tr>`);
+            });
+
+            sanggota.docs.forEach(d => members.push(d.data().nama));
+            document.getElementById('bNama').innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
+
+            document.getElementById('totalSaldo').innerText = 'Rp ' + (tin - tout + tiur).toLocaleString();
+            document.getElementById('sumKasIn').innerText = 'Rp ' + tin.toLocaleString();
+            document.getElementById('sumKasOut').innerText = 'Rp ' + tout.toLocaleString();
+            
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
+                type:'doughnut', data:{ labels:['In','Out','Iuran'], datasets:[{ data:[tin, tout, tiur], backgroundColor:['#10b981','#ef4444','#3b82f6'] }] },
+                options:{ cutout:'70%', plugins:{legend:{position:'bottom'}} }
+            });
+        }
+
+        // ACTIONS
+        document.getElementById('btnSubmitKas').onclick = async () => {
+            const n = document.getElementById('kNom').value, k = document.getElementById('kKet').value;
+            await db_fs.collection("kas").add({ tgl: new Date(), nom: Number(n), ket: k, kat: currentKat });
+            closeModal('modalKas'); loadData();
+        };
+        document.getElementById('btnSubmitMember').onclick = async () => {
+            const n = document.getElementById('mNama').value;
+            await db_fs.collection("anggota").add({ nama: n });
+            closeModal('modalMember'); loadData();
+        };
+        document.getElementById('btnSubmitIuran').onclick = async () => {
+            const n = document.getElementById('bNama').value, nom = document.getElementById('bNom').value;
+            await db_fs.collection("pembayaran").add({ tgl: new Date(), nama: n, nom: Number(nom) });
+            closeModal('modalBayar'); loadData();
         };
     </script>
 </body>
-</html>
+    </html>
+                                                                                                                                                                                           
