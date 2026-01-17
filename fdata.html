@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
         .bg-tuntas { background-color: #059669; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -17,6 +17,8 @@
         th { font-size: 10px; text-transform: uppercase; color: #64748b; padding: 12px 8px; text-align: left; }
         td { font-size: 11px; padding: 12px 8px; border-bottom: 1px solid #f1f5f9; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body class="pb-28">
@@ -37,7 +39,7 @@
             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 mb-8">Login Firebase RT 04</p>
             
             <div class="space-y-4">
-                <input type="email" id="username" placeholder="Email (Contoh: budi@gmail.com)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+                <input type="email" id="username" placeholder="Email Terdaftar" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
                 <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
                 <button type="button" id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase tracking-wide active:scale-95 transition-all shadow-lg shadow-emerald-100">Masuk</button>
             </div>
@@ -116,7 +118,7 @@
     </div>
 
     <div id="modalKas" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8 animate-slide-up">
             <div class="flex gap-2 mb-6 bg-slate-100 p-1 rounded-xl">
                 <button id="btnIn" class="flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-emerald-600">Masuk</button>
                 <button id="btnOut" class="flex-1 py-3 rounded-lg text-slate-400 font-bold">Keluar</button>
@@ -141,7 +143,7 @@
     </div>
 
     <div id="modalBayar" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8 animate-slide-up">
             <h3 class="font-bold text-center mb-6 text-slate-800 uppercase tracking-widest text-sm">Input Iuran Warga</h3>
             <div class="space-y-3">
                 <input type="date" id="bTgl" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
@@ -153,11 +155,11 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
+    <script>
         // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
@@ -168,28 +170,34 @@
             appId: "1:1090506516563:web:63c429677caea28addfea6"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db_fs = getFirestore(app);
-        const auth = getAuth(app);
+        // Initialize
+        firebase.initializeApp(firebaseConfig);
+        const db_fs = firebase.firestore();
+        const auth = firebase.auth();
 
         let db = { kas:[], anggota:[], pembayaran:[] }, kKat = "Masuk", chart;
         const showLoading = (s) => document.getElementById('loading').style.display = s ? 'flex' : 'none';
         
-        // AUTH LOGIC
-        document.getElementById('btnLogin').onclick = async () => {
+        // LOGIN LOGIC
+        document.getElementById('btnLogin').onclick = function() {
             const email = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             if(!email || !pass) return alert("Isi email dan password!");
+            
             showLoading(true);
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (e) { alert("Login Gagal! Cek kembali email/pass."); }
-            showLoading(false);
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    showLoading(false);
+                })
+                .catch((e) => {
+                    showLoading(false);
+                    alert("Gagal Masuk: " + e.message);
+                });
         };
 
-        document.getElementById('btnLogout').onclick = () => signOut(auth);
+        document.getElementById('btnLogout').onclick = () => auth.signOut();
 
-        onAuthStateChanged(auth, (user) => {
+        auth.onAuthStateChanged((user) => {
             if (user) {
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
@@ -200,23 +208,26 @@
             }
         });
 
-        // DATA HANDLER
+        // DATA LOADER
         async function refreshData() {
             showLoading(true);
             try {
-                const qKas = query(collection(db_fs, "kas"), orderBy("tanggal", "desc"));
-                const snapKas = await getDocs(qKas);
+                // Ambil Data Kas
+                const snapKas = await db_fs.collection("kas").orderBy("tanggal", "desc").get();
                 db.kas = snapKas.docs.map(doc => doc.data());
 
-                const snapAnggota = await getDocs(collection(db_fs, "anggota"));
+                // Ambil Data Anggota
+                const snapAnggota = await db_fs.collection("anggota").get();
                 db.anggota = snapAnggota.docs.map(doc => doc.data().nama);
 
-                const qBayar = query(collection(db_fs, "pembayaran"), orderBy("tanggal", "desc"));
-                const snapBayar = await getDocs(qBayar);
+                // Ambil Data Pembayaran
+                const snapBayar = await db_fs.collection("pembayaran").orderBy("tanggal", "desc").get();
                 db.pembayaran = snapBayar.docs.map(doc => doc.data());
 
                 renderUI();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+            }
             showLoading(false);
         }
 
@@ -249,46 +260,62 @@
             });
         }
 
-        // BUTTON ACTIONS
+        // DATABASE ACTIONS
         document.getElementById('btnSubmitKas').onclick = async () => {
             const t = document.getElementById('kTgl').value, n = document.getElementById('kNom').value, k = document.getElementById('kKet').value;
             if(!t || !n || !k) return alert("Lengkapi data!");
             showLoading(true);
-            await addDoc(collection(db_fs, "kas"), { tanggal: Timestamp.fromDate(new Date(t)), keterangan: k, kategori: kKat, nominal: Number(n) });
-            document.getElementById('modalKas').classList.add('hidden');
-            refreshData();
+            try {
+                await db_fs.collection("kas").add({
+                    tanggal: firebase.firestore.Timestamp.fromDate(new Date(t)),
+                    keterangan: k,
+                    kategori: kKat,
+                    nominal: Number(n)
+                });
+                document.getElementById('modalKas').classList.add('hidden');
+                refreshData();
+            } catch (e) { alert("Gagal simpan: " + e.message); showLoading(false); }
         };
 
         document.getElementById('btnSubmitMember').onclick = async () => {
             const n = document.getElementById('mNama').value;
             if(!n) return alert("Isi nama!");
             showLoading(true);
-            await addDoc(collection(db_fs, "anggota"), { nama: n });
-            document.getElementById('modalMember').classList.add('hidden');
-            refreshData();
+            try {
+                await db_fs.collection("anggota").add({ nama: n });
+                document.getElementById('modalMember').classList.add('hidden');
+                refreshData();
+            } catch (e) { alert("Gagal simpan: " + e.message); showLoading(false); }
         };
 
         document.getElementById('btnSubmitIuran').onclick = async () => {
             const t = document.getElementById('bTgl').value, n = document.getElementById('bNama').value, nom = document.getElementById('bNom').value;
             if(!t || !n || !nom) return alert("Lengkapi!");
             showLoading(true);
-            await addDoc(collection(db_fs, "pembayaran"), { tanggal: Timestamp.fromDate(new Date(t)), nama: n, nominal: Number(nom) });
-            document.getElementById('modalBayar').classList.add('hidden');
-            refreshData();
+            try {
+                await db_fs.collection("pembayaran").add({
+                    tanggal: firebase.firestore.Timestamp.fromDate(new Date(t)),
+                    nama: n,
+                    nominal: Number(nom)
+                });
+                document.getElementById('modalBayar').classList.add('hidden');
+                refreshData();
+            } catch (e) { alert("Gagal simpan: " + e.message); showLoading(false); }
         };
 
-        // UI TABS & MODALS
-        document.getElementById('nav-home').onclick = () => switchTab('home');
-        document.getElementById('nav-kas').onclick = () => switchTab('kas');
-        document.getElementById('nav-anggota').onclick = () => switchTab('anggota');
-
+        // NAVIGATION LOGIC
         function switchTab(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-emerald-600','text-slate-300'));
             document.getElementById('screen-'+t).classList.add('active');
             document.getElementById('nav-'+t).classList.replace('text-slate-300','text-emerald-600');
+            document.getElementById('pageTitle').innerText = t === 'home' ? 'Ringkasan' : t === 'kas' ? 'Kas Tuntas' : 'Data Warga';
             document.getElementById('addBtnHeader').style.display = (t === 'kas') ? 'flex' : 'none';
         }
+
+        document.getElementById('nav-home').onclick = () => switchTab('home');
+        document.getElementById('nav-kas').onclick = () => switchTab('kas');
+        document.getElementById('nav-anggota').onclick = () => switchTab('anggota');
 
         document.getElementById('addBtnHeader').onclick = () => {
             document.getElementById('modalKas').classList.remove('hidden');
@@ -296,12 +323,4 @@
         };
 
         document.getElementById('btnOpenModalMember').onclick = () => document.getElementById('modalMember').classList.remove('hidden');
-        document.getElementById('btnOpenModalBayar').onclick = () => {
-            const sel = document.getElementById('bNama');
-            sel.innerHTML = db.anggota.map(a => `<option value="${a}">${a}</option>`).join('');
-            document.getElementById('modalBayar').classList.remove('hidden');
-            document.querySelectorAll('input[type="date"]').forEach(i=>i.valueAsDate=new Date());
-        };
-
-        document.getElementById('btnIn').onclick = () => { kKat = "Masuk"; document.getElementById('btnIn').className = "flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-emerald-600"; document.getElementById('btnOut').className = "flex-1 py-3 rounded-lg text-slate-400 font-bold"; };
-        document.getElementById('btnOut').onclick = () => { kKat = "Keluar"; document.getElementById('btnOut').className = "flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-red-600"; document.getElementById('btnIn').className = "flex-1 py-3 rounded-lg text-slate-400 font-
+        document.getElementById('btnOpenModalBayar').onclick
