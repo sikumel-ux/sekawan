@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Input Pembayaran - TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #f0fdf4;
+        }
+        .input-focus:focus {
+            border-color: #059669;
+            ring: 2px;
+            ring-color: #10b981;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-sm bg-white p-8 rounded-[2.5rem] shadow-2xl border border-emerald-100 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-50 rounded-full"></div>
+        
+        <div class="relative">
+            <div class="flex items-center justify-center mb-6">
+                <div class="bg-emerald-600 text-white p-3 rounded-2xl shadow-lg shadow-emerald-200">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
+                </div>
+            </div>
+            
+            <h2 class="text-xl font-black text-slate-800 text-center mb-1 uppercase tracking-tighter">Pembayaran TUNTAS</h2>
+            <p class="text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest mb-8 border-b pb-4">RT 04 Sekawan - Sampah</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">No WhatsApp Pelanggan</label>
+                    <div class="flex items-center bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all mt-1">
+                        <span class="pl-4 pr-1 text-slate-400 font-bold text-sm">+62</span>
+                        <input type="number" id="wa" placeholder="81234567..." class="w-full p-4 bg-transparent outline-none text-slate-700 font-bold text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Nama Bapak/Ibu</label>
+                    <input type="text" id="nama" placeholder="Masukkan Nama" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-bold text-sm mt-1 transition-all">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Untuk Iuran Bulan</label>
+                    <select id="bulan" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-bold text-slate-700 text-sm mt-1 transition-all">
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September">September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Nominal (Rp)</label>
+                    <input type="number" id="nominal" placeholder="0" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-black text-sm mt-1 transition-all">
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <button onclick="setNominal(50000)" class="bg-emerald-50 text-emerald-700 font-bold py-2 rounded-xl border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all text-xs">Rp 50.000</button>
+                        <button onclick="setNominal(70000)" class="bg-emerald-50 text-emerald-700 font-bold py-2 rounded-xl border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all text-xs">Rp 70.000</button>
+                    </div>
+                </div>
+
+                <button onclick="prosesSimpan()" id="btn-main" class="w-full bg-emerald-700 text-white p-5 rounded-2xl font-black shadow-xl shadow-emerald-100 active:scale-95 transition-all mt-6 flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> SIMPAN & KIRIM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG FIREBASE (Gunakan punya kamu)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function setNominal(angka) {
+            document.getElementById('nominal').value = angka;
+        }
+
+        async function prosesSimpan() {
+            const btn = document.getElementById('btn-main');
+            const waInput = document.getElementById('wa').value;
+            const nama = document.getElementById('nama').value;
+            const bulan = document.getElementById('bulan').value;
+            const nominal = document.getElementById('nominal').value;
+
+            // Validasi Sederhana
+            if(!waInput || !nama || !nominal) {
+                alert("⚠️ Mohon lengkapi semua data!");
+                return;
+            }
+
+            // Formatting
+            const waFinal = "62" + waInput.replace(/^0+/, '');
+            const kodeUnik = "T" + Date.now().toString().slice(-6); // Kode unik 6 digit terakhir timestamp
+            
+            // Loading State
+            btn.disabled = true;
+            btn.classList.replace('bg-emerald-700', 'bg-slate-400');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> MEMPROSES...";
+
+            try {
+                // 1. Simpan Data ke Firestore
+                await db.collection("kwitansi").doc(kodeUnik).set({
+                    wa: waFinal,
+                    nama: nama,
+                    bulan: bulan,
+                    nominal: Number(nominal),
+                    kode: kodeUnik,
+                    tgl: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 2. Buat Link untuk Pelanggan (Otomatis deteksi domain)
+                const currentUrl = window.location.href;
+                const linkView = currentUrl.replace('fpay.html', 'kwitansi.html') + '?id=' + kodeUnik;
+                
+                // 3. Susun Pesan WhatsApp
+                const pesan = `*BUKTI PEMBAYARAN IURAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\nPembayaran iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima dan dicatat dalam sistem.\n\nKlik link di bawah ini untuk melihat kwitansi digital resmi Anda:\n${linkView}\n\n_Pesan ini dibuat otomatis oleh Sistem Admin TUNTAS RT 04_`;
+                
+                // 4. Buka WhatsApp & Reset Form
+                window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
+                
+                setTimeout(() => {
+                    alert("✅ Berhasil disimpan & Link terkirim!");
+                    location.reload();
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error: ", error);
+                alert("❌ Gagal menyimpan data: " + error.message);
+                btn.disabled = false;
+                btn.classList.replace('bg-slate-400', 'bg-emerald-700');
+                btn.innerHTML = "<i class='fa-brands fa-whatsapp text-lg'></i> SIMPAN & KIRIM";
+            }
+        }
+    </script>
+</body>
+  </html>
+  
