@@ -37,7 +37,7 @@
             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 mb-8">Login Firebase RT 04</p>
             
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username (e.g: admin)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+                <input type="email" id="username" placeholder="Email (Contoh: budi@gmail.com)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
                 <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
                 <button type="button" id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-xl font-bold uppercase tracking-wide active:scale-95 transition-all shadow-lg shadow-emerald-100">Masuk</button>
             </div>
@@ -78,7 +78,6 @@
                         <i class="fa-solid fa-hand-holding-dollar text-blue-500 bg-blue-50 p-3 rounded-xl"></i>
                     </div>
                 </div>
-
                 <div class="bg-white p-6 rounded-[2rem] border card-shadow">
                     <canvas id="mainChart" style="max-height: 200px;"></canvas>
                 </div>
@@ -88,9 +87,7 @@
                 <div class="bg-white rounded-2xl border overflow-x-auto card-shadow">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 border-b">
-                            <tr>
-                                <th class="p-3">Tgl</th><th class="p-3">Ket</th><th class="p-3">Masuk</th><th class="p-3">Keluar</th>
-                            </tr>
+                            <tr><th class="p-3">Tgl</th><th class="p-3">Ket</th><th class="p-3">Masuk</th><th class="p-3">Keluar</th></tr>
                         </thead>
                         <tbody id="tableBodyKas"></tbody>
                     </table>
@@ -119,7 +116,7 @@
     </div>
 
     <div id="modalKas" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 animate-slide-up">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
             <div class="flex gap-2 mb-6 bg-slate-100 p-1 rounded-xl">
                 <button id="btnIn" class="flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-emerald-600">Masuk</button>
                 <button id="btnOut" class="flex-1 py-3 rounded-lg text-slate-400 font-bold">Keluar</button>
@@ -144,7 +141,7 @@
     </div>
 
     <div id="modalBayar" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 animate-slide-up">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
             <h3 class="font-bold text-center mb-6 text-slate-800 uppercase tracking-widest text-sm">Input Iuran Warga</h3>
             <div class="space-y-3">
                 <input type="date" id="bTgl" class="w-full p-4 bg-slate-50 border rounded-xl outline-none">
@@ -161,6 +158,7 @@
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -175,18 +173,17 @@
         const auth = getAuth(app);
 
         let db = { kas:[], anggota:[], pembayaran:[] }, kKat = "Masuk", chart;
-
-        // UI Helpers
         const showLoading = (s) => document.getElementById('loading').style.display = s ? 'flex' : 'none';
         
-        // --- AUTH ---
+        // AUTH LOGIC
         document.getElementById('btnLogin').onclick = async () => {
-            const u = document.getElementById('username').value + "@tuntas.com";
-            const p = document.getElementById('password').value;
+            const email = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if(!email || !pass) return alert("Isi email dan password!");
             showLoading(true);
             try {
-                await signInWithEmailAndPassword(auth, u, p);
-            } catch (e) { alert("Login Gagal! Check user/pass"); }
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) { alert("Login Gagal! Cek kembali email/pass."); }
             showLoading(false);
         };
 
@@ -203,13 +200,13 @@
             }
         });
 
-        // --- DATA LOGIC ---
+        // DATA HANDLER
         async function refreshData() {
             showLoading(true);
             try {
                 const qKas = query(collection(db_fs, "kas"), orderBy("tanggal", "desc"));
                 const snapKas = await getDocs(qKas);
-                db.kas = snapKas.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                db.kas = snapKas.docs.map(doc => doc.data());
 
                 const snapAnggota = await getDocs(collection(db_fs, "anggota"));
                 db.anggota = snapAnggota.docs.map(doc => doc.data().nama);
@@ -252,10 +249,10 @@
             });
         }
 
-        // --- ACTIONS ---
+        // BUTTON ACTIONS
         document.getElementById('btnSubmitKas').onclick = async () => {
             const t = document.getElementById('kTgl').value, n = document.getElementById('kNom').value, k = document.getElementById('kKet').value;
-            if(!t || !n || !k) return alert("Isi semua!");
+            if(!t || !n || !k) return alert("Lengkapi data!");
             showLoading(true);
             await addDoc(collection(db_fs, "kas"), { tanggal: Timestamp.fromDate(new Date(t)), keterangan: k, kategori: kKat, nominal: Number(n) });
             document.getElementById('modalKas').classList.add('hidden');
@@ -280,7 +277,7 @@
             refreshData();
         };
 
-        // Navigation & Modals
+        // UI TABS & MODALS
         document.getElementById('nav-home').onclick = () => switchTab('home');
         document.getElementById('nav-kas').onclick = () => switchTab('kas');
         document.getElementById('nav-anggota').onclick = () => switchTab('anggota');
@@ -306,9 +303,5 @@
             document.querySelectorAll('input[type="date"]').forEach(i=>i.valueAsDate=new Date());
         };
 
-        document.getElementById('btnIn').onclick = () => { kKat = "Masuk"; document.getElementById('btnIn').classList.add('bg-white','text-emerald-600'); document.getElementById('btnOut').classList.remove('bg-white','text-red-600'); };
-        document.getElementById('btnOut').onclick = () => { kKat = "Keluar"; document.getElementById('btnOut').classList.add('bg-white','text-red-600'); document.getElementById('btnIn').classList.remove('bg-white','text-emerald-600'); };
-
-    </script>
-</body>
-</html>
+        document.getElementById('btnIn').onclick = () => { kKat = "Masuk"; document.getElementById('btnIn').className = "flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-emerald-600"; document.getElementById('btnOut').className = "flex-1 py-3 rounded-lg text-slate-400 font-bold"; };
+        document.getElementById('btnOut').onclick = () => { kKat = "Keluar"; document.getElementById('btnOut').className = "flex-1 py-3 bg-white rounded-lg shadow-sm font-bold text-red-600"; document.getElementById('btnIn').className = "flex-1 py-3 rounded-lg text-slate-400 font-
