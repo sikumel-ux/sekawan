@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04 - LENGKAP</title>
+    <title>TUNTAS RT 04 - RE-FIX</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -20,15 +20,15 @@
 
     <div id="loginPage" class="fixed inset-0 bg-white z-[100] flex items-center justify-center p-6">
         <div class="w-full max-w-sm text-center">
-            <div class="w-20 h-20 bg-tuntas text-white rounded-[2rem] flex items-center justify-center text-3xl mx-auto mb-6 shadow-xl shadow-emerald-100">
+            <div class="w-20 h-20 bg-tuntas text-white rounded-[2rem] flex items-center justify-center text-3xl mx-auto mb-6 shadow-xl">
                 <i class="fa-solid fa-leaf"></i>
             </div>
-            <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">TUNTAS RT 04</h2>
+            <h2 class="text-2xl font-black text-slate-800 uppercase italic">TUNTAS RT 04</h2>
             <div class="space-y-4 mt-8">
-                <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-slate-50 border">
-                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border">
-                <button id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold uppercase shadow-lg active:scale-95 transition-all">Masuk</button>
-                <p id="msg" class="text-[10px] font-bold text-rose-500"></p>
+                <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-slate-50 border border-slate-200 focus:border-emerald-500">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 focus:border-emerald-500">
+                <button id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold uppercase shadow-lg active:scale-95 transition-all">Masuk Sekarang</button>
+                <p id="msg" class="text-[10px] font-bold text-rose-500 min-h-[15px]"></p>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
                 <h1 class="font-black text-xl text-emerald-800 leading-none italic">TUNTAS</h1>
                 <p class="text-[8px] font-bold text-emerald-500 uppercase tracking-widest mt-1">Sistem Informasi RT</p>
             </div>
-            <button id="btnLogout" class="text-rose-500 font-bold text-xs p-2 bg-rose-50 rounded-lg">LOGOUT</button>
+            <button id="btnLogout" class="text-rose-500 font-bold text-[10px] p-2 bg-rose-50 rounded-lg border border-rose-100">KELUAR</button>
         </header>
 
         <div id="screen-home" class="tab-content active p-6 space-y-6">
@@ -53,15 +53,15 @@
             </div>
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                    <p class="text-[7px] font-bold text-emerald-500 uppercase">Pemasukan</p>
+                    <p class="text-[7px] font-bold text-emerald-500 uppercase italic">Pemasukan</p>
                     <p id="sIn" class="font-black text-[9px] text-slate-700">0</p>
                 </div>
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                    <p class="text-[7px] font-bold text-rose-500 uppercase">Pengeluaran</p>
+                    <p class="text-[7px] font-bold text-rose-500 uppercase italic">Pengeluaran</p>
                     <p id="sOut" class="font-black text-[9px] text-slate-700">0</p>
                 </div>
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                    <p class="text-[7px] font-bold text-blue-500 uppercase">Iuran</p>
+                    <p class="text-[7px] font-bold text-blue-500 uppercase italic">Iuran</p>
                     <p id="sIur" class="font-black text-[9px] text-slate-700">0</p>
                 </div>
             </div>
@@ -70,11 +70,11 @@
 
         <div id="screen-kas" class="tab-content p-6 space-y-4">
             <div class="bg-slate-800 p-6 rounded-[2.5rem] text-white text-center shadow-xl">
-                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Kas Ready</p>
-                <h3 id="totalSaldo2" class="text-2xl font-black">Rp 0</h3>
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Saldo Kas (Real-time)</p>
+                <h3 id="totalSaldo2" class="text-2xl font-black text-emerald-400">Rp 0</h3>
             </div>
             <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
-                <p class="text-[10px] font-bold text-slate-400 uppercase">Range Tanggal (Filter):</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase">Range Tanggal:</p>
                 <div class="flex gap-2">
                     <input type="date" id="kasFrom" class="flex-1 text-[10px] p-2 border bg-slate-50" onchange="loadData()">
                     <input type="date" id="kasTo" class="flex-1 text-[10px] p-2 border bg-slate-50" onchange="loadData()">
@@ -82,12 +82,12 @@
             </div>
             <div class="bg-white rounded-2xl border overflow-hidden shadow-sm overflow-x-auto">
                 <table class="w-full text-[10px] text-left">
-                    <thead class="bg-slate-50 border-b text-slate-400 uppercase">
-                        <tr><th class="p-3">Tanggal</th><th class="p-3">Keterangan</th><th class="p-3 text-right">In</th><th class="p-3 text-right">Out</th><th class="p-3 text-center">Aksi</th></tr>
+                    <thead class="bg-slate-50 border-b text-slate-400 uppercase font-black">
+                        <tr><th class="p-3">Tgl Indo</th><th class="p-3">Ket</th><th class="p-3 text-right">In</th><th class="p-3 text-right">Out</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
                     <tbody id="tBodyKas"></tbody>
-                    <tfoot class="bg-slate-100 font-black border-t">
-                        <tr><td colspan="2" class="p-3 text-center">TOTAL</td><td id="footIn" class="p-3 text-right text-emerald-600">0</td><td id="footOut" class="p-3 text-right text-rose-600">0</td><td class="p-3"></td></tr>
+                    <tfoot class="bg-emerald-50 font-black border-t">
+                        <tr><td colspan="2" class="p-3 text-center">SUBTOTAL</td><td id="footIn" class="p-3 text-right text-emerald-600">0</td><td id="footOut" class="p-3 text-right text-rose-600">0</td><td class="p-3"></td></tr>
                     </tfoot>
                 </table>
             </div>
@@ -96,7 +96,7 @@
 
         <div id="screen-iur" class="tab-content p-6 space-y-4">
             <div class="bg-blue-600 p-6 rounded-[2.5rem] text-white text-center shadow-xl">
-                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Iuran Masuk Bulan Ini</p>
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Iuran Bulan Ini</p>
                 <h3 id="totalIur3" class="text-2xl font-black">Rp 0</h3>
             </div>
             <input type="month" id="fIur" class="w-full p-4 border rounded-2xl font-bold text-emerald-700 bg-white" onchange="loadData()">
@@ -106,8 +106,8 @@
                         <tr><th class="p-3">Tgl</th><th class="p-3">Nama</th><th class="p-3 text-center">Status</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
                     <tbody id="tBodyIur"></tbody>
-                    <tfoot class="bg-slate-100 font-black border-t text-emerald-600">
-                        <tr><td colspan="3" class="p-3 text-center">TOTAL IURAN</td><td id="footIur" class="p-3 text-right">0</td><td class="p-3"></td></tr>
+                    <tfoot class="bg-blue-50 font-black border-t text-blue-700">
+                        <tr><td colspan="3" class="p-3 text-center italic">Total Iuran Masuk</td><td id="footIur" class="p-3 text-right">0</td><td class="p-3"></td></tr>
                     </tfoot>
                 </table>
             </div>
@@ -117,34 +117,34 @@
             </div>
         </div>
 
-        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-around pb-8 z-40 shadow-inner">
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-around pb-8 z-40">
             <button onclick="st('home')" id="n-home" class="text-emerald-600 flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold">BERANDA</span></button>
             <button onclick="st('kas')" id="n-kas" class="text-slate-300 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[8px] font-bold">RIWAYAT</span></button>
-            <button onclick="st('iur')" id="n-iur" class="text-slate-300 flex flex-col items-center gap-1"><i class="fa-solid fa-users-rectangle"></i><span class="text-[8px] font-bold">IURAN</span></button>
+            <button onclick="st('iur')" id="n-iur" class="text-slate-300 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">IURAN</span></button>
         </nav>
     </div>
 
     <div id="mKas" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
         <h4 id="kasTitle" class="font-black text-center text-slate-800 uppercase italic">Tambah Kas</h4>
-        <div class="flex gap-2 bg-slate-100 p-1 rounded-2xl"><button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-xl font-bold text-emerald-600 shadow-sm uppercase">Masuk</button><button id="bOut" onclick="sk('Keluar')" class="flex-1 py-3 rounded-xl text-slate-400 font-bold uppercase">Keluar</button></div>
-        <input type="date" id="kDate" class="w-full p-4 border bg-slate-50"><input type="number" id="kNom" placeholder="Nominal Rp" class="w-full p-4 border bg-slate-50"><input type="text" id="kKet" placeholder="Keterangan" class="w-full p-4 border bg-slate-50">
+        <div class="flex gap-2 bg-slate-100 p-1 rounded-2xl"><button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-xl font-bold text-emerald-600 shadow-sm">MASUK</button><button id="bOut" onclick="sk('Keluar')" class="flex-1 py-3 rounded-xl text-slate-400 font-bold">KELUAR</button></div>
+        <input type="date" id="kDate" class="w-full p-4 border bg-slate-50"><input type="number" id="kNom" placeholder="Nominal" class="w-full p-4 border bg-slate-50"><input type="text" id="kKet" placeholder="Keterangan" class="w-full p-4 border bg-slate-50">
         <input type="hidden" id="kId">
-        <button id="sKas" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold shadow-xl">SIMPAN DATA</button>
-        <button onclick="closeM('mKas')" class="w-full text-slate-400 font-bold text-[10px] uppercase">Batal</button>
+        <button id="sKas" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-bold">SIMPAN</button>
+        <button onclick="closeM('mKas')" class="w-full text-slate-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
     <div id="mBayar" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
-        <h4 id="iurTitle" class="font-black text-center text-slate-800 uppercase italic">Input Iuran</h4>
-        <input type="month" id="iDate" class="w-full p-4 border bg-slate-50"><select id="iNama" class="w-full p-4 border bg-slate-50 font-bold"></select><input type="number" id="iNom" placeholder="Nominal Rp" class="w-full p-4 border bg-slate-50">
+        <h4 id="iurTitle" class="font-bold text-center uppercase tracking-widest">Input Iuran</h4>
+        <input type="month" id="iDate" class="w-full p-4 border bg-slate-50"><select id="iNama" class="w-full p-4 border bg-slate-50 font-bold uppercase"></select><input type="number" id="iNom" placeholder="Nominal Rp" class="w-full p-4 border bg-slate-50">
         <input type="hidden" id="iId">
-        <button id="sBayar" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold shadow-xl">SIMPAN IURAN</button>
-        <button onclick="closeM('mBayar')" class="w-full text-slate-400 font-bold text-[10px] uppercase tracking-widest">Batal</button>
+        <button id="sBayar" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold">PROSES PEMBAYARAN</button>
+        <button onclick="closeM('mBayar')" class="w-full text-slate-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
     <div id="mAng" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center p-6"><div class="bg-white w-full rounded-[2.5rem] p-8 text-center shadow-2xl">
-        <h4 class="font-black text-slate-800 uppercase mb-4">Warga Baru</h4>
+        <h4 class="font-bold uppercase mb-4 italic">Warga Baru</h4>
         <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full p-4 border rounded-2xl mb-4 font-bold uppercase text-center bg-slate-50">
-        <button id="sAng" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold">DAFTARKAN</button>
+        <button id="sAng" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold shadow-lg">SIMPAN WARGA</button>
         <button onclick="closeM('mAng')" class="w-full mt-4 text-slate-400 font-bold text-[10px]">TUTUP</button>
     </div></div>
 
@@ -166,21 +166,36 @@
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
-        // FORMAT INDO
-        const tglIndo = (date) => {
-            const d = new Date(date);
-            return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        const tglIndo = (d) => {
+            const date = new Date(d);
+            return date.toLocaleDateString('id-ID', { day:'2-digit', month:'2-digit', year:'numeric' });
         };
 
-        // LOGIN SYSTEM
+        // LOGIN ENGINE (Force Persistence)
         document.getElementById('btnLogin').onclick = () => {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            auth.signInWithEmailAndPassword(e,p).catch(err => { document.getElementById('msg').innerText = err.message; });
+            if(!e || !p) return document.getElementById('msg').innerText = "Email & Password wajib diisi!";
+            
+            document.getElementById('msg').innerText = "Sedang verifikasi...";
+            
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                return auth.signInWithEmailAndPassword(e, p);
+            }).catch(err => {
+                document.getElementById('msg').innerText = "Login Gagal: " + err.message;
+            });
         };
+
         document.getElementById('btnLogout').onclick = () => auth.signOut();
+        
         auth.onAuthStateChanged(user => {
-            if(user){ document.getElementById('loginPage').style.display='none'; document.getElementById('mainApp').classList.remove('hidden'); init(); }
-            else { document.getElementById('loginPage').style.display='flex'; document.getElementById('mainApp').classList.add('hidden'); }
+            if(user){ 
+                document.getElementById('loginPage').classList.add('hidden'); 
+                document.getElementById('mainApp').classList.remove('hidden'); 
+                init(); 
+            } else { 
+                document.getElementById('loginPage').classList.remove('hidden'); 
+                document.getElementById('mainApp').classList.add('hidden'); 
+            }
         });
 
         function init(){
@@ -204,7 +219,7 @@
                 let show = true; if(df && iso < df) show=false; if(dt && iso > dt) show=false;
                 if(show){
                     const vi = d.kat==='Masuk'?d.nom:0, vo = d.kat==='Keluar'?d.nom:0; f2In+=vi; f2Out+=vo;
-                    tk.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold text-slate-400">${tglIndo(t)}</td><td class="p-3 font-semibold">${d.ket}</td><td class="p-3 text-right text-emerald-600 font-bold">${vi?vi.toLocaleString():'-'}</td><td class="p-3 text-right text-rose-500 font-bold">${vo?vo.toLocaleString():'-'}</td><td class="p-3 text-center space-x-2"><button onclick="editK('${doc.id}', '${iso}', ${d.nom}, '${d.ket}', '${d.kat}')" class="text-blue-400"><i class="fa-solid fa-pen"></i></button><button onclick="delD('kas','${doc.id}')" class="text-rose-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+                    tk.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold text-slate-400">${tglIndo(t)}</td><td class="p-3 font-semibold">${d.ket}</td><td class="p-3 text-right text-emerald-600 font-bold">${vi?vi.toLocaleString():'-'}</td><td class="p-3 text-right text-rose-500 font-bold">${vo?vo.toLocaleString():'-'}</td><td class="p-3 text-center space-x-2"><button onclick="editK('${doc.id}', '${iso}', ${d.nom}, '${d.ket}', '${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button><button onclick="delD('kas','${doc.id}')" class="text-rose-400"><i class="fa-solid fa-trash-can"></i></button></td></tr>`);
                 }
             });
 
@@ -218,11 +233,11 @@
             let f3Iur=0, nmList=[];
             sa.docs.forEach(doc => {
                 const n = doc.data().nama; nmList.push(n); const lunas = mapIur[`${n}-${i}`];
-                let st = `<span class="text-rose-300 text-[8px] font-bold uppercase italic">Belum</span>`, tgl='-', nom='-', aksi='';
+                let st = `<span class="text-rose-300 text-[8px] font-bold uppercase">Belum</span>`, tgl='-', nom='-', aksi='';
                 if(lunas){ 
-                    st = `<span class="text-emerald-600 text-[8px] font-bold uppercase">Lunas</span>`; 
+                    st = `<span class="text-emerald-600 text-[8px] font-black uppercase">Lunas</span>`; 
                     tgl=tglIndo(lunas.tgl); nom=lunas.nom.toLocaleString(); f3Iur+=lunas.nom;
-                    aksi = `<button onclick="editI('${lunas.id}', '${lunas.bln}', '${n}', ${lunas.nom})" class="text-blue-400"><i class="fa-solid fa-pen"></i></button><button onclick="delD('pembayaran','${lunas.id}')" class="text-rose-300 ml-2"><i class="fa-solid fa-trash"></i></button>`;
+                    aksi = `<button onclick="editI('${lunas.id}', '${lunas.bln}', '${n}', ${lunas.nom})" class="text-blue-500"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="delD('pembayaran','${lunas.id}')" class="text-rose-400 ml-2"><i class="fa-solid fa-trash-can"></i></button>`;
                 }
                 ti.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 text-slate-400 font-bold">${tgl}</td><td class="p-3 font-bold uppercase">${n}</td><td class="p-3 text-center">${st}</td><td class="p-3 text-right font-black text-slate-600">${nom}</td><td class="p-3 text-center">${aksi}</td></tr>`);
             });
@@ -230,7 +245,7 @@
             document.getElementById('iNama').innerHTML = nmList.map(n=>`<option value="${n}">${n}</option>`).join('');
             const saldo = (tIn + tIur) - tOut;
             document.getElementById('totalSaldo').innerText = 'Rp ' + saldo.toLocaleString();
-            document.getElementById('totalSaldo2').innerText = 'Rp ' + saldo.toLocaleString();
+            document.getElementById('totalSaldo2').innerText = 'Rp ' + (tIn - tOut).toLocaleString();
             document.getElementById('sIn').innerText = f1In.toLocaleString();
             document.getElementById('sOut').innerText = f1Out.toLocaleString();
             document.getElementById('sIur').innerText = f1Iur.toLocaleString();
@@ -241,13 +256,11 @@
             upChart(f1In, f1Iur, f1Out);
         }
 
-        // CHART
         function upChart(a,b,c){
             if(chart) chart.destroy();
-            chart = new Chart(document.getElementById('chart'), { type:'bar', data:{ labels:['IN','IURAN','OUT'], datasets:[{ data:[a,b,c], backgroundColor:['#10b981','#3b82f6','#f43f5e'], borderRadius:12 }] }, options:{ plugins:{ legend:{display:false} } } });
+            chart = new Chart(document.getElementById('chart'), { type:'bar', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#10b981','#3b82f6','#f43f5e'], borderRadius:12 }] }, options:{ plugins:{ legend:{display:false} } } });
         }
 
-        // NAV & MODAL
         function st(t){ 
             document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); 
             document.getElementById('screen-'+t).classList.add('active'); 
@@ -261,8 +274,4 @@
             document.getElementById(id).classList.remove('hidden'); 
         }
         function closeM(id){ document.getElementById(id).classList.add('hidden'); }
-        function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-xl font-bold text-emerald-600 shadow-sm uppercase':'flex-1 py-3 rounded-xl text-slate-400 font-bold uppercase'; document.getElementById('bOut').className=k==='Keluar'?'flex-1 py-3 bg-white rounded-xl font-bold text-rose-600 shadow-sm uppercase':'flex-1 py-3 rounded-xl text-slate-400 font-bold uppercase'; }
-
-        // ACTIONS
-        document.getElementById('sKas').onclick = async () => {
-            const t=document.getElementById('kDate').value, n=Number(document.getElem
+        function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 
