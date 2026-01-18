@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04</title>
+    <title>TUNTAS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -47,7 +47,7 @@
     <div id="mainApp" class="hidden">
         <header class="p-6 flex justify-between items-center bg-white border-b border-olive/30 sticky top-0 z-50">
             <div>
-                <h1 class="font-black text-2xl text-forest italic leading-none">TUNTAS</h1>
+                <h1 class="font-black text-2xl text-forest leading-none">TUNTAS</h1>
                 <p class="text-[8px] font-bold text-forest/60 uppercase mt-1">Turun Tangan Atasi Sampah</p>
             </div>
             <button id="btnLogout" class="w-10 h-10 flex items-center justify-center text-forest bg-olive/10 rounded-xl border border-olive/30">
@@ -88,7 +88,7 @@
                     <p class="text-[8px] font-bold uppercase opacity-70">Pemasukan</p>
                     <p id="kasInSide" class="text-lg font-black">0</p>
                 </div>
-                <div class="bg-olive p-4 rounded-3xl text-white shadow-md">
+                <div class="bg-medium p-4 rounded-3xl text-white shadow-md">
                     <p class="text-[8px] font-bold uppercase opacity-70">Pengeluaran</p>
                     <p id="kasOutSide" class="text-lg font-black">0</p>
                 </div>
@@ -114,14 +114,14 @@
 
         <div id="screen-iur" class="tab-content p-6 space-y-4">
             <div class="bg-forest p-6 rounded-[2.5rem] text-[#E3DE61] text-center shadow-xl">
-                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Iuran Terkumpul</p>
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total</p>
                 <h3 id="totalIur3" class="text-2xl font-black">Rp 0</h3>
             </div>
             <input type="month" id="fIur" class="w-full p-4 card-tuntas font-bold text-forest shadow-sm" onchange="loadData()">
             <div class="card-tuntas overflow-hidden shadow-sm">
                 <table class="w-full text-[10px] text-left">
                     <thead class="bg-forest text-white uppercase font-bold">
-                        <tr><th class="p-3">Warga</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr>
+                        <tr><th class="p-3">Anggota</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
                     <tbody id="tBodyIur" class="divide-y divide-gray-100"></tbody>
                 </table>
@@ -135,7 +135,7 @@
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-olive/20 p-4 flex justify-around pb-8 z-40">
             <button onclick="st('home')" id="n-home" class="text-forest flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold">HOME</span></button>
             <button onclick="st('kas')" id="n-kas" class="text-forest/30 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[8px] font-bold">KAS</span></button>
-            <button onclick="st('iur')" id="n-iur" class="text-forest/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">WARGA</span></button>
+            <button onclick="st('iur')" id="n-iur" class="text-forest/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">ANGGOTA</span></button>
         </nav>
     </div>
 
@@ -159,7 +159,7 @@
 
     <div id="mAng" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center p-6"><div class="bg-white w-full rounded-[2.5rem] p-8 text-center">
         <h4 class="font-bold text-forest uppercase mb-4">Tambah Warga</h4>
-        <input type="text" id="aNama" placeholder="NAMA WARGA" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 font-bold uppercase text-center">
+        <input type="text" id="aNama" placeholder="NAMA" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 font-bold uppercase text-center">
         <button id="sAng" class="w-full bg-forest text-white py-4 rounded-2xl font-bold">TAMBAHKAN</button>
         <button onclick="closeM('mAng')" class="w-full mt-4 text-gray-400 font-bold text-[10px]">TUTUP</button>
     </div></div>
