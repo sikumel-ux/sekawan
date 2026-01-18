@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04 - Modern Edition</title>
+    <title>TUNTAS RT 04 - Anti Gagal Login</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        :root {
-            --emerald: #2F5249; --sage: #97B067; --lime: #E3DE61; --bg: #F0F8EC;
-        }
+        :root { --emerald: #2F5249; --sage: #97B067; --bg: #F0F8EC; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--emerald); 
-            background-image: url("https://www.transparenttextures.com/patterns/leaf.png"); /* Ornamen Daun Halus */
+            background-image: url("https://www.transparenttextures.com/patterns/leaf.png");
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(151, 176, 103, 0.2); }
-        .btn-grad { background: linear-gradient(135deg, var(--emerald), var(--medium-forest)); color: white; transition: 0.3s; }
-        input, select { border-radius: 16px !important; padding: 12px 16px !important; border: 1.5px solid rgba(47, 82, 73, 0.1) !important; }
-        input:focus { border-color: var(--sage) !important; box-shadow: 0 0 0 4px rgba(151, 176, 103, 0.1); }
+        input, select { border-radius: 16px !important; padding: 12px 16px !important; border: 1.5px solid rgba(47, 82, 73, 0.1) !important; outline: none; }
     </style>
 </head>
 <body class="pb-28">
@@ -29,19 +31,17 @@
     <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-[#F0F8EC]">
         <div class="w-full max-w-sm text-center">
             <div class="relative inline-block mb-8">
-                <div class="w-24 h-24 bg-[#2F5249] rounded-[2.5rem] flex items-center justify-center text-4xl text-[#E3DE61] shadow-2xl rotate-12">
+                <div class="w-20 h-20 bg-[#2F5249] rounded-[2rem] flex items-center justify-center text-3xl text-[#E3DE61] shadow-2xl">
                     <i class="fa-solid fa-leaf"></i>
                 </div>
-                <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-[#97B067] rounded-full border-4 border-[#F0F8EC] flex items-center justify-center text-white">
-                    <i class="fa-solid fa-check text-xs"></i>
-                </div>
             </div>
-            <h2 class="text-4xl font-black tracking-tighter italic text-[#2F5249]">TUNTAS<span class="text-[#97B067]">.</span></h2>
-            <p class="text-[10px] font-bold opacity-50 uppercase tracking-[0.3em] mb-10">Manajemen Kas RT 04</p>
+            <h2 class="text-3xl font-black italic text-[#2F5249]">TUNTAS RT 04</h2>
+            <p class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em] mb-10">Modern Management System</p>
+            
             <div class="space-y-4">
                 <input type="email" id="email" placeholder="Email Admin" class="w-full shadow-sm bg-white">
                 <input type="password" id="password" placeholder="Password" class="w-full shadow-sm bg-white">
-                <button id="btnLogin" class="w-full py-4 bg-[#2F5249] text-white rounded-2xl font-black shadow-xl hover:scale-95 transition-transform">LOG IN</button>
+                <button id="btnLogin" class="w-full py-4 bg-[#2F5249] text-white rounded-2xl font-black shadow-xl">MASUK</button>
                 <p id="msg" class="text-xs font-bold text-red-500 mt-2"></p>
             </div>
         </div>
@@ -49,130 +49,100 @@
 
     <div id="mainApp" class="hidden">
         <header class="p-6 flex justify-between items-center sticky top-0 z-50 glass border-b border-sage/10">
-            <div>
-                <h1 class="font-black text-2xl italic leading-none">TUNTAS<span class="text-sage">.</span></h1>
-                <div class="flex items-center gap-1 mt-1">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <p class="text-[8px] font-bold opacity-40 uppercase">Sistem Aktif</p>
-                </div>
-            </div>
-            <button id="btnLogout" class="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-sage/20 text-red-400">
+            <h1 class="font-black text-xl italic leading-none text-emerald">TUNTAS<span class="text-sage">.</span></h1>
+            <button id="btnLogout" class="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-sage/20 text-red-400">
                 <i class="fa-solid fa-power-off"></i>
             </button>
         </header>
 
         <div id="screen-home" class="tab-content active p-6 space-y-6">
-            <div class="bg-gradient-to-br from-[#2F5249] to-[#437057] p-8 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
-                <img src="https://www.transparenttextures.com/patterns/leaves.png" class="absolute inset-0 opacity-10 pointer-events-none" />
-                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Saldo Keseluruhan</p>
-                <h2 id="totalSaldo" class="text-4xl font-black mt-1 tracking-tight">Rp 0</h2>
-                <div class="mt-6 pt-6 border-t border-white/10 flex justify-between items-center">
-                    <input type="month" id="fHome" class="bg-white/10 border-none text-white text-xs font-bold py-1 px-3 rounded-xl" onchange="loadData()">
-                    <i class="fa-solid fa-chart-pie text-sage"></i>
-                </div>
+            <div class="bg-gradient-to-br from-[#2F5249] to-[#437057] p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+                <p class="text-[10px] font-bold opacity-60 uppercase">Saldo Akhir</p>
+                <h2 id="totalSaldo" class="text-3xl font-black mt-1">Rp 0</h2>
+                <input type="month" id="fHome" class="mt-4 bg-white/10 border-none text-white text-[10px] p-2 rounded-lg" onchange="loadData()">
             </div>
-
-            <div class="grid grid-cols-3 gap-3">
-                <div class="glass p-4 rounded-3xl text-center shadow-sm border-none">
-                    <p class="text-[8px] font-bold opacity-40 uppercase mb-1 text-green-700">Masuk</p>
-                    <p id="sIn" class="font-black text-[10px]">0</p>
-                </div>
-                <div class="glass p-4 rounded-3xl text-center shadow-sm border-none">
-                    <p class="text-[8px] font-bold opacity-40 uppercase mb-1 text-red-700">Keluar</p>
-                    <p id="sOut" class="font-black text-[10px]">0</p>
-                </div>
-                <div class="glass p-4 rounded-3xl text-center shadow-sm border-none">
-                    <p class="text-[8px] font-bold opacity-40 uppercase mb-1 text-sage">Iuran</p>
-                    <p id="sIur" class="font-black text-[10px]">0</p>
-                </div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold opacity-50 uppercase">Masuk</p><p id="sIn" class="text-[10px] font-black">0</p></div>
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold opacity-50 uppercase">Keluar</p><p id="sOut" class="text-[10px] font-black">0</p></div>
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold opacity-50 uppercase">Iuran</p><p id="sIur" class="text-[10px] font-black">0</p></div>
             </div>
-
-            <div class="glass p-6 rounded-[2.5rem] shadow-sm"><canvas id="chart" style="max-height: 200px;"></canvas></div>
+            <div class="glass p-4 rounded-[2rem]"><canvas id="chart" style="max-height: 180px;"></canvas></div>
         </div>
 
         <div id="screen-kas" class="tab-content p-6 space-y-4">
-            <div class="glass p-4 rounded-[2rem] flex items-center gap-3">
-                <div class="flex-1">
-                    <p class="text-[8px] font-bold opacity-40 mb-1">DARI</p>
-                    <input type="date" id="kasFrom" class="w-full text-[10px] bg-transparent" onchange="loadData()">
-                </div>
-                <div class="flex-1">
-                    <p class="text-[8px] font-bold opacity-40 mb-1">SAMPAI</p>
-                    <input type="date" id="kasTo" class="w-full text-[10px] bg-transparent" onchange="loadData()">
-                </div>
+            <div class="glass p-4 rounded-3xl flex gap-2 items-center">
+                <input type="date" id="kasFrom" class="flex-1 text-[10px] bg-transparent" onchange="loadData()">
+                <span class="text-xs font-bold">-</span>
+                <input type="date" id="kasTo" class="flex-1 text-[10px] bg-transparent" onchange="loadData()">
             </div>
-
-            <div class="glass rounded-[2rem] overflow-hidden shadow-sm">
-                <table class="w-full text-[11px]">
-                    <thead class="bg-[#2F5249] text-white">
-                        <tr><th class="p-4 text-left">Tanggal</th><th class="p-4 text-left">Keterangan</th><th class="p-4 text-right">Nominal</th><th class="p-4 text-center"><i class="fa-solid fa-gear"></i></th></tr>
+            <div class="glass rounded-[2rem] overflow-hidden">
+                <table class="w-full text-[10px]">
+                    <thead class="bg-emerald text-white uppercase">
+                        <tr><th class="p-3 text-left">Tanggal</th><th class="p-3">Ket</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
-                    <tbody id="tBodyKas" class="divide-y divide-sage/10"></tbody>
+                    <tbody id="tBodyKas" class="divide-y divide-emerald/5 italic"></tbody>
                 </table>
             </div>
-            <button onclick="openM('mKas')" class="fixed bottom-28 right-6 w-16 h-16 bg-[#2F5249] text-white rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="openM('mKas')" class="fixed bottom-28 right-6 w-14 h-14 bg-emerald text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
         </div>
 
         <div id="screen-iur" class="tab-content p-6 space-y-4">
-            <div class="bg-[#97B067] p-8 rounded-[3rem] text-[#2F5249] shadow-xl text-center relative overflow-hidden">
-                <p class="text-[10px] font-bold opacity-60 uppercase">Periode Iuran</p>
-                <input type="month" id="fIur" class="mt-2 bg-white/20 border-none font-black text-xl text-center" onchange="loadData()">
-                <p id="totalIur3" class="mt-4 text-sm font-bold opacity-80"></p>
+            <div class="bg-sage p-6 rounded-[2rem] text-emerald text-center shadow-xl">
+                <p class="text-[10px] font-bold opacity-60 uppercase">Total Iuran Bulan Ini</p>
+                <input type="month" id="fIur" class="mt-2 bg-white/20 border-none font-black text-lg text-center rounded-lg" onchange="loadData()">
+                <p id="totalIur3" class="mt-2 text-xs font-bold opacity-80"></p>
             </div>
             <div class="glass rounded-[2rem] overflow-hidden">
-                <table class="w-full text-[11px]">
-                    <thead class="bg-[#2F5249] text-white">
-                        <tr><th class="p-4 text-left">Nama Anggota</th><th class="p-4 text-center">Status</th><th class="p-4 text-center">Aksi</th></tr>
+                <table class="w-full text-[10px]">
+                    <thead class="bg-emerald text-white uppercase">
+                        <tr><th class="p-3 text-left">Nama Anggota</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
-                    <tbody id="tBodyIur" class="divide-y divide-sage/10 uppercase"></tbody>
+                    <tbody id="tBodyIur" class="divide-y divide-emerald/5 font-bold uppercase"></tbody>
                 </table>
             </div>
             <div class="fixed bottom-28 right-6 flex flex-col gap-3 z-50">
-                <button onclick="openM('mAng')" class="w-12 h-12 bg-white text-[#2F5249] rounded-2xl shadow-xl flex items-center justify-center text-xl border border-sage/20"><i class="fa-solid fa-user-plus"></i></button>
-                <button onclick="openM('mBayar')" class="w-16 h-16 bg-[#2F5249] text-white rounded-full shadow-2xl flex items-center justify-center text-2xl border-4 border-white"><i class="fa-solid fa-receipt"></i></button>
+                <button onclick="openM('mAng')" class="w-12 h-12 bg-white text-emerald rounded-2xl shadow-lg flex items-center justify-center text-xl border border-sage/20"><i class="fa-solid fa-user-plus"></i></button>
+                <button onclick="openM('mBayar')" class="w-14 h-14 bg-emerald text-white rounded-full shadow-2xl flex items-center justify-center text-xl border-4 border-white"><i class="fa-solid fa-receipt"></i></button>
             </div>
         </div>
 
-        <nav class="fixed bottom-0 left-0 right-0 glass border-t border-sage/10 p-6 flex justify-around pb-10 z-50 rounded-t-[3rem] shadow-2xl">
-            <button onclick="st('home')" id="n-home" class="text-[#2F5249] flex flex-col items-center gap-1"><i class="fa-solid fa-grip-vertical"></i><span class="text-[9px] font-bold uppercase">Beranda</span></button>
-            <button onclick="st('kas')" id="n-kas" class="text-[#2F5249]/30 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[9px] font-bold uppercase">Kas</span></button>
-            <button onclick="st('iur')" id="n-iur" class="text-[#2F5249]/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[9px] font-bold uppercase">Anggota</span></button>
+        <nav class="fixed bottom-0 left-0 right-0 glass border-t border-sage/10 p-5 flex justify-around pb-8 z-50 rounded-t-[2.5rem]">
+            <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold">HOME</span></button>
+            <button onclick="st('kas')" id="n-kas" class="text-emerald/30 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[8px] font-bold">KAS</span></button>
+            <button onclick="st('iur')" id="n-iur" class="text-emerald/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">ANGGOTA</span></button>
         </nav>
     </div>
 
-    <div id="mKas" class="fixed inset-0 bg-emerald/60 hidden z-[60] flex items-end backdrop-blur-sm"><div class="bg-white w-full rounded-t-[3rem] p-8 space-y-4">
-        <h4 id="mKasTitle" class="font-black text-center text-[#2F5249] uppercase tracking-widest">Input Kas</h4>
+    <div id="mKas" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
+        <h4 id="mKasTitle" class="font-black text-center text-emerald uppercase">Input Kas</h4>
         <div class="flex gap-2 bg-gray-100 p-1 rounded-2xl">
-            <button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-xl font-bold text-[#2F5249] shadow-sm">MASUK</button>
+            <button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-xl font-bold text-emerald shadow-sm">MASUK</button>
             <button id="bOut" onclick="sk('Keluar')" class="flex-1 py-3 rounded-xl text-gray-400 font-bold">KELUAR</button>
         </div>
         <input type="date" id="kDate" class="w-full"><input type="number" id="kNom" placeholder="Nominal Rp" class="w-full"><input type="text" id="kKet" placeholder="Keterangan" class="w-full">
         <input type="hidden" id="kId">
-        <button id="sKas" class="w-full py-5 bg-[#2F5249] text-white rounded-[1.5rem] font-black shadow-xl">SIMPAN DATA</button>
-        <button onclick="closeM('mKas')" class="w-full text-gray-400 font-bold text-xs uppercase">Batal</button>
+        <button id="sKas" class="w-full py-4 bg-emerald text-white rounded-2xl font-black shadow-lg">SIMPAN</button>
+        <button onclick="closeM('mKas')" class="w-full text-gray-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
-    <div id="mBayar" class="fixed inset-0 bg-emerald/60 hidden z-[60] flex items-end backdrop-blur-sm"><div class="bg-white w-full rounded-t-[3rem] p-8 space-y-4">
-        <h4 id="mBayarTitle" class="font-black text-center uppercase">Setoran Iuran</h4>
+    <div id="mBayar" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
+        <h4 id="mBayarTitle" class="font-black text-center text-emerald uppercase">Iuran Anggota</h4>
         <input type="month" id="iDate" class="w-full"><select id="iNama" class="w-full font-bold uppercase"></select><input type="number" id="iNom" placeholder="Nominal Rp" class="w-full">
         <input type="hidden" id="iId">
-        <button id="sBayar" class="w-full py-5 bg-[#2F5249] text-white rounded-[1.5rem] font-black">SIMPAN IURAN</button>
-        <button onclick="closeM('mBayar')" class="w-full text-gray-400 font-bold text-xs uppercase">Batal</button>
+        <button id="sBayar" class="w-full py-4 bg-emerald text-white rounded-2xl font-black shadow-lg">SIMPAN</button>
+        <button onclick="closeM('mBayar')" class="w-full text-gray-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
-    <div id="mAng" class="fixed inset-0 bg-emerald/60 hidden z-[60] flex items-center p-8 backdrop-blur-sm"><div class="bg-white w-full rounded-[3rem] p-10 text-center">
-        <h4 class="font-black text-[#2F5249] uppercase mb-6">Anggota Baru</h4>
-        <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full mb-6 font-black uppercase text-center border-none bg-gray-50">
-        <button id="sAng" class="w-full py-5 bg-[#2F5249] text-white rounded-2xl font-black">TAMBAHKAN</button>
-        <button onclick="closeM('mAng')" class="w-full mt-4 text-gray-400 font-bold text-xs uppercase">Tutup</button>
+    <div id="mAng" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center p-8"><div class="bg-white w-full rounded-[2.5rem] p-8 text-center">
+        <h4 class="font-black text-emerald uppercase mb-4">Tambah Anggota</h4>
+        <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full mb-4 font-bold text-center">
+        <button id="sAng" class="w-full py-4 bg-emerald text-white rounded-2xl font-black">DAFTARKAN</button>
+        <button onclick="closeM('mAng')" class="w-full mt-4 text-gray-400 font-bold text-[10px]">TUTUP</button>
     </div></div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        const config = {
+        // CONFIG FIREBASE
+        const fbConf = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
             projectId: "tuntas-sekawan",
@@ -180,33 +150,46 @@
             messagingSenderId: "1090506516563",
             appId: "1:1090506516563:web:63c429677caea28addfea6"
         };
-        firebase.initializeApp(config);
+        firebase.initializeApp(fbConf);
+        const auth = firebase.auth();
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
-        // FORMAT INDO DD - MM - YYYY
+        // FORMAT DD - MM - YYYY
         const fTgl = (d) => {
             const t = new Date(d);
-            const dd = String(t.getDate()).padStart(2, '0');
-            const mm = String(t.getMonth() + 1).padStart(2, '0');
-            return `${dd} - ${mm} - ${t.getFullYear()}`;
+            return `${String(t.getDate()).padStart(2,'0')} - ${String(t.getMonth()+1).padStart(2,'0')} - ${t.getFullYear()}`;
         };
 
-        // LOGIN ENGINE
+        // --- LOGIN LOGIC ---
         document.getElementById('btnLogin').onclick = () => {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            if(!e || !p) return;
-            document.getElementById('msg').innerText = "Sedang Masuk...";
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-                return firebase.auth().signInWithEmailAndPassword(e, p);
-            }).catch(err => { document.getElementById('msg').innerText = "Gagal: " + err.message; });
+            if(!e || !p) return document.getElementById('msg').innerText = "Isi email & password!";
+            
+            document.getElementById('msg').innerText = "Mengecek kredensial...";
+            
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .then(() => auth.signInWithEmailAndPassword(e, p))
+                .catch(err => { 
+                    console.error(err);
+                    document.getElementById('msg').innerText = "Gagal: " + err.message; 
+                });
         };
-        document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
-        firebase.auth().onAuthStateChanged(user => {
-            if(user){ document.getElementById('loginPage').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); init(); }
-            else { document.getElementById('loginPage').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+
+        document.getElementById('btnLogout').onclick = () => auth.signOut();
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                init();
+            } else {
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
         });
 
+        // --- DATA LOGIC ---
         function init(){
             const m = new Date().toISOString().substring(0,7);
             document.getElementById('fHome').value = m; document.getElementById('fIur').value = m;
@@ -229,11 +212,11 @@
                 let show = true; if(df && iso < df) show=false; if(dt && iso > dt) show=false;
                 if(show){
                     tk.insertAdjacentHTML('beforeend', `<tr class="border-b">
-                        <td class="p-4 font-bold opacity-40">${fTgl(t)}</td>
-                        <td class="p-4">${d.ket}</td>
-                        <td class="p-4 text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td>
-                        <td class="p-4 text-center space-x-2">
-                            <button onclick="editK('${doc.id}', '${iso}', ${d.nom}, '${d.ket}', '${d.kat}')" class="text-blue-400"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <td class="p-3 font-bold opacity-40">${fTgl(t)}</td>
+                        <td class="p-3">${d.ket}</td>
+                        <td class="p-3 text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="delD('kas','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`);
                 }
@@ -250,10 +233,10 @@
             sa.docs.forEach(doc => {
                 const n = doc.data().nama, l = mapIur[`${n}-${i}`]; nmList.push(n);
                 ti.insertAdjacentHTML('beforeend', `<tr class="border-b">
-                    <td class="p-4 font-black text-emerald">${n}</td>
-                    <td class="p-4 text-center">${l?`<span class="bg-[#2F5249] text-[#E3DE61] px-3 py-1 rounded-full text-[8px] font-black tracking-tighter">LUNAS</span>`:`<span class="text-orange-400 text-[8px] font-bold italic">PENDING</span>`}</td>
-                    <td class="p-4 text-center space-x-2">
-                        ${l?`<button onclick="editI('${l.id}', '${i}', '${n}', ${l.nom})" class="text-blue-400"><i class="fa-solid fa-pen-to-square"></i></button>`:''}
+                    <td class="p-3 font-black text-emerald">${n}</td>
+                    <td class="p-3 text-center">${l?`<span class="bg-emerald text-[#E3DE61] px-2 py-1 rounded text-[7px] font-black">LUNAS</span>`:`<span class="text-orange-400 text-[7px] italic">BELUM</span>`}</td>
+                    <td class="p-3 text-center space-x-2">
+                        ${l?`<button onclick="editI('${l.id}','${i}','${n}',${l.nom})" class="text-blue-500"><i class="fa-solid fa-pen"></i></button>`:''}
                         <button onclick="delD('${l?'pembayaran':'anggota'}','${l?l.id:doc.id}')" class="text-red-200"><i class="fa-solid fa-trash"></i></button>
                     </td></tr>`);
             });
@@ -267,7 +250,7 @@
             upChart(f1In, f1Iur, f1Out);
         }
 
-        // EDIT & DELETE
+        // EDIT LOGIC
         window.editK = (id, t, n, k, kat) => {
             document.getElementById('kId').value = id; document.getElementById('kDate').value = t;
             document.getElementById('kNom').value = n; document.getElementById('kKet').value = k;
@@ -282,6 +265,7 @@
         // SAVE ACTIONS
         document.getElementById('sKas').onclick = async () => {
             const id=document.getElementById('kId').value, t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value;
+            if(!t || !n) return;
             const data = { tgl:new Date(t), nom:n, ket:k, kat:currentK };
             if(id) await db.collection("kas").doc(id).update(data); else await db.collection("kas").add(data);
             closeM('mKas'); loadData();
@@ -289,5 +273,30 @@
 
         document.getElementById('sBayar').onclick = async () => {
             const id=document.getElementById('iId').value, t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value);
+            if(!t || !nm) return;
             const data = { tgl:new Date(t+"-01"), nama:n, nom:nm };
-            if(id) await db.collection("pembayaran").doc(id).update(da
+            if(id) await db.collection("pembayaran").doc(id).update(data); else await db.collection("pembayaran").add(data);
+            closeM('mBayar'); loadData();
+        };
+
+        // HELPERS
+        function upChart(a,b,c){
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('chart'), { 
+                type:'doughnut', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#2F5249','#97B067','#FF6B6B'], borderWidth:0 }] },
+                options:{ plugins:{ legend:{position:'bottom', labels:{font:{size:9, weight:'bold'}, usePointStyle:true}} }, cutout:'75%' }
+            });
+        }
+        function st(t){ 
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); 
+            document.getElementById('screen-'+t).classList.add('active'); 
+            document.querySelectorAll('nav button').forEach(b=>b.classList.replace('text-emerald','text-emerald/30')); 
+            document.getElementById('n-'+t).classList.replace('text-emerald/30','text-emerald'); 
+        }
+        function openM(id){ document.getElementById(id).classList.remove('hidden'); }
+        function closeM(id){ 
+            document.getElementById(id).classList.add('hidden'); 
+            document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('kId').value=''; document.getElementById('iId').value='';
+        }
+        function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-xl font-bold text-emerald shadow-sm':'flex-1 py-3 rounded-xl text-gray-400 font-bold'; document.getElementById('bOut').className=k==='Keluar'?'flex-1 py-3 bg-white rounded-xl font-bold text-red-500 shadow-sm':'flex-1 py-3 rounded-xl text-gray-400 font-bold'; }
+        document.getElementById('sAng').onc
