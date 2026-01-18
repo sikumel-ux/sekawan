@@ -3,29 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04 - Anti Gagal</title>
-    
+    <title>TUNTAS RT 04 - Modern Edition</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         :root { --emerald: #2F5249; --sage: #97B067; --bg: #F0F8EC; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--emerald); 
             background-image: url("https://www.transparenttextures.com/patterns/leaf.png");
-            margin: 0; padding: 0;
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(151, 176, 103, 0.2); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(151, 176, 103, 0.2); }
         input, select { border-radius: 16px !important; padding: 12px 16px !important; border: 1.5px solid rgba(47, 82, 73, 0.1) !important; outline: none; }
-        .btn-emerald { background-color: var(--emerald); color: white; font-weight: 800; border-radius: 18px; transition: 0.3s; }
     </style>
 </head>
 <body class="pb-28">
@@ -39,9 +34,8 @@
             <div class="space-y-4 mt-10">
                 <input type="email" id="email" placeholder="Email Admin" class="w-full shadow-sm bg-white text-center">
                 <input type="password" id="password" placeholder="Password" class="w-full shadow-sm bg-white text-center">
-                <button id="btnLogin" class="w-full py-4 btn-emerald shadow-xl">MASUK</button>
+                <button id="btnLogin" class="w-full py-4 bg-[#2F5249] text-white rounded-2xl font-black shadow-xl">MASUK</button>
                 <p id="msg" class="text-[10px] font-bold text-red-500 mt-4"></p>
-                <p class="text-[8px] opacity-30 mt-10">Pastikan internet aktif & email benar.</p>
             </div>
         </div>
     </div>
@@ -56,14 +50,14 @@
 
         <div id="screen-home" class="tab-content active p-6 space-y-6">
             <div class="bg-gradient-to-br from-[#2F5249] to-[#437057] p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
-                <p class="text-[10px] font-bold opacity-60 uppercase">Saldo Akhir RT 04</p>
+                <p class="text-[10px] font-bold opacity-60 uppercase">Saldo Kas Keseluruhan</p>
                 <h2 id="totalSaldo" class="text-3xl font-black mt-1">Rp 0</h2>
                 <input type="month" id="fHome" class="mt-4 bg-white/10 border-none text-white text-[10px] p-2 rounded-lg" onchange="loadData()">
             </div>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="glass p-3 rounded-2xl text-center"><p class="text-[7px] font-bold text-green-600 uppercase">Masuk</p><p id="sIn" class="text-[10px] font-black">0</p></div>
-                <div class="glass p-3 rounded-2xl text-center"><p class="text-[7px] font-bold text-red-500 uppercase">Keluar</p><p id="sOut" class="text-[10px] font-black">0</p></div>
-                <div class="glass p-3 rounded-2xl text-center"><p class="text-[7px] font-bold text-sage uppercase">Iuran</p><p id="sIur" class="text-[10px] font-black">0</p></div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold text-green-600 uppercase">Masuk</p><p id="sIn" class="text-[10px] font-black">0</p></div>
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold text-red-500 uppercase">Keluar</p><p id="sOut" class="text-[10px] font-black">0</p></div>
+                <div class="glass p-3 rounded-2xl"><p class="text-[7px] font-bold text-sage uppercase">Iuran</p><p id="sIur" class="text-[10px] font-black">0</p></div>
             </div>
             <div class="glass p-4 rounded-[2rem]"><canvas id="chart" style="max-height: 180px;"></canvas></div>
         </div>
@@ -71,15 +65,15 @@
         <div id="screen-kas" class="tab-content p-6 space-y-4">
             <div class="glass p-4 rounded-3xl flex gap-2 items-center">
                 <input type="date" id="kasFrom" class="flex-1 text-[10px] bg-transparent" onchange="loadData()">
-                <span class="text-xs font-bold">-</span>
+                <span class="text-xs font-bold text-emerald">-</span>
                 <input type="date" id="kasTo" class="flex-1 text-[10px] bg-transparent" onchange="loadData()">
             </div>
-            <div class="glass rounded-[2rem] overflow-hidden">
+            <div class="glass rounded-[2rem] overflow-hidden shadow-sm">
                 <table class="w-full text-[10px]">
-                    <thead class="bg-emerald text-white uppercase">
-                        <tr><th class="p-3 text-left">Tanggal</th><th class="p-3">Ket</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center">Aksi</th></tr>
+                    <thead class="bg-emerald text-white uppercase text-[9px]">
+                        <tr><th class="p-3 text-left">Tanggal (Indo)</th><th class="p-3">Ket</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
-                    <tbody id="tBodyKas" class="divide-y divide-emerald/5 italic"></tbody>
+                    <tbody id="tBodyKas" class="divide-y divide-emerald/5 italic font-medium"></tbody>
                 </table>
             </div>
             <button onclick="openM('mKas')" class="fixed bottom-28 right-6 w-14 h-14 bg-emerald text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
@@ -104,7 +98,7 @@
             </div>
         </div>
 
-        <nav class="fixed bottom-0 left-0 right-0 glass border-t border-sage/10 p-5 flex justify-around pb-8 z-50 rounded-t-[2.5rem]">
+        <nav class="fixed bottom-0 left-0 right-0 glass border-t border-sage/10 p-5 flex justify-around pb-8 z-50 rounded-t-[2.5rem] shadow-2xl">
             <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold">HOME</span></button>
             <button onclick="st('kas')" id="n-kas" class="text-emerald/30 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[8px] font-bold">KAS</span></button>
             <button onclick="st('iur')" id="n-iur" class="text-emerald/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">ANGGOTA</span></button>
@@ -122,8 +116,8 @@
         <button onclick="closeM('mKas')" class="w-full text-gray-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
-    <div id="mBayar" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4 text-center">
-        <h4 id="mBayarTitle" class="font-black text-emerald uppercase">Setoran Iuran</h4>
+    <div id="mBayar" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
+        <h4 id="mBayarTitle" class="font-black text-center text-emerald uppercase">Setoran Iuran</h4>
         <input type="month" id="iDate" class="w-full"><select id="iNama" class="w-full font-bold uppercase"></select><input type="number" id="iNom" placeholder="Nominal Rp" class="w-full">
         <input type="hidden" id="iId"><button id="sBayar" class="w-full py-4 bg-emerald text-white rounded-2xl font-black shadow-lg">SIMPAN</button>
         <button onclick="closeM('mBayar')" class="w-full text-gray-400 font-bold text-[10px]">BATAL</button>
@@ -132,12 +126,12 @@
     <div id="mAng" class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center p-8"><div class="bg-white w-full rounded-[2.5rem] p-8 text-center">
         <h4 class="font-black text-emerald uppercase mb-4">Tambah Anggota</h4>
         <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full mb-4 font-bold text-center uppercase">
-        <button id="sAng" class="w-full py-4 bg-emerald text-white rounded-2xl font-black">DAFTARKAN</button>
-        <button onclick="closeM('mAng')" class="w-full mt-4 text-gray-400 font-bold text-[10px]">TUTUP</button>
+        <button id="sAng" class="w-full py-4 bg-emerald text-white rounded-2xl font-black">SIMPAN</button>
+        <button onclick="closeM('mAng')" class="w-full mt-4 text-gray-400 font-bold text-[10px]">BATAL</button>
     </div></div>
 
     <script>
-        // 1. INISIALISASI FIREBASE
+        // CONFIG
         const config = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -147,50 +141,38 @@
             appId: "1:1090506516563:web:63c429677caea28addfea6"
         };
         firebase.initializeApp(config);
-        const auth = firebase.auth();
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
-        // 2. FUNGSI LOGIN (PALING KRUSIAL)
-        document.getElementById('btnLogin').addEventListener('click', function() {
+        // --- CORE LOGIN ENGINE (SESUAI REQUEST) ---
+        document.getElementById('btnLogin').onclick = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
-            const msg = document.getElementById('msg');
+            if(!e || !p) return;
+            document.getElementById('msg').innerText = "Memproses...";
             
-            if(!e || !p) { msg.innerText = "Isi dulu, bro!"; return; }
-            msg.innerText = "Sabar, lagi dicek...";
-
-            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .then(() => {
-                return auth.signInWithEmailAndPassword(e, p);
-            })
-            .then((user) => {
-                console.log("Login Berhasil!");
-            })
-            .catch((err) => {
-                msg.innerText = "Gagal: " + err.message;
-                console.error(err);
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                return firebase.auth().signInWithEmailAndPassword(e, p);
+            }).catch(err => {
+                document.getElementById('msg').innerText = "Error: " + err.message;
             });
+        };
+
+        firebase.auth().onAuthStateChanged(user => {
+            if(user) { document.getElementById('loginPage').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); init(); }
+            else { document.getElementById('loginPage').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
         });
+        document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
 
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                init();
-            } else {
-                document.getElementById('loginPage').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-            }
-        });
+        // LOGIKA DATA & FORMAT INDO
+        const fTgl = (d) => {
+            const t = new Date(d);
+            return `${String(t.getDate()).padStart(2,'0')} - ${String(t.getMonth()+1).padStart(2,'0')} - ${t.getFullYear()}`;
+        };
 
-        document.getElementById('btnLogout').onclick = () => auth.signOut();
-
-        // 3. LOGIKA DATA & UI
         function init(){
             const m = new Date().toISOString().substring(0,7);
-            document.getElementById('fHome').value = m; 
-            document.getElementById('fIur').value = m;
+            document.getElementById('fHome').value = m; document.getElementById('fIur').value = m;
             loadData();
         }
 
@@ -210,10 +192,10 @@
                 let show = true; if(df && iso < df) show=false; if(dt && iso > dt) show=false;
                 if(show){
                     tk.insertAdjacentHTML('beforeend', `<tr class="border-b">
-                        <td class="p-3 opacity-50 font-bold">${t.getDate()}-${t.getMonth()+1}-${t.getFullYear()}</td>
+                        <td class="p-3 font-bold opacity-40">${fTgl(t)}</td>
                         <td class="p-3">${d.ket}</td>
                         <td class="p-3 text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td>
-                        <td class="p-3 text-center flex justify-center gap-2">
+                        <td class="p-3 text-center flex justify-center gap-3">
                             <button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="delD('kas','${doc.id}')" class="text-red-200"><i class="fa-solid fa-trash"></i></button>
                         </td></tr>`);
@@ -232,8 +214,8 @@
                 const n = doc.data().nama, l = mapIur[`${n}-${i}`]; nmList.push(n);
                 ti.insertAdjacentHTML('beforeend', `<tr class="border-b">
                     <td class="p-3 text-emerald font-black">${n}</td>
-                    <td class="p-3 text-center">${l?`<span class="bg-emerald text-lime px-2 py-1 rounded text-[7px] font-black">LUNAS</span>`:`<span class="text-orange-400 text-[7px] italic font-bold">BELUM</span>`}</td>
-                    <td class="p-3 text-center flex justify-center gap-2">
+                    <td class="p-3 text-center">${l?`<span class="bg-emerald text-[#E3DE61] px-2 py-1 rounded text-[7px] font-black">LUNAS</span>`:`<span class="text-orange-400 text-[7px] italic font-bold">BELUM</span>`}</td>
+                    <td class="p-3 text-center flex justify-center gap-3">
                         ${l?`<button onclick="editI('${l.id}','${i}','${n}',${l.nom})" class="text-blue-500"><i class="fa-solid fa-pen"></i></button>`:''}
                         <button onclick="delD('${l?'pembayaran':'anggota'}','${l?l.id:doc.id}')" class="text-red-100"><i class="fa-solid fa-trash"></i></button>
                     </td></tr>`);
@@ -248,7 +230,7 @@
             upChart(f1In, f1Iur, f1Out);
         }
 
-        // 4. CRUD HELPERS
+        // CRUD
         window.editK = (id, t, n, k, kat) => {
             document.getElementById('kId').value = id; document.getElementById('kDate').value = t;
             document.getElementById('kNom').value = n; document.getElementById('kKet').value = k;
@@ -277,9 +259,9 @@
             const n=document.getElementById('aNama').value; if(n) await db.collection("anggota").add({ nama:n.toUpperCase() });
             closeM('mAng'); loadData();
         };
-        window.delD = async (col, id) => { if(confirm("Hapus?")) { await db.collection(col).doc(id).delete(); loadData(); } };
+        window.delD = async (col, id) => { if(confirm("Hapus selamanya?")) { await db.collection(col).doc(id).delete(); loadData(); } };
 
-        // 5. UI HELPERS
+        // UI HELPERS
         function st(t){ 
             document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); 
             document.getElementById('screen-'+t).classList.add('active'); 
@@ -287,10 +269,16 @@
             document.getElementById('n-'+t).classList.replace('text-emerald/30','text-emerald'); 
         }
         function openM(id){ document.getElementById(id).classList.remove('hidden'); }
-        function closeM(id){ document.getElementById(id).classList.add('hidden'); document.querySelectorAll('input').forEach(i=>i.value=''); }
+        function closeM(id){ document.getElementById(id).classList.add('hidden'); document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('kId').value=''; document.getElementById('iId').value=''; }
         function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-xl font-bold text-emerald shadow-sm':'flex-1 py-3 rounded-xl text-gray-400 font-bold'; document.getElementById('bOut').className=k==='Keluar'?'flex-1 py-3 bg-white rounded-xl font-bold text-red-500 shadow-sm':'flex-1 py-3 rounded-xl text-gray-400 font-bold'; }
         function upChart(a,b,c){
             if(chart) chart.destroy();
             chart = new Chart(document.getElementById('chart'), { 
                 type:'doughnut', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#2F5249','#97B067','#FF6B6B'], borderWidth:0 }] },
-                options:{ plugins:{ legend:{position:'
+                options:{ plugins:{ legend:{position:'bottom', labels:{font:{size:9, weight:'bold'}, usePointStyle:true}} }, cutout:'75%' }
+            });
+        }
+    </script>
+</body>
+    </html>
+    
