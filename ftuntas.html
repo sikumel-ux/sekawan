@@ -29,8 +29,10 @@
             <div class="space-y-4 mt-10">
                 <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-white border border-[#93DA97]">
                 <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-white border border-[#93DA97]">
-                <button id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold uppercase shadow-lg">MASUK</button>
-                <p id="msg" class="text-[10px] font-bold text-orange-700 min-h-[15px]"></p>
+                <button id="btnLogin" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold uppercase shadow-lg active:scale-95 transition-all">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk
+                </button>
+                <p id="msg" class="text-[10px] font-bold text-orange-700 min-h-[15px] mt-2"></p>
             </div>
         </div>
     </div>
@@ -48,11 +50,11 @@
 
         <div id="screen-home" class="tab-content active p-6 space-y-6">
             <div class="flex items-center justify-between card-putih p-4">
-                <span class="text-[10px] font-bold text-[#5E936C]/50 uppercase">Data Bulan Ini</span>
+                <span class="text-[10px] font-bold text-[#5E936C]/50 uppercase">Filter Bulan</span>
                 <input type="month" id="fHome" class="font-bold text-[#5E936C] bg-transparent" onchange="loadData()">
             </div>
             <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl">
-                <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Saldo Akhir</p>
+                <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest">Total Saldo Kas</p>
                 <h2 id="totalSaldo" class="text-4xl font-black mt-1">Rp 0</h2>
             </div>
             <div class="grid grid-cols-3 gap-2">
@@ -73,54 +75,50 @@
         </div>
 
         <div id="screen-kas" class="tab-content p-6 space-y-4">
-            <div class="bg-[#5E936C] p-6 rounded-[2.5rem] text-white text-center">
+            <div class="bg-tuntas p-6 rounded-[2.5rem] text-white text-center">
                 <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Riwayat Kas</p>
                 <h3 id="totalSaldo2" class="text-2xl font-black">Rp 0</h3>
-            </div>
-            <div class="card-putih p-4 flex gap-2">
-                <input type="date" id="kasFrom" class="flex-1 text-[10px] p-2 bg-gray-50 border border-gray-100" onchange="loadData()">
-                <input type="date" id="kasTo" class="flex-1 text-[10px] p-2 bg-gray-50 border border-gray-100" onchange="loadData()">
             </div>
             <div class="card-putih overflow-hidden">
                 <table class="w-full text-[10px] text-left">
                     <thead class="bg-tuntas text-white font-bold uppercase">
-                        <tr><th class="p-3">Tgl</th><th class="p-3">Ket</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center">Aksi</th></tr>
+                        <tr><th class="p-3">Tgl</th><th class="p-3">Ket</th><th class="p-3 text-right">Nominal</th><th class="p-3 text-center"><i class="fa-solid fa-ellipsis-vertical"></i></th></tr>
                     </thead>
                     <tbody id="tBodyKas" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
-            <button onclick="openM('mKas')" class="fixed bottom-24 right-6 w-14 h-14 bg-tuntas text-white rounded-full shadow-2xl flex items-center justify-center text-2xl z-50"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="openM('mKas')" class="fixed bottom-24 right-6 w-14 h-14 bg-tuntas text-white rounded-full shadow-2xl flex items-center justify-center text-2xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
         </div>
 
         <div id="screen-iur" class="tab-content p-6 space-y-4">
             <div class="bg-[#93DA97] p-6 rounded-[2.5rem] text-[#5E936C] text-center shadow-lg">
-                <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest">Setoran Iuran</p>
+                <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest">Status Iuran Warga</p>
                 <h3 id="totalIur3" class="text-2xl font-black">Rp 0</h3>
             </div>
             <input type="month" id="fIur" class="w-full p-4 card-putih font-bold text-[#5E936C]" onchange="loadData()">
             <div class="card-putih overflow-hidden">
                 <table class="w-full text-[10px] text-left">
                     <thead class="bg-tuntas text-white font-bold uppercase">
-                        <tr><th class="p-3">Tgl</th><th class="p-3">Warga</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr>
+                        <tr><th class="p-3">Warga</th><th class="p-3 text-center">Status</th><th class="p-3 text-center">Aksi</th></tr>
                     </thead>
                     <tbody id="tBodyIur" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
             <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
                 <button onclick="openM('mAng')" class="w-12 h-12 bg-white border border-[#93DA97] text-tuntas rounded-full shadow-lg flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></button>
-                <button onclick="openM('mBayar')" class="w-14 h-14 bg-tuntas text-white rounded-full shadow-2xl flex items-center justify-center text-2xl border-2 border-white"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+                <button onclick="openM('mBayar')" class="w-14 h-14 bg-tuntas text-white rounded-full shadow-2xl flex items-center justify-center text-2xl border-4 border-white"><i class="fa-solid fa-receipt"></i></button>
             </div>
         </div>
 
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#93DA97]/30 p-4 flex justify-around pb-8 z-40">
             <button onclick="st('home')" id="n-home" class="text-tuntas flex flex-col items-center gap-1"><i class="fa-solid fa-house"></i><span class="text-[8px] font-bold">HOME</span></button>
-            <button onclick="st('kas')" id="n-kas" class="text-tuntas/30 flex flex-col items-center gap-1"><i class="fa-solid fa-list-check"></i><span class="text-[8px] font-bold">KAS</span></button>
-            <button onclick="st('iur')" id="n-iur" class="text-tuntas/30 flex flex-col items-center gap-1"><i class="fa-solid fa-people-group"></i><span class="text-[8px] font-bold">WARGA</span></button>
+            <button onclick="st('kas')" id="n-kas" class="text-tuntas/30 flex flex-col items-center gap-1"><i class="fa-solid fa-wallet"></i><span class="text-[8px] font-bold">KAS</span></button>
+            <button onclick="st('iur')" id="n-iur" class="text-tuntas/30 flex flex-col items-center gap-1"><i class="fa-solid fa-users"></i><span class="text-[8px] font-bold">WARGA</span></button>
         </nav>
     </div>
 
     <div id="mKas" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4">
-        <h4 id="kasTitle" class="font-bold text-center text-tuntas uppercase">Tambah Kas</h4>
+        <h4 id="kasTitle" class="font-bold text-center text-tuntas uppercase">Input Data Kas</h4>
         <div class="flex gap-2 bg-[#E8FFD9] p-1 rounded-2xl">
             <button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-xl font-bold text-tuntas shadow-sm">MASUK</button>
             <button id="bOut" onclick="sk('Keluar')" class="flex-1 py-3 rounded-xl text-tuntas/40 font-bold">KELUAR</button>
@@ -129,25 +127,8 @@
         <input type="number" id="kNom" placeholder="Nominal" class="w-full p-4 bg-gray-50 border border-gray-100">
         <input type="text" id="kKet" placeholder="Keterangan" class="w-full p-4 bg-gray-50 border border-gray-100">
         <input type="hidden" id="kId">
-        <button id="sKas" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold">SIMPAN</button>
+        <button id="sKas" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold shadow-lg">SIMPAN DATA</button>
         <button onclick="closeM('mKas')" class="w-full text-tuntas/40 font-bold text-[10px] uppercase">Batal</button>
-    </div></div>
-
-    <div id="mBayar" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-end"><div class="bg-white w-full rounded-t-[2.5rem] p-8 space-y-4 text-center">
-        <h4 id="iurTitle" class="font-bold text-tuntas uppercase">Bayar Iuran</h4>
-        <input type="month" id="iDate" class="w-full p-4 bg-gray-50 border border-gray-100">
-        <select id="iNama" class="w-full p-4 bg-gray-50 border border-gray-100 font-bold uppercase"></select>
-        <input type="number" id="iNom" placeholder="Nominal Rp" class="w-full p-4 bg-gray-50 border border-gray-100">
-        <input type="hidden" id="iId">
-        <button id="sBayar" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold">SIMPAN DATA</button>
-        <button onclick="closeM('mBayar')" class="w-full text-tuntas/40 font-bold text-[10px] uppercase">Batal</button>
-    </div></div>
-
-    <div id="mAng" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center p-6"><div class="bg-white w-full rounded-[2.5rem] p-8 text-center shadow-2xl">
-        <h4 class="font-bold text-tuntas uppercase mb-4 italic">Tambah Warga</h4>
-        <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl mb-4 font-bold uppercase text-center">
-        <button id="sAng" class="w-full bg-tuntas text-white py-4 rounded-2xl font-bold">TAMBAHKAN</button>
-        <button onclick="closeM('mAng')" class="w-full mt-4 text-tuntas/40 font-bold text-[10px]">TUTUP</button>
     </div></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -168,13 +149,19 @@
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
-        // LOGIN ENGINE - COPY PERSIS DARI SCREENSHOT
+        // LOGIN ENGINE - MENGIKUTI SCREENSHOT
         document.getElementById('btnLogin').onclick = () => {
-            const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            if(!e || !p) return document.getElementById('msg').innerText = "Email & Password wajib diisi!";
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
             
+            if(!e || !p) {
+                document.getElementById('msg').innerText = "Email & Password wajib diisi!";
+                return;
+            }
+
             document.getElementById('msg').innerText = "Sedang verifikasi...";
-            
+
+            // Persistence Local
             auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
                 return auth.signInWithEmailAndPassword(e, p);
             }).catch(err => {
@@ -182,6 +169,7 @@
             });
         };
 
+        // LOGOUT & STATE
         document.getElementById('btnLogout').onclick = () => auth.signOut();
         
         auth.onAuthStateChanged(user => {
@@ -195,68 +183,61 @@
             }
         });
 
-        // FUNGSI UTAMA LAINNYA
-        const tglIndo = (d) => new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'2-digit', year:'numeric' });
-
+        // LOAD DATA & UI
         function init(){
             const m = new Date().toISOString().substring(0,7);
-            document.getElementById('fHome').value = m; document.getElementById('fIur').value = m;
+            document.getElementById('fHome').value = m; 
+            document.getElementById('fIur').value = m;
             loadData();
         }
 
         async function loadData(){
-            const h = document.getElementById('fHome').value, i = document.getElementById('fIur').value, df = document.getElementById('kasFrom').value, dt = document.getElementById('kasTo').value;
-            const [sk, si, sa] = await Promise.all([db.collection("kas").orderBy("tgl","desc").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get()]);
+            const h = document.getElementById('fHome').value;
+            const i = document.getElementById('fIur').value;
+            const [sk, si, sa] = await Promise.all([
+                db.collection("kas").orderBy("tgl","desc").get(),
+                db.collection("pembayaran").get(),
+                db.collection("anggota").orderBy("nama","asc").get()
+            ]);
             
             let tIn=0, tOut=0, tIur=0, f1In=0, f1Out=0, f1Iur=0;
             const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur');
             tk.innerHTML=''; ti.innerHTML='';
 
             sk.docs.forEach(doc => {
-                const d = doc.data(), t = d.tgl.toDate(), iso = t.toISOString().split('T')[0], bln = iso.substring(0,7);
+                const d = doc.data(), t = d.tgl.toDate(), bln = t.toISOString().substring(0,7);
                 if(d.kat==='Masuk') tIn += d.nom; else tOut += d.nom;
-                if(bln===h){ if(d.kat==='Masuk') f1In += d.nom; else f1Out += d.nom; }
-                if(df && iso < df) return; if(dt && iso > dt) return;
-
-                const isM = d.kat==='Masuk';
-                tk.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold text-tuntas/40">${tglIndo(t)}</td><td class="p-3 font-semibold">${d.ket}</td><td class="p-3 text-right font-black ${isM?'text-tuntas':'text-orange-600/60'}">${isM?'+':''}${d.nom.toLocaleString()}</td><td class="p-3 text-center space-x-2"><button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-tuntas/30"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="delD('kas','${doc.id}')" class="text-orange-400/40"><i class="fa-solid fa-trash-can"></i></button></td></tr>`);
+                if(bln===h){ 
+                    if(d.kat==='Masuk') f1In += d.nom; else f1Out += d.nom;
+                    tk.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold opacity-40">${t.toLocaleDateString('id-ID')}</td><td class="p-3">${d.ket}</td><td class="p-3 text-right font-black ${d.kat==='Masuk'?'text-tuntas':'text-orange-600/60'}">${d.nom.toLocaleString()}</td><td class="p-3 text-center"><button onclick="delD('kas','${doc.id}')" class="text-orange-400/40"><i class="fa-solid fa-trash-can"></i></button></td></tr>`);
+                }
             });
 
             const mapIur = {};
             si.docs.forEach(doc => {
                 const d = doc.data(), bln = d.tgl.toDate().toISOString().substring(0,7); tIur += d.nom;
-                mapIur[`${d.nama}-${bln}`] = {id: doc.id, nom: d.nom, tgl: d.tgl.toDate(), bln: bln};
+                mapIur[`${d.nama}-${bln}`] = {id: doc.id, nom: d.nom};
                 if(bln===h) f1Iur += d.nom;
             });
 
-            let f3Iur=0, nmList=[];
             sa.docs.forEach(doc => {
-                const n = doc.data().nama; nmList.push(n); const l = mapIur[`${n}-${i}`];
-                let st = `<span class="text-orange-300 text-[8px] font-bold uppercase italic">Absen</span>`, tgl='-', aksi='';
-                if(l){ 
-                    st = `<span class="bg-tuntas text-white px-2 py-0.5 rounded text-[8px] font-bold">LUNAS</span>`; 
-                    tgl=tglIndo(l.tgl); f3Iur+=l.nom;
-                    aksi = `<button onclick="editI('${l.id}','${l.bln}','${n}',${l.nom})" class="text-tuntas/30"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="delD('pembayaran','${l.id}')" class="text-orange-400/40 ml-2"><i class="fa-solid fa-trash-can"></i></button>`;
-                }
-                ti.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 text-tuntas/40 font-bold">${tgl}</td><td class="p-3 font-bold uppercase text-tuntas">${n}</td><td class="p-3 text-center">${st}</td><td class="p-3 text-center">${aksi}</td></tr>`);
+                const n = doc.data().nama, l = mapIur[`${n}-${i}`];
+                ti.insertAdjacentHTML('beforeend', `<tr class="border-b"><td class="p-3 font-bold uppercase text-tuntas">${n}</td><td class="p-3 text-center">${l?`<span class="bg-tuntas text-white px-2 py-0.5 rounded text-[8px] font-bold">LUNAS</span>`:`<span class="text-orange-300 text-[8px] font-bold uppercase italic">ABBSEN</span>`}</td><td class="p-3 text-center">${l?`<button onclick="delD('pembayaran','${l.id}')" class="text-orange-400/40"><i class="fa-solid fa-trash-can"></i></button>`:`<i class="fa-solid fa-clock-rotate-left opacity-20"></i>`}</td></tr>`);
             });
 
-            document.getElementById('iNama').innerHTML = nmList.map(n=>`<option value="${n}">${n}</option>`).join('');
-            const saldo = (tIn + tIur) - tOut;
-            document.getElementById('totalSaldo').innerText = 'Rp ' + saldo.toLocaleString();
+            document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString();
             document.getElementById('totalSaldo2').innerText = 'Rp ' + (tIn - tOut).toLocaleString();
             document.getElementById('sIn').innerText = f1In.toLocaleString();
             document.getElementById('sOut').innerText = f1Out.toLocaleString();
             document.getElementById('sIur').innerText = f1Iur.toLocaleString();
-            document.getElementById('totalIur3').innerText = 'Rp ' + f3Iur.toLocaleString();
             upChart(f1In, f1Iur, f1Out);
         }
 
         function upChart(a,b,c){
             if(chart) chart.destroy();
             chart = new Chart(document.getElementById('chart'), { 
-                type:'bar', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#5E936C','#93DA97','#D97706'], borderRadius:8 }] },
-                options:{ plugins:{ legend:{display:false} } }
+                type:'doughnut', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#5E936C','#93DA97','#D97706'], borderWidth:0 }] },
+                options:{ plugins:{ legend:{position:'bottom', labels:{font:{size:8}, usePointStyle:true}} }, cutout:'70%' }
             });
         }
 
@@ -267,27 +248,19 @@
             document.getElementById('n-'+t).classList.replace('text-tuntas/30','text-tuntas'); 
         }
 
-        function openM(id){ 
-            const d = new Date().toISOString().split('T')[0];
-            if(id==='mKas'){ document.getElementById('kId').value=""; document.getElementById('kDate').value=d; document.getElementById('kNom').value=""; document.getElementById('kKet').value=""; }
-            if(id==='mBayar'){ document.getElementById('iId').value=""; document.getElementById('iDate').value=d.substring(0,7); document.getElementById('iNom').value=""; }
-            document.getElementById(id).classList.remove('hidden'); 
-        }
-
+        function openM(id){ document.getElementById(id).classList.remove('hidden'); }
         function closeM(id){ document.getElementById(id).classList.add('hidden'); }
         function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-xl font-bold text-tuntas shadow-sm':'flex-1 py-3 rounded-xl text-tuntas/40 font-bold'; document.getElementById('bOut').className=k==='Keluar'?'flex-1 py-3 bg-white rounded-xl font-bold text-orange-600 shadow-sm':'flex-1 py-3 rounded-xl text-tuntas/40 font-bold'; }
 
         document.getElementById('sKas').onclick = async () => {
-            const t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value, id=document.getElementById('kId').value;
+            const t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value;
             if(!t || !n) return;
-            const data = { tgl:new Date(t), nom:n, ket:k, kat:currentK };
-            if(id) await db.collection("kas").doc(id).update(data); else await db.collection("kas").add(data);
+            await db.collection("kas").add({ tgl:new Date(t), nom:n, ket:k, kat:currentK });
             closeM('mKas'); loadData();
         };
 
-        document.getElementById('sBayar').onclick = async () => {
-            const t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value), id=document.getElementById('iId').value;
-            if(!t || !nm) return;
-            const data = { tgl:new Date(t+"-01"), nama:n, nom:nm };
-            if(id) await db.collection("pembayaran").doc(id).update(data); else await db.collection("pembayaran").add(data);
-            closeM('mBayar'); loadData
+        window.delD = async (col, id) => { if(confirm("Hapus?")) { await db.collection(col).doc(id).delete(); loadData(); } };
+    </script>
+</body>
+    </html>
+                                                                                                
