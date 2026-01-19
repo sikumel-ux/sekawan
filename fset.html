@@ -114,7 +114,7 @@
 
         <div id="screen-iur" class="tab-content p-6 space-y-4">
             <div class="bg-forest p-6 rounded-[2.5rem] text-[#E3DE61] text-center shadow-xl">
-                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Iuran Bulan Ini</p>
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total</p>
                 <h3 id="totalIur3" class="text-2xl font-black">Rp 0</h3>
             </div>
             <input type="month" id="fIur" class="w-full p-4 card-tuntas font-bold text-forest shadow-sm" onchange="loadData()">
@@ -182,7 +182,6 @@
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
-        // LOGIN SYSTEM
         document.getElementById('btnLogin').onclick = () => {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
             if(!e || !p) return document.getElementById('msg').innerText = "Wajib diisi!";
@@ -238,16 +237,13 @@
 
             let nmList=[];
             sa.docs.forEach(doc => {
-                const n = doc.data().nama; nmList.push(n); 
-                const l = mapIur[`${n}-${i}`];
-                
-                // PERUBAHAN DISINI: Penambahan aksi hapus anggota
+                const n = doc.data().nama; nmList.push(n); const l = mapIur[`${n}-${i}`];
                 ti.insertAdjacentHTML('beforeend', `<tr class="border-b">
                     <td class="p-3 font-bold uppercase text-forest">${n}</td>
                     <td class="p-3 text-center">${l?`<span class="bg-forest text-white px-2 py-0.5 rounded text-[8px] font-bold">LUNAS</span>`:`<span class="text-orange-300 text-[8px] font-bold italic">ABSEN</span>`}</td>
-                    <td class="p-3 text-center flex justify-center gap-3">
-                        ${l?`<button onclick="delD('pembayaran','${l.id}')" title="Hapus Bayar" class="text-orange-400/40"><i class="fa-solid fa-receipt"></i> <i class="fa-solid fa-xmark text-[8px]"></i></button>`:''}
-                        <button onclick="delD('anggota','${doc.id}')" title="Hapus Anggota" class="text-red-300/50"><i class="fa-solid fa-user-minus"></i></button>
+                    <td class="p-3 text-center flex items-center justify-center gap-2">
+                        ${l?`<button onclick="delD('pembayaran','${l.id}')" class="text-orange-400/40"><i class="fa-solid fa-trash-can"></i></button>`:`-`}
+                        <button onclick="delD('anggota','${doc.id}')" class="text-red-400/30 ml-2"><i class="fa-solid fa-user-minus"></i></button>
                     </td>
                 </tr>`);
             });
@@ -298,4 +294,8 @@
 
         document.getElementById('sAng').onclick = async () => {
             const n=document.getElementById('aNama').value;
-            if(n)
+            if(n) await db.collection("anggota").add({ nama:n.toUpperCase() });
+            document.getElementById('aNama').value=''; closeM('mAng'); loadData();
+        };
+
+        window.delD = async (col, id) => { if(con
