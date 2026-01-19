@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04 - REPAIR VERSION</title>
+    <title>TUNTAS RT 04 - DATA ACTIVE</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root { --emerald: #064E3B; }
+        :root { --emerald: #064E3B; --dark: #04392D; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAF8; color: var(--emerald); margin:0; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        .table-container { background: white; border: 2px solid var(--emerald); border-radius: 1.5rem; overflow: hidden; margin-top: 1rem; }
+        th { background: var(--emerald); color: white; padding: 12px; font-size: 10px; font-weight: 900; text-transform: uppercase; text-align: left; }
+        td { color: #000; font-weight: 700; font-size: 12px; padding: 12px; border-bottom: 1px solid #f0f0f0; }
+        input, select { border: 2px solid var(--emerald) !important; border-radius: 12px !important; padding: 10px !important; width: 100%; color: black; font-weight: 700; }
         .btn-main { background: var(--emerald); color: white; font-weight: 800; border-radius: 15px; padding: 16px; width: 100%; text-transform: uppercase; }
-        input { border: 2px solid var(--emerald) !important; border-radius: 12px !important; padding: 12px !important; width: 100%; color: black; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -28,48 +30,71 @@
 
     <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-[#F8FAF8]">
         <div class="w-full max-w-sm text-center">
-            <div class="w-20 h-20 bg-[#064E3B] rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-2xl rotate-3">
-                <i class="fa-solid fa-leaf text-3xl"></i>
-            </div>
-            <h2 class="text-3xl font-black text-[#064E3B] mb-2 italic tracking-tighter uppercase">Tuntas RT 04</h2>
+            <div class="w-20 h-20 bg-[#064E3B] rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-2xl rotate-3"><i class="fa-solid fa-leaf text-3xl"></i></div>
+            <h2 class="text-3xl font-black text-[#064E3B] mb-10 italic uppercase">TUNTAS RT 04</h2>
             <div class="space-y-4">
                 <input type="email" id="email" placeholder="Email Admin" class="text-center">
                 <input type="password" id="password" placeholder="Password" class="text-center">
-                <button onclick="prosesLogin()" id="btnLogin" class="btn-main shadow-xl">Masuk</button>
-                <p id="msg" class="text-[11px] font-black text-red-600 mt-4 min-h-[20px]"></p>
+                <button onclick="prosesLogin()" class="btn-main shadow-xl">Masuk</button>
+                <p id="msg" class="text-[11px] font-black text-red-600 mt-4"></p>
             </div>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-5 flex justify-between items-center bg-white border-b-2 border-emerald/5 shadow-sm">
+        <header class="p-5 flex justify-between items-center bg-white border-b-2 border-emerald/5 shadow-sm sticky top-0 z-50">
             <h1 class="font-black text-xl italic text-emerald">TUNTAS<span class="text-lime-600">.</span></h1>
-            <button onclick="logout()" class="text-emerald font-black text-[10px] uppercase border-2 border-emerald/10 px-4 py-2 rounded-2xl bg-white">
-                <i class="fa-solid fa-power-off text-red-500"></i> KELUAR
-            </button>
+            <button onclick="logout()" class="text-emerald font-black text-[10px] uppercase border-2 border-emerald/10 px-4 py-2 rounded-2xl">KELUAR</button>
         </header>
 
         <div id="screen-home" class="tab-content active p-5 space-y-4">
             <div class="bg-[#04392D] p-6 rounded-[2.5rem] text-white shadow-2xl">
                 <p class="text-[10px] font-black opacity-50 uppercase mb-1">Total Saldo Kas</p>
-                <h2 id="totalSaldo" class="text-4xl font-black text-[#A3E635] mb-6">Rp 0</h2>
+                <h2 id="totalSaldo" class="text-3xl font-black text-[#A3E635] mb-6">Rp 0</h2>
                 <div class="grid grid-cols-2 gap-2 mb-4">
-                    <input type="date" id="fHomeStart" class="!bg-white/10 !border-0 !text-white text-[10px]" onchange="loadData()">
-                    <input type="date" id="fHomeEnd" class="!bg-white/10 !border-0 !text-white text-[10px]" onchange="loadData()">
+                    <input type="date" id="fHomeStart" class="!bg-white/10 !border-0 !text-white !p-2 text-[10px]" onchange="loadData()">
+                    <input type="date" id="fHomeEnd" class="!bg-white/10 !border-0 !text-white !p-2 text-[10px]" onchange="loadData()">
+                </div>
+                <div class="grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center">
+                    <div><p class="text-[8px] opacity-50">MASUK</p><p id="sIn" class="text-xs font-black text-[#A3E635]">0</p></div>
+                    <div class="border-x border-white/10"><p class="text-[8px] opacity-50">KELUAR</p><p id="sOut" class="text-xs font-black text-orange-400">0</p></div>
+                    <div><p class="text-[8px] opacity-50">IURAN</p><p id="sIur" class="text-xs font-black text-blue-400">0</p></div>
                 </div>
             </div>
             <div class="bg-white p-4 rounded-[2rem] shadow-sm"><canvas id="chart"></canvas></div>
         </div>
+
+        <div id="screen-kas" class="tab-content p-5">
+            <div class="bg-[#04392D] p-5 rounded-3xl text-white shadow-xl">
+                <div class="flex gap-2 mb-4">
+                    <input type="date" id="kasFrom" class="!bg-white/10 !border-0 !text-white text-[10px]" onchange="loadData()">
+                    <input type="date" id="kasTo" class="!bg-white/10 !border-0 !text-white text-[10px]" onchange="loadData()">
+                </div>
+                <div class="grid grid-cols-3 gap-1 border-t border-white/10 pt-4 text-center">
+                    <div><p class="text-[9px] opacity-50">IN</p><p id="sumIn" class="text-xs font-black text-[#A3E635]">0</p></div>
+                    <div class="border-x border-white/10"><p class="text-[9px] opacity-50">OUT</p><p id="sumOut" class="text-xs font-black text-orange-400">0</p></div>
+                    <div><p class="text-[9px] opacity-50">NET</p><p id="sumNet" class="text-xs font-black">0</p></div>
+                </div>
+            </div>
+            <div class="table-container shadow-md"><table class="w-full"><thead><tr><th>TGL</th><th>KET</th><th class="text-right">NOMINAL</th></tr></thead><tbody id="tBodyKas"></tbody></table></div>
+        </div>
+
+        <div id="screen-iur" class="tab-content p-5">
+            <div class="bg-[#04392D] p-6 rounded-3xl text-white text-center shadow-xl">
+                <input type="date" id="fIur" class="!bg-white/10 !border-0 !text-white font-bold mb-4" onchange="loadData()">
+                <div class="bg-white/5 py-4 rounded-2xl"><p class="text-[10px] text-[#A3E635] font-black mb-1 uppercase">Terkumpul</p><p id="totalIur3" class="text-2xl font-black">Rp 0</p></div>
+            </div>
+            <div class="table-container shadow-md"><table class="w-full"><thead><tr><th>WARGA</th><th class="text-center">STATUS</th></tr></thead><tbody id="tBodyIur"></tbody></table></div>
+        </div>
         
         <nav class="fixed bottom-0 inset-x-0 bg-white border-t-2 border-emerald/5 p-4 flex justify-around pb-8 z-50 rounded-t-[2.5rem] shadow-2xl">
-            <button onclick="st('home')" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-house text-lg"></i>HOME</button>
-            <button onclick="st('kas')" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-wallet text-lg"></i>KAS</button>
-            <button onclick="st('iur')" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-users text-lg"></i>WARGA</button>
+            <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-house text-lg"></i>HOME</button>
+            <button onclick="st('kas')" id="n-kas" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-wallet text-lg"></i>KAS</button>
+            <button onclick="st('iur')" id="n-iur" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-users text-lg"></i>WARGA</button>
         </nav>
     </div>
 
     <script>
-        // CONFIG FIREBASE
         const config = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -78,20 +103,11 @@
             messagingSenderId: "1090506516563",
             appId: "1:1090506516563:web:63c429677caea28addfea6"
         };
-        
-        // Cek Firebase
-        try {
-            firebase.initializeApp(config);
-            console.log("Firebase Siap");
-        } catch(e) {
-            console.error("Firebase Gagal:", e);
-        }
-
+        firebase.initializeApp(config);
         const db = firebase.firestore();
         const auth = firebase.auth();
         let chart;
 
-        // AUTH MONITOR
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('loginPage').classList.add('hidden');
@@ -103,42 +119,75 @@
             }
         });
 
-        // FUNGSI LOGIN
         async function prosesLogin() {
-            const e = document.getElementById('email').value.trim();
-            const p = document.getElementById('password').value;
-            const msg = document.getElementById('msg');
-            
-            if(!e || !p) { msg.innerText = "Isi email & password!"; return; }
-
-            msg.innerText = "Mengecek...";
-            try {
-                await auth.signInWithEmailAndPassword(e, p);
-            } catch (err) {
-                msg.innerText = "Gagal: " + err.message;
-            }
+            const e = document.getElementById('email').value, p = document.getElementById('password').value, m = document.getElementById('msg');
+            m.innerText = "Mengecek...";
+            try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { m.innerText = err.message; }
         }
 
         function logout() { auth.signOut(); }
 
         function init() {
-            // Pasang tanggal default
-            const d = new Date();
-            const s = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0];
-            const e = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0];
-            document.getElementById('fHomeStart').value = s;
-            document.getElementById('fHomeEnd').value = e;
+            const d = new Date(), s = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0], e = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0];
+            document.getElementById('fHomeStart').value = s; document.getElementById('fHomeEnd').value = e;
+            document.getElementById('kasFrom').value = s; document.getElementById('kasTo').value = e;
+            document.getElementById('fIur').value = d.toISOString().split('T')[0];
             loadData();
         }
 
         async function loadData() {
-            // Logika load data kamu di sini
-            console.log("Memuat data...");
+            const hs = document.getElementById('fHomeStart').value, he = document.getElementById('fHomeEnd').value, fi = document.getElementById('fIur').value;
+            const df = document.getElementById('kasFrom').value, dt = document.getElementById('kasTo').value;
+            
+            const [sk, si, sa] = await Promise.all([db.collection("kas").orderBy("tgl","desc").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get()]);
+            
+            let tIn=0, tOut=0, tIur=0, dIn=0, dOut=0, dIur=0, kIn=0, kOut=0;
+            const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur');
+            tk.innerHTML=''; ti.innerHTML='';
+
+            sk.docs.forEach(doc => {
+                const d = doc.data(), t = d.tgl.toDate(), iso = t.toISOString().split('T')[0];
+                if(d.kat==='Masuk') tIn += d.nom; else tOut += d.nom;
+                if(iso >= hs && iso <= he){ if(d.kat==='Masuk') dIn += d.nom; else dOut += d.nom; }
+                if(iso >= df && iso <= dt){
+                    if(d.kat==='Masuk') kIn += d.nom; else kOut += d.nom;
+                    tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td>${d.ket}</td><td class="text-right ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td></tr>`);
+                }
+            });
+
+            const mapIur = {};
+            si.docs.forEach(doc => {
+                const d = doc.data(), bln = d.tgl.toDate().toISOString().substring(0,7);
+                tIur += d.nom; 
+                mapIur[`${d.nama}-${bln}`] = d.nom;
+                if(bln === fi.substring(0,7)) dIur += d.nom;
+            });
+
+            sa.docs.forEach(doc => {
+                const n = doc.data().nama, l = mapIur[`${n}-${fi.substring(0,7)}`];
+                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase">${n}</td><td class="text-center">${l?`<span class="bg-emerald text-white text-[9px] px-2 py-1 rounded font-black">LUNAS</span>`:`<span class="text-red-500 font-bold italic text-[9px]">BELUM</span>`}</td></tr>`);
+            });
+
+            document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString();
+            document.getElementById('sIn').innerText = dIn.toLocaleString(); document.getElementById('sOut').innerText = dOut.toLocaleString(); document.getElementById('sIur').innerText = dIur.toLocaleString();
+            document.getElementById('totalIur3').innerText = 'Rp ' + dIur.toLocaleString();
+            document.getElementById('sumIn').innerText = kIn.toLocaleString(); document.getElementById('sumOut').innerText = kOut.toLocaleString(); document.getElementById('sumNet').innerText = (kIn - kOut).toLocaleString();
+            upChart(dIn, dIur, dOut);
         }
 
         function st(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('screen-' + t).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-emerald','text-emerald/20'));
+            document.getElementById('n-' + t).classList.replace('text-emerald/20','text-emerald');
+        }
+
+        function upChart(a,b,c){
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('chart'), { 
+                type:'doughnut', data:{ labels:['MASUK','IURAN','KELUAR'], datasets:[{ data:[a,b,c], backgroundColor:['#064E3B','#3B82F6','#EF4444'], borderWidth:0 }] },
+                options:{ plugins:{ legend:{position:'bottom', labels:{font:{size:10, weight:'bold'}}} }, cutout:'75%' }
+            });
         }
     </script>
 </body>
