@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS RT 04 - UNIFIED DESIGN</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root { --emerald: #064E3B; --bg: #F8FAF8; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--emerald); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .table-container { background: white; border: 2px solid var(--emerald); border-radius: 1rem; overflow: hidden; }
+        th { background-color: var(--emerald); color: white !important; padding: 12px 8px; font-size: 11px; text-transform: uppercase; }
+        td { color: #000000 !important; font-weight: 700; font-size: 12px; padding: 12px 8px; border-bottom: 1px solid #E5E7EB; }
+        .btn-main { background-color: var(--emerald); color: white; font-weight: 800; border-radius: 12px; padding: 14px; width: 100%; }
+        input, select { border: 2px solid var(--emerald) !important; border-radius: 10px !important; padding: 10px !important; color: black !important; font-weight: 800; background: white !important; }
+        .icon-btn { width: 3rem; height: 3rem; background: white; color: var(--emerald); border: 2px solid var(--emerald); border-radius: 0.75rem; display: flex; items-center: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="pb-32">
+
+    <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-[#F8FAF8]">
+        <div class="w-full max-sm text-center">
+            <div class="w-16 h-16 bg-[#064E3B] rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4"><i class="fa-solid fa-leaf"></i></div>
+            <h2 class="text-2xl font-black text-[#064E3B] mb-8 italic">TUNTAS RT 04</h2>
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="Email Admin" class="w-full text-center">
+                <input type="password" id="password" placeholder="Password" class="w-full text-center">
+                <button id="btnLogin" class="btn-main shadow-xl uppercase">Masuk</button>
+                <p id="msg" class="text-xs font-bold text-red-600 mt-4"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <header class="p-5 flex justify-between items-center sticky top-0 z-50 bg-white border-b-2 border-emerald/10">
+            <h1 class="font-black text-xl italic text-emerald">TUNTAS<span class="text-lime-600">.</span></h1>
+            <button id="btnLogout" class="text-emerald font-black text-[10px] uppercase border-2 border-emerald/20 px-4 py-2 rounded-xl flex items-center gap-2">
+                <i class="fa-solid fa-power-off"></i> Keluar
+            </button>
+        </header>
+
+        <div id="screen-home" class="tab-content active p-5 space-y-4">
+            <div class="bg-[#064E3B] p-6 rounded-3xl text-white shadow-xl">
+                <p class="text-[10px] font-bold opacity-70">TOTAL SALDO KAS</p>
+                <h2 id="totalSaldo" class="text-3xl font-black text-lime-400">Rp 0</h2>
+                <div class="mt-4 flex gap-2">
+                    <input type="date" id="fHomeStart" class="w-full text-[10px] !p-2 bg-emerald/10 text-white" onchange="loadData()">
+                    <input type="date" id="fHomeEnd" class="w-full text-[10px] !p-2 bg-emerald/10 text-white" onchange="loadData()">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-white p-3 rounded-xl border border-emerald/10 text-center"><p class="text-[8px] font-bold text-gray-400">MASUK</p><p id="sIn" class="text-[11px] font-black text-emerald">0</p></div>
+                <div class="bg-white p-3 rounded-xl border border-emerald/10 text-center"><p class="text-[8px] font-bold text-gray-400">KELUAR</p><p id="sOut" class="text-[11px] font-black text-red-500">0</p></div>
+                <div class="bg-white p-3 rounded-xl border border-emerald/10 text-center"><p class="text-[8px] font-bold text-gray-400">IURAN</p><p id="sIur" class="text-[11px] font-black text-blue-600">0</p></div>
+            </div>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-emerald/5"><canvas id="chart"></canvas></div>
+        </div>
+
+        <div id="screen-kas" class="tab-content p-5 space-y-4">
+            <div class="bg-emerald p-4 rounded-2xl flex flex-col gap-3 shadow-md">
+                <div class="flex gap-2">
+                    <input type="date" id="kasFrom" class="flex-1 text-[10px] !p-2" onchange="loadData()">
+                    <input type="date" id="kasTo" class="flex-1 text-[10px] !p-2" onchange="loadData()">
+                </div>
+                <div class="flex justify-between text-white text-[10px] font-black px-1 border-t border-white/20 pt-2">
+                    <div>IN: <span id="sumIn" class="text-lime-300">0</span></div>
+                    <div>OUT: <span id="sumOut" class="text-orange-300">0</span></div>
+                    <div>NET: <span id="sumNet" class="text-white">0</span></div>
+                </div>
+            </div>
+            <div class="table-container"><table class="w-full"><thead><tr><th class="text-left">TGL</th><th class="text-left">KET</th><th class="text-right">NOMINAL</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyKas"></tbody></table></div>
+            <button onclick="openM('mKas')" class="fixed bottom-24 right-6 w-14 h-14 bg-emerald text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div id="screen-iur" class="tab-content p-5 space-y-4">
+            <div class="bg-white p-6 rounded-3xl border-2 border-emerald shadow-sm text-center">
+                <p class="text-[10px] font-black text-emerald uppercase mb-2">Periode Iuran</p>
+                <input type="date" id="fIur" class="w-full text-center" onchange="loadData()">
+                <p id="totalIur3" class="text-sm font-black mt-3 text-emerald"></p>
+            </div>
+            <div class="table-container"><table class="w-full"><thead><tr><th class="text-left">WARGA</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyIur"></tbody></table></div>
+            
+            <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
+                <button onclick="openM('mAng')" class="icon-btn shadow-lg"><i class="fa-solid fa-user-plus"></i></button>
+                <button onclick="openM('mBayar')" class="icon-btn shadow-lg"><i class="fa-solid fa-receipt"></i></button>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 inset-x-0 bg-white border-t-2 border-emerald/10 p-4 flex justify-around pb-8 z-50 rounded-t-3xl shadow-xl">
+            <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-house"></i>HOME</button>
+            <button onclick="st('kas')" id="n-kas" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-wallet"></i>KAS</button>
+            <button onclick="st('iur')" id="n-iur" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-users"></i>WARGA</button>
+        </nav>
+    </div>
+
+    <div id="mKas" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-end"><div class="bg-white w-full rounded-t-3xl p-6 space-y-4">
+        <h4 id="mKasTitle" class="font-black text-center uppercase">Input Kas</h4>
+        <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+            <button id="bIn" onclick="sk('Masuk')" class="flex-1 py-3 bg-white rounded-lg font-black text-emerald shadow-sm text-xs">MASUK</button>
+            <button id="bOut" onclick="sk('Keluar')" class="flex-1 py-3 rounded-lg text-gray-400 font-black text-xs">KELUAR</button>
+        </div>
+        <input type="date" id="kDate" class="w-full"><input type="number" id="kNom" placeholder="Nominal Rp" class="w-full"><input type="text" id="kKet" placeholder="Keterangan" class="w-full"><input type="hidden" id="kId"><button id="sKas" class="btn-main">SIMPAN</button><button onclick="closeM('mKas')" class="w-full text-gray-400 font-bold py-2 text-xs uppercase">Batal</button>
+    </div></div>
+
+    <div id="mBayar" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-end"><div class="bg-white w-full rounded-t-3xl p-6 space-y-4">
+        <h4 id="mBayarTitle" class="font-black text-center uppercase">Input Iuran</h4>
+        <input type="date" id="iDate" class="w-full"><select id="iNama" class="w-full uppercase"></select><input type="number" id="iNom" placeholder="Nominal Rp" class="w-full"><input type="hidden" id="iId"><button id="sBayar" class="btn-main">SIMPAN IURAN</button><button onclick="closeM('mBayar')" class="w-full text-gray-400 font-bold py-2 text-xs uppercase">Batal</button>
+    </div></div>
+
+    <div id="mAng" class="fixed inset-0 bg-black/60 hidden z-[100] flex items-center p-6"><div class="bg-white w-full rounded-3xl p-8">
+        <h4 id="mAngTitle" class="font-black text-center uppercase mb-4">Data Warga</h4>
+        <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="w-full mb-4 text-center uppercase">
+        <input type="hidden" id="aId"><button id="sAng" class="btn-main">SIMPAN</button><button onclick="closeM('mAng')" class="w-full mt-2 text-gray-400 font-bold text-xs uppercase">Tutup</button>
+    </div></div>
+
+    <script>
+        const config = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+        firebase.initializeApp(config);
+        const db = firebase.firestore();
+        let currentK = 'Masuk', chart;
+
+        document.getElementById('btnLogin').onclick = () => {
+            const e = document.getElementById('email').value, p = document.getElementById('password').value;
+            if(!e || !p) return;
+            document.getElementById('msg').innerText = "Memproses...";
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                return firebase.auth().signInWithEmailAndPassword(e, p);
+            }).catch(err => { document.getElementById('msg').innerText = "Error: " + err.message; });
+        };
+
+        firebase.auth().onAuthStateChanged(user => {
+            if(user) { document.getElementById('loginPage').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); init(); }
+            else { document.getElementById('loginPage').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+        });
+        document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
+
+        function init(){
+            const now = new Date();
+            const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+            const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+            document.getElementById('fHomeStart').value = start;
+            document.getElementById('fHomeEnd').value = end;
+            document.getElementById('kasFrom').value = start;
+            document.getElementById('kasTo').value = end;
+            document.getElementById('fIur').value = now.toISOString().split('T')[0];
+            loadData();
+        }
+
+        async function loadData(){
+            const hs = document.getElementById('fHomeStart').value, he = document.getElementById('fHomeEnd').value, fi = document.getElementById('fIur').value;
+            const df = document.getElementById('kasFrom').value, dt = document.getElementById('kasTo').value;
+            
+            const [sk, si, sa] = await Promise.all([db.collection("kas").orderBy("tgl","desc").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get()]);
+            
+            let tIn=0, tOut=0, tIur=0, dIn=0, dOut=0, dIur=0, kSumIn=0, kSumOut=0;
+            const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur');
+            tk.innerHTML=''; ti.innerHTML='';
+
+            sk.docs.forEach(doc => {
+                const d = doc.data(), t = d.tgl.toDate(), iso = t.toISOString().split('T')[0];
+                if(d.kat==='Masuk') tIn += d.nom; else tOut += d.nom;
+                if(iso >= hs && iso <= he){ if(d.kat==='Masuk') dIn += d.nom; else dOut += d.nom; }
+                if(iso >= df && iso <= dt){
+                    if(d.kat==='Masuk') kSumIn += d.nom; else kSumOut += d.nom;
+                    tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td>${d.ket}</td><td class="text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td><td class="text-center flex justify-center gap-2"><button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button><button onclick="delD('kas','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+                }
+            });
+
+            const mapIur = {};
+            si.docs.forEach(doc => {
+                const d = doc.data(), iso = d.tgl.toDate().toISOString().split('T')[0], bln = iso.substring(0,7);
+                tIur += d.nom; 
+                mapIur[`${d.nama}-${bln}`] = {id: doc.id, nom: d.nom};
+                if(bln === fi.substring(0,7)) dIur += d.nom;
+            });
+
+            sa.docs.forEach(doc => {
+                const n = doc.data().nama, l = mapIur[`${n}-${fi.substring(0,7)}`];
+                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase">${n}</td><td class="text-center">${l?`<span class="bg-emerald text-white text-[9px] px-2 py-1 rounded font-black">LUNAS</span>`:`<span class="text-red-500 font-bold italic text-[9px]">BELUM</span>`}</td><td class="text-center flex justify-center gap-2">${l?`<button onclick="editI('${l.id}','${fi.substring(0,7)}','${n}',${l.nom})" class="text-blue-500"><i class="fa-solid fa-file-invoice"></i></button>`:''}<button onclick="editAng('${doc.id}','${n}')" class="text-emerald"><i class="fa-solid fa-pen"></i></button><button onclick="delD('anggota','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+            });
+
+            document.getElementById('iNama').innerHTML = sa.docs.map(doc=>`<option value="${doc.data().nama}">${doc.data().nama}</option>`).join('');
+            document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString();
+            document.getElementById('sIn').innerText = dIn.toLocaleString();
+            document.getElementById('sOut').innerText = dOut.toLocaleString();
+            document.getElementById('sIur').innerText = dIur.toLocaleString();
+            document.getElementById('totalIur3').innerText = 'TOTAL IURAN: Rp ' + dIur.toLocaleString();
+            
+            // SUMMARY KAS PAGE
+            document.getElementById('sumIn').innerText = kSumIn.toLocaleString();
+            document.getElementById('sumOut').innerText = kSumOut.toLocaleString();
+            document.getElementById('sumNet').innerText = (kSumIn - kSumOut).toLocaleString();
+            
+            upChart(dIn, dIur, dOut);
+        }
+
+        window.editAng = (id, n) => { document.getElementById('aId').value = id; document.getElementById('aNama').value = n; document.getElementById('mAngTitle').innerText = "Edit Nama Warga"; openM('mAng'); };
+        document.getElementById('sAng').onclick = async () => {
+            const id = document.getElementById('aId').value, n = document.getElementById('aNama').value; if(!n) return;
+            if(id) await db.collection("anggota").doc(id).update({ nama: n.toUpperCase() });
+            else await db.collection("anggota").add({ nama: n.toUpperCase() });
+            closeM('mAng'); loadData();
+        };
+
+        window.editK = (id, t, n, k, kat) => { document.getElementById('kId').value = id; document.getElementById('kDate').value = t; document.getElementById('kNom').value = n; document.getElementById('kKet').value = k; sk(kat); openM('mKas'); };
+        window.editI = (id, bln, n, nom) => { document.getElementById('iId').value = id; document.getElementById('iDate').value = bln+"-01"; document.getElementById('iNama').value = n; document.getElementById('iNom').value = nom; openM('mBayar'); };
+        
+        document.getElementById('sKas').onclick = async () => {
+            const id=document.getElementById('kId').value, t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value;
+            if(!t || !n) return; const d = { tgl:new Date(t), nom:n, ket:k, kat:currentK };
+            if(id) await db.collection("kas").doc(id).update(d); else await db.collection("kas").add(d);
+            closeM('mKas'); loadData();
+        };
+
+        document.getElementById('sBayar').onclick = async () => {
+            const id=document.getElementById('iId').value, t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value);
+            if(!t || !nm) return; const d = { tgl:new Date(t), nama:n, nom:nm };
+            if(id) await db.collection("pembayaran").doc(id).update(d); else await db.collection("pembayaran").add(d);
+            closeM('mBayar'); loadData();
+        };
+
+        window.delD = async (col, id) => { if(confirm("Hapus data?")) { await db.collection(col).doc(id).delete(); loadData(); } };
+
+        function st(t){ 
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); document.getElementById('screen-'+t).classList.add('active'); 
+            document.querySelectorAll('nav button').forEach(b=>b.classList.replace('text-emerald','text-emerald/20')); document.getElementById('n-'+t).classList.replace('text-emerald/20','text-emerald'); 
+        }
+        function openM(id){ document.getElementById(id).classList.remove('hidden'); }
+        function closeM(id){ document.getElementById(id).classList.add('hidden'); document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('aId').value=''; document.getElementById('kId').value=''; }
+        function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-lg font-black text-emerald shadow-sm text-xs':'flex-1 py-3 rounded-lg text-gray-400 font-black text-xs'; document.getElementById('bOut').className=k==='Keluar'?'flex-1 py-3 bg-white rounded-lg font-black text-red-500 shadow-sm text-xs':'flex-1 py-3 rounded-lg text-gray-400 font-black text-xs'; }
+        
+        function upChart(a,b,c){
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('chart'), { 
+                type:'doughnut',
