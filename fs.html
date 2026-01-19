@@ -109,17 +109,41 @@
         </div>
 
 
-        <div id="screen-iur" class="tab-content p-5 space-y-4">
-            <div class="bg-white p-6 rounded-3xl border-2 border-emerald text-center">
-                <input type="date" id="fIur" class="w-full text-center mb-2" onchange="loadData()">
-                <p id="totalIur3" class="text-sm font-black text-emerald uppercase"></p>
+        <div id="screen-iur" class="t        <div id="screen-iur" class="tab-content p-5 space-y-4">
+            <div class="bg-[#04392D] p-6 rounded-3xl shadow-xl border border-white/10 text-center">
+                <p class="text-[10px] font-black text-white/60 uppercase mb-3 tracking-widest">Pilih Periode Iuran</p>
+                <input type="date" id="fIur" class="w-full text-center !bg-white/10 !text-white !border-white/20 !rounded-xl mb-4" onchange="loadData()">
+                
+                <div class="bg-white/5 py-3 rounded-2xl border border-white/5">
+                    <p class="text-[9px] font-bold text-lime-400/80 uppercase">Terkumpul Bulan Ini</p>
+                    <p id="totalIur3" class="text-xl font-black text-white tracking-tight">Rp 0</p>
+                </div>
             </div>
-            <div class="table-container"><table class="w-full"><thead><tr><th>WARGA</th><th>STATUS</th><th>AKSI</th></tr></thead><tbody id="tBodyIur"></tbody></table></div>
+
+            <div class="table-container shadow-md border-2 border-[#064E3B]">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-left py-4 px-4">NAMA WARGA</th>
+                            <th class="text-center py-4">STATUS</th>
+                            <th class="text-center py-4 px-4">AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tBodyIur" class="divide-y divide-gray-100">
+                        </tbody>
+                </table>
+            </div>
+
             <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
-                <button onclick="openM('mAng')" class="icon-btn"><i class="fa-solid fa-user-plus text-xl"></i></button>
-                <button onclick="openM('mBayar')" class="icon-btn"><i class="fa-solid fa-receipt text-xl"></i></button>
+                <button onclick="openM('mAng')" class="w-14 h-14 bg-white text-[#064E3B] border-2 border-[#064E3B] rounded-2xl shadow-xl flex items-center justify-center">
+                    <i class="fa-solid fa-user-plus text-xl"></i>
+                </button>
+                <button onclick="openM('mBayar')" class="w-14 h-14 bg-[#064E3B] text-white rounded-2xl shadow-2xl flex items-center justify-center border-4 border-white">
+                    <i class="fa-solid fa-receipt text-xl"></i>
+                </button>
             </div>
         </div>
+
 
         <nav class="fixed bottom-0 inset-x-0 bg-white border-t-2 border-emerald/10 p-4 flex justify-around pb-8 z-50 rounded-t-3xl shadow-xl">
             <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px] uppercase"><i class="fa-solid fa-house"></i>Home</button>
