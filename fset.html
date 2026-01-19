@@ -178,22 +178,34 @@
             appId: "1:1090506516563:web:63c429677caea28addfea6"
         };
         firebase.initializeApp(config);
-        const auth = firebase.auth();
         const db = firebase.firestore();
         let currentK = 'Masuk', chart;
 
+        // --- CORE LOGIN ENGINE  ---
         document.getElementById('btnLogin').onclick = () => {
-            const e = document.getElementById('email').value, p = document.getElementById('password').value;
-            if(!e || !p) return document.getElementById('msg').innerText = "Wajib diisi!";
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            if(!e || !p) return;
             document.getElementById('msg').innerText = "Memproses...";
-            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-                return auth.signInWithEmailAndPassword(e, p);
-            }).catch(err => { document.getElementById('msg').innerText = "Gagal: " + err.message; });
+            
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                return firebase.auth().signInWithEmailAndPassword(e, p);
+            }).catch(err => {
+                document.getElementById('msg').innerText = "Error: " + err.message;
+            });
         };
-        document.getElementById('btnLogout').onclick = () => auth.signOut();
-        auth.onAuthStateChanged(user => {
-            if(user){ document.getElementById('loginPage').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); init(); }
-            else { document.getElementById('loginPage').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+
+        document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
+        
+        firebase.auth().onAuthStateChanged(user => {
+            if(user){ 
+                document.getElementById('loginPage').classList.add('hidden'); 
+                document.getElementById('mainApp').classList.remove('hidden'); 
+                init(); 
+            } else { 
+                document.getElementById('loginPage').classList.remove('hidden'); 
+                document.getElementById('mainApp').classList.add('hidden'); 
+            }
         });
 
         function init(){
@@ -237,13 +249,18 @@
 
             let nmList=[];
             sa.docs.forEach(doc => {
-                const n = doc.data().nama; nmList.push(n); const l = mapIur[`${n}-${i}`];
+                const n = doc.data().nama; nmList.push(n); 
+                const l = mapIur[`${n}-${i}`];
+                
+                // BARIS BARU: Menambahkan tombol hapus anggota di sebelah tombol hapus iuran
                 ti.insertAdjacentHTML('beforeend', `<tr class="border-b">
                     <td class="p-3 font-bold uppercase text-forest">${n}</td>
                     <td class="p-3 text-center">${l?`<span class="bg-forest text-white px-2 py-0.5 rounded text-[8px] font-bold">LUNAS</span>`:`<span class="text-orange-300 text-[8px] font-bold italic">ABSEN</span>`}</td>
-                    <td class="p-3 text-center flex items-center justify-center gap-2">
-                        ${l?`<button onclick="delD('pembayaran','${l.id}')" class="text-orange-400/40"><i class="fa-solid fa-trash-can"></i></button>`:`-`}
-                        <button onclick="delD('anggota','${doc.id}')" class="text-red-400/30 ml-2"><i class="fa-solid fa-user-minus"></i></button>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-4">
+                            ${l?`<button onclick="delD('pembayaran','${l.id}')" class="text-orange-400/40" title="Hapus Iuran"><i class="fa-solid fa-trash-can"></i></button>`:`<span class="text-gray-200">-</span>`}
+                            <button onclick="delD('anggota','${doc.id}')" class="text-red-400/30" title="Hapus Anggota"><i class="fa-solid fa-user-minus"></i></button>
+                        </div>
                     </td>
                 </tr>`);
             });
@@ -288,14 +305,4 @@
         document.getElementById('sBayar').onclick = async () => {
             const t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value);
             if(!t || !nm) return;
-            await db.collection("pembayaran").add({ tgl:new Date(t+"-01"), nama:n, nom:nm });
-            closeM('mBayar'); loadData();
-        };
-
-        document.getElementById('sAng').onclick = async () => {
-            const n=document.getElementById('aNama').value;
-            if(n) await db.collection("anggota").add({ nama:n.toUpperCase() });
-            document.getElementById('aNama').value=''; closeM('mAng'); loadData();
-        };
-
-        window.delD = async (col, id) => { if(con
+            await db.collection("pembayaran").add({ tgl:new Date(
