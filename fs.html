@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS RT 04 - FIX LOGIN</title>
+    <title>TUNTAS RT 04 - FINAL REPAIR</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -16,7 +16,7 @@
     
     <style>
         :root { --emerald: #064E3B; --bg: #F8FAF8; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--emerald); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--emerald); overflow-x: hidden; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .table-container { background: white; border: 2px solid var(--emerald); border-radius: 1rem; overflow: hidden; }
@@ -24,39 +24,39 @@
         td { color: #000000 !important; font-weight: 700; font-size: 12px; padding: 12px 8px; border-bottom: 1px solid #E5E7EB; }
         .btn-main { background-color: var(--emerald); color: white; font-weight: 800; border-radius: 12px; padding: 14px; width: 100%; }
         input, select { border: 2px solid var(--emerald) !important; border-radius: 10px !important; padding: 10px !important; color: black !important; font-weight: 800; background: white !important; }
-        .icon-btn { width: 3.5rem; height: 3.5rem; background: white; color: var(--emerald); border: 2px solid var(--emerald); border-radius: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .icon-btn { width: 3.5rem; height: 3.5rem; background: white; color: var(--emerald); border: 2.5px solid var(--emerald); border-radius: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body class="pb-32">
 
     <div id="loginPage" class="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-[#F8FAF8]">
         <div class="w-full max-w-sm text-center">
-            <div class="w-16 h-16 bg-[#064E3B] rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4"><i class="fa-solid fa-leaf"></i></div>
-            <h2 class="text-2xl font-black text-[#064E3B] mb-8 italic text-emerald">TUNTAS RT 04</h2>
+            <div class="w-16 h-16 bg-[#064E3B] rounded-2xl flex items-center justify-center text-2xl text-white mx-auto mb-4 shadow-lg"><i class="fa-solid fa-leaf"></i></div>
+            <h2 class="text-2xl font-black text-[#064E3B] mb-8 italic">TUNTAS RT 04</h2>
             <div class="space-y-4">
                 <input type="email" id="email" placeholder="Email Admin" class="w-full text-center">
                 <input type="password" id="password" placeholder="Password" class="w-full text-center">
-                <button id="btnLogin" class="btn-main shadow-xl uppercase">Masuk</button>
+                <button id="btnLogin" class="btn-main shadow-xl uppercase tracking-widest">Masuk</button>
                 <p id="msg" class="text-xs font-bold text-red-600 mt-4"></p>
             </div>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-5 flex justify-between items-center sticky top-0 z-50 bg-white border-b-2 border-emerald/10">
+        <header class="p-5 flex justify-between items-center sticky top-0 z-50 bg-white border-b-2 border-emerald/10 shadow-sm">
             <h1 class="font-black text-xl italic text-emerald">TUNTAS<span class="text-lime-600">.</span></h1>
             <button id="btnLogout" class="text-emerald font-black text-[10px] uppercase border-2 border-emerald/20 px-4 py-2 rounded-xl flex items-center gap-2">
-                <i class="fa-solid fa-power-off"></i> Keluar
+                <i class="fa-solid fa-power-off"></i> KELUAR
             </button>
         </header>
 
         <div id="screen-home" class="tab-content active p-5 space-y-4">
-            <div class="bg-[#064E3B] p-6 rounded-3xl text-white shadow-xl">
-                <p class="text-[10px] font-bold opacity-70">TOTAL SALDO KAS</p>
+            <div class="bg-[#064E3B] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                <p class="text-[10px] font-bold opacity-70 uppercase">Saldo Kas</p>
                 <h2 id="totalSaldo" class="text-3xl font-black text-lime-400">Rp 0</h2>
                 <div class="mt-4 flex gap-2">
-                    <input type="date" id="fHomeStart" class="w-full text-[10px] !p-2 bg-emerald/20 border-0 text-white" onchange="loadData()">
-                    <input type="date" id="fHomeEnd" class="w-full text-[10px] !p-2 bg-emerald/20 border-0 text-white" onchange="loadData()">
+                    <input type="date" id="fHomeStart" class="w-full text-[10px] !p-2 bg-emerald/30 border-0 text-white" onchange="loadData()">
+                    <input type="date" id="fHomeEnd" class="w-full text-[10px] !p-2 bg-emerald/30 border-0 text-white" onchange="loadData()">
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
@@ -68,28 +68,28 @@
         </div>
 
         <div id="screen-kas" class="tab-content p-5 space-y-4">
-            <div class="bg-emerald p-4 rounded-2xl shadow-md">
+            <div class="bg-emerald p-4 rounded-2xl shadow-lg">
                 <div class="flex gap-2 mb-3">
                     <input type="date" id="kasFrom" class="flex-1 text-[10px] !p-2" onchange="loadData()">
                     <input type="date" id="kasTo" class="flex-1 text-[10px] !p-2" onchange="loadData()">
                 </div>
-                <div class="flex justify-between text-white text-[10px] font-black px-1 border-t border-white/20 pt-2 uppercase tracking-tighter">
-                    <div>Masuk: <span id="sumIn" class="text-lime-300">0</span></div>
-                    <div>Keluar: <span id="sumOut" class="text-orange-300">0</span></div>
-                    <div>Net: <span id="sumNet" class="text-white">0</span></div>
+                <div class="flex justify-between text-white text-[9px] font-extrabold px-1 border-t border-white/20 pt-2 uppercase">
+                    <div>IN: <span id="sumIn" class="text-lime-300">0</span></div>
+                    <div>OUT: <span id="sumOut" class="text-orange-300">0</span></div>
+                    <div>NET: <span id="sumNet" class="text-white">0</span></div>
                 </div>
             </div>
-            <div class="table-container"><table class="w-full"><thead><tr><th class="text-left">TGL</th><th class="text-left">KET</th><th class="text-right">NOMINAL</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyKas"></tbody></table></div>
+            <div class="table-container shadow-sm"><table class="w-full"><thead><tr><th class="text-left">TGL</th><th class="text-left">KET</th><th class="text-right">NOMINAL</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyKas"></tbody></table></div>
             <button onclick="openM('mKas')" class="fixed bottom-24 right-6 w-14 h-14 bg-emerald text-white rounded-full shadow-2xl flex items-center justify-center text-xl z-50 border-4 border-white"><i class="fa-solid fa-plus"></i></button>
         </div>
 
         <div id="screen-iur" class="tab-content p-5 space-y-4">
-            <div class="bg-white p-6 rounded-3xl border-2 border-emerald text-center">
+            <div class="bg-white p-6 rounded-3xl border-2 border-emerald text-center shadow-sm">
                 <p class="text-[10px] font-black text-emerald uppercase mb-2">Periode Iuran</p>
                 <input type="date" id="fIur" class="w-full text-center" onchange="loadData()">
                 <p id="totalIur3" class="text-sm font-black mt-3 text-emerald"></p>
             </div>
-            <div class="table-container"><table class="w-full"><thead><tr><th class="text-left">WARGA</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyIur"></tbody></table></div>
+            <div class="table-container shadow-sm"><table class="w-full"><thead><tr><th class="text-left">NAMA WARGA</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead><tbody id="tBodyIur"></tbody></table></div>
             <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
                 <button onclick="openM('mAng')" class="icon-btn"><i class="fa-solid fa-user-plus text-xl"></i></button>
                 <button onclick="openM('mBayar')" class="icon-btn"><i class="fa-solid fa-receipt text-xl"></i></button>
@@ -97,9 +97,9 @@
         </div>
 
         <nav class="fixed bottom-0 inset-x-0 bg-white border-t-2 border-emerald/10 p-4 flex justify-around pb-8 z-50 rounded-t-3xl shadow-xl">
-            <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-house"></i>HOME</button>
-            <button onclick="st('kas')" id="n-kas" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-wallet"></i>KAS</button>
-            <button onclick="st('iur')" id="n-iur" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px]"><i class="fa-solid fa-users"></i>WARGA</button>
+            <button onclick="st('home')" id="n-home" class="text-emerald flex flex-col items-center gap-1 font-black text-[10px] uppercase"><i class="fa-solid fa-house"></i>Home</button>
+            <button onclick="st('kas')" id="n-kas" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px] uppercase"><i class="fa-solid fa-wallet"></i>Kas</button>
+            <button onclick="st('iur')" id="n-iur" class="text-emerald/20 flex flex-col items-center gap-1 font-black text-[10px] uppercase"><i class="fa-solid fa-users"></i>Warga</button>
         </nav>
     </div>
 
@@ -124,139 +124,123 @@
     </div></div>
 
     <script>
-        // FIREBASE CONFIG
-        const config = {
-            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
-            authDomain: "tuntas-sekawan.firebaseapp.com",
-            projectId: "tuntas-sekawan",
-            storageBucket: "tuntas-sekawan.firebasestorage.app",
-            messagingSenderId: "1090506516563",
-            appId: "1:1090506516563:web:63c429677caea28addfea6"
-        };
-        firebase.initializeApp(config);
-        const db = firebase.firestore();
-        let currentK = 'Masuk', chart;
+        window.onload = function() {
+            const config = {
+                apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+                authDomain: "tuntas-sekawan.firebaseapp.com",
+                projectId: "tuntas-sekawan",
+                storageBucket: "tuntas-sekawan.firebasestorage.app",
+                messagingSenderId: "1090506516563",
+                appId: "1:1090506516563:web:63c429677caea28addfea6"
+            };
+            firebase.initializeApp(config);
+            const db = firebase.firestore();
+            let currentK = 'Masuk', chart;
 
-        // --- AUTH SECTION (RESTORED TO ORIGINAL WORKING STATE) ---
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                init();
-            } else {
-                document.getElementById('loginPage').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-            }
-        });
-
-        document.getElementById('btnLogin').onclick = () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if (!email || !password) return;
-            document.getElementById('msg').innerText = "Mohon tunggu...";
-            
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                .then(() => {
-                    return firebase.auth().signInWithEmailAndPassword(email, password);
-                })
-                .catch(error => {
-                    document.getElementById('msg').innerText = "Gagal: " + error.message;
-                });
-        };
-
-        document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
-
-        // --- APP LOGIC ---
-        function init(){
-            const now = new Date();
-            const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-            const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-            document.getElementById('fHomeStart').value = start;
-            document.getElementById('fHomeEnd').value = end;
-            document.getElementById('kasFrom').value = start;
-            document.getElementById('kasTo').value = end;
-            document.getElementById('fIur').value = now.toISOString().split('T')[0];
-            loadData();
-        }
-
-        async function loadData(){
-            const hs = document.getElementById('fHomeStart').value, he = document.getElementById('fHomeEnd').value, fi = document.getElementById('fIur').value;
-            const df = document.getElementById('kasFrom').value, dt = document.getElementById('kasTo').value;
-            
-            const [sk, si, sa] = await Promise.all([
-                db.collection("kas").orderBy("tgl","desc").get(), 
-                db.collection("pembayaran").get(), 
-                db.collection("anggota").orderBy("nama","asc").get()
-            ]);
-            
-            let tIn=0, tOut=0, tIur=0, dIn=0, dOut=0, dIur=0, kIn=0, kOut=0;
-            const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur');
-            tk.innerHTML=''; ti.innerHTML='';
-
-            sk.docs.forEach(doc => {
-                const d = doc.data(), t = d.tgl.toDate(), iso = t.toISOString().split('T')[0];
-                if(d.kat==='Masuk') tIn += d.nom; else tOut += d.nom;
-                if(iso >= hs && iso <= he){ if(d.kat==='Masuk') dIn += d.nom; else dOut += d.nom; }
-                if(iso >= df && iso <= dt){
-                    if(d.kat==='Masuk') kIn += d.nom; else kOut += d.nom;
-                    tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td>${d.ket}</td><td class="text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td><td class="text-center flex justify-center gap-2"><button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button><button onclick="delD('kas','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    document.getElementById('loginPage').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    init();
+                } else {
+                    document.getElementById('loginPage').classList.remove('hidden');
+                    document.getElementById('mainApp').classList.add('hidden');
                 }
             });
 
-            const mapIur = {};
-            si.docs.forEach(doc => {
-                const d = doc.data(), bln = d.tgl.toDate().toISOString().substring(0,7);
-                tIur += d.nom; 
-                mapIur[`${d.nama}-${bln}`] = {id: doc.id, nom: d.nom};
-                if(bln === fi.substring(0,7)) dIur += d.nom;
-            });
+            document.getElementById('btnLogin').onclick = () => {
+                const e = document.getElementById('email').value, p = document.getElementById('password').value;
+                if (!e || !p) return;
+                document.getElementById('msg').innerText = "Menghubungkan...";
+                firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                    return firebase.auth().signInWithEmailAndPassword(e, p);
+                }).catch(err => { document.getElementById('msg').innerText = "Gagal: " + err.message; });
+            };
 
-            sa.docs.forEach(doc => {
-                const n = doc.data().nama, l = mapIur[`${n}-${fi.substring(0,7)}`];
-                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase">${n}</td><td class="text-center">${l?`<span class="bg-emerald text-white text-[9px] px-2 py-1 rounded font-black">LUNAS</span>`:`<span class="text-red-500 font-bold italic text-[9px]">BELUM</span>`}</td><td class="text-center flex justify-center gap-2">${l?`<button onclick="editI('${l.id}','${fi.substring(0,7)}','${n}',${l.nom})" class="text-blue-500"><i class="fa-solid fa-file-invoice"></i></button>`:''}<button onclick="editAng('${doc.id}','${n}')" class="text-emerald"><i class="fa-solid fa-pen"></i></button><button onclick="delD('anggota','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
-            });
+            document.getElementById('btnLogout').onclick = () => firebase.auth().signOut();
 
-            document.getElementById('iNama').innerHTML = sa.docs.map(doc=>`<option value="${doc.data().nama}">${doc.data().nama}</option>`).join('');
-            document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString();
-            document.getElementById('sIn').innerText = dIn.toLocaleString();
-            document.getElementById('sOut').innerText = dOut.toLocaleString();
-            document.getElementById('sIur').innerText = dIur.toLocaleString();
-            document.getElementById('totalIur3').innerText = 'TERKUMPUL: Rp ' + dIur.toLocaleString();
-            document.getElementById('sumIn').innerText = kIn.toLocaleString();
-            document.getElementById('sumOut').innerText = kOut.toLocaleString();
-            document.getElementById('sumNet').innerText = (kIn - kOut).toLocaleString();
-            upChart(dIn, dIur, dOut);
-        }
+            function init(){
+                const now = new Date();
+                const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+                const end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+                document.getElementById('fHomeStart').value = start;
+                document.getElementById('fHomeEnd').value = end;
+                document.getElementById('kasFrom').value = start;
+                document.getElementById('kasTo').value = end;
+                document.getElementById('fIur').value = now.toISOString().split('T')[0];
+                loadData();
+            }
 
-        // CRUD
-        window.editAng = (id, n) => { document.getElementById('aId').value = id; document.getElementById('aNama').value = n; document.getElementById('mAngTitle').innerText = "Edit Nama"; openM('mAng'); };
-        document.getElementById('sAng').onclick = async () => {
-            const id = document.getElementById('aId').value, n = document.getElementById('aNama').value; if(!n) return;
-            if(id) await db.collection("anggota").doc(id).update({ nama: n.toUpperCase() });
-            else await db.collection("anggota").add({ nama: n.toUpperCase() });
-            closeM('mAng'); loadData();
-        };
-        window.editK = (id, t, n, k, kat) => { document.getElementById('kId').value = id; document.getElementById('kDate').value = t; document.getElementById('kNom').value = n; document.getElementById('kKet').value = k; sk(kat); openM('mKas'); };
-        window.editI = (id, bln, n, nom) => { document.getElementById('iId').value = id; document.getElementById('iDate').value = bln+"-01"; document.getElementById('iNama').value = n; document.getElementById('iNom').value = nom; openM('mBayar'); };
-        document.getElementById('sKas').onclick = async () => {
-            const id=document.getElementById('kId').value, t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value;
-            if(!t || !n) return; const d = { tgl:new Date(t), nom:n, ket:k, kat:currentK };
-            if(id) await db.collection("kas").doc(id).update(d); else await db.collection("kas").add(d);
-            closeM('mKas'); loadData();
-        };
-        document.getElementById('sBayar').onclick = async () => {
-            const id=document.getElementById('iId').value, t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value);
-            if(!t || !nm) return; const d = { tgl:new Date(t), nama:n, nom:nm };
-            if(id) await db.collection("pembayaran").doc(id).update(d); else await db.collection("pembayaran").add(d);
-            closeM('mBayar'); loadData();
-        };
-        window.delD = async (col, id) => { if(confirm("Hapus?")) { await db.collection(col).doc(id).delete(); loadData(); } };
+            async function loadData(){
+                const hs = document.getElementById('fHomeStart').value, he = document.getElementById('fHomeEnd').value, fi = document.getElementById('fIur').value;
+                const df = document.getElementById('kasFrom').value, dt = document.getElementById('kasTo').value;
+                const [sk, si, sa] = await Promise.all([db.collection("kas").orderBy("tgl","desc").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get()]);
+                
+                let tIn=0, tOut=0, tIur=0, dIn=0, dOut=0, dIur=0, kIn=0, kOut=0;
+                const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur');
+                tk.innerHTML=''; ti.innerHTML='';
 
-        // UI
-        function st(t){ 
-            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); document.getElementById('screen-'+t).classList.add('active'); 
-            document.querySelectorAll('nav button').forEach(b=>b.classList.replace('text-emerald','text-emerald/20')); document.getElementById('n-'+t).classList.replace('text-emerald/20','text-emerald'); 
-        }
-        function openM(id){ document.getElementById(id).classList.remove('hidden'); }
-        function closeM(id){ document.getElementById(id).classList.add('hidden'); document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('aId').value=''; document.getElementById('kId').value=''; }
-        function sk(k){ currentK=k; document.getElementById('bIn').className=k==='Masuk'?'flex-1 py-3 bg-white rounded-lg font-black text-emerald shadow-sm text-xs':'flex-1 py-3 rounded-lg text-gray-400 font-black text-xs'; document.getElementBy
+                sk.docs.forEach(doc => {
+                    const d = doc.data(), t = d.tgl.toDate(), iso = t.toISOString().split('T')[0];
+                    if(d.kat==='Masuk') tIn += d.nom; else tOut += d.nom;
+                    if(iso >= hs && iso <= he){ if(d.kat==='Masuk') dIn += d.nom; else dOut += d.nom; }
+                    if(iso >= df && iso <= dt){
+                        if(d.kat==='Masuk') kIn += d.nom; else kOut += d.nom;
+                        tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td>${d.ket}</td><td class="text-right font-black ${d.kat==='Masuk'?'text-emerald':'text-red-500'}">${d.nom.toLocaleString()}</td><td class="text-center flex justify-center gap-2"><button onclick="editK('${doc.id}','${iso}',${d.nom},'${d.ket}','${d.kat}')" class="text-blue-500"><i class="fa-solid fa-pen"></i></button><button onclick="delD('kas','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+                    }
+                });
+
+                const mapIur = {};
+                si.docs.forEach(doc => {
+                    const d = doc.data(), bln = d.tgl.toDate().toISOString().substring(0,7);
+                    tIur += d.nom; 
+                    mapIur[`${d.nama}-${bln}`] = {id: doc.id, nom: d.nom};
+                    if(bln === fi.substring(0,7)) dIur += d.nom;
+                });
+
+                sa.docs.forEach(doc => {
+                    const n = doc.data().nama, l = mapIur[`${n}-${fi.substring(0,7)}`];
+                    ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase">${n}</td><td class="text-center">${l?`<span class="bg-emerald text-white text-[9px] px-2 py-1 rounded font-black">LUNAS</span>`:`<span class="text-red-500 font-bold italic text-[9px]">BELUM</span>`}</td><td class="text-center flex justify-center gap-2">${l?`<button onclick="editI('${l.id}','${fi.substring(0,7)}','${n}',${l.nom})" class="text-blue-500"><i class="fa-solid fa-file-invoice"></i></button>`:''}<button onclick="editAng('${doc.id}','${n}')" class="text-emerald"><i class="fa-solid fa-pen"></i></button><button onclick="delD('anggota','${doc.id}')" class="text-red-300"><i class="fa-solid fa-trash"></i></button></td></tr>`);
+                });
+
+                document.getElementById('iNama').innerHTML = sa.docs.map(doc=>`<option value="${doc.data().nama}">${doc.data().nama}</option>`).join('');
+                document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString();
+                document.getElementById('sIn').innerText = dIn.toLocaleString();
+                document.getElementById('sOut').innerText = dOut.toLocaleString();
+                document.getElementById('sIur').innerText = dIur.toLocaleString();
+                document.getElementById('totalIur3').innerText = 'TOTAL IURAN: Rp ' + dIur.toLocaleString();
+                document.getElementById('sumIn').innerText = kIn.toLocaleString();
+                document.getElementById('sumOut').innerText = kOut.toLocaleString();
+                document.getElementById('sumNet').innerText = (kIn - kOut).toLocaleString();
+                upChart(dIn, dIur, dOut);
+            }
+
+            // GLOBAL FUNCTIONS
+            window.editAng = (id, n) => { document.getElementById('aId').value = id; document.getElementById('aNama').value = n; document.getElementById('mAngTitle').innerText = "Edit Nama"; openM('mAng'); };
+            document.getElementById('sAng').onclick = async () => {
+                const id = document.getElementById('aId').value, n = document.getElementById('aNama').value; if(!n) return;
+                if(id) await db.collection("anggota").doc(id).update({ nama: n.toUpperCase() });
+                else await db.collection("anggota").add({ nama: n.toUpperCase() });
+                closeM('mAng'); loadData();
+            };
+            window.editK = (id, t, n, k, kat) => { document.getElementById('kId').value = id; document.getElementById('kDate').value = t; document.getElementById('kNom').value = n; document.getElementById('kKet').value = k; sk(kat); openM('mKas'); };
+            window.editI = (id, bln, n, nom) => { document.getElementById('iId').value = id; document.getElementById('iDate').value = bln+"-01"; document.getElementById('iNama').value = n; document.getElementById('iNom').value = nom; openM('mBayar'); };
+            document.getElementById('sKas').onclick = async () => {
+                const id=document.getElementById('kId').value, t=document.getElementById('kDate').value, n=Number(document.getElementById('kNom').value), k=document.getElementById('kKet').value;
+                if(!t || !n) return; const d = { tgl:new Date(t), nom:n, ket:k, kat:currentK };
+                if(id) await db.collection("kas").doc(id).update(d); else await db.collection("kas").add(d);
+                closeM('mKas'); loadData();
+            };
+            document.getElementById('sBayar').onclick = async () => {
+                const id=document.getElementById('iId').value, t=document.getElementById('iDate').value, n=document.getElementById('iNama').value, nm=Number(document.getElementById('iNom').value);
+                if(!t || !nm) return; const d = { tgl:new Date(t), nama:n, nom:nm };
+                if(id) await db.collection("pembayaran").doc(id).update(d); else await db.collection("pembayaran").add(d);
+                closeM('mBayar'); loadData();
+            };
+            window.delD = async (col, id) => { if(confirm("Hapus?")) { await db.collection(col).doc(id).delete(); loadData(); } };
+            window.st = (t) => { 
+                document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); document.getElementById('screen-'+t).classList.add('active'); 
+                document.querySelectorAll('nav button').forEach(b=>b.classList.replace('text-emerald','text-emerald/20')); document.getElementById('n-'+t).classList.replace('text-emerald/20','text-emerald'); 
+            };
+            window.openM = (id) => { document.getElementById(id).classList.remove('hidden'); };
+            window.closeM = (id) => { document.getElementById(id).classList.add('hidden'); document.querySelectorAll('input').forEach(i=>i.value=''); document.getElementById('aId').value=''; document.getElementById(
