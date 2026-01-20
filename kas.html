@@ -94,7 +94,7 @@
                 <i class="fa-brands fa-screenpal text-lg"></i>
             </div>
             <div>
-                <h1 class="text-xl font-extrabold text-emerald-900">Tuntas.</h1>
+                <h1 class="text-xl font-extrabold text-emerald-900">TUNTAS.</h1>
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Admin Dashboard</p>
             </div>
         </div>
@@ -164,7 +164,7 @@
         <div class="bento-card">
              <input type="date" id="fIur" class="modern-in text-center font-extrabold" onchange="loadData()">
         </div>
-        <input type="text" id="sWarga" class="modern-in" placeholder="Cari nama warga..." oninput="loadData()">
+        <input type="text" id="sWarga" class="modern-in" placeholder="Cari nama anggota..." oninput="loadData()">
         <div id="tBodyIur" class="space-y-3"></div>
         
         <div class="fixed bottom-24 right-6 flex flex-col gap-3">
@@ -188,7 +188,7 @@
         </button>
         <button onclick="st('iur')" id="n-iur" class="flex flex-col items-center gap-1">
             <span class="material-symbols-rounded">group</span>
-            <span class="text-[9px] font-bold uppercase">Warga</span>
+            <span class="text-[9px] font-bold uppercase">Anggota</span>
         </button>
     </nav>
 </div>
@@ -210,14 +210,14 @@
         <select id="iNama" class="modern-in font-bold"></select>
         <input type="date" id="iBln" class="modern-in">
         <input type="number" id="iNom" class="modern-in font-extrabold text-xl" placeholder="Nominal Rp">
-        <button onclick="simpanIuran()" class="btn-primary">KONFIRMASI BAYAR</button>
+        <button onclick="simpanIuran()" class="btn-primary">KONFIRMASI</button>
     </div>
 </div>
 
 <div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
     <div class="bg-white w-full p-8 rounded-t-[35px] space-y-4">
-        <h3 class="text-lg font-extrabold text-center text-emerald-900">Tambah Warga</h3>
-        <input type="text" id="aNama" class="modern-in uppercase font-bold" placeholder="NAMA LENGKAP">
+        <h3 class="text-lg font-extrabold text-center text-emerald-900">Tambah Anggota</h3>
+        <input type="text" id="aNama" class="modern-in uppercase font-bold" placeholder="NAMA">
         <button onclick="simpanAnggota()" class="btn-primary">DAFTARKAN</button>
     </div>
 </div>
@@ -274,7 +274,7 @@
         
         let tin=0, tout=0, tiurAll=0, biur=0;
         const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur'), sel=document.getElementById('iNama');
-        tk.innerHTML=''; ti.innerHTML=''; sel.innerHTML='<option value="">Pilih Nama Warga</option>';
+        tk.innerHTML=''; ti.innerHTML=''; sel.innerHTML='<option value="">Pilih Nama Anggota</option>';
 
         dkas.docs.forEach(doc => {
             const d = doc.data(), t = d.tgl.toDate();
