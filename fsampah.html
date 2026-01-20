@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS RT 04</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root { --emerald: #064E3B; --dark: #022c22; --lime: #A3E635; }
+        
+        body, input, button, select { 
+            font-family: 'Gochi Hand', cursive !important; 
+        }
+
+        .material-symbols-rounded {
+            font-family: 'Material Symbols Rounded' !important;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+        }
+
+        body { 
+            background-color: #FDFBF7; 
+            background-image: radial-gradient(#d1d5db 0.8px, transparent 0.8px);
+            background-size: 20px 20px; color: var(--emerald); margin:0; 
+        }
+        
+        .card-ijo { 
+            background: var(--emerald); padding: 15px; color: white; 
+            border-radius: 40px 15px 35px 15px/15px 35px 15px 40px;
+            box-shadow: 4px 4px 0px var(--dark);
+        }
+
+        .card-mini {
+            background: var(--emerald);
+            border-radius: 15px;
+            padding: 12px 8px;
+            text-align: center;
+            color: white;
+            border: 1px solid var(--dark);
+        }
+
+        .tabel-doodle {
+            border: 2px solid var(--emerald);
+            border-radius: 20px; overflow: hidden;
+            background: white;
+        }
+        .tabel-doodle th { background: var(--emerald); color: white; padding: 10px; font-size: 12px; text-align: left; }
+        .tabel-doodle td { padding: 12px; border-bottom: 1px solid #f1f5f9; color: black; }
+
+        .doodle-in { 
+            border: 2px solid var(--emerald) !important; 
+            border-radius: 12px !important; 
+            padding: 10px; background: white; color: black;
+        }
+
+        .btn-main { 
+            background: var(--emerald); color: white; padding: 12px;
+            border-radius: 15px; border: none;
+            box-shadow: 4px 4px 0px var(--dark);
+        }
+        
+        .tab-content { display: none; padding-bottom: 120px; }
+        .tab-content.active { display: block; }
+        
+        .modal { 
+            background: rgba(0,0,0,0.8); display:none; z-index: 200; 
+            position: fixed; inset: 0; align-items: flex-end; 
+        }
+
+        nav { background: white; border-top: 1px solid #e2e8f0; }
+        nav button { color: #94a3b8; padding: 8px 16px; transition: 0.3s; border-radius: 15px; }
+        nav button.active { background: var(--emerald); color: white !important; }
+    </style>
+</head>
+<body class="p-4">
+
+<div id="loginPage" class="hidden flex flex-col items-center justify-center min-h-[80vh] text-center">
+    <div class="card-ijo w-full max-w-sm space-y-6">
+        <h1 class="text-6xl italic font-black text-white">Tuntas.</h1>
+        <div class="space-y-4">
+            <input type="email" id="email" class="doodle-in w-full text-center" placeholder="Email Admin">
+            <input type="password" id="pass" class="doodle-in w-full text-center" placeholder="Password">
+            <button onclick="login()" class="btn-main w-full text-2xl bg-white !text-emerald-900 !shadow-none font-bold">MASUK</button>
+        </div>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden">
+    <header class="flex justify-between items-start mb-6 pt-2">
+        <div>
+            <h1 class="text-4xl font-black italic leading-none">Tuntas.</h1>
+            <p class="text-sm opacity-80 italic">Turun Tangan Atasi Sampah</p>
+        </div>
+        <button onclick="logout()" class="text-emerald-900 p-1 opacity-60">
+            <span class="material-symbols-rounded text-3xl">directions_run</span>
+        </button>
+    </header>
+
+    <div id="screen-home" class="tab-content active space-y-6">
+        <div class="card-ijo text-center py-10">
+            <p class="text-lg opacity-80 italic">Total Saldo Kas</p>
+            <h2 class="totalSaldoText text-5xl font-bold">0</h2>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-2">
+            <div class="card-mini">
+                <span class="material-symbols-rounded text-xs mb-1">download</span>
+                <p class="text-[9px] opacity-70">MASUK</p>
+                <p class="sInText text-[11px] font-bold">0</p>
+            </div>
+            <div class="card-mini">
+                <span class="material-symbols-rounded text-xs mb-1">upload</span>
+                <p class="text-[9px] opacity-70">KELUAR</p>
+                <p class="sOutText text-[11px] font-bold">0</p>
+            </div>
+            <div class="card-mini">
+                <span class="material-symbols-rounded text-xs mb-1">payments</span>
+                <p class="text-[9px] opacity-70 uppercase">Iuran</p>
+                <p id="totalIurHome" class="text-[11px] font-bold">0</p>
+            </div>
+        </div>
+
+        <button onclick="openModal('mKas')" class="btn-main w-full text-2xl font-bold">CATAT TRANSAKSI</button>
+    </div>
+
+    <div id="screen-kas" class="tab-content space-y-4">
+        <div class="grid grid-cols-3 gap-2">
+            <div class="card-mini"><p class="text-[10px] opacity-70 uppercase">Masuk</p><p class="sInText text-[11px] font-bold">0</p></div>
+            <div class="card-mini"><p class="text-[10px] opacity-70 uppercase">Keluar</p><p class="sOutText text-[11px] font-bold">0</p></div>
+            <div class="card-mini"><p class="text-[10px] opacity-70 uppercase">Saldo</p><p class="totalSaldoText text-[11px] font-bold">0</p></div>
+        </div>
+        <div class="flex gap-2">
+            <input type="date" id="fTgl1" class="doodle-in w-full text-xs" onchange="loadData()">
+            <input type="date" id="fTgl2" class="doodle-in w-full text-xs" onchange="loadData()">
+        </div>
+        <input type="text" id="sKas" class="doodle-in w-full" placeholder="Cari transaksi..." oninput="loadData()">
+        <div class="tabel-doodle">
+            <table class="w-full">
+                <thead><tr><th>TGL</th><th>KET</th><th>RP</th><th>#</th></tr></thead>
+                <tbody id="tBodyKas" class="text-sm"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="screen-iur" class="tab-content space-y-4">
+        <div class="card-ijo text-center">
+            <input type="date" id="fIur" class="doodle-in w-full mb-2 text-center" onchange="loadData()">
+            <p class="text-xs opacity-60 uppercase">Total Iuran Bulan Terpilih</p>
+            <p id="totalIur3" class="text-4xl font-bold">0</p>
+        </div>
+        <input type="text" id="sWarga" class="doodle-in w-full" placeholder="Cari nama anggota..." oninput="loadData()">
+        <div class="tabel-doodle">
+            <table class="w-full">
+                <thead><tr><th>NAMA ANGGOTA</th><th>STATUS</th><th class="text-right">AKSI</th></tr></thead>
+                <tbody id="tBodyIur" class="text-lg"></tbody>
+            </table>
+        </div>
+
+        <div class="fixed bottom-28 right-6 flex flex-col gap-4">
+            <button onclick="openModal('mAnggota')" class="!bg-[#064E3B] text-white rounded-full w-14 h-14 shadow-2xl flex items-center justify-center">
+                <span class="material-symbols-rounded">person_add</span>
+            </button>
+            <button onclick="openModal('mIuran')" class="!bg-[#064E3B] text-white rounded-full w-14 h-14 shadow-2xl flex items-center justify-center">
+                <span class="material-symbols-rounded">payments</span>
+            </button>
+        </div>
+    </div>
+    
+    <nav class="fixed bottom-0 inset-x-0 h-20 flex justify-around items-center px-4 pb-2">
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center text-[10px]">
+            <span class="material-symbols-rounded">home</span>UTAMA
+        </button>
+        <button onclick="st('kas')" id="n-kas" class="flex flex-col items-center text-[10px]">
+            <span class="material-symbols-rounded">menu_book</span>BUKU KAS
+        </button>
+        <button onclick="st('iur')" id="n-iur" class="flex flex-col items-center text-[10px]">
+            <span class="material-symbols-rounded">group</span>ANGGOTA
+        </button>
+    </nav>
+</div>
+
+<div id="mKas" class="modal" onclick="if(event.target==this)closeModal('mKas')">
+    <div class="bg-white w-full p-8 rounded-t-[2.5rem] space-y-4">
+        <h3 class="text-2xl text-center font-bold">Catat Kas</h3>
+        <select id="kKat" class="doodle-in w-full"><option value="Masuk">Masuk</option><option value="Keluar">Keluar</option></select>
+        <input type="text" id="kKet" class="doodle-in w-full" placeholder="Keterangan">
+        <input type="number" id="kNom" class="doodle-in w-full" placeholder="Rp">
+        <button onclick="simpanKas()" class="btn-main w-full text-xl font-bold">SIMPAN</button>
+    </div>
+</div>
+
+<div id="mIuran" class="modal" onclick="if(event.target==this)closeModal('mIuran')">
+    <div class="bg-white w-full p-8 rounded-t-[2.5rem] space-y-4">
+        <h3 class="text-2xl text-center font-bold">Bayar Iuran</h3>
+        <select id="iNama" class="doodle-in w-full"></select>
+        <input type="date" id="iBln" class="doodle-in w-full">
+        <input type="number" id="iNom" class="doodle-in w-full" placeholder="Rp">
+        <button onclick="simpanIuran()" class="btn-main w-full text-xl font-bold">KONFIRMASI</button>
+    </div>
+</div>
+
+<div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
+    <div class="bg-white w-full p-8 rounded-t-[2.5rem] space-y-4">
+        <h3 class="text-2xl text-center font-bold">Tambah Anggota</h3>
+        <input type="text" id="aNama" class="doodle-in w-full uppercase" placeholder="Nama Lengkap">
+        <button onclick="simpanAnggota()" class="btn-main w-full text-xl font-bold">TAMBAH</button>
+    </div>
+</div>
+
+<script>
+    const config = {
+        apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+        authDomain: "tuntas-sekawan.firebaseapp.com",
+        projectId: "tuntas-sekawan",
+        storageBucket: "tuntas-sekawan.firebasestorage.app",
+        messagingSenderId: "1090506516563",
+        appId: "1:1090506516563:web:63c429677caea28addfea6"
+    };
+    firebase.initializeApp(config);
+    const db = firebase.firestore(), auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+        if (user) { document.getElementById('mainApp').classList.remove('hidden'); document.getElementById('loginPage').classList.add('hidden'); init(); }
+        else { document.getElementById('mainApp').classList.add('hidden'); document.getElementById('loginPage').classList.remove('hidden'); }
+    });
+
+    async function login() {
+        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Gagal Masuk!"); }
+    }
+    function logout() { if(confirm("Keluar aplikasi?")) auth.signOut(); }
+
+    function init() {
+        const t = new Date().toISOString().split('T')[0];
+        document.getElementById('fTgl1').value = t; document.getElementById('fTgl2').value = t;
+        document.getElementById('fIur').value = t; document.getElementById('iBln').value = t;
+        loadData();
+    }
+
+    async function loadData() {
+        const fi = document.getElementById('fIur').value, sk = document.getElementById('sKas').value.toLowerCase(), sw = document.getElementById('sWarga').value.toLowerCase();
+        const t1 = new Date(document.getElementById('fTgl1').value), t2 = new Date(document.getElementById('fTgl2').value); t2.setHours(23,59,59);
+
+        const [dkas, diur, dang] = await Promise.all([
+            db.collection("kas").orderBy("tgl","desc").get(), 
+            db.collection("pembayaran").get(), 
+            db.collection("anggota").orderBy("nama","asc").get()
+        ]);
+        
+        let tin=0, tout=0, tiurAll=0, biur=0;
+        const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur'), sel=document.getElementById('iNama');
+        tk.innerHTML=''; ti.innerHTML=''; sel.innerHTML='<option>PILIH ANGGOTA</option>';
+
+        dkas.docs.forEach(doc => {
+            const d = doc.data(), t = d.tgl.toDate();
+            if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
+            if(t >= t1 && t <= t2 && d.ket.toLowerCase().includes(sk)) {
+                tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td class="font-bold uppercase text-[10px]">${d.ket}</td><td class="font-bold">${d.nom.toLocaleString()}</td><td onclick="hapus('kas','${doc.id}')"><span class="material-symbols-rounded text-emerald-900 opacity-40 text-sm">delete_outline</span></td></tr>`);
+            }
+        });
+
+        const mIur = {};
+        diur.docs.forEach(doc => { 
+            const d = doc.data(); 
+            tiurAll += d.nom; // Total semua iuran masuk
+            if(d.bulan === fi) { biur += d.nom; mIur[d.nama] = true; } 
+        });
+
+        dang.docs.forEach(doc => {
+            const n = doc.data().nama; sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
+            if(n.toLowerCase().includes(sw)) {
+                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase font-bold">${n}</td><td class="text-xs italic">${mIur[n]?'LUNAS':'--'}</td><td class="text-right flex justify-end gap-4"><span class="material-symbols-rounded text-emerald-900 opacity-60" onclick="editAnggota('${doc.id}','${n}')">edit</span><span class="material-symbols-rounded text-emerald-900 opacity-40" onclick="hapus('anggota','${doc.id}')">delete</span></td></tr>`);
+            }
+        });
+
+        const total = (tin + tiurAll) - tout;
+        document.querySelectorAll('.totalSaldoText').forEach(e => e.innerText = 'Rp ' + total.toLocaleString());
+        document.querySelectorAll('.sInText').forEach(e => e.innerText = tin.toLocaleString());
+        document.querySelectorAll('.sOutText').forEach(e => e.innerText = tout.toLocaleString());
+        document.getElementById('totalIurHome').innerText = tiurAll.toLocaleString(); // Total Iuran di Home
+        document.getElementById('totalIur3').innerText = 'Rp ' + biur.toLocaleString(); // Detail di Tab Anggota
+    }
+
+    async function simpanKas() {
+        const d = { kat: document.getElementById('kKat').value, tgl: new Date(), ket: document.getElementById('kKet').value, nom: Number(document.getElementById('kNom').value) };
+        if(d.nom) { await db.collection("kas").add(d); closeModal('mKas'); loadData(); }
+    }
+    async function simpanIuran() {
+        const d = { nama: document.getElementById('iNama').value, bulan: document.getElementById('iBln').value, nom: Number(document.getElementById('iNom').value), tgl: new Date() };
+        if(d.nom) { await db.collection("pembayaran").add(d); closeModal('mIuran'); loadData(); }
+    }
+    async function simpanAnggota() {
+        const n = document.getElementById('aNama').value.toUpperCase();
+        if(n) { await db.collection("anggota").add({ nama: n }); closeModal('mAnggota'); loadData(); }
+    }
+    async function editAnggota(id, lama) {
+        const baru = prompt("Ubah Nama Anggota:", lama);
+        if(baru && baru !== lama) { await db.collection("anggota").doc(id).update({ nama: baru.toUpperCase() }); loadData(); }
+    }
+    async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+    
+    function openModal(id) { document.getElementById(id).style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    function st(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('screen-'+t).classList.add('active');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('n-'+t).classList.add('active');
+    }
+</script>
+</body>
+                  </html>
+                  
