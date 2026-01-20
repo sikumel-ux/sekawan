@@ -33,7 +33,6 @@
             background-size: 20px 20px; color: var(--emerald); margin:0; 
         }
         
-        /* Card & Doodle Style */
         .card-ijo { 
             background: var(--emerald); padding: 15px; color: white; 
             border-radius: 40px 15px 35px 15px/15px 35px 15px 40px;
@@ -68,7 +67,6 @@
             position: fixed; inset: 0; align-items: flex-end; 
         }
 
-        /* Navbar Style */
         nav { background: white; border-top: 1px solid #e2e8f0; }
         nav button { color: #94a3b8; padding: 8px 16px; transition: 0.3s; border-radius: 15px; }
         nav button.active { 
@@ -139,13 +137,13 @@
     <div id="screen-iur" class="tab-content space-y-4">
         <div class="card-ijo text-center !bg-[#064E3B]">
             <input type="date" id="fIur" class="doodle-in w-full mb-2 text-center" onchange="loadData()">
-            <p class="text-xs opacity-60">TOTAL IURAN BULAN INI</p>
+            <p class="text-xs opacity-60 uppercase">Total Iuran Anggota Bulan Ini</p>
             <p id="totalIur3" class="text-4xl text-lime-400 font-bold">0</p>
         </div>
-        <input type="text" id="sWarga" class="doodle-in w-full" placeholder="Cari nama warga..." oninput="loadData()">
+        <input type="text" id="sWarga" class="doodle-in w-full" placeholder="Cari nama anggota..." oninput="loadData()">
         <div class="tabel-doodle">
             <table class="w-full">
-                <thead><tr><th>NAMA</th><th>STATUS</th><th class="text-right">AKSI</th></tr></thead>
+                <thead><tr><th>NAMA ANGGOTA</th><th>STATUS</th><th class="text-right">AKSI</th></tr></thead>
                 <tbody id="tBodyIur" class="text-lg"></tbody>
             </table>
         </div>
@@ -168,7 +166,7 @@
             <span class="material-symbols-rounded">menu_book</span>BUKU KAS
         </button>
         <button onclick="st('iur')" id="n-iur" class="flex flex-col items-center text-[10px]">
-            <span class="material-symbols-rounded">group</span>WARGA
+            <span class="material-symbols-rounded">group</span>ANGGOTA
         </button>
     </nav>
 </div>
@@ -195,8 +193,8 @@
 
 <div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
     <div class="bg-white w-full p-8 rounded-t-[2.5rem] space-y-4">
-        <h3 class="text-2xl text-center font-bold">Warga Baru</h3>
-        <input type="text" id="aNama" class="doodle-in w-full uppercase" placeholder="Nama Lengkap">
+        <h3 class="text-2xl text-center font-bold">Tambah Anggota Baru</h3>
+        <input type="text" id="aNama" class="doodle-in w-full uppercase" placeholder="Nama Lengkap Anggota">
         <button onclick="simpanAnggota()" class="btn-main w-full text-xl font-bold">TAMBAH</button>
     </div>
 </div>
@@ -220,9 +218,9 @@
 
     async function login() {
         const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Salah bro!"); }
+        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Login Gagal!"); }
     }
-    function logout() { if(confirm("Keluar dari aplikasi?")) auth.signOut(); }
+    function logout() { if(confirm("Keluar aplikasi?")) auth.signOut(); }
 
     function init() {
         const t = new Date().toISOString().split('T')[0];
@@ -243,13 +241,13 @@
         
         let tin=0, tout=0, tiur=0, biur=0;
         const tk=document.getElementById('tBodyKas'), ti=document.getElementById('tBodyIur'), sel=document.getElementById('iNama');
-        tk.innerHTML=''; ti.innerHTML=''; sel.innerHTML='<option>PILIH WARGA</option>';
+        tk.innerHTML=''; ti.innerHTML=''; sel.innerHTML='<option>PILIH ANGGOTA</option>';
 
         dkas.docs.forEach(doc => {
             const d = doc.data(), t = d.tgl.toDate();
             if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
             if(t >= t1 && t <= t2 && d.ket.toLowerCase().includes(sk)) {
-                tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td class="font-bold uppercase">${d.ket}</td><td class="${d.kat==='Masuk'?'text-emerald-700':'text-red-600'} font-bold">${d.nom.toLocaleString()}</td><td onclick="hapus('kas','${doc.id}')"><span class="material-symbols-rounded text-red-500 text-sm">delete</span></td></tr>`);
+                tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td class="font-bold uppercase text-[10px] leading-tight">${d.ket}</td><td class="${d.kat==='Masuk'?'text-emerald-700':'text-red-600'} font-bold">${d.nom.toLocaleString()}</td><td onclick="hapus('kas','${doc.id}')"><span class="material-symbols-rounded text-red-500 text-sm">delete</span></td></tr>`);
             }
         });
 
@@ -259,7 +257,7 @@
         dang.docs.forEach(doc => {
             const n = doc.data().nama; sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
             if(n.toLowerCase().includes(sw)) {
-                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase font-bold">${n}</td><td class="text-xs italic">${mIur[n]?'LUNAS ✅':'--'}</td><td class="text-right flex justify-end gap-4"><span class="material-symbols-rounded text-blue-700" onclick="editWarga('${doc.id}','${n}')">edit_square</span><span class="material-symbols-rounded text-red-600" onclick="hapus('anggota','${doc.id}')">delete</span></td></tr>`);
+                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase font-bold">${n}</td><td class="text-xs italic">${mIur[n]?'LUNAS ✅':'--'}</td><td class="text-right flex justify-end gap-4"><span class="material-symbols-rounded text-blue-700" onclick="editAnggota('${doc.id}','${n}')">edit_square</span><span class="material-symbols-rounded text-red-600" onclick="hapus('anggota','${doc.id}')">delete</span></td></tr>`);
             }
         });
 
@@ -282,8 +280,8 @@
         const n = document.getElementById('aNama').value.toUpperCase();
         if(n) { await db.collection("anggota").add({ nama: n }); closeModal('mAnggota'); loadData(); }
     }
-    async function editWarga(id, lama) {
-        const baru = prompt("Ganti Nama Warga:", lama);
+    async function editAnggota(id, lama) {
+        const baru = prompt("Ubah Nama Anggota:", lama);
         if(baru && baru !== lama) { await db.collection("anggota").doc(id).update({ nama: baru.toUpperCase() }); loadData(); }
     }
     async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
@@ -298,5 +296,5 @@
     }
 </script>
 </body>
-                    </html>
+    </html>
     
