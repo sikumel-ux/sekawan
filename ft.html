@@ -36,7 +36,17 @@
         .card-ijo { 
             background: var(--emerald); padding: 15px; color: white; 
             border-radius: 40px 15px 35px 15px/15px 35px 15px 40px;
-            box-shadow: 6px 6px 0px var(--dark);
+            box-shadow: 4px 4px 0px var(--dark);
+        }
+
+        /* Card Kecil untuk Ringkasan */
+        .card-mini {
+            background: var(--emerald);
+            border-radius: 15px;
+            padding: 8px;
+            text-align: center;
+            color: white;
+            border: 2px solid var(--dark);
         }
 
         .tabel-doodle {
@@ -121,6 +131,21 @@
     </div>
 
     <div id="screen-kas" class="tab-content space-y-4">
+        <div class="grid grid-cols-3 gap-2">
+            <div class="card-mini !bg-emerald-900">
+                <p class="text-[10px] opacity-70">MASUK</p>
+                <p class="sInText text-[11px] font-bold text-lime-400">0</p>
+            </div>
+            <div class="card-mini !bg-red-950">
+                <p class="text-[10px] opacity-70">KELUAR</p>
+                <p class="sOutText text-[11px] font-bold text-red-400">0</p>
+            </div>
+            <div class="card-mini !bg-slate-900">
+                <p class="text-[10px] opacity-70">TOTAL</p>
+                <p class="totalSaldoText text-[11px] font-bold text-white">0</p>
+            </div>
+        </div>
+
         <div class="flex gap-2">
             <input type="date" id="fTgl1" class="doodle-in w-full text-xs" onchange="loadData()">
             <input type="date" id="fTgl2" class="doodle-in w-full text-xs" onchange="loadData()">
@@ -297,4 +322,4 @@
 </script>
 </body>
     </html>
-    
+                                                                                           
