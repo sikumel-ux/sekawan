@@ -15,7 +15,18 @@
     
     <style>
         :root { --emerald: #064E3B; --dark: #04392D; --lime: #A3E635; }
-        * { font-family: 'Gochi Hand', cursive !important; }
+        
+        /* FIX: Font tulis tangan tidak boleh nabrak icon */
+        body, input, button, select, table { 
+            font-family: 'Gochi Hand', cursive; 
+        }
+        
+        /* Kembalikan font asli untuk icon */
+        .fa-solid, .fa { 
+            font-family: "Font Awesome 6 Free" !important; 
+            font-weight: 900 !important;
+        }
+
         body { 
             background-color: #FDFBF7; 
             background-image: radial-gradient(#d1d5db 0.8px, transparent 0.8px);
@@ -38,8 +49,10 @@
             background: white;
             box-shadow: 4px 4px 0px var(--emerald);
         }
-        .tabel-doodle tr { border-bottom: 2px dashed #cbd5e1; }
-        .tabel-doodle tr:last-child { border-bottom: none; }
+        .tabel-doodle table { width: 100%; border-collapse: collapse; }
+        .tabel-doodle th { background: var(--emerald); color: white; padding: 12px; }
+        .tabel-doodle td { padding: 12px; border-bottom: 2px dashed #e2e8f0; color: black; }
+        .tabel-doodle tr:last-child td { border-bottom: none; }
 
         /* Input & Button */
         .doodle-in { 
@@ -63,9 +76,10 @@
         }
 
         /* Navbar Berwarna Bold */
-        nav button { color: #94a3b8; transition: 0.3s; }
-        nav button.active { color: var(--emerald); transform: scale(1.1); }
-        nav button i { font-size: 24px; display: block; margin-bottom: 2px; }
+        nav { border-top: 3px dashed var(--emerald); } /* Gantinya garis lurus */
+        nav button { color: #94a3b8; }
+        nav button.active { color: var(--emerald); font-weight: bold; }
+        nav button i { font-size: 24px; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body class="p-4">
@@ -73,7 +87,7 @@
 <div id="loginPage" class="hidden flex flex-col items-center justify-center min-h-[80vh] text-center">
     <div class="card-ijo w-full max-w-sm space-y-6">
         <h1 class="text-6xl font-black italic">Tuntas.</h1>
-        <div class="space-y-4">
+        <div class="space-y-4 text-black">
             <input type="email" id="email" class="doodle-in w-full text-center" placeholder="Email Admin">
             <input type="password" id="pass" class="doodle-in w-full text-center" placeholder="Password">
             <button onclick="login()" class="btn-main w-full text-2xl bg-lime-400 !text-dark">MASUK</button>
@@ -84,7 +98,7 @@
 <div id="mainApp" class="hidden">
     <header class="flex justify-between items-center mb-6 pt-2">
         <h1 class="text-4xl font-black italic">Tuntas RT04.</h1>
-        <button onclick="logout()" class="text-2xl text-red-600"><i class="fa-solid fa-circle-xmark"></i></button>
+        <button onclick="logout()" class="text-3xl text-red-600"><i class="fa-solid fa-power-off"></i></button>
     </header>
 
     <div id="screen-home" class="tab-content active space-y-6">
@@ -118,11 +132,11 @@
         <input type="text" id="sKas" class="doodle-in w-full text-sm" placeholder="Cari transaksi..." oninput="loadData()">
         
         <div class="tabel-doodle">
-            <table class="w-full text-left">
-                <thead class="bg-emerald text-white text-xs">
-                    <tr><th class="p-3">TGL</th><th class="p-3">KET</th><th class="p-3">RP</th><th class="p-3">#</th></tr>
+            <table>
+                <thead>
+                    <tr><th>TGL</th><th>KET</th><th>RP</th><th>#</th></tr>
                 </thead>
-                <tbody id="tBodyKas" class="text-black text-lg"></tbody>
+                <tbody id="tBodyKas"></tbody>
             </table>
         </div>
     </div>
@@ -135,24 +149,24 @@
         <input type="text" id="sWarga" class="doodle-in w-full" placeholder="Cari nama warga..." oninput="loadData()">
         
         <div class="tabel-doodle">
-            <table class="w-full text-left">
-                <thead class="bg-emerald text-white text-xs">
-                    <tr><th class="p-3">NAMA</th><th class="p-3">STATUS</th><th class="p-3 text-right">AKSI</th></tr>
+            <table>
+                <thead>
+                    <tr><th>NAMA</th><th>STATUS</th><th class="text-right">AKSI</th></tr>
                 </thead>
-                <tbody id="tBodyIur" class="text-black text-xl"></tbody>
+                <tbody id="tBodyIur"></tbody>
             </table>
         </div>
 
         <div class="fixed bottom-28 right-6 flex flex-col gap-4">
-            <button onclick="openModal('mAnggota')" class="btn-main bg-white !text-emerald rounded-full w-14 h-14 shadow-xl"><i class="fa-solid fa-user-plus"></i></button>
-            <button onclick="openModal('mIuran')" class="btn-main bg-lime-400 !text-dark rounded-full w-14 h-14 shadow-xl"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+            <button onclick="openModal('mAnggota')" class="btn-main bg-white !text-emerald rounded-full w-14 h-14 shadow-xl text-xl"><i class="fa-solid fa-user-plus"></i></button>
+            <button onclick="openModal('mIuran')" class="btn-main bg-lime-400 !text-dark rounded-full w-14 h-14 shadow-xl text-xl"><i class="fa-solid fa-file-invoice-dollar"></i></button>
         </div>
     </div>
     
     <nav class="fixed bottom-0 inset-x-0 h-20 bg-white flex justify-around items-center px-4 pb-2">
-        <button onclick="st('home')" id="n-home" class="active text-[10px]"><i class="fa-solid fa-house-chimney"></i>HOME</button>
-        <button onclick="st('kas')" id="n-kas" class="text-[10px]"><i class="fa-solid fa-book"></i>BUKU KAS</button>
-        <button onclick="st('iur')" id="n-iur" class="text-[10px]"><i class="fa-solid fa-users"></i>WARGA</button>
+        <button onclick="st('home')" id="n-home" class="active text-[10px] flex flex-col items-center"><i class="fa-solid fa-house"></i>HOME</button>
+        <button onclick="st('kas')" id="n-kas" class="text-[10px] flex flex-col items-center"><i class="fa-solid fa-book-bible"></i>KAS</button>
+        <button onclick="st('iur')" id="n-iur" class="text-[10px] flex flex-col items-center"><i class="fa-solid fa-users-rectangle"></i>WARGA</button>
     </nav>
 </div>
 
@@ -185,6 +199,7 @@
 </div>
 
 <script>
+    // Config Firebase kamu
     const config = {
         apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
         authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -203,7 +218,7 @@
 
     async function login() {
         const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Email/Password Salah, Bro!"); }
+        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Salah bro!"); }
     }
     function logout() { if(confirm("Keluar?")) auth.signOut(); }
 
@@ -232,7 +247,7 @@
             const d = doc.data(), t = d.tgl.toDate();
             if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
             if(t >= t1 && t <= t2 && d.ket.toLowerCase().includes(sk)) {
-                tk.insertAdjacentHTML('beforeend', `<tr><td class="p-3 text-[10px]">${t.getDate()}/${t.getMonth()+1}</td><td class="p-3 font-bold uppercase text-xs">${d.ket}</td><td class="p-3 text-xs ${d.kat==='Masuk'?'text-emerald':'text-red-600'}">${d.nom.toLocaleString()}</td><td class="p-3 text-red-500" onclick="hapus('kas','${doc.id}')"><i class="fa-solid fa-trash"></i></td></tr>`);
+                tk.insertAdjacentHTML('beforeend', `<tr><td>${t.getDate()}/${t.getMonth()+1}</td><td class="font-bold uppercase text-xs">${d.ket}</td><td class="${d.kat==='Masuk'?'text-emerald':'text-red-600'}">${d.nom.toLocaleString()}</td><td class="text-red-500" onclick="hapus('kas','${doc.id}')"><i class="fa-solid fa-trash"></i></td></tr>`);
             }
         });
 
@@ -242,7 +257,7 @@
         dang.docs.forEach(doc => {
             const n = doc.data().nama; sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
             if(n.toLowerCase().includes(sw)) {
-                ti.insertAdjacentHTML('beforeend', `<tr><td class="p-3 uppercase font-bold text-sm">${n}</td><td class="p-3 text-xs">${mIur[n]?'LUNAS ✅':'--'}</td><td class="p-3 text-right space-x-4"><i class="fa-solid fa-pen-to-square text-blue-800" onclick="editWarga('${doc.id}','${n}')"></i><i class="fa-solid fa-trash-can text-red-600" onclick="hapus('anggota','${doc.id}')"></i></td></tr>`);
+                ti.insertAdjacentHTML('beforeend', `<tr><td class="uppercase font-bold text-sm">${n}</td><td class="text-xs">${mIur[n]?'LUNAS ✅':'--'}</td><td class="text-right space-x-4"><i class="fa-solid fa-pen-to-square text-blue-800" onclick="editWarga('${doc.id}','${n}')"></i><i class="fa-solid fa-trash-can text-red-600" onclick="hapus('anggota','${doc.id}')"></i></td></tr>`);
             }
         });
 
@@ -270,6 +285,7 @@
         if(baru && baru !== lama) { await db.collection("anggota").doc(id).update({ nama: baru.toUpperCase() }); loadData(); }
     }
     async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+    
     function openModal(id) { document.getElementById(id).style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     function st(t) {
@@ -280,4 +296,5 @@
     }
 </script>
 </body>
-</html>
+            </html>
+    
