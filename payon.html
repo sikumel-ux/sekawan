@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin TUNTAS - Bento Pay</title>
+    <title>TUNTAS</title>
     
     <meta name="theme-color" content="#064E3B">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -111,15 +111,15 @@
                     <i class="fa-brands fa-screenpal text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-emerald-900 tracking-tighter">Tuntas Pay.</h1>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">Admin RT 04</p>
+                    <h1 class="text-2xl font-extrabold text-emerald-900 tracking-tighter">Tuntas Payment.</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">Administration System</p>
                 </div>
             </div>
         </div>
 
         <div class="bento-card space-y-5">
             <div>
-                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">WhatsApp Warga</label>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">No. WhatsApp</label>
                 <div class="relative mt-1.5">
                     <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">+62</span>
                     <input type="number" id="wa" class="modern-in pl-14" placeholder="812345678">
@@ -127,8 +127,8 @@
             </div>
 
             <div>
-                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama Lengkap</label>
-                <input type="text" id="nama" class="modern-in mt-1.5 uppercase" placeholder="NAMA WARGA">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama</label>
+                <input type="text" id="nama" class="modern-in mt-1.5 uppercase" placeholder="NAMA">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -169,7 +169,7 @@
         </div>
 
         <div class="text-center">
-            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[4px]">Verified System RT 04</p>
+            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[4px]">TUNTAS Verified System</p>
         </div>
     </div>
 
@@ -216,7 +216,7 @@
                 });
 
                 // Generate link bukti pembayaran otomatis
-                const linkView = window.location.href.replace('pay.html', 'payment.html').split('?')[0] + '?' + kodeFinal;
+                const linkView = window.location.href.replace('payon.html', 'payment.html').split('?')[0] + '?' + kodeFinal;
 
                 // FORMAT PESAN WHATSAPP TERBARU
                 const pesan = `*BUKTI PEMBAYARAN*\n\n` +
