@@ -3,17 +3,17 @@
   "name": "Tuntas",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/9431/9431114.png",
+      "src": "tuntas.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/9431/9431114.png",
+      "src": "tuntas.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "tuntas.html",
   "display": "standalone",
   "theme_color": "#064E3B",
   "background_color": "#F1F5F9"
