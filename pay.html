@@ -36,11 +36,11 @@
             </div>
             
             <h2 class="text-xl font-black text-slate-800 text-center mb-1 uppercase tracking-tighter">Pembayaran TUNTAS</h2>
-            <p class="text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest mb-8 border-b pb-4">RT 04 Sekawan - Sampah</p>
+            <p class="text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest mb-8 border-b pb-4">RT 04 Dongkelan</p>
 
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">No WhatsApp Pelanggan</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">No WhatsApp</label>
                     <div class="flex items-center bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all mt-1">
                         <span class="pl-4 pr-1 text-slate-400 font-bold text-sm">+62</span>
                         <input type="number" id="wa" placeholder="81234567..." class="w-full p-4 bg-transparent outline-none text-slate-700 font-bold text-sm">
@@ -140,10 +140,10 @@
 
                 // 2. Buat Link untuk Pelanggan (Otomatis deteksi domain)
                 const currentUrl = window.location.href;
-                const linkView = currentUrl.replace('fpay.html', 'lunas.html') + '?id=' + kodeUnik;
+                const linkView = currentUrl.replace('pay.html', 'payment.html') + '?id=' + kodeUnik;
                 
                 // 3. Susun Pesan WhatsApp
-                const pesan = `*BUKTI PEMBAYARAN IURAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\nPembayaran iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima dan dicatat dalam sistem.\n\nKlik link di bawah ini untuk melihat kwitansi digital resmi Anda:\n${linkView}\n\n_Pesan ini dibuat otomatis oleh Sistem Admin TUNTAS RT 04_`;
+                const pesan = `*BUKTI PEMBAYARAN*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\nPembayaran iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima dan dicatat dalam sistem.\n\nKlik link di bawah ini untuk melihat kwitansi Anda:\n${linkView}\n\n_Pesan ini dibuat otomatis oleh Sistem Administrasi TUNTAS_`;
                 
                 // 4. Buka WhatsApp & Reset Form
                 window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
