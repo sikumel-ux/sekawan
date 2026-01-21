@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin TUNTAS - Bento</title>
+    <title>Admin TUNTAS - Bento Pay</title>
     
     <meta name="theme-color" content="#064E3B">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,25 +28,30 @@
             background-size: 24px 24px;
             color: #1E293B;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .bento-card {
             background: var(--card);
-            border-radius: 28px;
+            border-radius: 32px;
             padding: 24px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255,255,255,0.8);
         }
 
         .modern-in {
             background: #F8FAFC;
             border: 2px solid #E2E8F0;
-            border-radius: 16px;
-            padding: 12px 16px;
+            border-radius: 18px;
+            padding: 14px 18px;
             outline: none;
             transition: 0.3s;
             width: 100%;
             font-weight: 600;
+            font-size: 15px;
         }
 
         .modern-in:focus {
@@ -55,67 +61,80 @@
         }
 
         .btn-nominal {
-            background: #F1F5F9;
+            background: #F8FAFC;
             border: 2px solid #E2E8F0;
-            padding: 10px;
-            border-radius: 14px;
+            padding: 12px;
+            border-radius: 16px;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 13px;
             transition: 0.2s;
+            color: #64748b;
         }
 
         .btn-nominal.active {
             background: var(--emerald);
             color: white;
             border-color: var(--emerald);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
         }
 
         .btn-main {
             background: var(--emerald);
             color: white;
-            border-radius: 20px;
-            padding: 18px;
+            border-radius: 22px;
+            padding: 20px;
             font-weight: 800;
             width: 100%;
             transition: 0.3s;
             box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-main:active { transform: scale(0.96); }
+
+        /* Splash Effect for PWA */
+        .header-icon {
+            background: var(--emerald);
+            box-shadow: 0 8px 16px rgba(6, 78, 59, 0.2);
+        }
     </style>
 </head>
-<body class="p-5 flex items-center justify-center">
+<body>
 
     <div class="w-full max-w-md space-y-4">
         
-        <div class="bento-card flex items-center gap-4 py-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-900 flex items-center justify-center text-white shadow-lg">
-                <i class="fa-brands fa-screenpal text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-extrabold text-emerald-900 leading-none">Tuntas Pay.</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Payment Input System</p>
+        <div class="bento-card flex items-center justify-between py-5">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl header-icon flex items-center justify-center text-white">
+                    <i class="fa-brands fa-screenpal text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-emerald-900 tracking-tighter">Tuntas Pay.</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">Admin RT 04</p>
+                </div>
             </div>
         </div>
 
-        <div class="bento-card space-y-4">
+        <div class="bento-card space-y-5">
             <div>
-                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-wider">No WhatsApp</label>
-                <div class="relative mt-1">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">+62</span>
-                    <input type="number" id="wa" class="modern-in pl-12" placeholder="8123...">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">WhatsApp Warga</label>
+                <div class="relative mt-1.5">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">+62</span>
+                    <input type="number" id="wa" class="modern-in pl-14" placeholder="812345678">
                 </div>
             </div>
 
             <div>
-                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-wider">Nama Warga</label>
-                <input type="text" id="nama" class="modern-in mt-1 uppercase" placeholder="Masukkan nama...">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama Lengkap</label>
+                <input type="text" id="nama" class="modern-in mt-1.5 uppercase" placeholder="CONTOH: BUDI SANTOSO">
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-wider">Bulan</label>
-                    <select id="bulan" class="modern-in mt-1">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Bulan</label>
+                    <select id="bulan" class="modern-in mt-1.5">
                         <option value="Januari">Januari</option>
                         <option value="Februari">Februari</option>
                         <option value="Maret">Maret</option>
@@ -131,29 +150,31 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-wider">Nominal</label>
-                    <input type="number" id="nominal" class="modern-in mt-1" placeholder="Rp">
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nominal</label>
+                    <input type="number" id="nominal" class="modern-in mt-1.5" placeholder="Rp">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="setNominal(50000, this)" class="btn-nominal">50.000</button>
-                <button onclick="setNominal(70000, this)" class="btn-nominal">70.000</button>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="setNominal(50000, this)" class="btn-nominal">Rp 50.000</button>
+                <button onclick="setNominal(70000, this)" class="btn-nominal">Rp 70.000</button>
             </div>
 
-            <div class="pt-2">
+            <div class="pt-3">
                 <button onclick="prosesSimpan()" id="btn-main" class="btn-main flex items-center justify-center gap-3">
-                    <i class="fa-brands fa-whatsapp text-xl"></i>
-                    <span>SIMPAN & KIRIM</span>
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Simpan & Kirim</span>
                 </button>
             </div>
         </div>
 
-        <p class="text-center text-[10px] text-slate-400 font-bold uppercase tracking-[3px]">RT 04 Management System</p>
+        <div class="text-center">
+            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[4px]">Verified System RT 04</p>
+        </div>
     </div>
 
     <script>
-        // Gunakan API URL dari data tersimpan
+        // API Google Apps Script dari database tersimpan
         const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
 
         function setNominal(angka, btn) {
@@ -169,13 +190,13 @@
             const bulan = document.getElementById('bulan').value;
             const nominal = document.getElementById('nominal').value;
 
-            if(!waInput || !nama || !nominal) return alert("Lengkapi data dulu, bro!");
+            if(!waInput || !nama || !nominal) return alert("Waduh bro, isi dulu semua datanya!");
 
             const waFinal = "62" + waInput.replace(/^0+/, '');
             const kodeFinal = "TUNTAS-" + Math.floor(1000 + Math.random() * 9000);
             
             btn.disabled = true;
-            btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> <span>MEMPROSES...</span>";
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>MENGIRIM...</span>";
 
             const dataObj = {
                 wa: waFinal, 
@@ -187,34 +208,44 @@
             };
 
             try {
-                // Kirim ke Google Apps Script
+                // Simpan ke Google Sheet via Web App
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: new URLSearchParams(dataObj)
                 });
 
-                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\nIuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\nID Transaksi: ${kodeFinal}\n_Disimpan otomatis via Tuntas System_`;
+                // Generate link bukti pembayaran otomatis
+                const linkView = window.location.href.replace('bayar.html', 'kwitansi.html').split('?')[0] + '?' + kodeFinal;
+
+                // Format Pesan WhatsApp
+                const pesan = `*BUKTI PEMBAYARAN*\n\n` +
+                              `Terima kasih Bapak/Ibu *${nama.toUpperCase()}*,\n` +
+                              `Iuran bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima.\n\n` +
+                              `*Bukti Pembayaran Digital:*\n${linkView}\n\n` +
+                              `_ID Transaksi: ${kodeFinal}_`;
                 
+                // Redirect ke WhatsApp API
                 window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
                 
-                setTimeout(() => location.reload(), 1000);
+                // Refresh halaman agar bersih kembali
+                setTimeout(() => location.reload(), 1500);
+
             } catch (e) {
-                alert("Waduh, Gagal koneksi!");
+                alert("Gagal koneksi ke server, bro!");
                 btn.disabled = false;
                 btn.innerHTML = "SIMPAN & KIRIM";
             }
         }
 
-        // PWA SCRIPT
+        // PWA: Registrasi Service Worker agar bisa diinstal
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(reg => {
-                    console.log('Tuntas PWA Aktif!');
-                }).catch(err => console.log('SW Gagal', err));
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Tuntas PWA Aktif!'))
+                .catch(err => console.log('SW Gagal:', err));
             });
         }
     </script>
 </body>
-                          </html>
-  
+</html>
