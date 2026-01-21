@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin TUNTAS - Bento Pay</title>
+    
+    <meta name="theme-color" content="#064E3B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #F1F5F9; 
+            --emerald: #064E3B; 
+            --card: #FFFFFF;
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            background-image: radial-gradient(circle at 2px 2px, #E2E8F0 1px, transparent 0);
+            background-size: 24px 24px;
+            color: #1E293B;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .bento-card {
+            background: var(--card);
+            border-radius: 32px;
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .modern-in {
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 18px;
+            padding: 14px 18px;
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .modern-in:focus {
+            border-color: var(--emerald);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(6, 78, 59, 0.05);
+        }
+
+        .btn-nominal {
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            padding: 12px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 13px;
+            transition: 0.2s;
+            color: #64748b;
+        }
+
+        .btn-nominal.active {
+            background: var(--emerald);
+            color: white;
+            border-color: var(--emerald);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+        }
+
+        .btn-main {
+            background: var(--emerald);
+            color: white;
+            border-radius: 22px;
+            padding: 20px;
+            font-weight: 800;
+            width: 100%;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-main:active { transform: scale(0.96); }
+
+        .header-icon {
+            background: var(--emerald);
+            box-shadow: 0 8px 16px rgba(6, 78, 59, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="w-full max-w-md space-y-4">
+        
+        <div class="bento-card flex items-center justify-between py-5">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl header-icon flex items-center justify-center text-white">
+                    <i class="fa-brands fa-screenpal text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-emerald-900 tracking-tighter">Tuntas Pay.</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">Admin RT 04</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bento-card space-y-5">
+            <div>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">WhatsApp Warga</label>
+                <div class="relative mt-1.5">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">+62</span>
+                    <input type="number" id="wa" class="modern-in pl-14" placeholder="812345678">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nama Lengkap</label>
+                <input type="text" id="nama" class="modern-in mt-1.5 uppercase" placeholder="NAMA WARGA">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Bulan</label>
+                    <select id="bulan" class="modern-in mt-1.5">
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September">September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase ml-1 tracking-widest">Nominal</label>
+                    <input type="number" id="nominal" class="modern-in mt-1.5" placeholder="Rp">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="setNominal(50000, this)" class="btn-nominal">Rp 50.000</button>
+                <button onclick="setNominal(70000, this)" class="btn-nominal">Rp 70.000</button>
+            </div>
+
+            <div class="pt-3">
+                <button onclick="prosesSimpan()" id="btn-main" class="btn-main flex items-center justify-center gap-3">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Simpan & Kirim</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[4px]">Verified System RT 04</p>
+        </div>
+    </div>
+
+    <script>
+        // API URL Google Apps Script milik user
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
+
+        function setNominal(angka, btn) {
+            document.getElementById('nominal').value = angka;
+            document.querySelectorAll('.btn-nominal').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        async function prosesSimpan() {
+            const btn = document.getElementById('btn-main');
+            const waInput = document.getElementById('wa').value;
+            const nama = document.getElementById('nama').value;
+            const bulan = document.getElementById('bulan').value;
+            const nominal = document.getElementById('nominal').value;
+
+            if(!waInput || !nama || !nominal) return alert("Data masih kosong, bro!");
+
+            const waFinal = "62" + waInput.replace(/^0+/, '');
+            const kodeFinal = "TUNTAS-" + Math.floor(1000 + Math.random() * 9000);
+            
+            btn.disabled = true;
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> <span>MENGIRIM...</span>";
+
+            const dataObj = {
+                wa: waFinal, 
+                nama: nama, 
+                bulan: bulan, 
+                nominal: nominal, 
+                kode: kodeFinal, 
+                tgl: new Date().toLocaleString('id-ID')
+            };
+
+            try {
+                // Kirim ke Google Apps Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams(dataObj)
+                });
+
+                // Generate link bukti pembayaran otomatis
+                const linkView = window.location.href.replace('pay.html', 'payment.html').split('?')[0] + '?' + kodeFinal;
+
+                // FORMAT PESAN WHATSAPP TERBARU
+                const pesan = `*BUKTI PEMBAYARAN*\n\n` +
+                              `Terima kasih Bapak/Ibu *${nama.toUpperCase()}*,\n` +
+                              `Pembayaran iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima dan dicatat dalam sistem.\n\n` +
+                              `Klik link di bawah ini untuk melihat bukti pembayaran Anda:\n` +
+                              `----------------------------------------\n` +
+                              `${linkView}\n` +
+                              `----------------------------------------\n\n` +
+                              `_Pesan ini dibuat otomatis oleh Sistem Administrasi TUNTAS_`;
+                
+                // Redirect ke WhatsApp API
+                window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
+                
+                setTimeout(() => location.reload(), 1500);
+
+            } catch (e) {
+                alert("Waduh, Gagal kirim!");
+                btn.disabled = false;
+                btn.innerHTML = "SIMPAN & KIRIM";
+            }
+        }
+
+        // PWA SCRIPT
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => console.log('Tuntas PWA Ready')).catch(err => console.log('SW Fail'));
+            });
+        }
+    </script>
+</body>
+</html>
