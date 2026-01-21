@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #F1F5F9; 
+            --emerald: #064E3B; 
+            --card: #FFFFFF;
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            background-image: radial-gradient(circle at 2px 2px, #E2E8F0 1px, transparent 0);
+            background-size: 24px 24px;
+            color: #1E293B;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .bento-card {
+            background: var(--card);
+            border-radius: 32px;
+            padding: 40px 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255,255,255,0.8);
+            text-align: center;
+        }
+
+        .floating { 
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .btn-back {
+            background: var(--emerald);
+            color: white;
+            border-radius: 20px;
+            padding: 16px 32px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3);
+        }
+
+        .btn-back:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="w-full max-w-md">
+        <div class="bento-card space-y-6">
+            
+            <div class="flex justify-center">
+                <div class="w-24 h-24 rounded-3xl bg-slate-100 flex items-center justify-center text-emerald-900 floating">
+                    <i class="fa-solid fa-map-location-dot text-5xl"></i>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h1 class="text-6xl font-black text-emerald-900 tracking-tighter">404</h1>
+                <p class="text-xl font-extrabold text-slate-800 uppercase tracking-tight">Waduh, Nyasar Bro?</p>
+                <p class="text-sm text-slate-400 font-medium px-4">
+                    Halaman yang kamu cari nggak ada di sini. Mungkin link-nya salah atau sudah dihapus sistem.
+                </p>
+            </div>
+
+            <div class="pt-4">
+                <a href="index.html" class="btn-back uppercase text-sm tracking-widest">
+                    <i class="fa-solid fa-house-chimney"></i>
+                    Balik ke Home
+                </a>
+            </div>
+
+            <div class="pt-4">
+                <p class="text-[9px] text-slate-300 font-bold uppercase tracking-[4px]">Verified System TUNTAS</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
