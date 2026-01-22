@@ -1,0 +1,176 @@
+Penyuaup lariin ke 404.html, bro..
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwitansi TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #f0f4f2; 
+            overflow: hidden; 
+            position: fixed; 
+            width: 100%; 
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .receipt-card { 
+            background: white; 
+            border-radius: 1.5rem; 
+            border-top: 12px solid #065f46; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        .text-ijo-tua { color: #065f46; }
+        .bg-ijo-muda { 
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div id="loading" class="text-emerald-800 font-bold animate-pulse text-xs uppercase tracking-widest">
+        MEMUAT DATA...
+    </div>
+
+    <div id="penyusup" class="hidden text-center p-8">
+        <div class="text-6xl mb-4">🤨</div>
+        <h1 class="text-2xl font-black text-rose-600 uppercase italic">KAMU SIAPA?</h1>
+        <p class="text-slate-500 text-sm mt-2">Data tidak ditemukan atau link salah.</p>
+    </div>
+
+    <div id="konten" class="receipt-card w-full max-w-sm p-8 hidden border border-emerald-100">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-black text-ijo-tua leading-none tracking-tighter">TUNTAS</h1>
+            <div class="inline-block bg-emerald-100 px-2 py-0.5 rounded mt-1">
+                <p class="text-[8px] text-emerald-800 font-bold uppercase tracking-[0.2em]">
+                    Turun Tangan Atasi Sampah
+                </p>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight leading-none">
+                    BUKTI PEMBAYARAN 
+                </h2>
+                <div class="w-10 h-1 bg-emerald-500 mx-auto mt-2 rounded-full"></div>
+            </div>
+        </div>
+
+        <div class="text-[12px] text-slate-600 leading-relaxed">
+            <p class="mb-4">
+                Telah diterima uang dari Bapak/Ibu <strong id="d-nama" class="text-slate-800 uppercase border-b border-emerald-100"></strong>, 
+                guna pembayaran pembakaran sampah terpadu bulan <strong id="d-bulan" class="text-slate-800 uppercase"></strong>, sebesar:
+            </p>
+
+            <div class="bg-ijo-muda p-5 rounded-2xl text-center shadow-lg border border-emerald-100 mb-6">
+                <p class="text-[8px] text-emerald-600 font-bold uppercase tracking-widest mb-1">Jumlah Nominal</p>
+                <p id="d-nominal" class="text-3xl font-black text-ijo-tua"></p>
+                <div class="w-12 h-[2px] bg-emerald-200 mx-auto my-2 rounded-full"></div>
+                <p id="d-terbilang" class="text-[9px] text-emerald-700 italic font-bold uppercase leading-tight"></p>
+            </div>
+
+            <div class="flex flex-col items-center mb-6">
+                <div class="p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+                    <img id="barcodeimg" alt="Barcode" class="w-full max-w-[180px] h-auto">
+                </div>
+            </div>
+
+            <p class="text-center italic text-[9px] text-slate-600 py-2 border-y border-dashed border-slate-100">
+                - Terimakasih Atas Partisipasinya -
+            </p>
+        </div>
+
+        <div class="mt-6 flex justify-between items-end">
+            <div class="text-[8px] text-slate-400 font-mono leading-tight bg-slate-50 p-2 rounded-lg border border-slate-100">
+                Tgl: <span id="d-tgl"></span><br>
+                ID: <span id="d-kode"></span>
+            </div>
+            <div class="text-right">
+                <p class="text-[9px] font-bold text-slate-400 uppercase leading-none">Hormat kami,</p>
+                <p class="text-[10px] font-bold text-ijo-tua uppercase mt-1 leading-none">Pengurus Tuntas</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Ambil Kode dari URL (?id=T123456)
+        const params = new URLSearchParams(window.location.search);
+        const kodeUrl = params.get('id');
+
+        // Fungsi Terbilang Otomatis
+        function terbilang(angka) {
+            const bilne = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            if (angka < 12) return bilne[angka];
+            else if (angka < 20) return terbilang(angka - 10) + " Belas";
+            else if (angka < 100) return terbilang(Math.floor(angka / 10)) + " Puluh " + terbilang(angka % 10);
+            else if (angka < 200) return " Seratus " + terbilang(angka - 100);
+            else if (angka < 1000) return terbilang(Math.floor(angka / 100)) + " Ratus " + terbilang(angka % 100);
+            else if (angka < 2000) return " Seribu " + terbilang(angka - 1000);
+            else if (angka < 1000000) return terbilang(Math.floor(angka / 1000)) + " Ribu " + terbilang(angka % 1000);
+            return "";
+        }
+
+        function tampilkanPenyusup() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('penyusup').classList.remove('hidden');
+        }
+
+        // TAMPILKAN DATA DARI FIREBASE
+        if (kodeUrl) {
+            db.collection("kwitansi").doc(kodeUrl).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    render(data);
+                } else {
+                    tampilkanPenyusup();
+                }
+            }).catch(() => tampilkanPenyusup());
+        } else {
+            tampilkanPenyusup();
+        }
+
+        function render(data) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('konten').classList.remove('hidden');
+            
+            document.getElementById('d-nama').innerText = data.nama;
+            document.getElementById('d-bulan').innerText = data.bulan;
+            document.getElementById('d-nominal').innerText = "Rp " + data.nominal.toLocaleString('id-ID');
+            document.getElementById('d-terbilang').innerText = "~ " + terbilang(data.nominal) + " Rupiah ~";
+            
+            // Format Tanggal dari Firebase Timestamp
+            const tglData = data.tgl ? data.tgl.toDate() : new Date();
+            document.getElementById('d-tgl').innerText = tglData.toLocaleDateString('id-ID');
+            
+            document.getElementById('d-kode').innerText = data.kode;
+
+            // Barcode
+            const barcodeUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(data.kode) + "&code=code128&dpi=96&databar=false";
+            document.getElementById('barcodeimg').src = barcodeUrl;
+        }
+    </script>
+</body>
+</html>
