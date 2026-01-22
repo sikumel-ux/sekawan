@@ -140,7 +140,7 @@
 
                 // 2. Buat Link untuk Pelanggan (Otomatis deteksi domain)
                 const currentUrl = window.location.href;
-                const linkView = currentUrl.replace('payz.html', 'thx.html') + '?id=' + kodeUnik;
+                const linkView = currentUrl.replace('pay.html', 'kuitansi.html') + '?id=' + kodeUnik;
                 
                 // 3. Susun Pesan WhatsApp
                 const pesan = `*BUKTI PEMBAYARAN*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\nPembayaran iuran sampah bulan *${bulan}* sebesar *Rp ${Number(nominal).toLocaleString('id-ID')}* telah kami terima dan dicatat dalam sistem.\n\nKlik link di bawah ini untuk melihat kwitansi Anda:\n${linkView}\n\n_Pesan ini dibuat otomatis oleh Sistem Administrasi TUNTAS_`;
