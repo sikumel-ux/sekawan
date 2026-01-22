@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kwitansi TUNTAS - Digital</title>
+    <title>Kwitansi TUNTAS</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap" rel="stylesheet">
@@ -22,20 +22,26 @@
             justify-content: center;
             margin: 0;
         }
-        .receipt-card { 
+        .bento-card { 
             background: white; 
             border-radius: 2.5rem; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(255,255,255,0.8);
             position: relative;
             overflow: hidden;
+            width: 100%;
+            max-width: 380px;
         }
-        .receipt-card::before {
-            content: "";
+        .line-accent {
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 15px;
+            height: 12px;
             background: #064E3B;
+        }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
@@ -43,16 +49,32 @@
 
     <div id="loading" class="flex flex-col items-center gap-3">
         <div class="w-10 h-10 border-4 border-emerald-100 border-t-emerald-800 rounded-full animate-spin"></div>
-        <p class="text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Memproses Link...</p>
+        <p class="text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Mencari Data...</p>
     </div>
 
-    <div id="konten" class="receipt-card w-full max-w-sm p-8 hidden">
+    <div id="ui-404" class="bento-card p-10 text-center hidden">
+        <div class="flex justify-center mb-6">
+            <div class="w-20 h-20 rounded-3xl bg-slate-50 flex items-center justify-center text-emerald-900 floating border border-slate-100">
+                <i class="fa-solid fa-file-circle-xmark text-4xl"></i>
+            </div>
+        </div>
+        <h1 class="text-4xl font-black text-emerald-900 tracking-tighter">404</h1>
+        <p class="text-lg font-extrabold text-slate-800 uppercase mt-2">Data Gaib!</p>
+        <p class="text-xs text-slate-400 font-medium mt-2 leading-relaxed">
+            Link kwitansi tidak valid atau data belum sinkron di database RT.
+        </p>
+        <div class="pt-8">
+            <a href="index.html" class="bg-emerald-900 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg">Kembali</a>
+        </div>
+    </div>
+
+    <div id="ui-konten" class="bento-card p-8 hidden">
+        <div class="line-accent"></div>
         <div class="text-center mb-6">
-            <h1 class="text-3xl font-black text-emerald-900 leading-none tracking-tighter">TUNTAS.</h1>
-            <p class="text-[8px] text-emerald-600 font-bold uppercase tracking-[0.3em] mt-2">Sistem Administrasi RT 04</p>
-            
+            <h1 class="text-3xl font-black text-emerald-900 leading-none tracking-tighter pt-4">TUNTAS.</h1>
+            <p class="text-[8px] text-emerald-600 font-bold uppercase tracking-[0.3em] mt-2">Bukti Pembayaran Digital</p>
             <div class="mt-8">
-                <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">KWITANSI DIGITAL</h2>
+                <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">KWITANSI</h2>
                 <div class="w-8 h-1 bg-emerald-500 mx-auto mt-2 rounded-full"></div>
             </div>
         </div>
@@ -74,20 +96,16 @@
                     <img id="barcodeimg" alt="Barcode" class="w-full max-w-[160px]">
                 </div>
             </div>
-
-            <p class="text-center italic text-[10px] text-slate-400 py-3 border-y border-dashed border-slate-200 uppercase tracking-widest">
-                Pembayaran Sah & Tercatat
-            </p>
         </div>
 
-        <div class="mt-6 flex justify-between items-end">
+        <div class="mt-4 flex justify-between items-end">
             <div class="text-[9px] text-slate-400 font-bold leading-tight bg-slate-50 p-3 rounded-xl border border-slate-100">
                 TGL: <span id="d-tgl" class="text-slate-600"></span><br>
                 ID: <span id="d-kode" class="text-slate-600"></span>
             </div>
             <div class="text-right">
-                <p class="text-[10px] font-extrabold text-emerald-900 uppercase">PENGURUS TUNTAS</p>
-                <p class="text-[8px] font-bold text-slate-400 uppercase">Yogyakarta</p>
+                <p class="text-[10px] font-extrabold text-emerald-900 uppercase">PENGURUS</p>
+                <p class="text-[8px] font-bold text-slate-400 uppercase">RT 04</p>
             </div>
         </div>
     </div>
@@ -105,52 +123,52 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 1. Ambil kode dari URL (Contoh: view.html?TUNTAS-1234)
-        const kodeUrl = window.location.search.substring(1);
-
-        function lariKe404() {
-            window.location.href = "404.html";
+        // Fungsi menampilkan UI Error
+        function show404() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('ui-konten').classList.add('hidden');
+            document.getElementById('ui-404').classList.remove('hidden');
         }
 
-        // 2. Fungsi Utama Cek Data
+        // Ambil ID dari URL (?TUNTAS-1234)
+        const kodeUrl = window.location.search.substring(1);
+
         async function fetchReceipt() {
-            if (!kodeUrl) return lariKe404();
+            if (!kodeUrl) return show404();
 
             try {
-                // Coba cari di koleksi "kwitansi" berdasarkan ID Dokumen
-                let docRef = await db.collection("kwitansi").doc(kodeUrl).get();
+                // Cari di koleksi "kwitansi" berdasarkan FIELD 'kode'
+                const query = await db.collection("kwitansi").where("kode", "==", kodeUrl).limit(1).get();
                 
-                if (docRef.exists) {
-                    render(docRef.data());
+                if (!query.empty) {
+                    const data = query.docs[0].data();
+                    render(data);
                 } else {
-                    // Jika tidak ada sebagai ID Dokumen, cari di Field 'kode'
-                    let query = await db.collection("kwitansi").where("kode", "==", kodeUrl).limit(1).get();
-                    if (!query.empty) {
-                        render(query.docs[0].data());
+                    // Jika tidak ada di field, coba cari sebagai ID Dokumen
+                    const docRef = await db.collection("kwitansi").doc(kodeUrl).get();
+                    if (docRef.exists) {
+                        render(docRef.data());
                     } else {
-                        lariKe404(); // Benar-benar tidak ditemukan
+                        show404();
                     }
                 }
             } catch (error) {
-                console.error("Error:", error);
-                lariKe404();
+                console.error(error);
+                show404();
             }
         }
 
         function render(data) {
             document.getElementById('loading').classList.add('hidden');
-            document.getElementById('konten').classList.remove('hidden');
+            document.getElementById('ui-konten').classList.remove('hidden');
             
-            document.getElementById('d-nama').innerText = data.nama;
-            document.getElementById('d-bulan').innerText = data.bulan;
-            document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal).toLocaleString('id-ID');
-            document.getElementById('d-terbilang').innerText = "~ " + terbilang(data.nominal) + " Rupiah ~";
-            
-            // Format Tanggal
+            document.getElementById('d-nama').innerText = data.nama || "Tanpa Nama";
+            document.getElementById('d-bulan').innerText = data.bulan || "-";
+            document.getElementById('d-nominal').innerText = "Rp " + Number(data.nominal || 0).toLocaleString('id-ID');
+            document.getElementById('d-terbilang').innerText = "~ " + terbilang(data.nominal || 0) + " Rupiah ~";
             document.getElementById('d-tgl').innerText = data.tgl || "-";
-            document.getElementById('d-kode').innerText = data.kode;
+            document.getElementById('d-kode').innerText = data.kode || "-";
 
-            // Generate Barcode
             const barcodeUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(data.kode) + "&code=code128&dpi=96&databar=false";
             document.getElementById('barcodeimg').src = barcodeUrl;
         }
@@ -167,7 +185,6 @@
             return "";
         }
 
-        // Jalankan pengecekan
         fetchReceipt();
     </script>
 </body>
