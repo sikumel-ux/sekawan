@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TUNTAS - Admin</title>
     
+    <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#064E3B">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10149/10149458.png">
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     
@@ -18,23 +15,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        :root { --bg: #F1F5F9; --emerald: #064E3B; --card: #FFFFFF; --text: #1E293B; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; }
-        .bento-card { background: var(--card); border-radius: 28px; padding: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255,255,255,0.7); }
-        .card-accent { background: linear-gradient(135deg, #064E3B 0%, #065F46 100%); color: white; border-radius: 28px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(6, 78, 59, 0.2); }
-        .modern-in { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 16px; padding: 14px 18px; outline: none; transition: 0.3s; width: 100%; }
-        .modern-in:focus { border-color: var(--emerald); background: white; }
-        .btn-primary { background: var(--emerald); color: white; border-radius: 20px; padding: 18px; font-weight: 800; width: 100%; transition: 0.3s; }
-        .tab-content { display: none; padding-bottom: 120px; animation: slideUp 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); border-top: 1px solid #E2E8F0; border-radius: 30px 30px 0 0; }
-        nav button.active { color: var(--emerald); }
-        .modal { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(6px); display:none; z-index: 200; position: fixed; inset: 0; align-items: flex-end; }
-        ::-webkit-scrollbar { display: none; }
-    </style>
 </head>
 <body class="p-5">
 
@@ -55,7 +35,7 @@
                     <span id="passIcon" class="material-symbols-rounded">visibility_off</span>
                 </button>
             </div>
-            <button onclick="login()" class="btn-primary shadow-lg shadow-emerald-900/20">Masuk Dashboard</button>
+            <button onclick="login()" class="btn-primary">Masuk Dashboard</button>
         </div>
     </div>
 </div>
@@ -85,7 +65,6 @@
                 <p class="sOutText text-lg font-extrabold text-red-600 leading-none">0</p>
             </div>
         </div>
-
         <button onclick="openModal('mKas')" class="btn-primary mt-2">CATAT TRANSAKSI</button>
     </div>
 
@@ -113,7 +92,6 @@
             <input type="text" id="sWarga" class="modern-in" placeholder="Cari nama..." oninput="loadData()">
         </div>
         <div id="tBodyIur" class="space-y-3"></div>
-        
         <div class="fixed bottom-24 right-6 flex flex-col gap-3">
             <button onclick="openModal('mAnggota')" class="w-14 h-14 bg-white text-emerald-900 rounded-2xl shadow-xl border flex items-center justify-center"><span class="material-symbols-rounded">person_add</span></button>
             <button onclick="openModal('mIuran')" class="w-14 h-14 bg-emerald-900 text-white rounded-2xl shadow-xl flex items-center justify-center"><span class="material-symbols-rounded">payments</span></button>
@@ -151,7 +129,7 @@
     <div class="bg-white w-full p-8 rounded-t-[35px] space-y-4">
         <h3 class="text-lg font-extrabold text-center">Tambah Warga</h3>
         <input type="text" id="aNama" class="modern-in uppercase font-bold" placeholder="Nama Lengkap">
-        <input type="number" id="aHp" class="modern-in" placeholder="No. WhatsApp (Contoh: 0812...)">
+        <input type="number" id="aHp" class="modern-in" placeholder="No. WhatsApp (0812...)">
         <button onclick="simpanAnggota()" class="btn-primary">TAMBAH</button>
     </div>
 </div>
@@ -165,13 +143,10 @@
             <h3 class="text-xl font-extrabold">Pembayaran Berhasil!</h3>
             <p class="text-slate-400 text-sm">Ingin mengirim bukti pembayaran ke warga?</p>
         </div>
-        <div id="shareContent" class="hidden"></div>
-        <div class="flex flex-col gap-3">
-            <button id="btnWA" class="btn-primary flex items-center justify-center gap-2 bg-green-600">
-                <span class="material-symbols-rounded">send</span> KIRIM WHATSAPP
-            </button>
-            <button onclick="closeModal('mShare')" class="text-slate-400 font-bold text-sm">TUTUP</button>
-        </div>
+        <button id="btnWA" class="btn-primary flex items-center justify-center gap-2 bg-green-600">
+            <span class="material-symbols-rounded">send</span> KIRIM WHATSAPP
+        </button>
+        <button onclick="closeModal('mShare')" class="text-slate-400 font-bold text-sm block w-full">TUTUP</button>
     </div>
 </div>
 
@@ -186,8 +161,6 @@
     };
     firebase.initializeApp(config);
     const db = firebase.firestore(), auth = firebase.auth();
-
-    // Data lokal untuk mapping HP
     let dataWarga = {};
 
     auth.onAuthStateChanged(user => {
@@ -247,7 +220,7 @@
         dang.docs.forEach(doc => {
             const d = doc.data();
             const n = d.nama;
-            dataWarga[n] = d.hp || ''; // Simpan HP ke memory
+            dataWarga[n] = d.hp || '';
             sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
             if(n.toLowerCase().includes(sw)) {
                 ti.insertAdjacentHTML('beforeend', `
@@ -256,7 +229,7 @@
                             <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-xs">${n.charAt(0)}</div>
                             <div>
                                 <p class="font-extrabold text-xs uppercase">${n}</p>
-                                <p class="text-[8px] text-slate-400 font-bold">${d.hp || 'No HP Belum Ada'}</p>
+                                <p class="text-[8px] text-slate-400 font-bold">${d.hp || '-'}</p>
                                 <span class="text-[9px] font-bold ${mIur[n]?'text-emerald-600':'text-slate-300'} uppercase">${mIur[n]?'Lunas':'Pending'}</span>
                             </div>
                         </div>
@@ -276,8 +249,7 @@
     }
 
     function renderRow(id, col, t, ket, kat, nom, isAuto = false) {
-        return `
-            <div class="bento-card flex justify-between items-center py-3 ${isAuto?'border-l-4 border-emerald-500':''}">
+        return `<div class="bento-card flex justify-between items-center py-3 ${isAuto?'border-l-4 border-emerald-500':''}">
                 <div class="flex gap-3 items-center">
                     <div class="text-[9px] font-bold bg-slate-50 p-2 rounded-lg text-slate-400">${t.getDate()}/${t.getMonth()+1}</div>
                     <div><p class="text-xs font-extrabold uppercase line-clamp-1">${ket}</p><p class="text-[8px] text-slate-400 font-bold tracking-widest">${isAuto?'OTOMATIS':kat}</p></div>
@@ -295,49 +267,50 @@
     }
 
     async function simpanIuran() {
-        const n = document.getElementById('iNama').value;
-        const nmn = Number(document.getElementById('iNom').value);
-        const bln = document.getElementById('iBln').value;
+        const n = document.getElementById('iNama').value, nmn = Number(document.getElementById('iNom').value), bln = document.getElementById('iBln').value;
         const kode = 'T-' + Math.floor(Math.random() * 1000000);
-        
         if(nmn && n) { 
             await db.collection("pembayaran").add({ nama: n, bulan: bln, nom: nmn, tgl: new Date(), kode: kode }); 
-            closeModal('mIuran'); 
-            loadData();
-            showShareModal(n, nmn, bln, kode);
+            closeModal('mIuran'); loadData(); showShareModal(n, nmn, bln, kode);
         }
     }
 
     function showShareModal(nama, nominal, bulan, kode) {
         const hp = dataWarga[nama] || '';
-        const msg = `*BUKTI PEMBAYARAN TUNTAS*%0A---------------------------%0A*Nama:* ${nama}%0A*Nominal:* Rp ${nominal.toLocaleString()}%0A*Bulan:* ${bulan}%0A*Kode:* ${kode}%0A---------------------------%0A_Terima kasih atas partisipasinya._`;
-        
-        const btnWA = document.getElementById('btnWA');
-        btnWA.onclick = () => {
+        const msg = `*BUKTI PEMBAYARAN TUNTAS*%0A---------------------------%0A*Nama:* ${nama}%0A*Nominal:* Rp ${nominal.toLocaleString()}%0A*Bulan:* ${bulan}%0A*Kode:* ${kode}%0A---------------------------%0A_Terima kasih._`;
+        document.getElementById('btnWA').onclick = () => {
             let phone = hp;
             if (phone.startsWith('0')) phone = '62' + phone.slice(1);
             window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
         };
-        
         openModal('mShare');
     }
 
     async function simpanAnggota() {
-        const n = document.getElementById('aNama').value.toUpperCase();
-        const h = document.getElementById('aHp').value;
+        const n = document.getElementById('aNama').value.toUpperCase(), h = document.getElementById('aHp').value;
         if(n) { await db.collection("anggota").add({ nama: n, hp: h }); closeModal('mAnggota'); loadData(); }
     }
 
     async function editAnggota(id, lama, hplama) {
-        const baru = prompt("Ubah Nama:", lama);
-        const hpbaru = prompt("Ubah No HP:", hplama);
-        if(baru !== null) { 
-            await db.collection("anggota").doc(id).update({ 
-                nama: baru.toUpperCase(),
-                hp: hpbaru
-            }); 
-            loadData(); 
-        }
+        const baru = prompt("Ubah Nama:", lama), hpbaru = prompt("Ubah No HP:", hplama);
+        if(baru !== null) { await db.collection("anggota").doc(id).update({ nama: baru.toUpperCase(), hp: hpbaru }); loadData(); }
     }
 
-    async function hapus(c, id) { if(confirm("Hapus 
+    async function hapus(c, id) { if(confirm("Hapus data?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+    function openModal(id) { document.getElementById(id).style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    function st(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('screen-'+t).classList.add('active');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('n-'+t).classList.add('active');
+    }
+    function togglePass() {
+        const p = document.getElementById('pass'), i = document.getElementById('passIcon');
+        p.type = p.type === 'password' ? 'text' : 'password';
+        i.innerText = p.type === 'password' ? 'visibility_off' : 'visibility';
+    }
+</script>
+</body>
+                </html>
+    
