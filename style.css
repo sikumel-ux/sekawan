@@ -1,0 +1,105 @@
+:root { 
+    --bg: #F1F5F9; 
+    --emerald: #064E3B; 
+    --card: #FFFFFF; 
+    --text: #1E293B; 
+}
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--text); 
+    margin: 0; 
+}
+
+/* Bento Card Style */
+.bento-card { 
+    background: var(--card); 
+    border-radius: 28px; 
+    padding: 20px; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); 
+    border: 1px solid rgba(255,255,255,0.7); 
+}
+
+.card-accent { 
+    background: linear-gradient(135deg, #064E3B 0%, #065F46 100%); 
+    color: white; 
+    border-radius: 28px; 
+    padding: 24px; 
+    box-shadow: 0 20px 25px -5px rgba(6, 78, 59, 0.2); 
+}
+
+/* Input & Button */
+.modern-in { 
+    background: #F8FAFC; 
+    border: 2px solid #E2E8F0; 
+    border-radius: 16px; 
+    padding: 14px 18px; 
+    outline: none; 
+    transition: 0.3s; 
+    width: 100%; 
+}
+
+.modern-in:focus { 
+    border-color: var(--emerald); 
+    background: white; 
+}
+
+.btn-primary { 
+    background: var(--emerald); 
+    color: white; 
+    border-radius: 20px; 
+    padding: 18px; 
+    font-weight: 800; 
+    width: 100%; 
+    transition: 0.3s; 
+    cursor: pointer;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Tabs & Animations */
+.tab-content { 
+    display: none; 
+    padding-bottom: 120px; 
+    animation: slideUp 0.4s ease; 
+}
+
+.tab-content.active { 
+    display: block; 
+}
+
+@keyframes slideUp { 
+    from { opacity: 0; transform: translateY(15px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Navigation */
+nav { 
+    background: rgba(255, 255, 255, 0.8); 
+    backdrop-filter: blur(15px); 
+    border-top: 1px solid #E2E8F0; 
+    border-radius: 30px 30px 0 0; 
+}
+
+nav button.active { 
+    color: var(--emerald); 
+}
+
+/* Modal System */
+.modal { 
+    background: rgba(15, 23, 42, 0.5); 
+    backdrop-filter: blur(6px); 
+    display:none; 
+    z-index: 200; 
+    position: fixed; 
+    inset: 0; 
+    align-items: flex-end; 
+}
+
+/* Utilities */
+::-webkit-scrollbar { 
+    display: none; 
+}
