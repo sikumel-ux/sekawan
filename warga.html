@@ -2,13 +2,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TUNTAS - Portal Warga</title>
-    
     <link rel="stylesheet" href="warga.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,8 +15,8 @@
 
 <div class="max-w-md mx-auto p-5">
     <div id="screen-home" class="tab-content active space-y-6">
-        <header class="flex flex-col items-center text-center py-8 space-y-4">
-            <div class="w-20 h-20 rounded-[28px] bg-emerald-900 flex items-center justify-center text-white shadow-2xl shadow-emerald-900/20">
+        <header class="flex flex-col items-center text-center py-10 space-y-4">
+            <div class="w-20 h-20 rounded-[28px] bg-emerald-900 flex items-center justify-center text-white shadow-xl shadow-emerald-900/20">
                 <span class="material-symbols-rounded text-4xl">eco</span>
             </div>
             <div>
@@ -26,170 +24,134 @@
                 <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">Turun Tangan Atasi Sampah</p>
             </div>
         </header>
-
-        <div class="bento-card bg-emerald-900 text-white border-none">
-            <h2 class="font-extrabold text-lg mb-2">Visi Kami</h2>
-            <p class="text-emerald-100/80 text-sm leading-relaxed">Mewujudkan lingkungan RT 04 yang bersih, sehat, dan bebas polusi asap melalui pengelolaan sampah mandiri yang transparan.</p>
+        <div class="bento-card bg-emerald-900 text-white border-none p-8">
+            <h2 class="font-extrabold text-xl mb-3">Apa itu Tuntas?</h2>
+            <p class="text-emerald-100/80 text-sm leading-relaxed">Program mandiri RT 04 untuk pengelolaan sampah yang lebih modern, terjadwal, dan transparan. Dari warga, oleh warga, untuk lingkungan kita.</p>
         </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bento-card">
-                <span class="material-symbols-rounded text-emerald-600 mb-2">verified</span>
-                <p class="font-extrabold text-sm">Transparan</p>
-                <p class="text-[10px] text-slate-400">Laporan keuangan dapat diakses semua warga.</p>
-            </div>
-            <div class="bento-card">
-                <span class="material-symbols-rounded text-emerald-600 mb-2">schedule</span>
-                <p class="font-extrabold text-sm">Terjadwal</p>
-                <p class="text-[10px] text-slate-400">Pengangkutan sampah rutin dan teratur.</p>
+        <div class="bento-card flex items-center gap-4">
+            <span class="material-symbols-rounded text-emerald-600">target</span>
+            <div>
+                <p class="font-extrabold text-sm">Tujuan Utama</p>
+                <p class="text-[11px] text-slate-500">Lingkungan bersih tanpa polusi asap pembakaran sampah.</p>
             </div>
         </div>
     </div>
 
-    <div id="screen-kas" class="tab-content space-y-4">
-        <h2 class="text-xl font-extrabold text-emerald-900 px-1 pt-4">Laporan Kas</h2>
-        
-        <div class="card-accent">
-            <p class="text-[10px] font-bold opacity-70 mb-1 tracking-widest uppercase">Saldo Kas Saat Ini</p>
-            <h2 id="vSaldo" class="text-4xl font-extrabold">Rp ...</h2>
+    <div id="screen-kas" class="tab-content space-y-4 pt-4">
+        <h2 class="text-xl font-extrabold text-emerald-900">Laporan Kas RT 04</h2>
+        <div class="card-accent shadow-xl shadow-emerald-900/20">
+            <p class="text-[10px] font-bold opacity-70 mb-1 tracking-widest uppercase">Saldo Saat Ini</p>
+            <h2 id="vSaldo" class="text-4xl font-extrabold">Rp 0</h2>
         </div>
-        
         <div class="grid grid-cols-2 gap-3">
-            <div class="bento-card">
-                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Masuk</p>
+            <div class="bento-card border-l-4 border-emerald-500 py-4">
+                <p class="text-[9px] font-bold text-slate-400 uppercase">Pemasukan</p>
                 <p id="vMasuk" class="text-sm font-extrabold text-emerald-700">Rp 0</p>
             </div>
-            <div class="bento-card">
-                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Keluar</p>
+            <div class="bento-card border-l-4 border-red-500 py-4">
+                <p class="text-[9px] font-bold text-slate-400 uppercase">Pengeluaran</p>
                 <p id="vKeluar" class="text-sm font-extrabold text-red-600">Rp 0</p>
             </div>
         </div>
-
-        <div class="space-y-3">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Riwayat Transaksi</p>
-            <div id="historyWarga" class="space-y-3">
-                </div>
+        <div id="historyWarga" class="space-y-3 pt-2">
+            <p class="text-center text-slate-400 text-xs py-10">Memperbarui data...</p>
         </div>
     </div>
 
     <div id="screen-faq" class="tab-content space-y-4 pt-4">
-        <h2 class="text-xl font-extrabold text-emerald-900 px-1">Tanya Jawab</h2>
+        <h2 class="text-xl font-extrabold text-emerald-900">FAQ</h2>
         <div class="space-y-3">
             <details class="bento-card group">
                 <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm">
-                    Kapan jadwal angkut sampah?
+                    Bagaimana cara membayar iuran?
                     <span class="material-symbols-rounded transition-transform group-open:rotate-180">expand_more</span>
                 </summary>
-                <p class="text-xs text-slate-500 mt-3 pt-3 border-t">Setiap hari <b>Minggu</b> dan <b>Kamis</b> pagi. Mohon sampah sudah siap di depan rumah sebelum jam 07.00 WIB.</p>
-            </details>
-            <details class="bento-card group">
-                <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm">
-                    Kenapa ada biaya iuran?
-                    <span class="material-symbols-rounded transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <p class="text-xs text-slate-500 mt-3 pt-3 border-t">Iuran digunakan untuk biaya operasional petugas, pemeliharaan alat angkut, dan pengelolaan tempat pembuangan akhir.</p>
+                <p class="text-xs text-slate-500 mt-3 pt-3 border-t">Pembayaran dapat dilakukan melalui bendahara RT atau petugas angkut sampah setiap bulannya.</p>
             </details>
         </div>
-        <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 p-5 bg-emerald-900 text-white rounded-[24px] font-bold shadow-xl mt-6">
-            <span class="material-symbols-rounded">chat</span> HUBUNGI PENGURUS
-        </a>
     </div>
 
     <nav class="fixed bottom-0 inset-x-0 h-20 flex justify-around items-center px-6 shadow-2xl">
         <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1">
-            <span class="material-symbols-rounded">info</span>
-            <span class="text-[10px] font-bold uppercase">Tentang</span>
+            <span class="material-symbols-rounded">home</span>
+            <span class="text-[10px] font-bold uppercase">Home</span>
         </button>
         <button onclick="st('kas')" id="n-kas" class="flex flex-col items-center gap-1">
             <span class="material-symbols-rounded">account_balance_wallet</span>
             <span class="text-[10px] font-bold uppercase">Kas</span>
         </button>
         <button onclick="st('faq')" id="n-faq" class="flex flex-col items-center gap-1">
-            <span class="material-symbols-rounded">help</span>
+            <span class="material-symbols-rounded">quiz</span>
             <span class="text-[10px] font-bold uppercase">FAQ</span>
         </button>
     </nav>
 </div>
 
 <script>
-    const firebaseConfig = {
+    const config = {
         apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
         authDomain: "tuntas-sekawan.firebaseapp.com",
         projectId: "tuntas-sekawan",
     };
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(config);
     const db = firebase.firestore();
 
-    async function loadDataWarga() {
+    async function loadData() {
         try {
-            // Ambil semua data dari koleksi kas dan pembayaran
+            // Kita ambil dua koleksi sekaligus seperti di Admin
             const [snapKas, snapIur] = await Promise.all([
-                db.collection("kas").orderBy("tgl", "desc").get(),
-                db.collection("pembayaran").orderBy("tgl", "desc").get()
+                db.collection("kas").get(),
+                db.collection("pembayaran").get()
             ]);
 
-            let totalMasuk = 0;
-            let totalKeluar = 0;
-            const historyList = [];
+            let inKas = 0, outKas = 0, totalIur = 0;
+            let gabungan = [];
 
-            // 1. Olah koleksi 'kas'
+            // 1. Ambil dari koleksi 'kas'
             snapKas.forEach(doc => {
                 const d = doc.data();
                 const nom = Number(d.nom) || 0;
-                if(d.kat === 'Masuk') totalMasuk += nom; else totalKeluar += nom;
-                
-                historyList.push({
-                    ket: d.ket,
-                    kat: d.kat,
-                    nom: nom,
-                    tgl: d.tgl.toDate()
-                });
+                if(d.kat === 'Masuk') inKas += nom; else outKas += nom;
+                gabungan.push({ ket: d.ket, kat: d.kat, nom: nom, tgl: d.tgl.toDate() });
             });
 
-            // 2. Olah koleksi 'pembayaran' (Selalu dianggap Masuk)
+            // 2. Ambil dari koleksi 'pembayaran' (Iuran Warga)
             snapIur.forEach(doc => {
                 const d = doc.data();
                 const nom = Number(d.nom) || 0;
-                totalMasuk += nom;
-                
-                historyList.push({
-                    ket: `Iuran: ${d.nama}`,
-                    kat: 'Masuk',
-                    nom: nom,
-                    tgl: d.tgl.toDate()
-                });
+                totalIur += nom;
+                gabungan.push({ ket: `Iuran: ${d.nama}`, kat: 'Masuk', nom: nom, tgl: d.tgl.toDate() });
             });
 
-            // Urutkan riwayat gabungan berdasarkan tanggal terbaru
-            historyList.sort((a, b) => b.tgl - a.tgl);
+            // Urutkan biar yang terbaru di atas
+            gabungan.sort((a,b) => b.tgl - a.tgl);
 
-            // Render ke UI
-            const container = document.getElementById('historyWarga');
-            container.innerHTML = '';
-            
-            historyList.slice(0, 10).forEach(h => {
-                const dateStr = `${h.tgl.getDate()}/${h.tgl.getMonth()+1}`;
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="bento-card flex justify-between items-center py-3">
-                        <div class="flex gap-3 items-center">
-                            <div class="text-[9px] font-bold bg-slate-100 p-2 rounded-lg text-slate-400">${dateStr}</div>
-                            <div>
-                                <p class="text-xs font-extrabold uppercase line-clamp-1">${h.ket}</p>
-                                <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">${h.kat}</p>
-                            </div>
-                        </div>
-                        <p class="font-extrabold text-xs ${h.kat==='Masuk'?'text-emerald-700':'text-red-500'}">${h.nom.toLocaleString('id-ID')}</p>
-                    </div>
-                `);
-            });
+            // Update UI Angka
+            const totalMasuk = inKas + totalIur;
+            const saldo = totalMasuk - outKas;
 
-            const saldo = totalMasuk - totalKeluar;
             document.getElementById('vSaldo').innerText = 'Rp ' + saldo.toLocaleString('id-ID');
             document.getElementById('vMasuk').innerText = 'Rp ' + totalMasuk.toLocaleString('id-ID');
-            document.getElementById('vKeluar').innerText = 'Rp ' + totalKeluar.toLocaleString('id-ID');
+            document.getElementById('vKeluar').innerText = 'Rp ' + outKas.toLocaleString('id-ID');
+
+            // Render List Riwayat (Max 10 saja biar ga penuh)
+            const listHtml = gabungan.slice(0, 10).map(h => `
+                <div class="bento-card flex justify-between items-center py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="text-[9px] font-bold text-slate-400 bg-slate-50 p-2 rounded-lg">${h.tgl.getDate()}/${h.tgl.getMonth()+1}</div>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase line-clamp-1">${h.ket}</p>
+                            <p class="text-[8px] font-bold text-slate-300 uppercase">${h.kat}</p>
+                        </div>
+                    </div>
+                    <p class="font-extrabold text-xs ${h.kat==='Masuk'?'text-emerald-700':'text-red-500'}">${h.nom.toLocaleString('id-ID')}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('historyWarga').innerHTML = listHtml || '<p class="text-center text-slate-400 text-xs">Belum ada transaksi.</p>';
 
         } catch (e) {
-            console.error("Error Load:", e);
+            console.error(e);
             document.getElementById('vSaldo').innerText = "Gagal Load";
         }
     }
@@ -201,9 +163,7 @@
         document.getElementById('n-'+t).classList.add('active');
     }
 
-    // Jalankan load data otomatis
-    loadDataWarga();
+    window.onload = loadData;
 </script>
 </body>
-        </html>
-        
+</html>
