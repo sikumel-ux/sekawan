@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Portal Warga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .bg-tuntas { background-color: #059669; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-active { color: #059669 !important; border-top: 3px solid #059669; }
+        /* Smooth scrolling untuk riwayat */
+        #transaksiList { max-height: 400px; overflow-y: auto; scrollbar-width: none; }
+        #transaksiList::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="text-slate-800 pb-24">
+
+    <header class="bg-white/90 backdrop-blur-md p-5 sticky top-0 z-50 flex justify-between items-center border-b border-slate-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg">
+                <i class="fa-solid fa-recycle text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-emerald-700 leading-tight">TUNTAS</h1>
+                <p id="tabTitle" class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-widest">Portal Warga</p>
+            </div>
+        </div>
+        <button onclick="loadPublicData()" class="w-10 h-10 bg-slate-50 text-emerald-600 rounded-xl flex items-center justify-center border border-slate-100 active:rotate-180 transition-all duration-500">
+            <i class="fa-solid fa-rotate"></i>
+        </button>
+    </header>
+
+    <main class="p-6">
+        
+        <section id="home" class="tab-content active space-y-6">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-2xl font-bold text-emerald-800 mb-2">RT 04 Bebas Sampah</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed italic">"Lingkungan asri tanpa polusi asap pembakaran sampah."</p>
+                </div>
+                <i class="fa-solid fa-leaf absolute -right-4 -bottom-4 text-8xl text-emerald-50 opacity-40"></i>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-center">
+                    <i class="fa-solid fa-hand-holding-heart text-emerald-600 mb-2 text-xl"></i>
+                    <h3 class="font-bold text-slate-700 text-xs">Swadaya</h3>
+                    <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold">Warga Aktif</p>
+                </div>
+                <div class="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-center">
+                    <i class="fa-solid fa-eye text-emerald-600 mb-2 text-xl"></i>
+                    <h3 class="font-bold text-slate-700 text-xs">Transparan</h3>
+                    <p class="text-[9px] text-slate-400 mt-1 uppercase font-bold">Terbuka 24 Jam</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-7 rounded-[2.5rem] border border-slate-50 text-center">
+                <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                    Mari bersama menjaga kebersihan lingkungan dengan rutin membayar iuran sampah tepat waktu.
+                </p>
+                <img src="https://cdn-icons-png.flaticon.com/512/3299/3299935.png" class="w-20 mx-auto opacity-20 grayscale" alt="">
+            </div>
+        </section>
+
+        <section id="kas" class="tab-content space-y-6">
+            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 text-center relative overflow-hidden">
+                <p class="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-2">Saldo Gabungan Terkini</p>
+                <h2 id="pubSaldo" class="text-4xl font-bold tracking-tight">Rp ...</h2>
+                
+                <div class="grid grid-cols-3 gap-2 mt-8 pt-6 border-t border-white/20">
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Masuk</p>
+                        <p id="pubMasuk" class="font-bold text-[10px]">Rp 0</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Keluar</p>
+                        <p id="pubKeluar" class="font-bold text-[10px]">Rp 0</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Iuran</p>
+                        <p id="pubIuran" class="font-bold text-[10px]">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> Riwayat 10 Transaksi Terakhir
+                </h3>
+                <div id="transaksiList" class="space-y-3">
+                    <div class="text-center py-10">
+                        <i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="tab-content space-y-4">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-2 mb-4">Pusat Bantuan</h3>
+            
+            <div class="space-y-3">
+                <details class="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Jadwal Angkut Sampah?
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-[11px] text-slate-500 mt-4 leading-relaxed border-t pt-4">Setiap hari <b>Kamis</b> dan <b>Minggu</b> pagi. Pastikan sampah di luar pagar sebelum jam 07.30 pagi.</p>
+                </details>
+
+                <details class="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Besaran Iuran?
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-[11px] text-slate-500 mt-4 leading-relaxed border-t pt-4">Iuran sebesar <b>Rp 25.000 / bulan</b>. Bisa dibayarkan langsung ke bendahara atau melalui aplikasi ini.</p>
+                </details>
+            </div>
+
+            <div class="pt-6">
+                <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 w-full py-5 bg-emerald-900 text-white rounded-[2rem] font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span class="text-sm">HUBUNGI BENDAHARA</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center px-4 z-50">
+        <button onclick="showTab('home')" id="btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 nav-active">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[9px] font-bold uppercase">Beranda</span>
+        </button>
+        <button onclick="showTab('kas')" id="btn-kas" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400">
+            <i class="fa-solid fa-receipt text-lg"></i>
+            <span class="text-[9px] font-bold uppercase">Laporan</span>
+        </button>
+        <button onclick="showTab('faq')" id="btn-faq" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400">
+            <i class="fa-solid fa-circle-info text-lg"></i>
+            <span class="text-[9px] font-bold uppercase">Bantuan</span>
+        </button>
+    </nav>
+
+    <script>
+        // API URL DARI GOOGLE APPS SCRIPT
+        const API_URL = "https://script.google.com/macros/s/AKfycbzCI_Q1DnXn69Ct26cQwGX3RhqZY8WZ-f1q7E16Tpb_nR3_yXmcXFP3tBd96qKMLVU3VA/exec";
+
+        // Fungsi Ganti Tab
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('nav-active'));
+            
+            document.getElementById(id).classList.add('active');
+            document.getElementById('btn-' + id).classList.add('nav-active');
+            
+            const titles = { 'home': 'Portal Warga', 'kas': 'Keuangan RT 04', 'faq': 'Tanya Jawab' };
+            document.getElementById('tabTitle').innerText = titles[id];
+        }
+
+        async function loadPublicData() {
+            try {
+                // Tampilkan loading saat refresh manual
+                document.getElementById('transaksiList').innerHTML = '<div class="text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-emerald-500 text-xl"></i></div>';
+                
+                const response = await fetch(`${API_URL}?action=getDashboard`, { method: 'POST' });
+                const data = await response.json();
+                
+                let tin = 0, tout = 0, tiur = 0;
+                let listKas = [];
+
+                // 1. Hitung Iuran (Tabel Pembayaran)
+                data.pembayaran.slice(1).forEach(row => {
+                    const nominal = Number(row[2]) || 0;
+                    tiur += nominal;
+                });
+
+                // 2. Olah Data Kas (Tabel Kas)
+                data.kas.slice(1).forEach(row => {
+                    const tgl = row[0];
+                    const ket = row[1];
+                    const kat = String(row[2]).trim().toLowerCase();
+                    const nom = Number(row[3]) || 0;
+
+                    if(kat === 'masuk') tin += nom; 
+                    else if(kat === 'keluar') tout += nom;
+
+                    if(ket) { // Ambil data jika keterangan ada
+                        listKas.push({ tgl, ket, kat, nom });
+                    }
+                });
+
+                // 3. Tampilkan Total Saldo
+                const totalSaldo = (tin - tout) + tiur;
+                document.getElementById('pubSaldo').innerText = 'Rp ' + totalSaldo.toLocaleString('id-ID');
+                document.getElementById('pubMasuk').innerText = 'Rp ' + tin.toLocaleString('id-ID');
+                document.getElementById('pubKeluar').innerText = 'Rp ' + tout.toLocaleString('id-ID');
+                document.getElementById('pubIuran').innerText = 'Rp ' + tiur.toLocaleString('id-ID');
+
+                // 4. Render Riwayat (Sortir terbaru di atas)
+                let html = '';
+                listKas.reverse().slice(0, 10).forEach(item => {
+                    const tglFormat = item.tgl ? item.tgl.split('T')[0] : '-';
+                    const isMasuk = item.kat === 'masuk';
+                    
+                    html += `
+                    <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full ${isMasuk ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} flex items-center justify-center text-[10px]">
+                                <i class="fa-solid ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-700 leading-tight uppercase truncate w-32">${item.ket}</p>
+                                <p class="text-[9px] text-slate-400 mt-1">${tglFormat}</p>
+                            </div>
+                        </div>
+                        <p class="text-[11px] font-bold ${isMasuk ? 'text-emerald-600' : 'text-red-600'}">
+                            ${isMasuk ? '+' : '-'} ${item.nom.toLocaleString('id-ID')}
+                        </p>
+                    </div>`;
+                });
+
+                document.getElementById('transaksiList').innerHTML = html || '<p class="text-center py-10 text-xs text-slate-400">Belum ada riwayat transaksi.</p>';
+
+            } catch(e) { 
+                console.error(e);
+                document.getElementById('pubSaldo').innerText = 'Koneksi Bermasalah';
+                document.getElementById('transaksiList').innerHTML = '<p class="text-center text-red-400 text-xs py-10">Gagal mengambil data dari server.</p>';
+            }
+        }
+        
+        // Jalankan fungsi saat awal buka
+        loadPublicData();
+    </script>
+</body>
+  </html>
+              
