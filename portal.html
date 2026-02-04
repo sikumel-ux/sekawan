@@ -3,211 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS - Portal Warga RT 04</title>
-    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <title>TUNTAS - Portal Warga</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root { --emerald: #064E3B; --bg: #F8FAFC; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); margin: 0; }
-        
-        /* Tab Logic */
-        .tab-content { display: none; padding-bottom: 100px; animation: slideUp 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Bento UI */
-        .bento-card { background: white; border-radius: 24px; padding: 20px; border: 1px solid #F1F5F9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .card-accent { background: linear-gradient(135deg, #064E3B 0%, #059669 100%); color: white; border-radius: 28px; padding: 24px; box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.2); }
-
-        /* Navbar */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { color: #94A3B8; display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; background: none; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--emerald); }
-        .nav-item span { font-variation-settings: 'FILL' 0; }
-        .nav-item.active span { font-variation-settings: 'FILL' 1; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .bg-tuntas { background-color: #059669; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-active { color: #059669 !important; border-top: 3px solid #059669; }
     </style>
 </head>
-<body class="p-5">
+<body class="text-slate-800 pb-24">
 
-<div class="max-w-md mx-auto">
-    
-    <div id="tab-home" class="tab-content active space-y-6">
-        <header class="text-center py-10">
-            <div class="w-20 h-20 bg-[#064E3B] rounded-[28px] mx-auto flex items-center justify-center text-white mb-4 shadow-xl shadow-emerald-900/20">
-                <span class="material-symbols-rounded text-4xl">eco</span>
+    <header class="bg-white/90 backdrop-blur-md p-5 sticky top-0 z-50 flex justify-between items-center border-b border-slate-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                <i class="fa-solid fa-recycle text-lg"></i>
             </div>
-            <h1 class="text-3xl font-extrabold text-[#064E3B] tracking-tighter">Tuntas.</h1>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">RT 04 - Bersih, Sehat, Mandiri</p>
-        </header>
-
-        <div class="bento-card bg-emerald-900 text-white border-none p-8 relative overflow-hidden">
-            <h2 class="font-extrabold text-xl mb-2 relative z-10">Program Tuntas</h2>
-            <p class="text-emerald-100/80 text-sm leading-relaxed relative z-10">Inisiatif pengelolaan sampah mandiri warga RT 04 untuk menciptakan lingkungan bebas polusi asap pembakaran sampah.</p>
-            <span class="material-symbols-rounded absolute -right-4 -bottom-4 text-8xl opacity-10">compost</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bento-card flex flex-col items-center text-center">
-                <span class="material-symbols-rounded text-emerald-600 mb-2">transcribe</span>
-                <p class="font-extrabold text-xs">Transparan</p>
-                <p class="text-[9px] text-slate-400 uppercase mt-1">Laporan Real-time</p>
-            </div>
-            <div class="bento-card flex flex-col items-center text-center">
-                <span class="material-symbols-rounded text-emerald-600 mb-2">event_available</span>
-                <p class="font-extrabold text-xs">Terjadwal</p>
-                <p class="text-[9px] text-slate-400 uppercase mt-1">2x Seminggu</p>
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-emerald-700 leading-tight tracking-tight">TUNTAS</h1>
+                <p id="tabTitle" class="text-[8px] font-bold text-slate-400 leading-tight uppercase tracking-widest">Portal Warga</p>
             </div>
         </div>
-    </div>
-
-    <div id="tab-kas" class="tab-content space-y-4">
-        <h2 class="text-xl font-extrabold text-emerald-900 pt-4 px-1">Laporan Kas RT</h2>
-        
-        <div class="card-accent shadow-xl">
-            <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest mb-1">Sisa Saldo Saat Ini</p>
-            <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter">Rp 0</h2>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <div class="bento-card border-l-4 border-emerald-500 py-4">
-                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Pemasukan</p>
-                <p id="vMasuk" class="text-sm font-extrabold text-emerald-700">0</p>
-            </div>
-            <div class="bento-card border-l-4 border-red-500 py-4">
-                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Pengeluaran</p>
-                <p id="vKeluar" class="text-sm font-extrabold text-red-600">0</p>
-            </div>
-        </div>
-
-        <div class="space-y-3 pt-2">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Detail Transaksi Terbaru</p>
-            <div id="historyList" class="space-y-3">
-                <div class="text-center py-10 text-slate-400 text-xs">Memuat data...</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-faq" class="tab-content space-y-4 pt-4">
-        <h2 class="text-xl font-extrabold text-emerald-900 px-1">Bantuan & FAQ</h2>
-        <div class="space-y-3">
-            <details class="bento-card group">
-                <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
-                    Kapan jadwal angkut sampah?
-                    <span class="material-symbols-rounded transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <p class="text-xs text-slate-500 mt-4 pt-4 border-t leading-relaxed">Petugas berkeliling setiap hari <b>Kamis</b> dan <b>Minggu</b> pagi. Sampah diharapkan sudah di depan rumah sebelum pukul 07.30 WIB.</p>
-            </details>
-            <details class="bento-card group">
-                <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
-                    Bagaimana transparansi kas?
-                    <span class="material-symbols-rounded transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <p class="text-xs text-slate-500 mt-4 pt-4 border-t leading-relaxed">Semua data yang tampil di aplikasi ini ditarik langsung dari catatan bendahara RT 04 (Real-time).</p>
-            </details>
-        </div>
-        
-        <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 p-5 bg-emerald-900 text-white rounded-[24px] font-bold shadow-lg mt-6 active:scale-95 transition-all">
-            <span class="material-symbols-rounded">chat</span> HUBUNGI ADMIN
-        </a>
-    </div>
-
-    <nav>
-        <button onclick="st('home')" id="n-home" class="nav-item active">
-            <span class="material-symbols-rounded">home</span>
-            <span class="text-[10px] font-bold">BERANDA</span>
+        <button onclick="window.location.href='db.html'" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-all">
+            <i class="fa-solid fa-gear"></i>
         </button>
-        <button onclick="st('kas')" id="n-kas" class="nav-item">
-            <span class="material-symbols-rounded">account_balance_wallet</span>
-            <span class="text-[10px] font-bold">LAPORAN KAS</span>
+    </header>
+
+    <main class="p-6">
+        
+        <section id="home" class="tab-content active space-y-6">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-2xl font-bold text-emerald-800 mb-2">RT 04 Bebas Sampah</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed">Gerakan swadaya warga untuk lingkungan bersih, sehat, dan bebas polusi pembakaran sampah.</p>
+                </div>
+                <i class="fa-solid fa-leaf absolute -right-4 -bottom-4 text-8xl text-emerald-50 opacity-50"></i>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-emerald-50 p-5 rounded-3xl border border-emerald-100">
+                    <i class="fa-solid fa-hand-holding-heart text-emerald-600 mb-3 text-xl"></i>
+                    <h3 class="font-bold text-slate-700 text-sm">Gotong Royong</h3>
+                    <p class="text-[10px] text-slate-500 mt-1">Dikelola oleh dan untuk warga RT 04.</p>
+                </div>
+                <div class="bg-emerald-50 p-5 rounded-3xl border border-emerald-100">
+                    <i class="fa-solid fa-shield-halved text-emerald-600 mb-3 text-xl"></i>
+                    <h3 class="font-bold text-slate-700 text-sm">Transparan</h3>
+                    <p class="text-[10px] text-slate-500 mt-1">Laporan kas bisa dipantau siapa saja.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-7 rounded-[2.5rem] shadow-sm border border-slate-50">
+                <h3 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-quote-left text-emerald-500 text-xs"></i> Visi Kami
+                </h3>
+                <p class="text-xs text-slate-600 italic leading-loose">
+                    "Menjadikan RT 04 sebagai pelopor pengelolaan sampah mandiri yang profesional dan mengutamakan kebersihan lingkungan demi masa depan anak cucu kita."
+                </p>
+            </div>
+        </section>
+
+        <section id="kas" class="tab-content space-y-6">
+            <div class="bg-tuntas p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100 text-center">
+                <p class="text-[10px] font-bold uppercase opacity-80 tracking-[0.2em] mb-2">Total Saldo Terkini</p>
+                <h2 id="pubSaldo" class="text-4xl font-bold tracking-tight">Rp ...</h2>
+                
+                <div class="grid grid-cols-3 gap-2 mt-8 pt-6 border-t border-white/20">
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1">Masuk</p>
+                        <p id="pubMasuk" class="font-bold text-[11px]">Rp 0</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1 text-red-100">Keluar</p>
+                        <p id="pubKeluar" class="font-bold text-[11px]">Rp 0</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1 text-emerald-100">Iuran</p>
+                        <p id="pubIuran" class="font-bold text-[11px]">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Kas Terakhir
+                </h3>
+                <div id="transaksiList" class="space-y-3">
+                    <p class="text-center py-10 text-xs text-slate-400">Memuat data transaksi...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="tab-content space-y-4">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-2 mb-4">Paling Sering Ditanyakan</h3>
+            
+            <div class="space-y-3">
+                <details class="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Kapan sampah diangkut?
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-500 mt-4 leading-relaxed border-t pt-4">Petugas berkeliling setiap hari <b>Kamis</b> dan <b>Minggu</b> pagi. Pastikan sampah sudah diletakkan di depan rumah sebelum jam 07.30.</p>
+                </details>
+
+                <details class="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Ke mana uang iuran sampah?
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-500 mt-4 leading-relaxed border-t pt-4">Uang iuran digunakan untuk jasa pengangkutan ke TPA, perawatan armada, dan alat kebersihan lingkungan RT 04.</p>
+                </details>
+
+                <details class="group bg-white p-5 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Bagaimana cara lapor sampah?
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <p class="text-xs text-slate-500 mt-4 leading-relaxed border-t pt-4">Bapak/Ibu bisa langsung menekan tombol WhatsApp di bawah untuk terhubung ke pengurus.</p>
+                </details>
+            </div>
+
+            <div class="pt-6">
+                <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 w-full py-5 bg-tuntas text-white rounded-[2rem] font-bold shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span class="text-sm">HUBUNGI ADMIN</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center px-4 z-50">
+        <button onclick="showTab('home')" id="btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 nav-active">
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Beranda</span>
         </button>
-        <button onclick="st('faq')" id="n-faq" class="nav-item">
-            <span class="material-symbols-rounded">help</span>
-            <span class="text-[10px] font-bold">FAQ</span>
+        <button onclick="showTab('kas')" id="btn-kas" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400">
+            <i class="fa-solid fa-wallet text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Laporan Kas</span>
+        </button>
+        <button onclick="showTab('faq')" id="btn-faq" class="nav-btn flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400">
+            <i class="fa-solid fa-circle-question text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Bantuan</span>
         </button>
     </nav>
-</div>
 
-<script>
-    // 1. Firebase Config (Sama dengan Admin)
-    const firebaseConfig = {
-        apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
-        authDomain: "tuntas-sekawan.firebaseapp.com",
-        projectId: "tuntas-sekawan",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzCI_Q1DnXn69Ct26cQwGX3RhqZY8WZ-f1q7E16Tpb_nR3_yXmcXFP3tBd96qKMLVU3VA/exec";
 
-    // 2. Navigasi Tab
-    function st(tabId) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById('tab-' + tabId).classList.add('active');
-        document.getElementById('n-' + tabId).classList.add('active');
-        window.scrollTo(0,0);
-    }
-
-    // 3. Load Data dari Koleksi "kas" Admin
-    async function loadData() {
-        try {
-            // Gunakan orderBy untuk data terbaru di atas
-            const snap = await db.collection("kas").orderBy("tgl", "desc").get();
+        // Fungsi Ganti Tab
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('nav-active'));
             
-            let tin = 0, tout = 0;
-            const historyContainer = document.getElementById('historyList');
-            historyContainer.innerHTML = '';
-
-            if (snap.empty) {
-                historyContainer.innerHTML = '<p class="text-center text-xs text-slate-400 py-10">Belum ada data transaksi.</p>';
-            }
-
-            snap.forEach(doc => {
-                const d = doc.data();
-                const nom = d.nom || 0;
-                
-                // Format tanggal dari Firebase Timestamp
-                let tglFormat = "Data lama";
-                if(d.tgl) {
-                    const t = d.tgl.toDate();
-                    tglFormat = `${t.getDate()}/${t.getMonth()+1}/${t.getFullYear()}`;
-                }
-
-                if(d.kat === 'Masuk') tin += nom; else tout += nom;
-
-                historyContainer.insertAdjacentHTML('beforeend', `
-                    <div class="bento-card flex justify-between items-center py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="text-[9px] font-bold bg-slate-50 p-2 rounded-lg text-slate-400">${tglFormat}</div>
-                            <div>
-                                <p class="text-xs font-extrabold uppercase line-clamp-1 text-slate-700">${d.ket}</p>
-                                <p class="text-[8px] font-bold text-slate-300 uppercase tracking-widest">${d.kat}</p>
-                            </div>
-                        </div>
-                        <p class="font-extrabold text-xs ${d.kat==='Masuk'?'text-emerald-700':'text-red-500'}">
-                            ${nom.toLocaleString('id-ID')}
-                        </p>
-                    </div>
-                `);
-            });
-
-            // Update UI Angka Saldo
-            document.getElementById('vSaldo').innerText = 'Rp ' + (tin - tout).toLocaleString('id-ID');
-            document.getElementById('vMasuk').innerText = 'Rp ' + tin.toLocaleString('id-ID');
-            document.getElementById('vKeluar').innerText = 'Rp ' + tout.toLocaleString('id-ID');
-
-        } catch (e) {
-            console.error(e);
-            document.getElementById('historyList').innerHTML = '<p class="text-center text-red-400 text-xs py-10">Gagal memuat data. Periksa koneksi.</p>';
+            document.getElementById(id).classList.add('active');
+            document.getElementById('btn-' + id).classList.add('nav-active');
+            
+            const titles = { 'home': 'Portal Warga', 'kas': 'Laporan Keuangan', 'faq': 'Tanya Jawab' };
+            document.getElementById('tabTitle').innerText = titles[id];
         }
-    }
 
-    // Jalankan load data saat awal
-    window.onload = loadData;
-</script>
+        async function loadPublicData() {
+            try {
+                const response = await fetch(`${API_URL}?action=getDashboard`, { method: 'POST' });
+                const data = await response.json();
+                
+                let tin = 0, tout = 0, tiur = 0;
+                let riwayatHTML = '';
+
+                // Hitung Iuran
+                data.pembayaran.slice(1).forEach(row => {
+                    tiur += Number(row[2]) || 0;
+                });
+
+                // Hitung & Bangun List Kas
+                data.kas.slice(1).reverse().forEach((row, index) => {
+                    const n = Number(row[3]) || 0;
+                    const ket = row[1];
+                    const kat = String(row[2]).trim().toLowerCase();
+                    const tgl = row[0].split('T')[0]; // Ambil tanggal saja
+
+                    if(kat === 'masuk') tin += n; else tout += n;
+
+                    // Buat List Riwayat (Hanya 10 terakhir)
+                    if(index < 10) {
+                        riwayatHTML += `
+                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full ${kat === 'masuk' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid ${kat === 'masuk' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-bold text-slate-700 leading-tight">${ket}</p>
+                                    <p class="text-[9px] text-slate-400 mt-1">${tgl}</p>
+                                </div>
+                            </div>
+                            <p class="text-[11px] font-bold ${kat === 'masuk' ? 'text-emerald-600' : 'text-red-600'}">
+                                ${kat === 'masuk' ? '+' : '-'} ${n.toLocaleString('id-ID')}
+                            </p>
+                        </div>`;
+                    }
+                });
+
+                const totalSaldo = (tin - tout) + tiur;
+
+                document.getElementById('pubSaldo').innerText = 'Rp ' + totalSaldo.toLocaleString('id-ID');
+                document.getElementById('pubMasuk').innerText = 'Rp ' + tin.toLocaleString('id-ID');
+                document.getElementById('pubKeluar').innerText = 'Rp ' + tout.toLocaleString('id-ID');
+                document.getElementById('pubIuran').innerText = 'Rp ' + tiur.toLocaleString('id-ID');
+                document.getElementById('transaksiList').innerHTML = riwayatHTML;
+
+            } catch(e) { 
+                console.error(e);
+                document.getElementById('pubSaldo').innerText = 'Error Data'; 
+            }
+        }
+        
+        loadPublicData();
+    </script>
 </body>
 </html>
