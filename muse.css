@@ -1,28 +1,14 @@
-/* css */
 body { 
     font-family: 'Poppins', sans-serif; 
     background-color: #f8fafc; 
     color: #1e293b; 
-    font-size: 15px;
 }
-
 .bg-tuntas { background-color: #059669; }
 .text-tuntas { color: #059669; }
+.tuntas-shadow { box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.15); }
+.footer-fresh { background-color: #ecfdf5; border-top: 1px solid #d1fae5; }
 
-/* Shadow Hijau Khas Tuntas */
-.tuntas-shadow { 
-    box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.15); 
-}
-
-.footer-fresh {
-    background-color: #ecfdf5;
-    border-top: 1px solid #d1fae5;
-}
-
-/* Card Animasi */
-.card-balance {
-    transition: transform 0.2s ease;
-}
-.card-balance:active {
-    transform: scale(0.98);
+/* Animasi angka biar keren */
+#totalSaldo, #totalMasuk, #totalKeluar {
+    transition: all 0.5s ease-out;
 }
