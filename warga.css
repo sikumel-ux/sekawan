@@ -1,9 +1,176 @@
-:root { --bg: #F8FAFC; --emerald: #064E3B; --card: #FFFFFF; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #1E293B; margin: 0; }
-.bento-card { background: var(--card); border-radius: 24px; padding: 20px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
-.card-accent { background: linear-gradient(135deg, #064E3B 0%, #065F46 100%); color: white; border-radius: 28px; padding: 24px; }
-.tab-content { display: none; padding-bottom: 100px; }
-.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-top: 1px solid #E2E8F0; }
-nav button.active { color: var(--emerald); }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Portal Warga</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-5 bg-[#F8FAFC]">
+
+<div class="max-w-md mx-auto">
+    <div id="screen-home" class="tab-content active space-y-6">
+        <header class="flex flex-col items-center text-center py-10 space-y-4">
+            <div class="w-20 h-20 rounded-[28px] bg-emerald-900 flex items-center justify-center text-white shadow-xl shadow-emerald-900/20">
+                <span class="material-symbols-rounded text-4xl">eco</span>
+            </div>
+            <div>
+                <h1 class="text-3xl font-extrabold text-emerald-900 tracking-tighter">Tuntas.</h1>
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">Turun Tangan Atasi Sampah</p>
+            </div>
+        </header>
+
+        <div class="bento-card bg-emerald-900 text-white p-8 rounded-[28px] shadow-lg border-none">
+            <h2 class="font-extrabold text-xl mb-2">Visi Lingkungan</h2>
+            <p class="text-emerald-100/80 text-sm leading-relaxed">Menjadikan RT 04 sebagai pelopor lingkungan bersih tanpa pembakaran sampah melalui pengelolaan iuran warga yang transparan.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bento-card bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm">
+                <span class="material-symbols-rounded text-emerald-600 mb-2">account_balance</span>
+                <p class="font-extrabold text-sm leading-tight">Transparan</p>
+                <p class="text-[10px] text-slate-400 mt-1">Pantau penggunaan dana RT secara real-time.</p>
+            </div>
+            <div class="bento-card bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm">
+                <span class="material-symbols-rounded text-emerald-600 mb-2">volunteer_activism</span>
+                <p class="font-extrabold text-sm leading-tight">Gotong Royong</p>
+                <p class="text-[10px] text-slate-400 mt-1">Dukungan Anda menjaga kebersihan kita.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-kas" class="tab-content space-y-4">
+        <h2 class="text-xl font-extrabold text-emerald-900 pt-4">Laporan Keuangan</h2>
+        
+        <div class="card-accent bg-gradient-to-br from-emerald-900 to-emerald-700 p-7 rounded-[28px] text-white shadow-xl">
+            <p class="text-[10px] font-bold opacity-70 mb-1 tracking-widest uppercase">Total Saldo Kas RT</p>
+            <h2 id="totalSaldoText" class="text-4xl font-extrabold tracking-tighter">Rp 0</h2>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bento-card bg-white p-5 rounded-[24px] border-l-4 border-emerald-500 shadow-sm">
+                <p class="text-[9px] font-bold text-slate-400 uppercase leading-none mb-1">Pemasukan</p>
+                <p id="sInText" class="text-lg font-extrabold text-emerald-700 leading-none">0</p>
+            </div>
+            <div class="bento-card bg-white p-5 rounded-[24px] border-l-4 border-red-500 shadow-sm">
+                <p class="text-[9px] font-bold text-slate-400 uppercase leading-none mb-1">Pengeluaran</p>
+                <p id="sOutText" class="text-lg font-extrabold text-red-600 leading-none">0</p>
+            </div>
+        </div>
+
+        <div id="tBodyKas" class="space-y-3 pt-2">
+            </div>
+    </div>
+
+    <div id="screen-faq" class="tab-content space-y-4 pt-4">
+        <h2 class="text-xl font-extrabold text-emerald-900">Tanya Jawab</h2>
+        <div class="space-y-3">
+            <details class="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                    Kapan jadwal angkut sampah?
+                    <span class="material-symbols-rounded transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <p class="text-xs text-slate-500 mt-4 pt-4 border-t leading-relaxed">
+                    Setiap hari <b>Minggu</b> dan <b>Kamis</b> pagi. Pastikan sampah diletakkan di depan rumah sebelum jam 07.30 WIB.
+                </p>
+            </details>
+        </div>
+        <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 p-5 bg-emerald-900 text-white rounded-[24px] font-bold shadow-lg mt-6">
+            <span class="material-symbols-rounded">chat</span> HUBUNGI ADMIN
+        </a>
+    </div>
+
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/80 backdrop-blur-md border-t flex justify-around items-center px-6">
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">info</span>
+            <span class="text-[10px] font-bold uppercase">Tentang</span>
+        </button>
+        <button onclick="st('kas')" id="n-kas" class="flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">account_balance_wallet</span>
+            <span class="text-[10px] font-bold uppercase">Kas</span>
+        </button>
+        <button onclick="st('faq')" id="n-faq" class="flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">quiz</span>
+            <span class="text-[10px] font-bold uppercase">FAQ</span>
+        </button>
+    </nav>
+</div>
+
+<style>
+    .tab-content { display: none; padding-bottom: 100px; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    nav button.active { color: #064E3B; }
+</style>
+
+<script>
+    const config = {
+        apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+        authDomain: "tuntas-sekawan.firebaseapp.com",
+        projectId: "tuntas-sekawan",
+    };
+    firebase.initializeApp(config);
+    const db = firebase.firestore();
+
+    async function loadData() {
+        // Ambil data dari DUA koleksi persis seperti script Admin kamu
+        const [dkas, diur] = await Promise.all([
+            db.collection("kas").orderBy("tgl","desc").get(), 
+            db.collection("pembayaran").orderBy("tgl","desc").get()
+        ]);
+        
+        let tin=0, tout=0, totalIuran=0;
+        const tk=document.getElementById('tBodyKas');
+        tk.innerHTML=''; 
+
+        // 1. Proses data Kas Umum
+        dkas.docs.forEach(doc => {
+            const d = doc.data(), t = d.tgl.toDate();
+            if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
+            tk.insertAdjacentHTML('beforeend', renderRow(t, d.ket, d.kat, d.nom));
+        });
+
+        // 2. Proses data Iuran (Pembayaran)
+        diur.docs.forEach(doc => {
+            const d = doc.data(), t = d.tgl.toDate();
+            totalIuran += d.nom;
+            tk.insertAdjacentHTML('beforeend', renderRow(t, `IURAN: ${d.nama}`, 'Masuk', d.nom, true));
+        });
+
+        // Hitung Saldo Total (Nyontek Rumus Admin)
+        const totalSaldo = (tin + totalIuran) - tout;
+        
+        document.getElementById('totalSaldoText').innerText = 'Rp ' + totalSaldo.toLocaleString();
+        document.getElementById('sInText').innerText = (tin + totalIuran).toLocaleString();
+        document.getElementById('sOutText').innerText = tout.toLocaleString();
+    }
+
+    function renderRow(t, ket, kat, nom, isAuto = false) {
+        return `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border border-slate-50 ${isAuto?'border-l-4 border-emerald-500':''}">
+                <div class="flex gap-3 items-center">
+                    <div class="text-[9px] font-bold bg-slate-50 p-2 rounded-lg text-slate-400">${t.getDate()}/${t.getMonth()+1}</div>
+                    <div>
+                        <p class="text-xs font-extrabold uppercase line-clamp-1">${ket}</p>
+                        <p class="text-[8px] text-slate-400 font-bold uppercase tracking-widest">${isAuto?'OTOMATIS':kat}</p>
+                    </div>
+                </div>
+                <p class="font-extrabold text-xs ${kat==='Masuk'?'text-emerald-700':'text-red-500'}">${nom.toLocaleString()}</p>
+            </div>`;
+    }
+
+    function st(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('screen-'+t).classList.add('active');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('n-'+t).classList.add('active');
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
