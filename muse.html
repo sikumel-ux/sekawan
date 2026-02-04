@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUNTAS - Kas Lingkungan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="muse.css">
+</head>
+<body class="pb-0">
+
+    <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                <i class="fa-brands fa-screenpal text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-none text-tuntas tracking-tight">TUNTAS</h1>
+                <p class="text-[9px] font-bold text-tuntas uppercase tracking-widest mt-1">Turun Tangan Atasi Sampah</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-6 space-y-6">
+
+        <section class="bg-tuntas p-7 rounded-[2.5rem] text-white tuntas-shadow relative overflow-hidden border-b-4 border-emerald-800">
+            <div class="relative z-10">
+                <h2 class="text-lg font-bold mb-3 flex items-center gap-2 text-emerald-100">
+                    <i class="fa-solid fa-leaf text-sm"></i> Tentang TUNTAS
+                </h2>
+                <p class="text-[13px] leading-relaxed opacity-95">
+                    <span class="font-bold underline decoration-yellow-400">TUNTAS</span> adalah program swadaya <span class="font-bold">RT 04</span> untuk melokalisir polusi asap. Sampah warga dikelola secara <span class="italic font-bold">terpadu</span>.
+                </p>
+            </div>
+            <i class="fa-solid fa-fire-burner absolute -right-6 -bottom-6 text-8xl opacity-10"></i>
+        </section>
+
+        <section class="space-y-3">
+            <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-wallet text-tuntas text-[10px]"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status Kas Lingkungan</h2>
+            </div>
+            
+            <div class="bg-white p-6 rounded-[2rem] border border-emerald-100 tuntas-shadow flex flex-col items-center justify-center text-center">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Sisa Saldo Kas</p>
+                <h3 class="text-3xl font-extrabold text-slate-800" id="totalSaldo">Rp 0</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-emerald-50/50 p-4 rounded-[1.5rem] border border-emerald-100 flex flex-col">
+                    <span class="text-[9px] font-bold text-emerald-600 uppercase mb-1">Pemasukan</span>
+                    <span class="text-sm font-bold text-emerald-700" id="totalMasuk">+ Rp 0</span>
+                </div>
+                <div class="bg-red-50/50 p-4 rounded-[1.5rem] border border-red-100 flex flex-col">
+                    <span class="text-[9px] font-bold text-red-500 uppercase mb-1">Pengeluaran</span>
+                    <span class="text-sm font-bold text-red-600" id="totalKeluar">- Rp 0</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow flex flex-col items-center text-center">
+                <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-calendar-day text-tuntas text-lg"></i>
+                </div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Jadwal Angkut</p>
+                <p class="text-[11px] font-bold text-slate-800 mt-1 uppercase">Minggu & Kamis</p>
+            </div>
+            
+            <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow flex flex-col items-center text-center">
+                <div class="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-fist-raised text-tuntas text-lg"></i>
+                </div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Support RT 04</p>
+                <p class="text-[11px] font-bold text-slate-800 mt-1 uppercase leading-tight">Dari & Untuk Kita</p>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-info-circle text-tuntas text-[10px]"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Penting</h2>
+            </div>
+            
+            <div class="space-y-3">
+                <details class="group bg-white rounded-2xl border border-slate-100 tuntas-shadow">
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-slate-700">
+                        Apa itu program TUNTAS?
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 border-t pt-3">
+                        Sistem pengelolaan sampah terpusat oleh petugas khusus agar pemukiman kita tidak lagi dikepung asap sampah mandiri.
+                    </div>
+                </details>
+
+                <details class="group bg-white rounded-2xl border border-slate-100 tuntas-shadow">
+                    <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-tuntas">
+                        Manfaat iuran warga?
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
+                    </summary>
+                    <div class="px-5 pb-5 text-[12px] text-slate-500 border-t pt-3">
+                        Iuran membiayai operasional petugas. Kelebihannya akan <span class="font-bold text-slate-800 underline">Masuk Kas RT 04</span>.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="pt-2">
+            <a href="https://wa.me/6287812710851" class="flex items-center gap-3 p-5 bg-tuntas text-white rounded-[2rem] font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all w-full justify-center">
+                <i class="fa-brands fa-whatsapp text-2xl"></i>
+                <span class="text-sm uppercase tracking-wider">Hubungi Pengelola</span>
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="footer-fresh mt-12 pb-16 pt-12 text-center">
+        <div class="px-6">
+            <p class="text-[10px] font-bold text-tuntas uppercase tracking-[0.4em] mb-1">TUNTAS - </p>
+            <p class="text-[9px] text-emerald-600 font-medium uppercase tracking-widest mb-10">Turun Tangan Atasi Sampah</p>
+            <p class="text-xs text-slate-800 italic">© 2026 TUNTAS - Sekawan Projects</p>
+        </div>
+    </footer>
+
+    <script>
+        // Logika untuk fetch data dari API Google Apps Script Anda
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9JsUb0saYvFnH8vpCn2JZu_AzdrXXXmQIcGfMW0dsTvPndFQC_CtKyLhMx_6Kjd_IEg/exec";
+
+        async function fetchKasData() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Asumsi data mengembalikan { saldo: x, masuk: x, keluar: x }
+                // Silakan sesuaikan dengan struktur JSON dari Apps Script Anda
+                document.getElementById('totalSaldo').innerText = 'Rp ' + data.saldo.toLocaleString('id-ID');
+                document.getElementById('totalMasuk').innerText = '+ Rp ' + data.masuk.toLocaleString('id-ID');
+                document.getElementById('totalKeluar').innerText = '- Rp ' + data.keluar.toLocaleString('id-ID');
+            } catch (error) {
+                console.error("Gagal mengambil data kas:", error);
+            }
+        }
+
+        // Panggil saat halaman dimuat
+        // fetchKasData(); 
+    </script>
+</body>
+  </html>
+  
