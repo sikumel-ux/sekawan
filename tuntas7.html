@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Portal Warga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .bg-tuntas { background-color: #059669; }
+        .tab-content { display: none; padding-bottom: 100px; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bento-card { background: white; border-radius: 24px; padding: 20px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); border-top: 1px solid #e2e8f0; }
+        .nav-item.active { color: #059669; }
+        .nav-item span { font-variation-settings: 'FILL' 0; }
+        .nav-item.active span { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="p-5">
+
+    <header class="max-w-md mx-auto flex justify-between items-center mb-6">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                <span class="material-symbols-rounded">eco</span>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-emerald-800 leading-tight">TUNTAS</h1>
+                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">RT 04 Beraksi</p>
+            </div>
+        </div>
+        <button onclick="loadData()" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 text-slate-400 active:rotate-180 transition-all duration-500">
+            <span class="material-symbols-rounded text-sm">sync</span>
+        </button>
+    </header>
+
+    <main class="max-w-md mx-auto">
+        <section id="screen-home" class="tab-content active space-y-6">
+            <div class="bento-card bg-emerald-900 text-white border-none p-8 relative overflow-hidden">
+                <h2 class="text-2xl font-bold mb-2 relative z-10">Lingkungan Bersih</h2>
+                <p class="text-sm opacity-80 leading-relaxed relative z-10">Menciptakan RT 04 yang sehat tanpa polusi asap pembakaran sampah melalui pengelolaan mandiri.</p>
+                <span class="material-symbols-rounded absolute -right-4 -bottom-4 text-9xl opacity-10">psychology_alt</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bento-card flex flex-col items-center text-center p-6">
+                    <span class="material-symbols-rounded text-emerald-600 mb-2">verified_user</span>
+                    <h3 class="font-bold text-xs">Transparan</h3>
+                    <p class="text-[9px] text-slate-400 mt-1 uppercase">Catatan Real-time</p>
+                </div>
+                <div class="bento-card flex flex-col items-center text-center p-6">
+                    <span class="material-symbols-rounded text-emerald-600 mb-2">volunteer_activism</span>
+                    <h3 class="font-bold text-xs">Gotong Royong</h3>
+                    <p class="text-[9px] text-slate-400 mt-1 uppercase">Dari & Untuk Warga</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-kas" class="tab-content space-y-4">
+            <div class="bento-card bg-gradient-to-br from-emerald-800 to-emerald-600 text-white border-none p-7 shadow-xl shadow-emerald-900/10">
+                <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest mb-1">Total Saldo Kas RT</p>
+                <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter">Rp 0</h2>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bento-card p-4 border-l-4 border-emerald-500">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Masuk</p>
+                    <p id="vIn" class="text-sm font-extrabold text-emerald-700">0</p>
+                </div>
+                <div class="bento-card p-4 border-l-4 border-red-500">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Keluar</p>
+                    <p id="vOut" class="text-sm font-extrabold text-red-600">0</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-sm">history</span> 10 Transaksi Terakhir
+                </p>
+                <div id="tBodyKas" class="space-y-3">
+                    <div class="text-center py-10 text-slate-300 text-xs">Memuat data transaksi...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-faq" class="tab-content space-y-4">
+            <h2 class="text-xl font-bold text-emerald-900 px-1">Tanya Jawab</h2>
+            <div class="space-y-3">
+                <details class="bento-card group">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Kapan jadwal angkut sampah?
+                        <span class="material-symbols-rounded text-slate-300 group-open:rotate-180 transition-all">expand_more</span>
+                    </summary>
+                    <p class="text-xs text-slate-500 mt-4 pt-4 border-t leading-relaxed">Hari <b>Kamis</b> dan <b>Minggu</b> pagi. Sampah diharapkan sudah siap di depan rumah sebelum jam 07.30 WIB.</p>
+                </details>
+                <details class="bento-card group">
+                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                        Berapa iuran per bulan?
+                        <span class="material-symbols-rounded text-slate-300 group-open:rotate-180 transition-all">expand_more</span>
+                    </summary>
+                    <p class="text-xs text-slate-500 mt-4 pt-4 border-t leading-relaxed">Iuran sampah sebesar <b>Rp 25.000,-</b> per bulan untuk operasional pengangkutan dan kebersihan lingkungan.</p>
+                </details>
+            </div>
+            <a href="https://wa.me/6287812710851" class="flex items-center justify-center gap-3 p-5 bg-emerald-900 text-white rounded-[24px] font-bold shadow-lg mt-6 active:scale-95 transition-all">
+                <span class="material-symbols-rounded">chat</span> HUBUNGI ADMIN
+            </a>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-20 flex justify-around items-center z-50 px-4">
+        <button onclick="st('home')" id="n-home" class="nav-item active flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">home</span>
+            <span class="text-[10px] font-bold">HOME</span>
+        </button>
+        <button onclick="st('kas')" id="n-kas" class="nav-item flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">payments</span>
+            <span class="text-[10px] font-bold">KAS</span>
+        </button>
+        <button onclick="st('faq')" id="n-faq" class="nav-item flex flex-col items-center gap-1 text-slate-400">
+            <span class="material-symbols-rounded">quiz</span>
+            <span class="text-[10px] font-bold">FAQ</span>
+        </button>
+    </nav>
+
+    <script>
+        const config = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+        firebase.initializeApp(config);
+        const db = firebase.firestore();
+
+        async function loadData() {
+            try {
+                const [dkas, diur] = await Promise.all([
+                    db.collection("kas").orderBy("tgl","desc").limit(20).get(), 
+                    db.collection("pembayaran").orderBy("tgl","desc").get()
+                ]);
+                
+                let tin=0, tout=0, totalIuran=0;
+                const tk=document.getElementById('tBodyKas');
+                tk.innerHTML='';
+
+                // Hitung Kas Umum
+                dkas.docs.forEach(doc => {
+                    const d = doc.data(), t = d.tgl.toDate();
+                    if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
+                    tk.insertAdjacentHTML('beforeend', renderRow(t, d.ket, d.kat, d.nom));
+                });
+
+                // Hitung Iuran (Tabel Pembayaran)
+                diur.docs.forEach(doc => {
+                    const d = doc.data(), t = d.tgl.toDate();
+                    totalIuran += d.nom;
+                    // Tampilkan di riwayat sebagai pemasukan otomatis
+                    tk.insertAdjacentHTML('beforeend', renderRow(t, `IURAN: ${d.nama}`, 'Masuk', d.nom, true));
+                });
+
+                // Update Ringkasan Saldo
+                const saldo = (tin + totalIuran) - tout;
+                document.getElementById('vSaldo').innerText = 'Rp ' + saldo.toLocaleString('id-ID');
+                document.getElementById('vIn').innerText = 'Rp ' + (tin + totalIuran).toLocaleString('id-ID');
+                document.getElementById('vOut').innerText = 'Rp ' + tout.toLocaleString('id-ID');
+
+            } catch(e) { 
+                console.error(e);
+                document.getElementById('tBodyKas').innerHTML = '<p class="text-center text-xs text-red-400">Gagal mengambil data.</p>';
+            }
+        }
+
+        function renderRow(t, ket, kat, nom, isAuto = false) {
+            return `<div class="bento-card flex justify-between items-center py-3 ${isAuto?'border-l-4 border-emerald-500':''}">
+                    <div class="flex gap-3 items-center">
+                        <div class="text-[9px] font-bold bg-slate-50 p-2 rounded-lg text-slate-400">${t.getDate()}/${t.getMonth()+1}</div>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase line-clamp-1">${ket}</p>
+                            <p class="text-[8px] text-slate-400 font-bold tracking-widest">${isAuto?'OTOMATIS':kat}</p>
+                        </div>
+                    </div>
+                    <p class="font-extrabold text-xs ${kat==='Masuk'?'text-emerald-700':'text-red-500'}">${nom.toLocaleString('id-ID')}</p>
+                </div>`;
+        }
+
+        function st(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('screen-'+t).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('n-'+t).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+              </html>
+              
