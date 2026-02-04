@@ -1,14 +1,5 @@
-body { 
-    font-family: 'Poppins', sans-serif; 
-    background-color: #f8fafc; 
-    color: #1e293b; 
-}
+body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: #1e293b; }
 .bg-tuntas { background-color: #059669; }
 .text-tuntas { color: #059669; }
 .tuntas-shadow { box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.15); }
 .footer-fresh { background-color: #ecfdf5; border-top: 1px solid #d1fae5; }
-
-/* Animasi angka biar keren */
-#totalSaldo, #totalMasuk, #totalKeluar {
-    transition: all 0.5s ease-out;
-}
