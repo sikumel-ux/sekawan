@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNTAS - Kas Warga</title>
+    <title>TUNTAS - Kas Lingkungan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,7 +14,7 @@
 </head>
 <body class="pb-0">
 
-    <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
+    <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
                 <i class="fa-brands fa-screenpal text-lg"></i>
@@ -29,120 +29,123 @@
     <main class="p-6 space-y-6">
 
         <section class="space-y-3">
-            <div class="bg-tuntas p-6 rounded-[2.5rem] text-white tuntas-shadow flex flex-col items-center justify-center text-center border-b-4 border-emerald-800">
-                <p class="text-[10px] font-bold opacity-80 uppercase tracking-[0.2em] mb-1">Total Saldo Kas RT 04</p>
-                <h3 class="text-3xl font-extrabold" id="totalSaldo">Rp ...</h3>
+            <div class="flex items-center gap-2 px-1">
+                <i class="fa-solid fa-chart-line text-tuntas text-[10px]"></i>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Update Kas RT 04</h2>
+            </div>
+
+            <div class="bg-tuntas p-7 rounded-[2.5rem] text-white tuntas-shadow text-center border-b-4 border-emerald-800">
+                <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mb-1">Sisa Saldo Saat Ini</p>
+                <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter">Rp 0</h2>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white p-4 rounded-[1.5rem] border border-emerald-100 tuntas-shadow flex flex-col">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wider">Pemasukan</span>
-                    <span class="text-sm font-bold text-emerald-600" id="totalMasuk">Rp ...</span>
+                <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Masuk</p>
+                    <p id="vMasuk" class="text-sm font-bold text-emerald-600">Rp 0</p>
                 </div>
-                <div class="bg-white p-4 rounded-[1.5rem] border border-emerald-100 tuntas-shadow flex flex-col">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase mb-1 tracking-wider">Pengeluaran</span>
-                    <span class="text-sm font-bold text-red-500" id="totalKeluar">Rp ...</span>
+                <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Total Keluar</p>
+                    <p id="vKeluar" class="text-sm font-bold text-red-500">Rp 0</p>
                 </div>
             </div>
         </section>
 
-        <section class="bg-emerald-50/50 p-7 rounded-[2.5rem] border border-emerald-100 relative overflow-hidden">
+        <section class="bg-emerald-50 p-6 rounded-[2.5rem] border border-emerald-100 relative overflow-hidden">
             <div class="relative z-10">
-                <h2 class="text-lg font-bold mb-2 flex items-center gap-2 text-tuntas">
-                    <i class="fa-solid fa-leaf text-sm"></i> Program RT 04
-                </h2>
-                <p class="text-[13px] leading-relaxed text-slate-600">
-                    Sistem pengelolaan sampah terpadu untuk melokalisir asap sampah mandiri. Udara bersih, warga sehat.
+                <h2 class="text-sm font-bold text-tuntas mb-2 uppercase tracking-wide">Tentang TUNTAS</h2>
+                <p class="text-[12px] leading-relaxed text-slate-600">
+                    Program swadaya <span class="font-bold text-slate-800">RT 04</span> untuk pengelolaan sampah terpadu demi lingkungan bebas polusi asap.
                 </p>
             </div>
+            <i class="fa-solid fa-leaf absolute -right-4 -bottom-4 text-6xl text-emerald-100/50"></i>
         </section>
 
         <section class="grid grid-cols-2 gap-4">
-            <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow flex flex-col items-center text-center">
-                <i class="fa-solid fa-calendar-day text-tuntas text-lg mb-2"></i>
+            <div class="bg-white p-5 rounded-[2rem] border border-slate-100 tuntas-shadow text-center">
+                <i class="fa-solid fa-calendar-check text-tuntas mb-2"></i>
                 <p class="text-[9px] font-bold text-slate-400 uppercase">Jadwal Angkut</p>
-                <p class="text-[11px] font-bold text-slate-800 mt-1">MINGGU & KAMIS</p>
+                <p class="text-[10px] font-bold text-slate-800">MINGGU & KAMIS</p>
             </div>
-            <div class="bg-white p-5 rounded-[2rem] border border-emerald-100 tuntas-shadow flex flex-col items-center text-center">
-                <i class="fa-solid fa-fist-raised text-tuntas text-lg mb-2"></i>
+            <div class="bg-white p-5 rounded-[2rem] border border-slate-100 tuntas-shadow text-center">
+                <i class="fa-solid fa-heart text-tuntas mb-2"></i>
                 <p class="text-[9px] font-bold text-slate-400 uppercase">Support RT 04</p>
-                <p class="text-[11px] font-bold text-slate-800 mt-1">DARI & UNTUK KITA</p>
+                <p class="text-[10px] font-bold text-slate-800">DARI KITA UNTUK KITA</p>
             </div>
         </section>
 
         <section class="space-y-3">
-            <div class="flex items-center gap-2 px-1">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tanya Jawab</h2>
-            </div>
             <details class="group bg-white rounded-2xl border border-slate-100 tuntas-shadow">
-                <summary class="list-none p-4 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                    Manfaat Iuran Warga?
+                <summary class="list-none p-5 flex justify-between items-center cursor-pointer font-bold text-[13px] text-slate-700">
+                    Manfaat iuran warga?
                     <i class="fa-solid fa-chevron-down text-[10px] group-open:rotate-180"></i>
                 </summary>
-                <div class="px-4 pb-4 text-[11px] text-slate-500 border-t pt-2">
-                    Digunakan untuk operasional petugas. Sisa saldo masuk ke Kas RT 04 untuk kegiatan sosial.
+                <div class="px-5 pb-5 text-[12px] text-slate-500 border-t pt-3">
+                    Iuran digunakan untuk biaya operasional petugas. Kelebihannya masuk ke Kas RT untuk kegiatan sosial lingkungan.
                 </div>
             </details>
         </section>
 
-        <section class="pt-2">
-            <a href="https://wa.me/6287812710851" class="flex items-center gap-3 p-5 bg-tuntas text-white rounded-[2rem] font-bold shadow-lg shadow-emerald-200 justify-center">
-                <i class="fa-brands fa-whatsapp text-2xl"></i>
-                <span class="text-sm uppercase tracking-wider">Hubungi Pengelola</span>
-            </a>
-        </section>
+        <a href="https://wa.me/6287812710851" class="flex items-center gap-3 p-5 bg-tuntas text-white rounded-[2rem] font-bold shadow-lg shadow-emerald-200 justify-center active:scale-95 transition-all">
+            <i class="fa-brands fa-whatsapp text-2xl"></i>
+            <span class="text-sm uppercase">Hubungi Pengelola</span>
+        </a>
 
     </main>
 
     <footer class="footer-fresh mt-12 pb-16 pt-12 text-center">
-        <p class="text-[10px] font-bold text-tuntas uppercase tracking-[0.4em]">TUNTAS</p>
-        <p class="text-xs text-slate-800 italic mt-4">© 2026 TUNTAS - Sekawan Projects</p>
+        <p class="text-[10px] font-bold text-tuntas tracking-[0.4em]">TUNTAS</p>
+        <p class="text-[10px] text-slate-400 mt-2 italic">© 2026 TUNTAS - Sekawan Projects</p>
     </footer>
 
     <script>
-        // Konfigurasi Firebase (Read-Only)
-        const config = {
+        // Konfigurasi harus sama dengan Dashboard Admin
+        const firebaseConfig = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
-            projectId: "tuntas-sekawan"
+            projectId: "tuntas-sekawan",
         };
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        async function loadRealtimeKas() {
+        // Fungsi Ambil Data dari Koleksi Admin
+        async function syncKasWarga() {
             try {
-                const [dkas, diur] = await Promise.all([
+                const [qKas, qIuran] = await Promise.all([
                     db.collection("kas").get(),
                     db.collection("pembayaran").get()
                 ]);
 
-                let totalMasuk = 0;
-                let totalKeluar = 0;
+                let masuk = 0;
+                let keluar = 0;
 
-                // Hitung dari koleksi kas
-                dkas.docs.forEach(doc => {
+                // 1. Hitung Pemasukan & Pengeluaran Umum
+                qKas.docs.forEach(doc => {
                     const d = doc.data();
-                    if (d.kat === 'Masuk') totalMasuk += d.nom;
-                    else totalKeluar += d.nom;
+                    if(d.kat === 'Masuk') masuk += d.nom;
+                    else keluar += d.nom;
                 });
 
-                // Hitung iuran dari koleksi pembayaran (otomatis masuk)
-                diur.docs.forEach(doc => {
-                    totalMasuk += doc.data().nom;
+                // 2. Hitung Iuran Warga (Otomatis Pemasukan)
+                qIuran.docs.forEach(doc => {
+                    masuk += doc.data().nom;
                 });
 
-                const saldo = totalMasuk - totalKeluar;
+                const saldo = masuk - keluar;
 
-                // Update tampilan
-                document.getElementById('totalSaldo').innerText = 'Rp ' + saldo.toLocaleString('id-ID');
-                document.getElementById('totalMasuk').innerText = 'Rp ' + totalMasuk.toLocaleString('id-ID');
-                document.getElementById('totalKeluar').innerText = 'Rp ' + totalKeluar.toLocaleString('id-ID');
-            } catch (e) {
-                console.error("Error load data: ", e);
+                // Tampilkan ke UI
+                document.getElementById('vSaldo').innerText = 'Rp ' + saldo.toLocaleString('id-ID');
+                document.getElementById('vMasuk').innerText = 'Rp ' + masuk.toLocaleString('id-ID');
+                document.getElementById('vKeluar').innerText = 'Rp ' + keluar.toLocaleString('id-ID');
+
+            } catch (err) {
+                console.error("Gagal sinkronisasi data:", err);
             }
         }
 
-        loadRealtimeKas();
+        // Jalankan fungsi
+        syncKasWarga();
     </script>
 </body>
-</html>
+    </html>
+    
