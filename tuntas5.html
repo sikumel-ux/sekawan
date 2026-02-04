@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin TUNTAS - RT 04</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --emerald: #064E3B;
+            --bg: #F8FAFC;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); margin: 0; }
+        
+        /* Navigasi Tab */
+        .tab-content { display: none; padding-bottom: 100px; animation: slideUp 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Bento Card Style */
+        .bento-card { background: white; border-radius: 24px; padding: 20px; border: 1px solid #F1F5F9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .card-accent { background: linear-gradient(135deg, #064E3B 0%, #065F46 100%); color: white; border-radius: 28px; padding: 24px; }
+
+        /* Input Styling */
+        input, select { 
+            width: 100%; padding: 14px; border-radius: 16px; border: 1px solid #E2E8F0; 
+            background: #F8FAFC; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;
+        }
+        input:focus { border-color: var(--emerald); background: white; }
+
+        /* Bottom Nav */
+        nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 80px; 
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); 
+            border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; align-items: center; 
+        }
+        .nav-item { color: #94A3B8; display: flex; flex-direction: column; align-items: center; gap: 4px; border: none; background: none; cursor: pointer; }
+        .nav-item.active { color: var(--emerald); }
+        .nav-item span { font-variation-settings: 'FILL' 0; }
+        .nav-item.active span { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="p-5">
+
+<div class="max-w-md mx-auto">
+    <div id="tab-home" class="tab-content active space-y-6">
+        <header class="text-center py-10">
+            <div class="w-16 h-16 bg-[#064E3B] rounded-3xl mx-auto flex items-center justify-center text-white mb-4">
+                <span class="material-symbols-rounded text-3xl">eco</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-[#064E3B]">Admin Tuntas.</h1>
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Dashboard Pengurus RT 04</p>
+        </header>
+
+        <div class="bento-card bg-[#064E3B] text-white border-none p-8">
+            <h2 class="font-bold text-lg mb-2">Status Program</h2>
+            <p class="text-sm opacity-80 leading-relaxed">Sistem pengelolaan sampah mandiri sedang berjalan. Pastikan data kas selalu diperbarui setiap ada transaksi.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bento-card flex flex-col items-center text-center">
+                <span class="material-symbols-rounded text-emerald-600 mb-2">groups</span>
+                <p class="font-extrabold text-xs">Total Warga</p>
+                <p class="text-[10px] text-slate-400 uppercase">Terdaftar aktif</p>
+            </div>
+            <div class="bento-card flex flex-col items-center text-center">
+                <span class="material-symbols-rounded text-emerald-600 mb-2">description</span>
+                <p class="font-extrabold text-xs">Laporan</p>
+                <p class="text-[10px] text-slate-400 uppercase">Siap cetak PDF</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-kas" class="tab-content space-y-4">
+        <h2 class="text-xl font-extrabold text-[#064E3B] pt-4">Input Kas RT</h2>
+        
+        <div class="bento-card space-y-4">
+            <div>
+                <label class="text-[10px] font-bold text-slate-400 ml-1 uppercase">Tanggal</label>
+                <input type="date" id="tglInput">
+            </div>
+            <input type="text" id="ketInput" placeholder="Keterangan Transaksi">
+            <div class="flex gap-2">
+                <select id="katInput">
+                    <option value="Masuk">Masuk</option>
+                    <option value="Keluar">Keluar</option>
+                </select>
+                <input type="number" id="nomInput" placeholder="Nominal Rp">
+            </div>
+            <button onclick="simpanKas()" class="w-full bg-[#064E3B] text-white p-4 rounded-2xl font-bold flex justify-center items-center gap-2">
+                <span class="material-symbols-rounded">save</span> SIMPAN DATA
+            </button>
+        </div>
+
+        <div class="card-accent">
+            <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest">Saldo Saat Ini</p>
+            <h2 id="vSaldo" class="text-3xl font-extrabold tracking-tighter">Rp 0</h2>
+        </div>
+
+        <div id="historyList" class="space-y-3">
+            <p class="text-center text-xs text-slate-400 py-10">Memuat data riwayat...</p>
+        </div>
+    </div>
+
+    <div id="tab-faq" class="tab-content space-y-4 pt-4">
+        <h2 class="text-xl font-extrabold text-[#064E3B]">Pengaturan FAQ</h2>
+        <div class="bento-card">
+            <p class="text-xs text-slate-500 italic">Bagian ini digunakan untuk mengubah jawaban yang tampil di aplikasi warga.</p>
+        </div>
+        <div class="space-y-3">
+            <div class="bento-card">
+                <p class="text-xs font-bold mb-2">Jadwal Angkut</p>
+                <input type="text" value="Kamis & Minggu Pagi" class="text-xs">
+            </div>
+            <div class="bento-card">
+                <p class="text-xs font-bold mb-2">Biaya Iuran</p>
+                <input type="text" value="Rp 25.000 / Bulan" class="text-xs">
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <button onclick="st('home')" id="n-home" class="nav-item active">
+            <span class="material-symbols-rounded">home</span>
+            <span class="text-[10px] font-bold">HOME</span>
+        </button>
+        <button onclick="st('kas')" id="n-kas" class="nav-item">
+            <span class="material-symbols-rounded">payments</span>
+            <span class="text-[10px] font-bold">KAS</span>
+        </button>
+        <button onclick="st('faq')" id="n-faq" class="nav-item">
+            <span class="material-symbols-rounded">quiz</span>
+            <span class="text-[10px] font-bold">FAQ</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    // --- KONFIGURASI FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+        authDomain: "tuntas-sekawan.firebaseapp.com",
+        projectId: "tuntas-sekawan",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Set tanggal hari ini secara otomatis
+    document.getElementById('tglInput').valueAsDate = new Date();
+
+    // --- FUNGSI NAVIGASI ---
+    function st(tabId) {
+        // Sembunyikan semua tab
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        // Hilangkan status aktif navigasi
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        
+        // Aktifkan tab dan tombol yang diklik
+        document.getElementById('tab-' + tabId).classList.add('active');
+        document.getElementById('n-' + tabId).classList.add('active');
+    }
+
+    // --- FUNGSI SIMPAN DATA ---
+    async function simpanKas() {
+        const tgl = document.getElementById('tglInput').value;
+        const ket = document.getElementById('ketInput').value;
+        const kat = document.getElementById('katInput').value;
+        const nom = Number(document.getElementById('nomInput').value);
+
+        if(!tgl || !ket || !nom) return alert("Mohon lengkapi data!");
+
+        try {
+            await db.collection("kas").add({
+                tgl: firebase.firestore.Timestamp.fromDate(new Date(tgl)),
+                ket: ket,
+                kat: kat,
+                nom: nom
+            });
+            alert("Data Kas Berhasil Disimpan!");
+            document.getElementById('ketInput').value = '';
+            document.getElementById('nomInput').value = '';
+            loadData();
+        } catch (e) {
+            alert("Gagal Simpan: " + e.message);
+        }
+    }
+
+    // --- FUNGSI LOAD DATA ---
+    async function loadData() {
+        const snap = await db.collection("kas").orderBy("tgl", "desc").get();
+        let tin = 0, tout = 0, html = '';
+
+        snap.forEach(doc => {
+            const d = doc.data();
+            const nom = d.nom || 0;
+            const tgl = d.tgl.toDate().toLocaleDateString('id-ID');
+            
+            if(d.kat === 'Masuk') tin += nom; else tout += nom;
+
+            html += `
+                <div class="bento-card flex justify-between items-center py-3">
+                    <div class="flex gap-3 items-center">
+                        <div class="text-[9px] font-bold bg-slate-100 p-2 rounded-lg text-slate-400">${tgl}</div>
+                        <div>
+                            <p class="text-xs font-extrabold uppercase line-clamp-1">${d.ket}</p>
+                            <p class="text-[8px] text-slate-300 font-bold uppercase">${d.kat}</p>
+                        </div>
+                    </div>
+                    <p class="font-extrabold text-xs ${d.kat==='Masuk'?'text-emerald-700':'text-red-500'}">${nom.toLocaleString()}</p>
+                </div>
+            `;
+        });
+
+        document.getElementById('vSaldo').innerText = 'Rp ' + (tin - tout).toLocaleString();
+        document.getElementById('historyList').innerHTML = html || '<p class="text-center text-xs text-slate-400">Belum ada riwayat.</p>';
+    }
+
+    // Jalankan load data saat halaman dibuka
+    loadData();
+</script>
+</body>
+  </html>
+  
