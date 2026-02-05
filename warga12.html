@@ -14,31 +14,30 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #0F172A; overflow-x: hidden; }
         
-        /* Font Global Scaling */
-        p { font-size: 14px; }
-        .text-xs { font-size: 13px; }
-        .text-[10px] { font-size: 11px; }
+        /* Font Scaling */
+        p { font-size: 15px; }
+        .text-xs { font-size: 14px; }
+        .text-[10px] { font-size: 12px; }
 
         .tab-content { display: none; height: 100vh; }
         .tab-content.active { display: flex; flex-direction: column; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .bento-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; }
+        .bento-card { background: white; border-radius: 32px; border: 1px solid #F1F5F9; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         
-        /* KAS TAB: FIXED TOP & SCROLLABLE BOTTOM */
-        #screen-kas { overflow: hidden; }
-        .kas-fixed-area { flex-shrink: 0; padding-bottom: 20px; background: #F8FAFC; z-index: 50; }
-        .kas-scroll-area { flex-grow: 1; overflow-y: auto; padding-bottom: 120px; }
+        /* Fixed & Scroll Logic */
+        .scroll-container { flex-grow: 1; overflow-y: auto; padding-bottom: 140px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
 
-        /* Running Gallery Animation */
+        /* Running Gallery */
         .gallery-track {
             display: flex;
-            width: calc(250px * 10);
-            animation: scroll 30s linear infinite;
+            width: calc(280px * 10);
+            animation: scroll 35s linear infinite;
         }
         @keyframes scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-250px * 5)); }
+            100% { transform: translateX(calc(-280px * 5)); }
         }
 
         .nav-item.active { color: #059669; }
@@ -49,57 +48,105 @@
 
     <header class="p-6 flex justify-between items-center max-w-md mx-auto bg-[#F8FAFC] z-[100]">
         <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-emerald-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
+            <div class="w-12 h-12 bg-emerald-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-emerald-900/20">
                 <span class="material-symbols-rounded text-2xl">eco</span>
             </div>
             <div>
-                <h1 class="text-2xl font-extrabold tracking-tighter text-emerald-950 leading-none">TUNTAS.</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">RT 04 Sekawan</p>
+                <h1 class="text-2xl font-extrabold tracking-tighter text-emerald-950 leading-none uppercase">Tuntas.</h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">RT 04 Sekawan</p>
             </div>
         </div>
+        <button onclick="loadData()" class="text-slate-400 p-2"><span class="material-symbols-rounded">sync</span></button>
     </header>
 
     <main class="max-w-md mx-auto">
         
-        <section id="screen-home" class="tab-content active px-6 overflow-y-auto pb-32 no-scrollbar">
-            <div class="bento-card bg-emerald-900 p-8 text-white border-none shadow-2xl shadow-emerald-900/20 mb-6 mt-2">
-                <h2 class="text-3xl font-extrabold leading-tight tracking-tighter">Gerakan Bebas Sampah.</h2>
-                <p class="text-sm text-emerald-100/70 mt-4 leading-relaxed">Kelola sampah mandiri untuk lingkungan RT 04 yang lebih asri dan tanpa polusi asap.</p>
-            </div>
+        <section id="screen-home" class="tab-content active">
+            <div class="scroll-container no-scrollbar px-6">
+                
+                <div class="bento-card bg-emerald-900 p-8 text-white border-none shadow-2xl shadow-emerald-900/20 mb-6 mt-2 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <span class="bg-white/10 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest">Inisiatif Warga</span>
+                        <h2 class="text-3xl font-extrabold leading-tight mt-4 tracking-tighter">Solusi Sampah Rumah Tangga.</h2>
+                        <p class="text-sm text-emerald-100/70 mt-4 leading-relaxed">Kelola sampah secara mandiri untuk lingkungan RT 04 yang lebih bersih, sehat, dan tanpa polusi asap.</p>
+                    </div>
+                    <span class="material-symbols-rounded absolute -right-8 -bottom-8 text-[180px] opacity-10 rotate-12">compost</span>
+                </div>
 
-            <div class="mb-6 overflow-hidden">
-                <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-4 px-1">Aktivitas Lapangan</h3>
-                <div class="gallery-track gap-4">
-                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400" class="w-[250px] h-[150px] object-cover rounded-[28px] shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=400" class="w-[250px] h-[150px] object-cover rounded-[28px] shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?w=400" class="w-[250px] h-[150px] object-cover rounded-[28px] shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1605600611220-b7c6a2ed4361?w=400" class="w-[250px] h-[150px] object-cover rounded-[28px] shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400" class="w-[250px] h-[150px] object-cover rounded-[28px] shadow-sm">
+                <div class="mb-8">
+                    <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-4 px-1">Aksi Lapangan Kami</h3>
+                    <div class="overflow-hidden rounded-[32px]">
+                        <div class="gallery-track gap-4">
+                            <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400" class="w-[280px] h-[180px] object-cover rounded-[32px]">
+                            <img src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?w=400" class="w-[280px] h-[180px] object-cover rounded-[32px]">
+                            <img src="https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?w=400" class="w-[280px] h-[180px] object-cover rounded-[32px]">
+                            <img src="https://images.unsplash.com/photo-1605600611220-b7c6a2ed4361?w=400" class="w-[280px] h-[180px] object-cover rounded-[32px]">
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bento-card p-6 bg-emerald-50 border-emerald-100">
-                    <span class="material-symbols-rounded text-emerald-600 mb-2">target</span>
-                    <h4 class="font-extrabold text-sm">Visi</h4>
-                    <p class="text-[10px] text-slate-500 leading-relaxed mt-1">Lingkungan sehat & hijau.</p>
+                <div class="bento-card p-8 mb-6 border-emerald-50 shadow-sm">
+                    <h3 class="text-xl font-extrabold text-emerald-950 mb-3 tracking-tight">Apa itu TUNTAS?</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        <b>TUNTAS</b> (Turun Tangan Atasi Sampah) adalah gerakan swadaya warga RT 04 untuk menghentikan kebiasaan membakar sampah yang mencemari udara. Kami mengelola penjemputan sampah rumah tangga secara rutin untuk dibuang ke tempat pembuangan akhir secara resmi.
+                    </p>
                 </div>
-                <div class="bento-card p-6 bg-blue-50 border-blue-100">
-                    <span class="material-symbols-rounded text-blue-600 mb-2">verified</span>
-                    <h4 class="font-extrabold text-sm">Misi</h4>
-                    <p class="text-[10px] text-slate-500 leading-relaxed mt-1">Transparansi & edukasi warga.</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bento-card p-6 bg-emerald-50 border-emerald-100">
+                        <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-emerald-200">
+                            <span class="material-symbols-rounded text-sm">visibility</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-emerald-900">Visi</h4>
+                        <p class="text-[11px] text-slate-600 leading-relaxed mt-2">Menjadikan RT 04 kawasan percontohan lingkungan asri & bebas polusi asap.</p>
+                    </div>
+                    <div class="bento-card p-6 bg-blue-50 border-blue-100">
+                        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-blue-200">
+                            <span class="material-symbols-rounded text-sm">task_alt</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-blue-900">Misi</h4>
+                        <p class="text-[11px] text-slate-600 leading-relaxed mt-2">Sistem angkut teratur, transparansi iuran, dan edukasi pemilahan sampah.</p>
+                    </div>
                 </div>
+
+                <div class="bento-card p-8 mb-4 border-slate-100">
+                    <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-6">Keunggulan Layanan</h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-5">
+                            <span class="material-symbols-rounded text-emerald-600 text-2xl">health_and_safety</span>
+                            <div>
+                                <h4 class="font-extrabold text-sm">Udara Lebih Segar</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">Hilangkan risiko penyakit pernapasan akibat asap pembakaran sampah di sekitar rumah.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <span class="material-symbols-rounded text-emerald-600 text-2xl">receipt_long</span>
+                            <div>
+                                <h4 class="font-extrabold text-sm">Iuran Terpantau</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">Gunakan aplikasi ini untuk melihat laporan keuangan secara real-time kapanpun Anda mau.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <span class="material-symbols-rounded text-emerald-600 text-2xl">cleaning_services</span>
+                            <div>
+                                <h4 class="font-extrabold text-sm">Praktis & Teratur</h4>
+                                <p class="text-[11px] text-slate-500 mt-1">Tidak perlu repot membuang sendiri, petugas kami menjemput tepat di depan pagar Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
         <section id="screen-kas" class="tab-content">
-            <div class="kas-fixed-area px-6 pt-2">
-                <div class="bento-card bg-gradient-to-br from-emerald-800 to-emerald-600 p-8 text-white border-none shadow-xl shadow-emerald-900/30">
+            <div class="p-6 bg-[#F8FAFC] z-50">
+                <div class="bento-card bg-gradient-to-br from-emerald-800 to-emerald-600 p-8 text-white border-none shadow-2xl shadow-emerald-900/30">
                     <p class="text-[11px] font-bold opacity-70 uppercase tracking-widest mb-1">Total Dana Warga</p>
-                    <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter leading-none">Rp 0</h2>
+                    <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter">Rp 0</h2>
                     <div class="flex justify-between mt-6 pt-5 border-t border-white/20">
-                        <div class="flex flex-col"><span class="text-[9px] uppercase opacity-60">Pemasukan</span><span id="vIn" class="text-sm font-bold">0</span></div>
-                        <div class="flex flex-col text-right"><span class="text-[9px] uppercase opacity-60">Pengeluaran</span><span id="vOut" class="text-sm font-bold">0</span></div>
+                        <div class="flex flex-col"><span class="text-[10px] uppercase opacity-60">Pemasukan</span><span id="vIn" class="text-sm font-bold">0</span></div>
+                        <div class="flex flex-col text-right"><span class="text-[10px] uppercase opacity-60">Pengeluaran</span><span id="vOut" class="text-sm font-bold">0</span></div>
                     </div>
                 </div>
                 <div class="flex items-center px-1 mt-6">
@@ -107,58 +154,76 @@
                     <div class="h-[1px] bg-slate-200 flex-grow ml-4"></div>
                 </div>
             </div>
-
-            <div class="kas-scroll-area px-6" id="tBodyKas">
+            <div class="flex-grow overflow-y-auto px-6 pb-32 no-scrollbar" id="tBodyKas">
                 </div>
         </section>
 
-        <section id="screen-faq" class="tab-content px-6 overflow-y-auto pb-32 no-scrollbar">
-            <h2 class="text-xl font-extrabold text-emerald-950 px-1 mb-6 mt-2">Pusat Bantuan</h2>
-            <div class="space-y-4">
-                <details class="bento-card group p-6 shadow-sm">
-                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
-                        Bagaimana cara bergabung?
-                        <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
-                    </summary>
-                    <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed">Hubungi admin WhatsApp. Pengurus akan mendata alamat rumah untuk jadwal pengambilan.</p>
-                </details>
-                <details class="bento-card group p-6 shadow-sm">
-                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
-                        Berapa biaya iuran bulanan?
-                        <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
-                    </summary>
-                    <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed">Iuran <b>Rp 25.000 / bulan</b>. Digunakan untuk jasa angkut dan kebersihan umum.</p>
-                </details>
-                <details class="bento-card group p-6 shadow-sm">
-                    <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-red-600">
-                        Barang yang dilarang dibuang?
-                        <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
-                    </summary>
-                    <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed">Dilarang membuang Puing bangunan, Limbah B3, Bangkai hewan besar, dan Kasur bekas tanpa koordinasi.</p>
-                </details>
-            </div>
-            <a href="https://wa.me/6287812710851" class="flex items-center justify-between p-7 bg-emerald-900 text-white rounded-[32px] mt-8 shadow-xl">
-                <div class="flex items-center gap-4">
-                    <span class="material-symbols-rounded">chat</span>
-                    <span class="font-bold">Hubungi Admin</span>
+        <section id="screen-faq" class="tab-content">
+            <div class="scroll-container no-scrollbar px-6 pt-2">
+                <h2 class="text-2xl font-extrabold text-emerald-950 px-1 mb-6">Pusat Bantuan</h2>
+                <div class="space-y-4">
+                    <details class="bento-card group p-6 shadow-sm">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                            Bagaimana cara bergabung?
+                            <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed italic border-slate-50">Silakan klik tombol "Hubungi Admin" di bawah. Petugas akan mencatat alamat dan memberikan stempel anggota.</p>
+                    </details>
+                    <details class="bento-card group p-6 shadow-sm">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                            Kapan sampah diambil?
+                            <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed border-slate-50 text-emerald-700 font-bold italic">Setiap hari KAMIS dan MINGGU pagi (Mulai pukul 07.30 WIB).</p>
+                    </details>
+                    <details class="bento-card group p-6 shadow-sm">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-slate-700">
+                            Biaya iuran dan pembayaran?
+                            <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed border-slate-50">Iuran <b>Rp 25.000 / bulan</b>. Bisa dibayar tunai ke Bendahara atau melalui transfer yang nantinya akan muncul di riwayat kas aplikasi ini.</p>
+                    </details>
+                    <details class="bento-card group p-6 shadow-sm">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-sm text-red-600">
+                            Sampah yang dilarang dibuang?
+                            <span class="material-symbols-rounded text-slate-300 group-open:rotate-180">expand_more</span>
+                        </summary>
+                        <div class="mt-4 pt-4 border-t text-xs text-slate-500 leading-relaxed border-slate-50">
+                            Demi keselamatan petugas, dilarang membuang: <br>
+                            - Puing bangunan & Kayu besar <br>
+                            - Kasur/Sofa (kecuali koordinasi khusus) <br>
+                            - Limbah medis/B3 tajam <br>
+                            - Bangkai hewan besar.
+                        </div>
+                    </details>
                 </div>
-                <span class="material-symbols-rounded opacity-40">arrow_forward_ios</span>
-            </a>
+
+                <a href="https://wa.me/6287812710851" class="flex items-center justify-between p-8 bg-emerald-900 text-white rounded-[40px] mt-10 shadow-2xl shadow-emerald-900/30 active:scale-95 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center"><span class="material-symbols-rounded text-2xl">chat</span></div>
+                        <div>
+                            <p class="text-sm font-bold">Chat Admin WhatsApp</p>
+                            <p class="text-[11px] opacity-60">Tanya jawab & Pendaftaran</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-rounded opacity-40">arrow_forward</span>
+                </a>
+            </div>
         </section>
     </main>
 
     <nav class="fixed bottom-0 left-0 right-0 h-24 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center z-[200] px-8">
         <button onclick="st('home')" id="n-home" class="nav-item active flex flex-col items-center gap-1">
-            <span class="material-symbols-rounded text-2xl">home</span>
+            <span class="material-symbols-rounded text-2xl">grid_view</span>
             <span class="text-[10px] font-extrabold uppercase">Home</span>
         </button>
         <button onclick="st('kas')" id="n-kas" class="nav-item flex flex-col items-center gap-1">
             <span class="material-symbols-rounded text-2xl">account_balance_wallet</span>
-            <span class="text-[10px] font-extrabold uppercase">Kas</span>
+            <span class="text-[10px] font-extrabold uppercase">Laporan</span>
         </button>
         <button onclick="st('faq')" id="n-faq" class="nav-item flex flex-col items-center gap-1">
             <span class="material-symbols-rounded text-2xl">help_center</span>
-            <span class="text-[10px] font-extrabold uppercase">FAQ</span>
+            <span class="text-[10px] font-extrabold uppercase">Bantuan</span>
         </button>
     </nav>
 
@@ -201,12 +266,12 @@
                 
                 combined.slice(0, 30).forEach(item => {
                     tk.insertAdjacentHTML('beforeend', `
-                        <div class="bento-card flex justify-between items-center p-5 mb-3">
+                        <div class="bento-card flex justify-between items-center p-5 mb-4 border-slate-50">
                             <div class="flex gap-4 items-center">
-                                <div class="text-[11px] font-extrabold text-slate-400 bg-slate-50 w-12 h-12 flex items-center justify-center rounded-2xl border border-slate-100">${item.t.getDate()}/${item.t.getMonth()+1}</div>
+                                <div class="text-[11px] font-extrabold text-slate-400 bg-slate-50 w-12 h-12 flex items-center justify-center rounded-2xl">${item.t.getDate()}/${item.t.getMonth()+1}</div>
                                 <div>
-                                    <p class="text-sm font-extrabold uppercase text-slate-700 leading-tight">${item.ket}</p>
-                                    <p class="text-[9px] text-slate-400 font-bold tracking-widest mt-1">${item.isAuto ? 'SISTEM' : item.kat}</p>
+                                    <p class="text-[13px] font-extrabold uppercase text-slate-700 leading-tight">${item.ket}</p>
+                                    <p class="text-[9px] text-slate-400 font-bold tracking-[0.1em] mt-1">${item.isAuto ? 'SISTEM' : item.kat}</p>
                                 </div>
                             </div>
                             <p class="font-extrabold text-sm ${item.kat==='Masuk'?'text-emerald-600':'text-red-500'}">
@@ -229,13 +294,13 @@
             document.getElementById('screen-'+t).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             document.getElementById('n-'+t).classList.add('active');
-            // Reset scroll position for home/faq
-            const scrollArea = document.querySelector('#screen-'+t);
-            if(scrollArea) scrollArea.scrollTop = 0;
+            // Reset scroll position
+            const container = document.querySelector('#screen-'+t+' .scroll-container');
+            if(container) container.scrollTop = 0;
         }
 
         window.onload = loadData;
     </script>
 </body>
-                  </html>
-  
+            </html>
+    
