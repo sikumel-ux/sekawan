@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Portal Warga</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #064E3B; overflow: hidden; height: 100vh; }
+        
+        /* Typography - Justify for Branding */
+        p { font-size: 15px; text-align: justify; line-height: 1.6; }
+        .text-xs { font-size: 14px; }
+        .text-[10px] { font-size: 12px; }
+
+        /* Layout Container */
+        .tab-content { display: none; height: 100vh; flex-direction: column; }
+        .tab-content.active { display: flex; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Scroll Engine */
+        .scroll-container { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding-bottom: 200px; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        .bento-card { background: white; border-radius: 32px; border: 1px solid #ECFDF5; box-shadow: 0 4px 20px rgba(5, 150, 105, 0.03); }
+        
+        /* Navigation */
+        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-top: 1px solid #ECFDF5; }
+        .nav-item.active { color: #059669; }
+        .nav-item.active span { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body>
+
+    <header class="p-6 flex justify-between items-center max-w-md mx-auto bg-[#F8FAFC] z-[100] shrink-0">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-emerald-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-emerald-900/20">
+                <span class="material-symbols-rounded text-2xl">eco</span>
+            </div>
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tighter text-emerald-950 leading-none uppercase">Tuntas.</h1>
+                <p class="text-[10px] font-bold text-emerald-600/50 uppercase tracking-[0.2em] mt-1 text-left">RT 04 Sekawan</p>
+            </div>
+        </div>
+        <button onclick="loadData()" class="text-emerald-900/30 p-2"><span class="material-symbols-rounded">sync</span></button>
+    </header>
+
+    <main class="max-w-md mx-auto h-full">
+        
+        <section id="screen-home" class="tab-content active">
+            <div class="scroll-container no-scrollbar px-6">
+                
+                <div class="bento-card bg-emerald-900 p-8 text-white border-none shadow-2xl shadow-emerald-900/20 mb-6 mt-2 relative overflow-hidden">
+                    <div class="relative z-10 text-left">
+                        <span class="bg-emerald-800 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-700">Movement</span>
+                        <h2 class="text-4xl font-extrabold leading-[1.1] mt-4 tracking-tighter italic">Napas Segar,<br>Lingkungan Pintar.</h2>
+                        <p class="text-sm text-emerald-100/70 mt-6 !text-left leading-relaxed">
+                            Bukan sekadar membuang sampah, tapi membangun peradaban warga yang peduli pada udara yang kita hirup bersama.
+                        </p>
+                    </div>
+                    <span class="material-symbols-rounded absolute -right-12 -bottom-12 text-[220px] opacity-10 rotate-12">park</span>
+                </div>
+
+                <div class="bento-card p-8 mb-6 border-emerald-100">
+                    <h3 class="text-[11px] font-extrabold text-emerald-900/40 uppercase tracking-widest mb-4 text-left">Identitas</h3>
+                    <h3 class="text-xl font-extrabold text-emerald-950 mb-4 tracking-tight text-left">Apa itu TUNTAS?</h3>
+                    <p class="text-sm text-emerald-900/70">
+                        <b>TUNTAS</b> (Turun Tangan Atasi Sampah) adalah gerakan swadaya warga RT 04 yang lahir dari kegelisahan akan asap pembakaran sampah. Kami percaya bahwa lingkungan yang bersih adalah hak setiap warga, dan sistem yang transparan adalah kuncinya.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                    <div class="bento-card p-6 bg-emerald-50 border-emerald-100">
+                        <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-emerald-200">
+                            <span class="material-symbols-rounded text-sm">visibility</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-emerald-900">Visi</h4>
+                        <p class="text-[11px] text-emerald-800/70 mt-2">RT 04 sebagai pelopor kawasan perumahan nol polusi asap di wilayah Sekawan.</p>
+                    </div>
+                    <div class="bento-card p-6 bg-emerald-100/50 border-emerald-200">
+                        <div class="w-10 h-10 bg-emerald-700 rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-emerald-200">
+                            <span class="material-symbols-rounded text-sm">auto_awesome</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-emerald-900">Misi</h4>
+                        <p class="text-[11px] text-emerald-800/70 mt-2">Membangun manajemen sampah mandiri yang disiplin, terjadwal, dan akuntabel.</p>
+                    </div>
+                </div>
+
+                <div class="bento-card p-8 mb-6 border-emerald-50 bg-white">
+                    <h3 class="text-[11px] font-extrabold text-emerald-900/40 uppercase tracking-widest mb-8 text-left">Mengapa Bergabung?</h3>
+                    <div class="space-y-8">
+                        <div class="flex gap-6 items-start">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                                <span class="material-symbols-rounded text-2xl">lungs</span>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-base text-emerald-950 text-left">Hentikan Polusi Asap</h4>
+                                <p class="text-[12px] text-emerald-900/60 mt-1 italic">Sayangi pernapasan keluarga dan tetangga. Pembakaran sampah plastik melepaskan zat dioksin yang berbahaya bagi kesehatan jangka panjang.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6 items-start">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                                <span class="material-symbols-rounded text-2xl">account_balance</span>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-base text-emerald-950 text-left">Transparansi Mutlak</h4>
+                                <p class="text-[12px] text-emerald-900/60 mt-1 italic">Setiap rupiah iuran warga dikelola secara terbuka. Anda bisa memantau pemasukan dan pengeluaran secara real-time melalui fitur Laporan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-card bg-emerald-50 p-8 border-dashed border-2 border-emerald-200 text-center">
+                    <h4 class="font-extrabold text-emerald-900 italic uppercase tracking-widest text-xs mb-2 text-center">Tingkatkan Kualitas Hidup</h4>
+                    <p class="text-xs text-emerald-800/60 text-center">Bergabung dengan 60+ warga lainnya yang telah berkomitmen menjaga keasrian RT 04.</p>
+                </div>
+
+                <div class="h-10 w-full"></div>
+            </div>
+        </section>
+
+        <section id="screen-kas" class="tab-content">
+            <div class="p-6 bg-[#F8FAFC] z-50 shrink-0">
+                <div class="bento-card bg-emerald-900 p-8 text-white border-none shadow-2xl shadow-emerald-900/30">
+                    <p class="text-[11px] font-bold opacity-70 uppercase tracking-widest mb-1 text-left">Dana Swadaya Terkumpul</p>
+                    <h2 id="vSaldo" class="text-4xl font-extrabold tracking-tighter text-left leading-none">Rp 0</h2>
+                    <div class="flex justify-between mt-6 pt-5 border-t border-emerald-800 text-left">
+                        <div class="flex flex-col"><span class="text-[10px] uppercase opacity-60 font-bold tracking-tighter">Masuk</span><span id="vIn" class="text-sm font-bold">0</span></div>
+                        <div class="flex flex-col text-right"><span class="text-[10px] uppercase opacity-60 font-bold tracking-tighter">Keluar</span><span id="vOut" class="text-sm font-bold">0</span></div>
+                    </div>
+                </div>
+                <div class="flex items-center px-1 mt-6">
+                    <h3 class="text-[11px] font-extrabold text-emerald-900/30 uppercase tracking-widest">Detail Arus Kas</h3>
+                    <div class="h-[1px] bg-emerald-100 flex-grow ml-4"></div>
+                </div>
+            </div>
+            <div class="scroll-container px-6 no-scrollbar" id="tBodyKas"></div>
+        </section>
+
+        <section id="screen-faq" class="tab-content">
+            <div class="scroll-container no-scrollbar px-6 pt-2">
+                <h2 class="text-2xl font-extrabold text-emerald-950 px-1 mb-6 text-left">Bantuan</h2>
+                <div class="space-y-4">
+                    <details class="bento-card group p-6 shadow-sm border-emerald-50">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-extrabold text-xs text-emerald-900 uppercase tracking-wide">
+                            Cara Mendaftar
+                            <span class="material-symbols-rounded text-emerald-200 group-open:rotate-180 transition-transform">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t border-emerald-50 text-[13px] text-emerald-900/60">Hubungi admin WhatsApp di bawah. Pengurus akan mendata alamat rumah untuk jadwal penjemputan rutin sampah.</p>
+                    </details>
+                    <details class="bento-card group p-6 shadow-sm border-emerald-50">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-extrabold text-xs text-emerald-900 uppercase tracking-wide">
+                            Jadwal Rutin
+                            <span class="material-symbols-rounded text-emerald-200 group-open:rotate-180 transition-transform">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t border-emerald-50 text-[13px] text-emerald-900/60 font-bold italic">Kamis & Minggu Pagi (Mulai Pukul 07.30 WIB).</p>
+                    </details>
+                    <details class="bento-card group p-6 shadow-sm border-emerald-50">
+                        <summary class="list-none flex justify-between items-center cursor-pointer font-extrabold text-xs text-red-700 uppercase tracking-wide">
+                            Larangan Buang
+                            <span class="material-symbols-rounded text-emerald-200 group-open:rotate-180 transition-transform">expand_more</span>
+                        </summary>
+                        <p class="mt-4 pt-4 border-t border-emerald-50 text-[13px] text-emerald-900/60">Puing bangunan, batang pohon besar, limbah B3/medis, dan furnitur besar tanpa koordinasi khusus.</p>
+                    </details>
+                </div>
+
+                <a href="https://wa.me/6287812710851" class="flex items-center justify-between p-8 bg-emerald-900 text-white rounded-[40px] mt-10 shadow-2xl shadow-emerald-900/30 active:scale-95 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-2xl">chat</span></div>
+                        <div class="text-left">
+                            <p class="text-sm font-bold">Admin WhatsApp</p>
+                            <p class="text-[11px] opacity-60">Konsultasi & Pendaftaran</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-rounded opacity-40">arrow_forward</span>
+                </a>
+                <div class="h-20 w-full"></div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-24 bg-white/90 backdrop-blur-xl border-t border-emerald-50 flex justify-around items-center z-[200] px-8">
+        <button onclick="st('home')" id="n-home" class="nav-item active flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded text-2xl">grid_view</span>
+            <span class="text-[10px] font-extrabold uppercase">Branding</span>
+        </button>
+        <button onclick="st('kas')" id="n-kas" class="nav-item flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded text-2xl">account_balance_wallet</span>
+            <span class="text-[10px] font-extrabold uppercase">Laporan</span>
+        </button>
+        <button onclick="st('faq')" id="n-faq" class="nav-item flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded text-2xl">help_center</span>
+            <span class="text-[10px] font-extrabold uppercase">Bantuan</span>
+        </button>
+    </nav>
+
+    <script>
+        const config = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+        firebase.initializeApp(config);
+        const db = firebase.firestore();
+
+        async function loadData() {
+            try {
+                const [dkas, diur] = await Promise.all([
+                    db.collection("kas").get(), 
+                    db.collection("pembayaran").get()
+                ]);
+                
+                let tin=0, tout=0, totalIuran=0, combined = [];
+
+                dkas.docs.forEach(doc => {
+                    const d = doc.data(), t = d.tgl ? d.tgl.toDate() : new Date();
+                    if(d.kat==='Masuk') tin += Number(d.nom); else tout += Number(d.nom);
+                    combined.push({ t, ket: d.ket, kat: d.kat, nom: d.nom, isAuto: false });
+                });
+
+                diur.docs.forEach(doc => {
+                    const d = doc.data(), t = d.tgl ? d.tgl.toDate() : new Date();
+                    totalIuran += Number(d.nom);
+                    combined.push({ t, ket: `IURAN: ${d.nama}`, kat: 'Masuk', nom: d.nom, isAuto: true });
+                });
+
+                combined.sort((a, b) => b.t - a.t);
+                const tk = document.getElementById('tBodyKas');
+                tk.innerHTML = '';
+                
+                combined.slice(0, 30).forEach(item => {
+                    tk.insertAdjacentHTML('beforeend', `
+                        <div class="bento-card flex justify-between items-center p-5 mb-4 border-emerald-50">
+                            <div class="flex gap-4 items-center">
+                                <div class="text-[11px] font-extrabold text-emerald-400 bg-emerald-50 w-12 h-12 flex items-center justify-center rounded-2xl shrink-0 border border-emerald-100">${item.t.getDate()}/${item.t.getMonth()+1}</div>
+                                <div class="text-left">
+                                    <p class="text-[13px] font-extrabold uppercase text-emerald-900 leading-tight">${item.ket}</p>
+                                    <p class="text-[9px] text-emerald-400 font-bold tracking-[0.1em] mt-1">${item.isAuto ? 'SISTEM' : item.kat}</p>
+                                </div>
+                            </div>
+                            <p class="font-extrabold text-sm ${item.kat==='Masuk'?'text-emerald-600':'text-red-500'}">
+                                ${item.nom.toLocaleString('id-ID')}
+                            </p>
+                        </div>
+                    `);
+                });
+
+                const saldo = (tin + totalIuran) - tout;
+                document.getElementById('vSaldo').innerText = 'Rp ' + saldo.toLocaleString('id-ID');
+                document.getElementById('vIn').innerText = (tin + totalIuran).toLocaleString('id-ID');
+                document.getElementById('vOut').innerText = tout.toLocaleString('id-ID');
+
+            } catch(e) { console.error(e); }
+        }
+
+        function st(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('screen-'+t).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('n-'+t).classList.add('active');
+            
+            const container = document.querySelector('#screen-'+t+' .scroll-container');
+            if(container) container.scrollTop = 0;
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+  </html>
+  
