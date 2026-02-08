@@ -36,7 +36,7 @@
             <h1 class="text-3xl font-black text-emerald-900">Tuntas.</h1>
             <input type="email" id="email" class="modern-in" placeholder="Email Admin">
             <input type="password" id="pass" class="modern-in" placeholder="Password">
-            <button onclick="login()" class="btn-primary uppercase">Masuk Dashboard</button>
+            <button onclick="login()" class="btn-primary uppercase tracking-widest">Login</button>
         </div>
     </div>
 
@@ -48,27 +48,27 @@
 
         <div id="screen-home" class="tab-content active space-y-6">
             <div class="card-main">
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Total Saldo Kas</p>
+                <p class="text-[10px] font-bold uppercase tracking-widest opacity-60">Saldo Kas Bersih</p>
                 <h2 class="text-4xl font-black mt-1" id="hSaldo">Rp 0</h2>
             </div>
             <div class="grid grid-cols-2 gap-4 text-center">
                 <div class="bg-white p-5 rounded-[2rem] border-2 border-emerald-50">
-                    <p class="text-[9px] font-black text-emerald-300 uppercase">Pemasukan</p>
+                    <p class="text-[9px] font-black text-emerald-300 uppercase">Total Masuk</p>
                     <p class="text-lg font-black text-emerald-600" id="hMasuk">0</p>
                 </div>
                 <div class="bg-white p-5 rounded-[2rem] border-2 border-rose-50">
-                    <p class="text-[9px] font-black text-rose-300 uppercase">Pengeluaran</p>
+                    <p class="text-[9px] font-black text-rose-300 uppercase">Total Keluar</p>
                     <p class="text-lg font-black text-rose-600" id="hKeluar">0</p>
                 </div>
             </div>
             <div class="space-y-3">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Riwayat Terakhir</h3>
+                <h3 class="text-xs font-bold text-slate-400 uppercase px-2">Riwayat Terakhir</h3>
                 <div id="tBodyHome" class="space-y-3"></div>
             </div>
         </div>
 
         <div id="screen-rekap" class="tab-content space-y-6">
-            <h1 class="text-xl font-black text-[#064E3B] px-2 uppercase">Rekap Jan-Jun</h1>
+            <h1 class="text-xl font-black text-[#064E3B] px-2 uppercase">Rekap Jan - Jun</h1>
             <div class="table-scroll">
                 <table class="w-full text-left text-[11px]">
                     <thead>
@@ -94,18 +94,17 @@
         <button id="n-home" onclick="st('home')" class="active"><span class="material-symbols-rounded">grid_view</span><span class="text-[10px] font-bold">HOME</span></button>
         <button id="n-rekap" onclick="st('rekap')"><span class="material-symbols-rounded">receipt_long</span><span class="text-[10px] font-bold">REKAP</span></button>
         <button id="n-warga" onclick="st('warga')"><span class="material-symbols-rounded">group</span><span class="text-[10px] font-bold">WARGA</span></button>
-        <button onclick="openModal('mKas')"><span class="material-symbols-rounded text-emerald-600">add_box</span><span class="text-[10px] font-bold">CATAT</span></button>
+        <button onclick="openModal('mKas')"><span class="material-symbols-rounded text-emerald-600">add_circle</span><span class="text-[10px] font-bold text-emerald-600">CATAT</span></button>
     </nav>
 
     <div id="mKas" class="modal" onclick="if(event.target==this)closeModal('mKas')">
         <div class="modal-content space-y-4">
-            <h3 class="font-black text-center text-emerald-900 uppercase">Catat Kas</h3>
+            <h3 class="font-black text-center text-emerald-900 uppercase">Catat Transaksi</h3>
             <select id="kKat" class="modern-in"><option value="Masuk">Pemasukan</option><option value="Keluar">Pengeluaran</option></select>
-            <input type="text" id="kKet" class="modern-in" placeholder="Keterangan">
+            <input type="text" id="kKet" class="modern-in" placeholder="Keterangan (Contoh: Beli Sapu)">
             <input type="number" id="kNom" class="modern-in font-black text-xl" placeholder="Nominal Rp">
-            <button onclick="simpanKas()" class="btn-primary uppercase">Simpan Kas</button>
-            <hr>
-            <button onclick="closeModal('mKas'); openModal('mIuran')" class="w-full text-emerald-600 font-bold text-xs uppercase underline">Bayar Iuran Warga?</button>
+            <button onclick="simpanKas()" class="btn-primary uppercase">Simpan</button>
+            <button onclick="closeModal('mKas'); openModal('mIuran')" class="w-full text-emerald-600 font-bold text-xs underline">Atau Bayar Iuran Warga?</button>
         </div>
     </div>
 
@@ -121,9 +120,9 @@
 
     <div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
         <div class="modal-content space-y-4">
-            <h3 class="font-black text-center uppercase">Tambah Warga</h3>
+            <h3 class="font-black text-center uppercase">Tambah Warga Baru</h3>
             <input type="text" id="aNama" class="modern-in uppercase" placeholder="Nama Lengkap">
-            <input type="number" id="aHp" class="modern-in" placeholder="628xxxx">
+            <input type="number" id="aHp" class="modern-in" placeholder="No HP (628...)">
             <button onclick="simpanAnggota()" class="btn-primary uppercase">Simpan Data</button>
         </div>
     </div>
@@ -143,15 +142,21 @@
         let dataWarga = {};
 
         auth.onAuthStateChanged(user => {
-            if (user) { document.getElementById('mainApp').classList.remove('hidden'); document.getElementById('loginPage').classList.add('hidden'); init(); }
-            else { document.getElementById('mainApp').classList.add('hidden'); document.getElementById('loginPage').classList.remove('hidden'); }
+            if (user) { 
+                document.getElementById('mainApp').classList.remove('hidden'); 
+                document.getElementById('loginPage').classList.add('hidden'); 
+                init(); 
+            } else { 
+                document.getElementById('mainApp').classList.add('hidden'); 
+                document.getElementById('loginPage').classList.remove('hidden'); 
+            }
         });
 
         async function login() {
             const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Login Gagal!"); }
         }
-        async function logout() { if(confirm("Logout?")) await auth.signOut(); }
+        async function logout() { if(confirm("Keluar?")) await auth.signOut(); }
 
         function init() {
             const cont = document.getElementById('containerBulan');
@@ -175,45 +180,48 @@
             th.innerHTML = ''; tw.innerHTML = ''; tr.innerHTML = ''; sel.innerHTML = '<option value="">Pilih Warga</option>';
             
             let tin = 0, tout = 0, totalIur = 0;
-            const iurArr = resIuran.docs.map(doc => doc.data());
-            dataWarga = {};
+            const iurArr = resIuran.docs.map(doc => {
+                const d = doc.data();
+                return { ...d, namaKey: (d.nama || "").trim().toUpperCase(), nom: d.nom || d.nominal || 0 };
+            });
 
-            // 1. RENDER RIWAYAT HOME & HITUNG KAS
+            // 1. KAS UMUM
             resKas.docs.forEach(doc => {
                 const d = doc.data(); 
-                if(d.kat === 'Masuk') tin += d.nom; else tout += d.nom;
-                th.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border-l-4 ${d.kat === 'Masuk' ? 'border-emerald-500' : 'border-rose-500'}"><div><p class="text-xs font-black uppercase">${d.ket}</p><p class="text-[8px] text-slate-400 font-bold uppercase">${d.kat}</p></div><p class="font-black text-xs ${d.kat === 'Masuk' ? 'text-emerald-600' : 'text-rose-600'}">Rp ${d.nom.toLocaleString()}</p></div>`);
+                const nominal = d.nom || d.nominal || 0;
+                if(d.kat === 'Masuk') tin += nominal; else tout += nominal;
+                th.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm border-l-4 ${d.kat === 'Masuk' ? 'border-emerald-500' : 'border-rose-500'}"><div><p class="text-xs font-black uppercase">${d.ket}</p><p class="text-[8px] text-slate-400 font-bold">${d.kat}</p></div><p class="font-black text-xs">Rp ${nominal.toLocaleString()}</p></div>`);
             });
 
-            // 2. RENDER WARGA & TABEL REKAP
+            // 2. REKAP & DATA WARGA
             resAnggota.docs.forEach(doc => {
-                const d = doc.data(), n = d.nama.trim().toUpperCase();
-                dataWarga[n] = d.hp || '';
-                sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
+                const d = doc.data();
+                const namaWarga = (d.nama || "").trim().toUpperCase();
+                dataWarga[namaWarga] = d.hp || '';
+                
+                sel.insertAdjacentHTML('beforeend', `<option value="${namaWarga}">${namaWarga}</option>`);
+                tw.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm"><div><p class="font-black text-xs">${namaWarga}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-rose-200"><span class="material-symbols-rounded">delete</span></button></div>`);
 
-                // List di tab warga
-                tw.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm"><div><p class="font-black text-xs uppercase">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-rose-200"><span class="material-symbols-rounded">delete</span></button></div>`);
-
-                // Isi baris rekap
-                let rowHtml = `<tr><td class="sticky-col p-4 font-bold text-slate-700 border-b border-slate-50 uppercase">${n.split(' ')[0]}</td>`;
+                // BARIS REKAP
+                let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 border-b border-slate-50 uppercase">${namaWarga.split(' ')[0]}</td>`;
                 daftarBulan.forEach(bln => {
-                    const bayar = iurArr.filter(i => i.nama.trim().toUpperCase() === n && i.bulan.includes(bln));
-                    if(bayar.length > 0) {
-                        let nomPerBulan = 0;
-                        bayar.forEach(b => {
-                            const jmlBln = b.bulan.split(',').length;
-                            nomPerBulan += (b.nom / jmlBln);
+                    const find = iurArr.filter(i => i.namaKey === namaWarga && (i.bulan || "").includes(bln));
+                    if(find.length > 0) {
+                        let totalBln = 0;
+                        find.forEach(f => {
+                            const jmlBln = (f.bulan || "").split(',').length || 1;
+                            totalBln += (f.nom / jmlBln);
                         });
-                        rowHtml += `<td class="text-center text-emerald-600 font-black">${(nomPerBulan/1000).toFixed(0)}K</td>`;
+                        row += `<td class="text-center text-emerald-600 font-black">${(totalBln/1000).toFixed(0)}K</td>`;
                     } else {
-                        rowHtml += `<td class="text-center text-slate-200">-</td>`;
+                        row += `<td class="text-center text-slate-200">-</td>`;
                     }
                 });
-                tr.insertAdjacentHTML('beforeend', rowHtml + `</tr>`);
+                tr.insertAdjacentHTML('beforeend', row + `</tr>`);
             });
 
-            // 3. UPDATE SALDO
-            iurArr.forEach(d => totalIur += d.nom);
+            // 3. SALDO AKHIR
+            iurArr.forEach(i => totalIur += i.nom);
             document.getElementById('hSaldo').innerText = 'Rp ' + (tin + totalIur - tout).toLocaleString();
             document.getElementById('hMasuk').innerText = (tin + totalIur).toLocaleString();
             document.getElementById('hKeluar').innerText = tout.toLocaleString();
@@ -222,7 +230,7 @@
         async function simpanIuran() {
             const n = document.getElementById('iNama').value, nmn = Number(document.getElementById('iNom').value);
             const blns = Array.from(document.querySelectorAll('input[name="blnCek"]:checked')).map(c => c.value);
-            if(!n || blns.length === 0 || !nmn) return alert("Lengkapi data iuran!");
+            if(!n || blns.length === 0 || !nmn) return alert("Pilih Nama, Bulan, dan Isi Nominal!");
             
             await db.collection("pembayaran").add({ nama: n, bulan: blns.join(","), nom: nmn, tgl: new Date() });
             closeModal('mIuran'); loadData();
@@ -239,7 +247,7 @@
             if(n) { await db.collection("anggota").add({ nama: n, hp: h }); closeModal('mAnggota'); loadData(); }
         }
 
-        async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+        async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
         function openModal(id) { document.getElementById(id).style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         function st(t) {
@@ -250,5 +258,5 @@
         }
     </script>
 </body>
-  </html>
-  
+            </html>
+    
