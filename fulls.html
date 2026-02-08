@@ -51,7 +51,7 @@
             <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm"><p class="text-[9px] font-bold text-emerald-500 uppercase">Pemasukan</p><p id="totalMasuk" class="text-lg font-black">0</p></div>
             <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm"><p class="text-[9px] font-bold text-red-500 uppercase">Pengeluaran</p><p id="totalKeluar" class="text-lg font-black">0</p></div>
         </div>
-        <div class="pt-4"><h3 class="font-black text-xs text-slate-800 mb-3 uppercase">Riwayat Terbaru</h3><div id="listRiwayat" class="space-y-2"></div></div>
+        <div class="pt-4"><h3 class="font-black text-xs text-slate-800 mb-3 uppercase tracking-tighter">Riwayat Terbaru</h3><div id="listRiwayat" class="space-y-2"></div></div>
     </div>
 
     <div id="screen-iur" class="tab-content space-y-6">
@@ -59,6 +59,7 @@
             <table class="w-full text-left text-[11px]">
                 <thead><tr id="th-rekap" class="text-slate-400 uppercase"><th class="sticky-col p-3">Nama</th></tr></thead>
                 <tbody id="tb-rekap"></tbody>
+                <tfoot id="tf-rekap" class="bg-emerald-50 font-black"></tfoot>
             </table>
         </div>
         <div id="tBodyIur" class="space-y-2 pt-4"></div>
@@ -124,15 +125,15 @@
         grid.innerHTML = ''; thr.innerHTML = '<th class="sticky-col p-3">Nama</th>';
         daftarBulan.forEach(bln => {
             grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-bold py-2 text-center border rounded-xl bg-white text-slate-300 peer-checked:bg-emerald-800 peer-checked:text-white uppercase">${bln.substring(0,3)}</div></label>`;
-            thr.innerHTML += `<th class="text-center p-3">${bln.substring(0,3)}</th>`;
+            thr.innerHTML += `<th class="text-center p-3 font-black">${bln.substring(0,3)}</th>`;
         });
         loadData();
     }
 
     async function loadData() {
         const [dkas, diur, dang] = await Promise.all([
-            db.collection("kas").orderBy("tgl","desc").get(), 
-            db.collection("pembayaran").orderBy("tgl","desc").get(), 
+            db.collection("kas").get(), 
+            db.collection("pembayaran").get(), 
             db.collection("anggota").orderBy("nama","asc").get()
         ]);
         
@@ -141,25 +142,29 @@
         let allTrx = [];
         const ti=document.getElementById('tBodyIur'), tr=document.getElementById('tb-rekap'), sel=document.getElementById('iNama'), listR = document.getElementById('listRiwayat');
         ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>'; listR.innerHTML='';
+        
         const iurArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
         dkas.docs.forEach(doc => {
-            const d = doc.data(); if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
-            allTrx.push({ ket: d.ket, nom: d.nom, kat: d.kat, tgl: d.tgl.toDate() });
+            const d = doc.data(); 
+            const t = d.tgl ? d.tgl.toDate() : new Date();
+            if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
+            allTrx.push({ ket: d.ket, nom: d.nom, kat: d.kat, tgl: t });
         });
 
         iurArr.forEach(d => {
+            const t = d.tgl ? d.tgl.toDate() : new Date();
             totalIur += d.nom;
-            allTrx.push({ ket: `IURAN: ${d.nama}`, nom: d.nom, kat: 'Masuk', tgl: d.tgl.toDate() });
+            allTrx.push({ ket: `IURAN: ${d.nama.split(' ')[0]}`, nom: d.nom, kat: 'Masuk', tgl: t });
         });
 
         document.getElementById('totalSaldo').innerText = 'Rp ' + ((tin + totalIur) - tout).toLocaleString();
         document.getElementById('totalMasuk').innerText = 'Rp ' + (tin + totalIur).toLocaleString();
         document.getElementById('totalKeluar').innerText = 'Rp ' + tout.toLocaleString();
 
-        allTrx.sort((a,b) => b.tgl - a.tgl).slice(0,5).forEach(tx => {
+        allTrx.sort((a,b) => b.tgl - a.tgl).slice(0,8).forEach(tx => {
             const isM = tx.kat === 'Masuk';
-            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="text-xs font-black uppercase">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString()}</p></div><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p></div>`);
+            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="text-xs font-black uppercase tracking-tighter">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p></div>`);
         });
 
         dang.docs.forEach(doc => {
@@ -169,15 +174,30 @@
             ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="font-black text-xs uppercase">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button></div>`);
 
             let row = `<tr><td class="sticky-col p-3 font-bold text-slate-700 border-b border-slate-50 uppercase">${n.split(' ')[0]}</td>`;
+            
             daftarBulan.forEach(bln => {
-                const bils = iurArr.filter(i => i.nama === n && i.bulan.includes(bln));
-                if(bils.length > 0) {
-                    let nomBln = 0; bils.forEach(b => nomBln += (b.nom / b.bulan.split(',').length));
-                    row += `<td class="text-center text-emerald-600 font-black">${(nomBln/1000)}K</td>`;
-                } else { row += `<td class="text-center text-slate-200">-</td>`; }
+                // LOGIKA REKAP DIPERBAIKI: Cek apakah nama warga ada di transaksi bulan tersebut
+                const bayaranBulanIni = iurArr.filter(i => i.nama === n && i.bulan.includes(bln));
+                if(bayaranBulanIni.length > 0) {
+                    let totalNominalBulan = 0;
+                    bayaranBulanIni.forEach(b => {
+                        // Bagi nominal dengan jumlah bulan yang dibayar (misal 160rb / 2 bulan)
+                        const jmlBulan = b.bulan.split(',').length;
+                        totalNominalBulan += (b.nom / jmlBulan);
+                    });
+                    row += `<td class="text-center text-emerald-600 font-black">${(totalNominalBulan/1000).toFixed(0)}K</td>`;
+                    totalsBln[bln] += totalNominalBulan;
+                } else {
+                    row += `<td class="text-center text-slate-200">-</td>`;
+                }
             });
             tr.insertAdjacentHTML('beforeend', row + `</tr>`);
         });
+
+        // TOTAL BAWAH
+        let frow = `<tr><td class="sticky-col p-3 uppercase text-[9px] text-slate-400">TOTAL</td>`;
+        daftarBulan.forEach(bln => frow += `<td class="text-center p-3 text-emerald-800 font-black">${(totalsBln[bln]/1000).toFixed(0)}K</td>`);
+        document.getElementById('tf-rekap').innerHTML = frow + `</tr>`;
     }
 
     async function simpanIuran() {
@@ -206,5 +226,4 @@
     }
 </script>
 </body>
-          </html>
-                                                                                                                                                                                             
+</html>
