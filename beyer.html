@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Input Pembayaran - TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #f0fdf4;
+        }
+        /* Custom Scrollbar untuk pilihan bulan jika terlalu panjang */
+        #bulan-container::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-sm bg-white p-8 rounded-[2.5rem] shadow-2xl border border-emerald-100 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-50 rounded-full"></div>
+        
+        <div class="relative">
+            <div class="flex items-center justify-center mb-6">
+                <div class="bg-emerald-600 text-white p-3 rounded-2xl shadow-lg shadow-emerald-200">
+                    <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
+                </div>
+            </div>
+            
+            <h2 class="text-xl font-black text-slate-800 text-center mb-1 uppercase tracking-tighter">Pembayaran TUNTAS</h2>
+            <p class="text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest mb-8 border-b pb-4">RT 04 Dongkelan</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">No WhatsApp</label>
+                    <div class="flex items-center bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all mt-1">
+                        <span class="pl-4 pr-1 text-slate-400 font-bold text-sm">+62</span>
+                        <input type="number" id="wa" placeholder="81234567..." class="w-full p-4 bg-transparent outline-none text-slate-700 font-bold text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Nama Bapak/Ibu</label>
+                    <input type="text" id="nama" placeholder="Masukkan Nama" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-bold text-sm mt-1 transition-all">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Pilih Bulan Iuran</label>
+                    <div id="bulan-container" class="grid grid-cols-3 gap-2 mt-2">
+                        </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Total Bayar (Rp)</label>
+                    <input type="number" id="nominal" placeholder="0" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-black text-sm mt-1 transition-all">
+                    
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <button onclick="setTarif(50000)" class="bg-emerald-50 text-emerald-700 font-bold py-2 rounded-xl border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all text-xs">Tarif 50rb</button>
+                        <button onclick="setTarif(70000)" class="bg-emerald-50 text-emerald-700 font-bold py-2 rounded-xl border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all text-xs">Tarif 70rb</button>
+                    </div>
+                </div>
+
+                <button onclick="prosesSimpan()" id="btn-main" class="w-full bg-emerald-700 text-white p-5 rounded-2xl font-black shadow-xl shadow-emerald-100 active:scale-95 transition-all mt-6 flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> SIMPAN & KIRIM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Daftar Bulan & Logika Kalkulasi
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        let tarifPerBulan = 50000; // Default awal
+
+        // Render Checkbox Bulan secara otomatis
+        const containerBulan = document.getElementById('bulan-container');
+        daftarBulan.forEach(bln => {
+            containerBulan.innerHTML += `
+                <label class="relative block">
+                    <input type="checkbox" name="bulan" value="${bln}" class="hidden peer" onchange="hitungOtomatis()">
+                    <div class="cursor-pointer text-[10px] font-bold py-2.5 text-center border border-slate-200 rounded-xl bg-white text-slate-500 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition-all">
+                        ${bln.substring(0, 3)}
+                    </div>
+                </label>
+            `;
+        });
+
+        // Fungsi saat tombol tarif diklik
+        function setTarif(harga) {
+            tarifPerBulan = harga;
+            hitungOtomatis();
+            // Feedback visual sederhana
+            console.log("Tarif diset ke: " + harga);
+        }
+
+        // Fungsi menghitung total nominal
+        function hitungOtomatis() {
+            const yangDipilih = document.querySelectorAll('input[name="bulan"]:checked');
+            const total = yangDipilih.length * tarifPerBulan;
+            document.getElementById('nominal').value = total;
+        }
+
+        async function prosesSimpan() {
+            const btn = document.getElementById('btn-main');
+            const waInput = document.getElementById('wa').value;
+            const nama = document.getElementById('nama').value;
+            const nominal = document.getElementById('nominal').value;
+            
+            // Ambil list bulan yang dicentang
+            const bulanSelected = Array.from(document.querySelectorAll('input[name="bulan"]:checked'))
+                                       .map(cb => cb.value);
+
+            // Validasi
+            if(!waInput || !nama || bulanSelected.length === 0 || !nominal) {
+                alert("⚠️ Lengkapi data dan pilih minimal satu bulan!");
+                return;
+            }
+
+            const waFinal = "62" + waInput.replace(/^0+/, '');
+            const kodeUnik = "T" + Date.now().toString().slice(-6);
+            const teksBulan = bulanSelected.join(", "); // Hasil: "Januari, Februari"
+
+            // Loading State
+            btn.disabled = true;
+            btn.classList.replace('bg-emerald-700', 'bg-slate-400');
+            btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> SEDANG MENYIMPAN...";
+
+            try {
+                // 1. Simpan ke Firestore
+                await db.collection("kwitansi").doc(kodeUnik).set({
+                    wa: waFinal,
+                    nama: nama,
+                    bulan: teksBulan,
+                    nominal: Number(nominal),
+                    kode: kodeUnik,
+                    tgl: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 2. Generate Link Kuitansi
+                const currentUrl = window.location.href;
+                const linkView = currentUrl.replace('pay.html', 'kuitansi.html') + '?id=' + kodeUnik;
+                
+                // 3. Pesan WhatsApp
+                const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\n\nPembayaran iuran sampah untuk bulan:\n*${teksBulan}*\n\nTotal: *Rp ${Number(nominal).toLocaleString('id-ID')}*\nStatus: *LUNAS*\n\nLihat kuitansi digital Anda di sini:\n${linkView}\n\n_Pesan ini dikirim otomatis oleh Sistem RT 04 Dongkelan_`;
+                
+                // 4. Eksekusi
+                window.open(`https://api.whatsapp.com/send?phone=${waFinal}&text=${encodeURIComponent(pesan)}`, '_blank');
+                
+                setTimeout(() => {
+                    alert("✅ Data tersimpan & WhatsApp terbuka!");
+                    location.reload();
+                }, 1000);
+
+            } catch (error) {
+                console.error(error);
+                alert("❌ Gagal simpan: " + error.message);
+                btn.disabled = false;
+                btn.classList.replace('bg-slate-400', 'bg-emerald-700');
+                btn.innerHTML = "<i class='fa-brands fa-whatsapp text-lg'></i> SIMPAN & KIRIM";
+            }
+        }
+    </script>
+</body>
+</html>
