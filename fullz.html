@@ -25,42 +25,44 @@
 </head>
 <body>
 
-<div id="mainApp" class="max-w-md mx-auto p-5">
+<div id="loginPage" class="hidden flex flex-col items-center justify-center min-h-[90vh] p-6 max-w-sm mx-auto">
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-xl w-full text-center space-y-6">
+        <div class="w-16 h-16 bg-emerald-900 rounded-2xl flex items-center justify-center mx-auto text-white">
+            <span class="material-symbols-rounded text-3xl">account_balance_wallet</span>
+        </div>
+        <h1 class="text-2xl font-black text-emerald-900 uppercase">Tuntas.</h1>
+        <div class="space-y-3">
+            <input type="email" id="email" class="w-full p-4 bg-slate-50 rounded-2xl border text-sm" placeholder="Email Admin">
+            <input type="password" id="pass" class="w-full p-4 bg-slate-50 rounded-2xl border text-sm" placeholder="Password">
+            <button onclick="login()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase tracking-widest">Masuk</button>
+        </div>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden max-w-md mx-auto p-5">
     <header class="flex justify-between items-center mb-6">
         <div class="flex items-center gap-2">
             <div class="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center text-white"><span class="material-symbols-rounded">wallet</span></div>
-            <h1 class="text-xl font-extrabold text-emerald-900">Tuntas.</h1>
+            <h1 class="text-xl font-black text-emerald-900">Tuntas.</h1>
         </div>
-        <button onclick="location.reload()" class="w-10 h-10 rounded-xl border flex items-center justify-center text-slate-400"><span class="material-symbols-rounded">refresh</span></button>
+        <button onclick="logout()" class="w-10 h-10 rounded-xl border flex items-center justify-center text-red-400"><span class="material-symbols-rounded">logout</span></button>
     </header>
 
     <div id="screen-home" class="tab-content active space-y-4">
-        <div class="card-accent p-8 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl">
+        <div class="p-8 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl">
             <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Saldo Kas</p>
-            <h2 id="totalSaldo" class="text-4xl font-extrabold mt-1">Rp 0</h2>
+            <h2 id="totalSaldo" class="text-4xl font-black mt-1">Rp 0</h2>
         </div>
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-                <p class="text-[9px] font-bold text-emerald-500 uppercase">Pemasukan</p>
-                <p id="totalMasuk" class="text-lg font-extrabold text-slate-800">0</p>
-            </div>
-            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-                <p class="text-[9px] font-bold text-red-500 uppercase">Pengeluaran</p>
-                <p id="totalKeluar" class="text-lg font-extrabold text-slate-800">0</p>
-            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm"><p class="text-[9px] font-bold text-emerald-500 uppercase">Pemasukan</p><p id="totalMasuk" class="text-lg font-black text-slate-800">0</p></div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm"><p class="text-[9px] font-bold text-red-500 uppercase">Pengeluaran</p><p id="totalKeluar" class="text-lg font-black text-slate-800">0</p></div>
         </div>
-        
-        <button onclick="openModal('mIuran')" class="w-full bg-emerald-900 text-white p-5 rounded-3xl font-extrabold text-sm shadow-lg">INPUT IURAN WARGA</button>
-
-        <div class="pt-4">
-            <h3 class="font-bold text-sm text-slate-800 mb-3 uppercase">Riwayat Transaksi</h3>
-            <div id="listRiwayat" class="space-y-2">
-                </div>
-        </div>
+        <button onclick="openModal('mIuran')" class="w-full bg-emerald-900 text-white p-5 rounded-3xl font-black text-sm shadow-lg">INPUT IURAN WARGA</button>
+        <div class="pt-4"><h3 class="font-black text-xs text-slate-800 mb-3 uppercase tracking-tighter">Riwayat Transaksi Terbaru</h3><div id="listRiwayat" class="space-y-2"></div></div>
     </div>
 
     <div id="screen-iur" class="tab-content space-y-6">
-        <h3 class="font-extrabold text-emerald-900 px-1">REKAP PEMBAYARAN</h3>
+        <h3 class="font-black text-emerald-900 px-1 uppercase text-sm">Rekap Jan-Jun</h3>
         <div class="table-scroll">
             <table class="w-full text-left text-[11px]">
                 <thead><tr id="th-rekap" class="text-slate-400 uppercase"><th class="sticky-col p-3">Nama</th></tr></thead>
@@ -72,7 +74,7 @@
         <button onclick="openModal('mAnggota')" class="fixed bottom-28 right-6 w-14 h-14 bg-emerald-900 text-white rounded-full shadow-2xl flex items-center justify-center"><span class="material-symbols-rounded">person_add</span></button>
     </div>
 
-    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white border-t flex justify-around items-center px-6">
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white border-t flex justify-around items-center px-6 z-50">
         <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1"><span class="material-symbols-rounded">grid_view</span><span class="text-[10px] font-bold">HOME</span></button>
         <button onclick="st('iur')" id="n-iur" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">group</span><span class="text-[10px] font-bold">WARGA</span></button>
     </nav>
@@ -80,20 +82,20 @@
 
 <div id="mIuran" class="modal" onclick="if(event.target==this)closeModal('mIuran')">
     <div class="modal-content space-y-4">
-        <h3 class="text-lg font-extrabold text-center uppercase">Bayar Iuran</h3>
-        <select id="iNama" class="modern-in font-bold"></select>
+        <h3 class="text-lg font-black text-center uppercase">Bayar Iuran</h3>
+        <select id="iNama" class="w-full p-3 bg-slate-50 rounded-xl border font-bold text-sm"></select>
         <div id="gridBulan" class="grid grid-cols-3 gap-2"></div>
-        <input type="number" id="iNom" class="modern-in font-extrabold text-xl text-emerald-700" placeholder="Total Nominal">
-        <button onclick="simpanIuran()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-bold">SIMPAN & SHARE WA</button>
+        <input type="number" id="iNom" class="w-full p-4 bg-slate-50 rounded-xl border font-black text-xl text-emerald-700 text-center" placeholder="Total Nominal">
+        <button onclick="simpanIuran()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black">SIMPAN & SHARE</button>
     </div>
 </div>
 
 <div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
     <div class="modal-content space-y-4">
-        <h3 class="font-extrabold text-center uppercase">Tambah Warga</h3>
-        <input type="text" id="aNama" class="modern-in uppercase" placeholder="Nama Lengkap">
-        <input type="number" id="aHp" class="modern-in" placeholder="No. WhatsApp">
-        <button onclick="simpanAnggota()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-bold">SIMPAN</button>
+        <h3 class="font-black text-center uppercase">Tambah Warga</h3>
+        <input type="text" id="aNama" class="w-full p-4 bg-slate-50 rounded-xl border uppercase text-sm" placeholder="Nama Lengkap">
+        <input type="number" id="aHp" class="w-full p-4 bg-slate-50 rounded-xl border text-sm" placeholder="No WhatsApp (62...)">
+        <button onclick="simpanAnggota()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black">SIMPAN DATA</button>
     </div>
 </div>
 
@@ -107,15 +109,33 @@
         appId: "1:1090506516563:web:63c429677caea28addfea6"
     };
     firebase.initializeApp(config);
-    const db = firebase.firestore();
+    const db = firebase.firestore(), auth = firebase.auth();
     const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
     let dataWarga = {};
+
+    auth.onAuthStateChanged(user => {
+        if (user) { 
+            document.getElementById('mainApp').classList.remove('hidden'); 
+            document.getElementById('loginPage').classList.add('hidden'); 
+            init(); 
+        } else { 
+            document.getElementById('mainApp').classList.add('hidden'); 
+            document.getElementById('loginPage').classList.remove('hidden'); 
+        }
+    });
+
+    async function login() {
+        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+        try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Gagal Login!"); }
+    }
+    async function logout() { if(confirm("Logout?")) await auth.signOut(); }
 
     function init() {
         const grid = document.getElementById('gridBulan');
         const thr = document.getElementById('th-rekap');
+        grid.innerHTML = ''; thr.innerHTML = '<th class="sticky-col p-3">Nama</th>';
         daftarBulan.forEach(bln => {
-            grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[10px] font-bold py-2 text-center border rounded-xl bg-white text-slate-400 peer-checked:bg-emerald-800 peer-checked:text-white uppercase">${bln.substring(0,3)}</div></label>`;
+            grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-bold py-2 text-center border rounded-xl bg-white text-slate-300 peer-checked:bg-emerald-800 peer-checked:text-white uppercase">${bln.substring(0,3)}</div></label>`;
             thr.innerHTML += `<th class="text-center p-3">${bln.substring(0,3)}</th>`;
         });
         loadData();
@@ -136,59 +156,57 @@
         ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>'; listR.innerHTML='';
         const iurArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-        // PROSES KAS
         dkas.docs.forEach(doc => {
-            const d = doc.data();
+            const d = doc.data(), t = d.tgl.toDate();
             if(d.kat==='Masuk') tin+=d.nom; else tout+=d.nom;
-            allTrx.push({ ket: d.ket, nom: d.nom, kat: d.kat, tgl: d.tgl.toDate() });
+            allTrx.push({ ket: d.ket, nom: d.nom, kat: d.kat, tgl: t });
         });
 
-        // PROSES IURAN
         iurArr.forEach(d => {
+            const t = d.tgl ? d.tgl.toDate() : new Date();
             totalIur += d.nom;
-            allTrx.push({ ket: `IURAN: ${d.nama.split(' ')[0]}`, nom: d.nom, kat: 'Masuk', tgl: d.tgl.toDate() });
+            allTrx.push({ ket: `IURAN: ${d.nama.split(' ')[0]}`, nom: d.nom, kat: 'Masuk', tgl: t });
         });
 
-        // TAMPILKAN SALDO & RIWAYAT HOME
         document.getElementById('totalSaldo').innerText = 'Rp ' + ((tin + totalIur) - tout).toLocaleString();
         document.getElementById('totalMasuk').innerText = 'Rp ' + (tin + totalIur).toLocaleString();
         document.getElementById('totalKeluar').innerText = 'Rp ' + tout.toLocaleString();
 
-        allTrx.sort((a,b) => b.tgl - a.tgl).slice(0,10).forEach(tx => {
+        allTrx.sort((a,b) => b.tgl - a.tgl).slice(0,8).forEach(tx => {
             const isM = tx.kat === 'Masuk';
-            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-bold text-[10px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-bold uppercase">${tx.ket}</p><p class="text-[8px] text-slate-400 font-bold">${tx.tgl.toLocaleDateString()}</p></div></div><p class="font-bold text-xs ${isM?'text-emerald-600':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p></div>`);
+            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase tracking-tighter">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString()}</p></div></div><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p></div>`);
         });
 
-        // RENDER TABEL REKAP & WARGA
         dang.docs.forEach(doc => {
             const d = doc.data(), n = d.nama;
             dataWarga[n] = d.hp || '';
             sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
-            
-            ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50"><div><p class="font-bold text-xs uppercase">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button></div>`);
+            ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="font-black text-xs uppercase">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button></div>`);
 
-            let row = `<tr><td class="sticky-col p-3 font-bold text-slate-700 border-b border-slate-50">${n.split(' ')[0]}</td>`;
+            let row = `<tr><td class="sticky-col p-3 font-bold text-slate-700 border-b border-slate-50 uppercase">${n.split(' ')[0]}</td>`;
             daftarBulan.forEach(bln => {
                 const bils = iurArr.filter(i => i.nama === n && i.bulan.includes(bln));
                 if(bils.length > 0) {
                     let nomBln = 0; bils.forEach(b => nomBln += (b.nom / b.bulan.split(',').length));
-                    row += `<td class="text-center text-emerald-600 font-bold">${(nomBln/1000)}K</td>`;
+                    row += `<td class="text-center text-emerald-600 font-black">${(nomBln/1000)}K</td>`;
                     totalsBln[bln] += nomBln;
                 } else { row += `<td class="text-center text-slate-200">-</td>`; }
             });
             tr.insertAdjacentHTML('beforeend', row + `</tr>`);
         });
+
+        let frow = `<tr><td class="sticky-col p-3 uppercase">TOTAL</td>`;
+        daftarBulan.forEach(bln => frow += `<td class="text-center p-3 text-emerald-800">${(totalsBln[bln]/1000)}K</td>`);
+        document.getElementById('tf-rekap').innerHTML = frow + `</tr>`;
     }
 
     async function simpanIuran() {
         const n = document.getElementById('iNama').value, nmn = Number(document.getElementById('iNom').value);
         const blns = Array.from(document.querySelectorAll('input[name="blnCek"]:checked')).map(c => c.value);
-        if(!n || !nmn || blns.length === 0) return alert("Lengkapi data!");
-        
+        if(!n || !nmn || blns.length === 0) return alert("Isi lengkap!");
         await db.collection("pembayaran").add({ nama: n, bulan: blns.join(","), nom: nmn, tgl: new Date() }); 
         closeModal('mIuran'); loadData();
-        
-        const msg = `*BUKTI BAYAR TUNTAS*%0ANama: ${n}%0ANominal: Rp ${nmn.toLocaleString()}%0ABulan: ${blns.join(",")}`;
+        const msg = `*BUKTI IURAN TUNTAS*%0A*Nama:* ${n}%0A*Nominal:* Rp ${nmn.toLocaleString()}%0A*Bulan:* ${blns.join(",")}%0A%0A_Terima kasih._`;
         window.open(`https://wa.me/${(dataWarga[n]||'').replace(/^0/,'62')}?text=${msg}`);
     }
 
@@ -206,7 +224,7 @@
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById('n-'+t).classList.add('active');
     }
-    window.onload = init;
 </script>
 </body>
-</html>
+                                                                                                                                          </html>
+                                                                                            
