@@ -158,7 +158,7 @@
 
                 // 2. Generate Link Kuitansi
                 const currentUrl = window.location.href;
-                const linkView = currentUrl.replace('beyer.html', 'witansi.html') + '?id=' + kodeUnik;
+                const linkView = currentUrl.replace('pay.html', 'kuitansi.html') + '?id=' + kodeUnik;
                 
                 // 3. Pesan WhatsApp
                 const pesan = `*BUKTI PEMBAYARAN TUNTAS*\n\nTerima kasih Bapak/Ibu *${nama.toUpperCase()}*,\n\nPembayaran iuran sampah untuk bulan:\n*${teksBulan}*\n\nTotal: *Rp ${Number(nominal).toLocaleString('id-ID')}*\nStatus: *LUNAS*\n\nLihat kuitansi digital Anda di sini:\n${linkView}\n\n_Pesan ini dikirim otomatis oleh Sistem RT 04 Dongkelan_`;
