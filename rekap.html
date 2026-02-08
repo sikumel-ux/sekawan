@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Iuran - TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .table-container { overflow-x: auto; border-radius: 1.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        th { background-color: #064e3b; color: white; text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; padding: 12px 8px; }
+        td { font-size: 11px; padding: 10px 8px; border-bottom: 1px solid #f1f5f9; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #f1f5f9; }
+        .check-icon { color: #10b981; font-size: 14px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-emerald-900 tracking-tighter">REKAP IURAN 2026</h1>
+                <p class="text-sm text-slate-500 font-bold">RT 04 Dongkelan • Turun Tangan Atasi Sampah</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="location.reload()" class="bg-white border border-slate-200 p-3 rounded-2xl shadow-sm hover:bg-slate-50 transition-all">
+                    <i class="fa-solid fa-rotate text-emerald-600"></i>
+                </button>
+                <a href="pay.html" class="bg-emerald-800 text-white px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                    + Input Baru
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white p-2 rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
+            <div class="table-container">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr id="table-head">
+                            <th class="sticky-col">Nama Warga</th>
+                            </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        </tbody>
+                    <tfoot id="table-foot" class="bg-emerald-50 font-black text-emerald-900">
+                        </tfoot>
+                </table>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sistem Manajemen RT 04 by Apriyanto</p>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const tarifIuran = 50000;
+
+        async function initRekap() {
+            // 1. Render Header
+            const thead = document.getElementById('table-head');
+            daftarBulan.forEach(bln => {
+                thead.innerHTML += `<th class="text-center">${bln.substring(0, 3)}</th>`;
+            });
+
+            try {
+                // 2. Ambil Data Warga & Pembayaran
+                const [resWarga, resBayar] = await Promise.all([
+                    db.collection("anggota").orderBy("nama", "asc").get(),
+                    db.collection("kwitansi").get()
+                ]);
+
+                const warga = resWarga.docs.map(doc => doc.data().nama);
+                const dataBayar = resBayar.docs.map(doc => doc.data());
+
+                const tbody = document.getElementById('table-body');
+                const tfoot = document.getElementById('table-foot');
+                
+                let rekapBulanan = {}; // Untuk menyimpan total uang per bulan
+                daftarBulan.forEach(b => rekapBulanan[b] = 0);
+
+                // 3. Render Baris per Warga
+                warga.forEach(nama => {
+                    let rowHtml = `<tr><td class="sticky-col font-bold text-slate-700 uppercase">${nama}</td>`;
+                    
+                    daftarBulan.forEach(bln => {
+                        // Cek apakah warga ini sudah bayar bulan 'bln'
+                        // Logika: Cari di dataBayar yang namanya sama DAN field bulannya mengandung 'bln'
+                        const isLunas = dataBayar.some(d => d.nama === nama && d.bulan.includes(bln));
+                        
+                        if (isLunas) {
+                            rowHtml += `<td class="text-center"><i class="fa-solid fa-circle-check check-icon"></i></td>`;
+                            rekapBulanan[bln] += tarifIuran;
+                        } else {
+                            rowHtml += `<td class="text-center text-slate-200">-</td>`;
+                        }
+                    });
+
+                    rowHtml += `</tr>`;
+                    tbody.innerHTML += rowHtml;
+                });
+
+                // 4. Render Footer (Total)
+                let footHtml = `<tr><td class="sticky-col font-black">TOTAL (Rp)</td>`;
+                daftarBulan.forEach(bln => {
+                    footHtml += `<td class="text-center text-[9px]">${rekapBulanan[bln].toLocaleString('id-ID')}</td>`;
+                });
+                footHtml += `</tr>`;
+                tfoot.innerHTML = footHtml;
+
+            } catch (error) {
+                console.error(error);
+                alert("Gagal memuat rekap!");
+            }
+        }
+
+        initRekap();
+    </script>
+</body>
+  </html>
+  
