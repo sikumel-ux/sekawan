@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuitansi Digital - TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .receipt-card { border-radius: 2rem; position: relative; }
+        .receipt-card::before, .receipt-card::after {
+            content: '';
+            position: absolute;
+            bottom: 85px;
+            width: 20px;
+            height: 20px;
+            background-color: #f8fafc;
+            border-radius: 50%;
+        }
+        .receipt-card::before { left: -10px; }
+        .receipt-card::after { right: -10px; }
+        .dashed-line { border-top: 2px dashed #e2e8f0; margin: 20px 0; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div id="loader" class="text-center">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-emerald-600"></i>
+        <p class="mt-2 text-slate-500 font-bold">Memuat Kuitansi...</p>
+    </div>
+
+    <div id="content" class="hidden w-full max-w-sm">
+        <div class="receipt-card bg-white shadow-2xl p-8 border border-slate-100">
+            <div class="text-center mb-6">
+                <div class="inline-block bg-emerald-100 text-emerald-700 p-3 rounded-full mb-3">
+                    <i class="fa-solid fa-check-double text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tighter uppercase">Kuitansi Digital</h1>
+                <p class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">RT 04 Dongkelan • TUNTAS</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase">ID Transaksi</span>
+                    <span id="disp-kode" class="text-xs font-bold text-slate-700"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase">Tanggal</span>
+                    <span id="disp-tgl" class="text-xs font-bold text-slate-700"></span>
+                </div>
+                
+                <div class="dashed-line"></div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Nama Pembayar</label>
+                    <p id="disp-nama" class="text-sm font-black text-slate-800 uppercase"></p>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Iuran Untuk Bulan</label>
+                    <p id="disp-bulan" class="text-sm font-bold text-emerald-700 leading-relaxed"></p>
+                </div>
+
+                <div class="dashed-line"></div>
+
+                <div class="bg-emerald-50 p-4 rounded-2xl flex justify-between items-center">
+                    <span class="text-[10px] font-black text-emerald-700 uppercase">Total Bayar</span>
+                    <span id="disp-nominal" class="text-xl font-black text-emerald-800"></span>
+                </div>
+
+                <div class="pt-6 text-center">
+                    <div class="inline-block border-2 border-emerald-600 text-emerald-600 px-4 py-1 rounded-lg font-black text-xs uppercase rotate-[-5deg]">
+                        Lunas
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-[9px] text-center text-slate-400 font-medium">
+                Simpan kuitansi ini sebagai bukti bayar yang sah.<br>Dicetak otomatis oleh Sistem TUNTAS.
+            </div>
+        </div>
+
+        <div class="mt-6 flex gap-2">
+            <button onclick="window.print()" class="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                <i class="fa-solid fa-print mr-2"></i> Cetak / PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG FIREBASE (Gunakan punya kamu)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Ambil ID dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const docId = urlParams.get('id');
+
+        if (!docId) {
+            alert("ID Kuitansi tidak ditemukan!");
+            window.location.href = 'beyer.html';
+        } else {
+            ambilData();
+        }
+
+        async function ambilData() {
+            try {
+                const doc = await db.collection("kwitansi").doc(docId).get();
+
+                if (doc.exists) {
+                    const data = doc.data();
+                    
+                    // Isi data ke elemen
+                    document.getElementById('disp-kode').innerText = data.kode;
+                    document.getElementById('disp-nama').innerText = data.nama;
+                    document.getElementById('disp-bulan').innerText = data.bulan;
+                    document.getElementById('disp-nominal').innerText = "Rp " + data.nominal.toLocaleString('id-ID');
+                    
+                    // Format Tanggal
+                    const tgl = data.tgl ? data.tgl.toDate() : new Date();
+                    document.getElementById('disp-tgl').innerText = tgl.toLocaleDateString('id-ID', { 
+                        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    });
+
+                    // Tampilkan Content
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('content').classList.remove('hidden');
+                } else {
+                    alert("Data kuitansi tidak ditemukan di database!");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Gagal mengambil data: " + error.message);
+            }
+        }
+    </script>
+</body>
+  </html>
+              
