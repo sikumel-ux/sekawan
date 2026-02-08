@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -16,16 +15,19 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 100px; }
         .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
-        .modal-content { background:white; padding:24px; border-radius:2.5rem; width:100%; max-width:400px; }
-        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1.2rem; outline:none; font-size: 14px; }
-        .btn-primary { width:100%; background:#064E3B; color:white; padding:16px; border-radius:1.2rem; font-weight:800; }
+        .modal-content { background:white; padding:24px; border-radius:2.5rem; width:100%; max-width:400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2); }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1.2rem; outline:none; font-size: 14px; font-weight: 600; }
+        .btn-primary { width:100%; background:#064E3B; color:white; padding:16px; border-radius:1.2rem; font-weight:800; transition:all 0.2s; }
+        .btn-primary:active { scale: 0.95; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: #064E3B; border-radius: 2rem; display: flex; justify-content: space-around; padding: 12px; z-index: 50; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
         nav button { color: rgba(255,255,255,0.5); display: flex; flex-direction: column; align-items: center; gap: 4px; }
         nav button.active { color: white; }
-        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 1px solid #F1F5F9; padding-right: 10px; }
-        .table-scroll { overflow-x: auto; border-radius: 1rem; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 100px; }
+        .table-scroll { overflow-x: auto; border-radius: 1.5rem; border: 1px solid #E2E8F0; }
+        th { background: #F8FAFC; padding: 12px 8px; font-size: 10px; color: #64748b; text-transform: uppercase; }
+        td { padding: 12px 8px; border-bottom: 1px solid #F1F5F9; font-size: 11px; }
     </style>
 </head>
 <body onload="init()">
@@ -34,24 +36,38 @@
         
         <div id="screen-warga" class="tab-content active space-y-6">
             <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-black text-emerald-900">WARGA RT 04</h1>
-                <button onclick="openModal('mAnggota')" class="bg-emerald-100 text-emerald-700 p-2 rounded-xl"><span class="material-symbols-rounded">person_add</span></button>
+                <div>
+                    <h1 class="text-2xl font-black text-emerald-900">WARGA RT 04</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Terdata</p>
+                </div>
+                <button onclick="openModal('mAnggota')" class="bg-emerald-100 text-emerald-700 p-3 rounded-2xl shadow-sm">
+                    <span class="material-symbols-rounded">person_add</span>
+                </button>
             </div>
-            <div id="tBodyIur" class="space-y-3"></div>
+            <div id="tBodyIur" class="space-y-3">
+                </div>
         </div>
 
         <div id="screen-rekap" class="tab-content space-y-6">
-            <h1 class="text-2xl font-black text-emerald-900">REKAP IURAN</h1>
-            <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-black text-emerald-900">REKAP IURAN</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Periode Jan - Jun</p>
+                </div>
+                <button onclick="loadData()" class="text-emerald-600"><span class="material-symbols-rounded">refresh</span></button>
+            </div>
+
+            <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden">
                 <div class="table-scroll">
-                    <table class="w-full text-[10px] text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr id="th-rekap" class="text-slate-400 uppercase">
+                            <tr id="th-rekap">
                                 <th class="sticky-col">Nama</th>
                                 </tr>
                         </thead>
-                        <tbody id="tb-rekap" class="text-slate-700"></tbody>
-                        <tfoot id="tf-rekap" class="font-black text-emerald-700 bg-emerald-50"></tfoot>
+                        <tbody id="tb-rekap"></tbody>
+                        <tfoot id="tf-rekap" class="bg-emerald-50 font-black text-emerald-900">
+                            </tfoot>
                     </table>
                 </div>
             </div>
@@ -62,42 +78,47 @@
     <nav>
         <button id="n-warga" onclick="st('warga')" class="active">
             <span class="material-symbols-rounded">group</span>
-            <span class="text-[8px] font-bold uppercase">Warga</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest">Warga</span>
         </button>
-        <button onclick="openModal('mIuran')" class="bg-white text-emerald-900 rounded-full w-12 h-12 -mt-8 shadow-xl">
-            <span class="material-symbols-rounded">add</span>
+        <button onclick="openModal('mIuran')" class="bg-white text-emerald-900 rounded-full w-14 h-14 -mt-10 shadow-2xl border-4 border-[#064E3B] flex items-center justify-center">
+            <span class="material-symbols-rounded text-3xl">add</span>
         </button>
         <button id="n-rekap" onclick="st('rekap')">
-            <span class="material-symbols-rounded">table_chart</span>
-            <span class="text-[8px] font-bold uppercase">Rekap</span>
+            <span class="material-symbols-rounded">analytics</span>
+            <span class="text-[8px] font-bold uppercase tracking-widest">Rekap</span>
         </button>
     </nav>
 
     <div id="mIuran" class="modal" onclick="if(event.target==this)closeModal('mIuran')">
         <div class="modal-content space-y-4">
-            <h3 class="font-black text-center text-emerald-900">BAYAR IURAN</h3>
-            <select id="iNama" class="modern-in font-bold"></select>
+            <h3 class="font-black text-center text-emerald-900 tracking-tighter text-lg">INPUT PEMBAYARAN</h3>
+            <select id="iNama" class="modern-in text-slate-700"></select>
             <div id="containerBulanIuran" class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100"></div>
-            <input type="number" id="iNom" class="modern-in font-black text-xl text-emerald-700" placeholder="Total Rp">
-            <button onclick="simpanIuran()" class="btn-primary">SIMPAN</button>
+            <div>
+                <label class="text-[10px] font-bold text-slate-400 ml-1">TOTAL BAYAR (RP)</label>
+                <input type="number" id="iNom" class="modern-in font-black text-xl text-emerald-700 mt-1" placeholder="Contoh: 50000">
+            </div>
+            <button onclick="simpanIuran()" class="btn-primary">SIMPAN & KIRIM WA</button>
         </div>
     </div>
 
     <div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
         <div class="modal-content space-y-4">
-            <h3 class="font-black text-center">TAMBAH WARGA</h3>
+            <h3 class="font-black text-center text-slate-800">TAMBAH WARGA BARU</h3>
             <input type="text" id="aNama" class="modern-in uppercase" placeholder="Nama Lengkap">
-            <input type="number" id="aHp" class="modern-in" placeholder="No. WA">
-            <button onclick="simpanAnggota()" class="btn-primary">SIMPAN WARGA</button>
+            <input type="number" id="aHp" class="modern-in" placeholder="No WhatsApp (08...)">
+            <button onclick="simpanAnggota()" class="btn-primary bg-slate-800">TAMBAH DATA</button>
         </div>
     </div>
 
     <div id="mShare" class="modal">
         <div class="modal-content text-center space-y-6">
-            <div class="text-emerald-500"><span class="material-symbols-rounded text-6xl">check_circle</span></div>
-            <h3 class="font-black">Berhasil!</h3>
-            <button id="btnWA" class="btn-primary bg-green-600">KIRIM WHATSAPP</button>
-            <button onclick="closeModal('mShare')" class="text-slate-400 font-bold text-xs">TUTUP</button>
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                <span class="material-symbols-rounded text-5xl">verified</span>
+            </div>
+            <h3 class="text-xl font-black">Data Tersimpan!</h3>
+            <button id="btnWA" class="btn-primary bg-green-600">KIRIM WHATSAPP SEKARANG</button>
+            <button onclick="closeModal('mShare')" class="text-slate-400 font-bold text-xs uppercase tracking-widest">Nanti Saja</button>
         </div>
     </div>
 
@@ -112,7 +133,9 @@
         };
         firebase.initializeApp(config);
         const db = firebase.firestore();
-        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        
+        // HANYA 6 BULAN SESUAI REQUEST
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
         let dataWarga = {};
 
         function init() {
@@ -122,21 +145,16 @@
 
         function renderBulanInputs() {
             const cont = document.getElementById('containerBulanIuran');
-            cont.innerHTML = '';
+            const thr = document.getElementById('th-rekap');
+            cont.innerHTML = ''; 
+            // Header tabel rekap (Jan - Jun)
             daftarBulan.forEach(bln => {
                 cont.innerHTML += `<label class="relative block">
-                    <input type="checkbox" name="blnCek" value="${bln}" class="hidden peer" onchange="hit()">
+                    <input type="checkbox" name="blnCek" value="${bln}" class="hidden peer">
                     <div class="cursor-pointer text-[10px] font-bold py-2 text-center border border-slate-200 rounded-xl bg-white text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white transition-all">${bln.substring(0,3)}</div>
                 </label>`;
+                thr.innerHTML += `<th class="text-center">${bln.substring(0,3)}</th>`;
             });
-            // Header Rekap
-            const thr = document.getElementById('th-rekap');
-            daftarBulan.forEach(bln => thr.innerHTML += `<th class="px-2 py-3">${bln.substring(0,3)}</th>`);
-        }
-
-        function hit() {
-            const jml = document.querySelectorAll('input[name="blnCek"]:checked').length;
-            document.getElementById('iNom').value = jml * 50000;
         }
 
         async function loadData() {
@@ -147,9 +165,9 @@
 
             const ti = document.getElementById('tBodyIur'), sel = document.getElementById('iNama'), tbR = document.getElementById('tb-rekap'), tfR = document.getElementById('tf-rekap');
             ti.innerHTML = ''; tbR.innerHTML = ''; sel.innerHTML = '<option value="">Pilih Warga</option>';
+            
             dataWarga = {};
             let totals = {}; daftarBulan.forEach(b => totals[b] = 0);
-
             const kwitansiArr = resKwitansi.docs.map(doc => doc.data());
 
             resAnggota.docs.forEach(doc => {
@@ -157,47 +175,87 @@
                 dataWarga[n] = d.hp || '';
                 sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
 
-                // Render List Warga
-                ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
-                    <div><p class="font-black text-xs">${n}</p><p class="text-[10px] text-slate-400">${d.hp || '-'}</p></div>
-                    <button onclick="hapus('anggota','${doc.id}')" class="text-rose-300"><span class="material-symbols-rounded">delete</span></button>
+                // Screen Warga
+                ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-3xl flex justify-between items-center shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-400 text-xs">${n.charAt(0)}</div>
+                        <div><p class="font-black text-xs text-slate-800">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div>
+                    </div>
+                    <button onclick="hapus('anggota','${doc.id}')" class="text-rose-200 hover:text-rose-500 transition-colors"><span class="material-symbols-rounded">delete</span></button>
                 </div>`);
 
-                // Render Rekap Matrix
-                let row = `<tr><td class="sticky-col font-bold py-3 border-b border-slate-50">${n.split(' ')[0]}</td>`;
+                // Screen Rekap Matrix (Isi Nominal)
+                let row = `<tr><td class="sticky-col font-bold text-slate-700">${n.split(' ')[0]}</td>`;
                 daftarBulan.forEach(bln => {
-                    const isLunas = kwitansiArr.some(k => k.nama.toUpperCase() === n && k.bulan.includes(bln));
-                    if(isLunas) {
-                        row += `<td class="px-2 py-3 text-emerald-500"><i class="fa-solid fa-check"></i></td>`;
-                        totals[bln] += 50000;
+                    // Cari transaksi yang ada bulan ini
+                    const bayar = kwitansiArr.filter(k => k.nama.toUpperCase() === n && k.bulan.includes(bln));
+                    if(bayar.length > 0) {
+                        // Jika bayar sekaligus banyak bulan, bagi rata nominalnya
+                        // Contoh: Bayar 100rb untuk Jan & Feb, maka Jan = 50rb, Feb = 50rb
+                        let totalBulanIni = 0;
+                        bayar.forEach(k => {
+                            const jmlBulan = k.bulan.split(',').length;
+                            totalBulanIni += (k.nominal / jmlBulan);
+                        });
+                        row += `<td class="text-center text-emerald-600 font-extrabold">${(totalBulanIni/1000)}K</td>`;
+                        totals[bln] += totalBulanIni;
                     } else {
-                        row += `<td class="px-2 py-3 text-slate-200">-</td>`;
+                        row += `<td class="text-center text-slate-200">-</td>`;
                     }
                 });
                 tbR.insertAdjacentHTML('beforeend', row + `</tr>`);
             });
 
-            // Footer Rekap
+            // Footer Rekap (Total Pendapatan per Bulan)
             let frow = `<tr><td class="sticky-col">TOTAL</td>`;
-            daftarBulan.forEach(bln => frow += `<td class="px-1 py-3 text-[8px]">${(totals[bln]/1000)}K</td>`);
+            daftarBulan.forEach(bln => frow += `<td class="text-center text-[9px]">${totals[bln] > 0 ? (totals[bln]/1000)+'K' : '0'}</td>`);
             tfR.innerHTML = frow + `</tr>`;
         }
 
         async function simpanIuran() {
             const n = document.getElementById('iNama').value, nmn = Number(document.getElementById('iNom').value);
             const blns = Array.from(document.querySelectorAll('input[name="blnCek"]:checked')).map(c => c.value);
-            if(!n || blns.length === 0) return alert("Pilih warga & bulan!");
-            const kode = 'T' + Date.now().toString().slice(-6), teksBln = blns.join(", ");
-            await db.collection("kwitansi").doc(kode).set({ nama: n, bulan: teksBln, nominal: nmn, tgl: new Date(), kode: kode });
-            closeModal('mIuran'); loadData(); showShare(n, nmn, teksBln, kode);
+            
+            if(!n || blns.length === 0 || !nmn) return alert("Lengkapi data!");
+
+            const kode = 'T' + Date.now().toString().slice(-6);
+            const teksBln = blns.join(", ");
+
+            await db.collection("kwitansi").doc(kode).set({ 
+                nama: n, 
+                bulan: teksBln, 
+                nominal: nmn, 
+                tgl: new Date(), 
+                kode: kode 
+            });
+
+            closeModal('mIuran'); 
+            loadData(); 
+            showShare(n, nmn, teksBln, kode);
+            
+            // Reset modal iuran
+            document.querySelectorAll('input[name="blnCek"]').forEach(c => c.checked = false);
+            document.getElementById('iNom').value = '';
         }
 
         function showShare(n, nmn, bln, kode) {
             const hp = dataWarga[n] || '';
             const link = `${window.location.origin}/kuitansi.html?id=${kode}`;
-            const msg = `*BUKTI PEMBAYARAN TUNTAS*%0A---------------------------%0A*Nama:* ${n}%0A*Nominal:* Rp ${nmn.toLocaleString()}%0A*Kode:* ${kode}%0A---------------------------%0A*Link e-Kuitansi Anda:*%0A${link}%0A---------------------------%0A_Terima kasih atas partisipasinya._%0A%0A*APRIYANTO*`;
+            const msg = `*BUKTI PEMBAYARAN TUNTAS*%0A` +
+                        `---------------------------%0A` +
+                        `*Nama:* ${n}%0A` +
+                        `*Nominal:* Rp ${nmn.toLocaleString()}%0A` +
+                        `*Kode:* ${kode}%0A` +
+                        `---------------------------%0A` +
+                        `*Link e-Kuitansi Anda:*%0A` +
+                        `${link}%0A` +
+                        `---------------------------%0A` +
+                        `_Terima kasih atas partisipasinya._%0A%0A` +
+                        `Pengurus Tuntas,%0A%0A` +
+                        `*APRIYANTO*`;
+
             document.getElementById('btnWA').onclick = () => {
-                if(!hp) return alert("No HP Kosong!");
+                if(!hp) return alert("Warga ini tidak punya No HP!");
                 window.open(`https://wa.me/${hp.replace(/^0/,'62')}?text=${msg}`);
             };
             openModal('mShare');
@@ -205,19 +263,26 @@
 
         async function simpanAnggota() {
             const n = document.getElementById('aNama').value.toUpperCase(), h = document.getElementById('aHp').value;
-            if(n) { await db.collection("anggota").add({ nama: n, hp: h }); closeModal('mAnggota'); loadData(); }
+            if(n) { 
+                await db.collection("anggota").add({ nama: n, hp: h }); 
+                closeModal('mAnggota'); 
+                document.getElementById('aNama').value = '';
+                document.getElementById('aHp').value = '';
+                loadData(); 
+            }
         }
 
-        async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+        async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+
         function st(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('screen-'+t).classList.add('active');
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
             document.getElementById('n-'+t).classList.add('active');
         }
+
         function openModal(id) { document.getElementById(id).style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
     </script>
 </body>
-  </html>
-  
+</html>
