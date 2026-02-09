@@ -3,246 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petualangan Matematika Octocat</title>
+    <title>Petualangan Angka</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4ecdc4">
     <style>
-        :root {
-            --primary: #ff6b6b;
-            --secondary: #4ecdc4;
-            --accent: #ffe66d;
-            --dark: #2f2f2f;
-        }
-
+        /* Menggunakan font sans-serif standar yang bersih & bulat */
         body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-            background-color: #a2d2ff;
-            background-image: radial-gradient(#ffffff 10%, transparent 10%);
-            background-size: 30px 30px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e0f2f1;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
         }
 
         .game-container {
             background: white;
-            border: 8px solid var(--dark);
-            border-radius: 30px;
+            border-radius: 20px;
             width: 90%;
-            max-width: 600px;
-            padding: 30px;
+            max-width: 500px;
+            padding: 25px;
             text-align: center;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
-            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        /* Halaman Depan */
-        #welcome-screen input {
+        h1 { color: #2c3e50; font-size: 28px; }
+        p { color: #576574; font-size: 18px; }
+
+        input {
             padding: 15px;
-            font-size: 20px;
-            border-radius: 15px;
-            border: 3px solid var(--secondary);
-            margin: 20px 0;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 2px solid #4ecdc4;
             width: 80%;
-            outline: none;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .btn {
-            background: var(--primary);
+            background: #ff6b6b;
             color: white;
             border: none;
             padding: 15px 30px;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            border-radius: 20px;
+            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px #c0392b;
-            transition: 0.2s;
+            width: 100%;
+            box-shadow: 0 4px #ee5253;
         }
 
-        .btn:active {
-            box-shadow: 0 2px #c0392b;
-            transform: translateY(4px);
-        }
-
-        /* Soal & UI */
-        #quiz-screen, #feedback-screen, #result-screen { display: none; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px #ee5253; }
 
         .progress-bar {
-            background: #eee;
-            border-radius: 20px;
-            height: 20px;
+            background: #f1f2f6;
+            height: 15px;
+            border-radius: 10px;
             margin: 20px 0;
-            border: 3px solid var(--dark);
+            overflow: hidden;
         }
 
         #progress-fill {
-            background: var(--secondary);
+            background: #4ecdc4;
             height: 100%;
             width: 0%;
-            border-radius: 15px;
-            transition: 0.5s;
-        }
-
-        .question-text {
-            font-size: 24px;
-            color: var(--dark);
-            margin: 20px 0;
-        }
-
-        .options-grid {
-            display: grid;
-            gap: 15px;
+            transition: 0.3s;
         }
 
         .opt-btn {
-            background: var(--accent);
-            border: 3px solid var(--dark);
-            padding: 20px;
-            font-size: 24px;
-            border-radius: 15px;
-            cursor: pointer;
+            background: #ffe66d;
+            border: none;
+            padding: 18px;
+            font-size: 22px;
             font-weight: bold;
+            border-radius: 12px;
+            margin: 5px 0;
+            cursor: pointer;
+            display: block;
+            width: 100%;
         }
 
-        .opt-btn:hover { background: #ffd93d; }
-
-        /* Feedback Pop-up */
-        .feedback-box {
-            animation: bounce 0.5s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .octo-img { font-size: 80px; margin-bottom: 10px; }
+        /* Utility */
+        #quiz-screen, #feedback-screen, #result-screen { display: none; }
     </style>
 </head>
 <body>
 
 <div class="game-container">
-    
     <div id="welcome-screen">
-        <div class="octo-img">🐙</div>
+        <div style="font-size: 60px;">🐙</div>
         <h1>Halo Teman!</h1>
-        <p style="font-size: 20px;">Nama kamu siapa, sih?</p>
-        <input type="text" id="user-name" placeholder="Tulis namamu di sini..." autofocus>
-        <br>
-        <button class="btn" onclick="startAdventure()">Main Sekarang! 🚀</button>
+        <p>Siapa nama kamu?</p>
+        <input type="text" id="user-name" placeholder="Ketik namamu..." autofocus>
+        <button class="btn" onclick="startAdventure()">Mulai Misi! 🚀</button>
     </div>
 
     <div id="quiz-screen">
-        <div id="greeting-text" style="font-weight: bold; color: var(--primary);"></div>
+        <p id="greeting" style="font-weight: bold; color: #ff6b6b;"></p>
         <div class="progress-bar"><div id="progress-fill"></div></div>
-        <div id="step-info" style="font-weight: bold;">Soal 1 / 20</div>
-        <div id="question" class="question-text"></div>
-        <div id="options" class="options-grid"></div>
+        <div id="question" style="font-size: 22px; font-weight: bold; margin-bottom: 20px;"></div>
+        <div id="options"></div>
     </div>
 
-    <div id="feedback-screen" class="feedback-box">
-        <div id="feedback-emoji" style="font-size: 100px;">🎉</div>
-        <h2 id="feedback-msg">Kamu Hebat!</h2>
-        <p>Siap untuk misi selanjutnya?</p>
-        <button class="btn" style="background: var(--secondary); box-shadow: 0 6px #16a085;" onclick="nextQuestion()">Ayo Lanjut! ➡️</button>
+    <div id="feedback-screen">
+        <div id="fb-emoji" style="font-size: 80px;">🌟</div>
+        <h2 id="fb-msg">Bagus!</h2>
+        <button class="btn" onclick="nextQuestion()" style="background:#4ecdc4; box-shadow: 0 4px #45b3a9;">Lanjut ➡️</button>
     </div>
 
     <div id="result-screen">
-        <div class="octo-img">👑</div>
-        <h2>Misi Selesai!</h2>
-        <h1 id="final-score">Skor: 0</h1>
-        <p id="final-msg" style="font-size: 18px;"></p>
-        <button class="btn" onclick="location.reload()">Main Lagi 🔄</button>
+        <div style="font-size: 70px;">🏆</div>
+        <h2 id="final-score"></h2>
+        <p id="final-msg"></p>
+        <button class="btn" onclick="location.reload()">Main Lagi</button>
     </div>
-
 </div>
 
 <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
     let userName = "";
     let currentStep = 0;
     let score = 0;
 
     const quizData = [
-        { q: "2 + 2 = ...", a: ["3", "4", "5"], c: "4", e: "🍎🍎 + 🍎🍎" },
-        { q: "5 + 1 = ...", a: ["6", "7", "4"], c: "6", e: "🐟🐟🐟🐟🐟 + 🐟" },
-        { q: "3 + 3 = ...", a: ["5", "6", "9"], c: "6", e: "🍬🍬🍬 + 🍬🍬🍬" },
-        { q: "4 + 2 = ...", a: ["6", "8", "5"], c: "6", e: "📚📚📚📚 + 📚📚" },
-        { q: "6 + 2 = ...", a: ["7", "8", "9"], c: "8", e: "🐦🐦🐦🐦🐦🐦 + 🐦🐦" },
-        { q: "1 + 4 = ...", a: ["4", "5", "6"], c: "5", e: "✏️ + ✏️✏️✏️✏️" },
-        { q: "7 + 3 = ...", a: ["9", "10", "11"], c: "10", e: "🔵x7 + 🔵🔵🔵" },
-        { q: "5 + 5 = ...", a: ["10", "15", "8"], c: "10", e: "🖐️ + 🖐️" },
-        { q: "2 + 5 = ...", a: ["6", "7", "8"], c: "7", e: "🚗🚗 + 🚗🚗🚗🚗🚗" },
-        { q: "8 + 1 = ...", a: ["7", "9", "10"], c: "9", e: "🧧x8 + 🧧" },
-        { q: "5 - 2 = ...", a: ["3", "2", "4"], c: "3", e: "🎈🎈🎈🎈🎈 (pecah 2)" },
-        { q: "10 - 4 = ...", a: ["5", "6", "7"], c: "6", e: "🍪x10 (dimakan 4)" },
-        { q: "6 - 3 = ...", a: ["2", "3", "4"], c: "3", e: "🤖🤖🤖🤖🤖🤖 (hilang 3)" },
-        { q: "8 - 4 = ...", a: ["4", "5", "3"], c: "4", e: "🐦x8 (terbang 4)" },
-        { q: "7 - 1 = ...", a: ["5", "6", "8"], c: "6", e: "🍊x7 (dimakan 1)" },
-        { q: "9 - 3 = ...", a: ["5", "6", "7"], c: "6", e: "🐱x9 (pergi 3)" },
-        { q: "4 - 2 = ...", a: ["1", "2", "3"], c: "2", e: "🍦🍦🍦🍦 (jatuh 2)" },
-        { q: "10 - 5 = ...", a: ["5", "4", "6"], c: "5", e: "🥚x10 (pecah 5)" },
-        { q: "3 - 3 = ...", a: ["1", "0", "3"], c: "0", e: "✈️✈️✈️ (hilang semua)" },
-        { q: "7 - 5 = ...", a: ["1", "2", "3"], c: "2", e: "👕x7 (kotor 5)" }
+        { q: "2 + 3 = ...", a: ["4", "5", "6"], c: "5", e: "🍎🍎 + 🍎🍎🍎" },
+        { q: "6 + 1 = ...", a: ["6", "7", "8"], c: "7", e: "🐱x6 + 🐱" },
+        { q: "4 + 4 = ...", a: ["7", "8", "9"], c: "8", e: "🎈x4 + 🎈x4" },
+        { q: "10 - 2 = ...", a: ["8", "7", "9"], c: "8", e: "🍪x10 (dimakan 2)" },
+        { q: "5 - 5 = ...", a: ["1", "0", "5"], c: "0", e: "🍬x5 (habis dimakan)" }
+        // Tambahkan soal lainnya sampai 20 di sini...
     ];
 
     function startAdventure() {
-        const input = document.getElementById("user-name");
-        if (input.value.trim() === "") {
-            alert("Isi namamu dulu ya sayang!");
-            return;
-        }
-        userName = input.value;
+        userName = document.getElementById("user-name").value;
+        if (!userName) return alert("Tulis namamu dulu ya!");
         document.getElementById("welcome-screen").style.display = "none";
         document.getElementById("quiz-screen").style.display = "block";
-        document.getElementById("greeting-text").innerText = `Selamat Datang, ${userName}!`;
+        document.getElementById("greeting").innerText = `Halo, ${userName}!`;
         loadQuestion();
     }
 
     function loadQuestion() {
-        const current = quizData[currentStep];
-        document.getElementById("step-info").innerText = `Soal ${currentStep + 1} / 20`;
-        document.getElementById("progress-fill").style.width = `${(currentStep / 20) * 100}%`;
-        document.getElementById("question").innerHTML = `${current.e}<br><b>${current.q}</b>`;
-        
-        const optionsDiv = document.getElementById("options");
-        optionsDiv.innerHTML = "";
-        current.a.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "opt-btn";
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(opt);
-            optionsDiv.appendChild(btn);
+        const cur = quizData[currentStep];
+        document.getElementById("progress-fill").style.width = `${(currentStep/quizData.length)*100}%`;
+        document.getElementById("question").innerHTML = `${cur.e}<br>${cur.q}`;
+        const optDiv = document.getElementById("options");
+        optDiv.innerHTML = "";
+        cur.a.forEach(o => {
+            const b = document.createElement("button");
+            b.className = "opt-btn";
+            b.innerText = o;
+            b.onclick = () => {
+                if(o === cur.c) { score++; showFB(true); }
+                else showFB(false);
+            };
+            optDiv.appendChild(b);
         });
     }
 
-    function checkAnswer(ans) {
-        if (ans === quizData[currentStep].c) {
-            score++;
-            showFeedback(true);
-        } else {
-            showFeedback(false);
-        }
-    }
-
-    function showFeedback(isCorrect) {
+    function showFB(correct) {
         document.getElementById("quiz-screen").style.display = "none";
         document.getElementById("feedback-screen").style.display = "block";
-        
-        if (isCorrect) {
-            document.getElementById("feedback-emoji").innerText = "🎉";
-            document.getElementById("feedback-msg").innerText = `Hebat, ${userName}! Jawabanmu BENAR!`;
-        } else {
-            document.getElementById("feedback-emoji").innerText = "💡";
-            document.getElementById("feedback-msg").innerText = `Ups! Kurang tepat, tapi jangan menyerah!`;
-        }
+        document.getElementById("fb-msg").innerText = correct ? `Hebat, ${userName}! Kamu Benar!` : `Hampir tepat, ${userName}!`;
+        document.getElementById("fb-emoji").innerText = correct ? "🎉" : "💡";
     }
 
     function nextQuestion() {
         currentStep++;
         document.getElementById("feedback-screen").style.display = "none";
-        if (currentStep < quizData.length) {
+        if(currentStep < quizData.length) {
             document.getElementById("quiz-screen").style.display = "block";
             loadQuestion();
         } else {
@@ -252,16 +185,9 @@
 
     function showResult() {
         document.getElementById("result-screen").style.display = "block";
-        document.getElementById("final-score").innerText = `Skor: ${score} / 20`;
-        
-        let msg = "";
-        if(score === 20) msg = `Sempurna! ${userName} adalah Raja Matematika! 👑`;
-        else if(score > 10) msg = `Hebat sekali ${userName}! Terus belajar ya! ✨`;
-        else msg = `Ayo semangat lagi ${userName}, kamu pasti bisa! 💪`;
-        
-        document.getElementById("final-msg").innerText = msg;
+        document.getElementById("final-score").innerText = `Skor: ${score} / ${quizData.length}`;
+        document.getElementById("final-msg").innerText = score > (quizData.length/2) ? "Kamu luar biasa!" : "Ayo coba lagi!";
     }
 </script>
-
 </body>
 </html>
