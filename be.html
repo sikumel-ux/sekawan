@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Octocat Math Mission - 10 Soal</title>
+    <title>Misi 20 Soal Matematika Octocat</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f6f8fa; color: #24292e; display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; border: 1px solid #d1d5da; border-radius: 6px; width: 100%; max-width: 500px; padding: 24px; box-shadow: 0 1px 3px rgba(27,31,35,0.12); }
-        .header { border-bottom: 1px solid #e1e4e8; padding-bottom: 16px; margin-bottom: 16px; text-align: center; }
-        .progress-container { background-color: #e1e4e8; border-radius: 10px; height: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-bar { background-color: #28a745; height: 100%; width: 0%; transition: 0.3s; }
-        .question { font-size: 18px; font-weight: 600; margin-bottom: 20px; min-height: 60px; }
-        .options { display: grid; gap: 10px; }
-        button { background-color: #fafbfc; border: 1px solid #d1d5da; border-radius: 6px; padding: 12px; cursor: pointer; text-align: left; font-size: 16px; transition: 0.2s; }
-        button:hover { background-color: #0366d6; color: white; border-color: #0366d6; }
-        .score-screen { text-align: center; display: none; }
-        .octocat { font-size: 50px; margin-bottom: 10px; }
-        .btn-restart { background-color: #2ea44f; color: white; border: none; padding: 10px 20px; margin-top: 20px; font-weight: bold; width: 100%; text-align: center; }
+        body { font-family: -apple-system, system-ui, sans-serif; background-color: #f6f8fa; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; border: 1px solid #d1d5da; border-radius: 12px; width: 100%; max-width: 550px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 2px solid #eaecef; margin-bottom: 20px; padding-bottom: 10px; }
+        .progress-container { background: #e1e4e8; border-radius: 10px; height: 12px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: #2ea44f; height: 100%; width: 0%; transition: 0.4s; }
+        .question { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #24292e; line-height: 1.5; }
+        .options { display: grid; gap: 12px; }
+        button { background: #ffffff; border: 2px solid #e1e4e8; border-radius: 8px; padding: 15px; cursor: pointer; font-size: 18px; font-weight: 600; transition: 0.3s; }
+        button:hover { border-color: #0366d6; background: #f1f8ff; }
+        .result-screen { text-align: center; display: none; }
+        .emoji-header { font-size: 50px; }
+        .badge { background: #fff5b1; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <div class="octocat">🐙🐱</div>
-        <h2 id="title">Misi: Penjelajah Angka</h2>
+    <div class="header" id="header-ui">
+        <div class="emoji-header">🚀</div>
+        <h2>Misi Matematika Junior</h2>
+        <span class="badge" id="step-counter">Soal 1 dari 20</span>
         <div class="progress-container">
             <div id="progress" class="progress-bar"></div>
         </div>
@@ -35,25 +36,39 @@
         <div id="options" class="options"></div>
     </div>
 
-    <div id="result" class="score-screen">
+    <div id="result" class="result-screen">
+        <div class="emoji-header">🏆</div>
         <h2 id="final-score"></h2>
-        <p id="message"></p>
-        <button class="btn-restart" onclick="location.reload()">Ulangi Misi</button>
+        <p id="message" style="font-size: 18px;"></p>
+        <button onclick="location.reload()" style="width:100%; background:#2ea44f; color:white; border:none; margin-top:20px;">Main Lagi</button>
     </div>
 </div>
 
 <script>
     const quizData = [
-        { q: "1. Octocat punya 3 bintang dan nambah 2 lagi. Totalnya?", a: ["4", "5", "6"], c: "5" },
-        { q: "2. Ada 8 bug, kamu hapus 3 bug. Sisa berapa?", a: ["5", "6", "11"], c: "5" },
-        { q: "3. Ibu kasih 5 stiker, Ayah kasih 4 lagi. Total stiker?", a: ["8", "9", "10"], c: "9" },
-        { q: "4. Punya 10 baris kode, 4 salah dan dihapus. Sisa?", a: ["6", "5", "7"], c: "6" },
-        { q: "5. Pagi nemu 6 koin, sore nemu 4 koin. Total koin?", a: ["9", "10", "11"], c: "10" },
-        { q: "6. Ada 7 komputer, 2 dimatikan. Berapa yang nyala?", a: ["5", "4", "6"], c: "5" },
-        { q: "7. Di tas ada 2 pensil, kamu masukin lagi 6. Jadi?", a: ["7", "8", "9"], c: "8" },
-        { q: "8. Ada 9 apel, dimakan adik 5 buah. Sisa berapa?", a: ["3", "4", "5"], c: "4" },
-        { q: "9. Download 1 game, lalu download 8 lagi. Total?", a: ["8", "9", "10"], c: "9" },
-        { q: "10. Punya 6 robot, semuanya dipinjam teman. Sisa?", a: ["0", "1", "6"], c: "0" }
+        // PENJUMLAHAN (1-10)
+        { q: "1. Octocat punya 2 bintang ⭐⭐ dan dapat lagi 2 ⭐⭐. Berapa totalnya?", a: ["3", "4", "5"], c: "4" },
+        { q: "2. Ada 5 ikan 🐟🐟🐟🐟🐟 berenang, datang 1 lagi 🐟. Jadi berapa?", a: ["6", "7", "4"], c: "6" },
+        { q: "3. Kamu punya 3 permen 🍬🍬🍬, Ibu beri 3 lagi 🍬🍬🍬. Totalnya?", a: ["5", "6", "7"], c: "6" },
+        { q: "4. Di meja ada 4 buku 📚📚📚📚, ditambah 2 buku 📚📚. Jadi berapa?", a: ["6", "5", "8"], c: "6" },
+        { q: "5. Ada 6 burung 🐦🐦🐦🐦🐦🐦, hinggap lagi 2 🐦🐦. Totalnya?", a: ["7", "8", "9"], c: "8" },
+        { q: "6. Kamu punya 1 pensil ✏️, beli lagi 4 ✏️✏️✏️✏️. Berapa pensilmu?", a: ["4", "5", "6"], c: "5" },
+        { q: "7. Ada 7 kelereng 🔵x7, ditambah 3 lagi 🔵🔵🔵. Totalnya?", a: ["9", "10", "11"], c: "10" },
+        { q: "8. Octocat punya 5 apel 🍎x5, nambah 5 lagi 🍎x5. Jadi berapa?", a: ["10", "15", "9"], c: "10" },
+        { q: "9. Ada 2 mobil 🚗🚗, datang 5 lagi 🚗x5. Total mobil?", a: ["6", "7", "8"], c: "7" },
+        { q: "10. Kamu punya 8 stiker 🧧x8, nambah 1 lagi 🧧. Totalnya?", a: ["7", "9", "10"], c: "9" },
+        
+        // PENGURANGAN (11-20)
+        { q: "11. Ada 5 balon 🎈x5, meletus 2 💥. Sisa berapa?", a: ["3", "2", "4"], c: "3" },
+        { q: "12. Punya 10 biskuit 🍪x10, dimakan 4 🍪x4. Sisa?", a: ["5", "6", "7"], c: "6" },
+        { q: "13. Ada 6 robot 🤖x6, dipinjam teman 3 🤖x3. Sisa?", a: ["2", "3", "4"], c: "3" },
+        { q: "14. Di pohon ada 8 burung 🐦x8, terbang 4 🐦x4. Sisa?", a: ["4", "5", "3"], c: "4" },
+        { q: "15. Kamu punya 7 jeruk 🍊x7, dimakan 1 🍊. Sisa berapa?", a: ["5", "6", "8"], c: "6" },
+        { q: "16. Ada 9 kucing 🐱x9, pergi 3 🐱x3. Sisa?", a: ["5", "6", "7"], c: "6" },
+        { q: "17. Punya 4 es krim 🍦x4, jatuh 2 🍦🍦. Sisa berapa?", a: ["1", "2", "3"], c: "2" },
+        { q: "18. Ada 10 telur 🥚x10, pecah 5 🥚x5. Sisa?", a: ["5", "4", "6"], c: "5" },
+        { q: "19. Punya 3 pesawat ✈️✈️✈️, hilang 3 ✈️✈️✈️. Sisa?", a: ["1", "0", "3"], c: "0" },
+        { q: "20. Ada 7 baju 👕x7, kotor 5 👕x5. Baju yang bersih sisa?", a: ["1", "2", "3"], c: "2" }
     ];
 
     let currentStep = 0;
@@ -63,10 +78,11 @@
         const qBox = document.getElementById("question");
         const oBox = document.getElementById("options");
         const progress = document.getElementById("progress");
+        const counter = document.getElementById("step-counter");
         const current = quizData[currentStep];
 
-        // Update Progress Bar
         progress.style.width = ((currentStep) / quizData.length * 100) + "%";
+        counter.innerText = `Soal ${currentStep + 1} dari 20`;
 
         qBox.innerText = current.q;
         oBox.innerHTML = "";
@@ -92,18 +108,18 @@
 
     function showResult() {
         document.getElementById("quiz-box").style.display = "none";
-        document.getElementById("progress").style.width = "100%";
+        document.getElementById("header-ui").style.display = "none";
         const res = document.getElementById("result");
         res.style.display = "block";
         
-        document.getElementById("final-score").innerText = `Skor: ${score} / ${quizData.length}`;
+        document.getElementById("final-score").innerText = `Skor Kamu: ${score} / 20`;
         
-        if(score === 10) {
-            document.getElementById("message").innerText = "Luar biasa! Kamu adalah Senior Developer! 🏆";
-        } else if(score > 6) {
-            document.getElementById("message").innerText = "Hebat! Kode berhasil diperbaiki! 🎉";
+        if(score >= 18) {
+            document.getElementById("message").innerText = "Luar Biasa! Kamu Jenius Matematika! 🌟";
+        } else if(score >= 12) {
+            document.getElementById("message").innerText = "Hebat! Terus berlatih ya! 👍";
         } else {
-            document.getElementById("message").innerText = "Ayo coba lagi, Octocat butuh bantuanmu! 💪";
+            document.getElementById("message").innerText = "Jangan menyerah, coba lagi yuk! 💪";
         }
     }
 
