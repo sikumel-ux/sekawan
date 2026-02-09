@@ -304,13 +304,14 @@
     function openModal(id) { document.getElementById(id).style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
 </script>
+    <script>
     // Registrasi PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
       .then(() => console.log("PWA Ready, Bro!"))
       .catch(err => console.log("Gagal PWA:", err));
 }
-    
+</script>
 </body>
     </html>
                     
