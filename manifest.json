@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "kas_tuntas.html",
+  "start_url": "kasku.html",
   "display": "standalone",
   "theme_color": "#064E3B",
   "background_color": "#F1F5F9"
