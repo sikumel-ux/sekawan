@@ -1,7 +1,7 @@
 const CACHE_NAME = 'tuntas-v2';
 const assets = [
   './',
-  './index.html',
+  './kasku.html',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
 ];
