@@ -3,12 +3,12 @@
   "name": "Tuntas",
   "icons": [
     {
-      "src": "tuntas.png",
+      "src": "sampah.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "tuntas.png",
+      "src": "sampah.png",
       "sizes": "512x512",
       "type": "image/png"
     }
