@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tuntas-v1';
+const CACHE_NAME = 'tuntas-v2';
 const assets = [
   './',
   './index.html',
