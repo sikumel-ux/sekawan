@@ -75,7 +75,7 @@
         let idUrl = params.get('id');
 
         async function init() {
-            if (!idUrl) { window.location.href = "kas_tuntas.html"; return; }
+            if (!idUrl) { window.location.href = "tentang.html"; return; }
             try {
                 let doc = await db.collection("pembayaran").doc(idUrl).get();
                 if (doc.exists) { render(doc.data(), doc.id); } else { tampilkanPenyusup(); }
