@@ -75,12 +75,30 @@
         let idUrl = params.get('id');
 
         async function init() {
-            if (!idUrl) { window.location.href = "tentang.html"; return; }
-            try {
-                let doc = await db.collection("pembayaran").doc(idUrl).get();
-                if (doc.exists) { render(doc.data(), doc.id); } else { tampilkanPenyusup(); }
-            } catch (e) { console.error(e); tampilkanPenyusup(); }
+    // Mengambil kode dari path (misal dari /T-123456 jadi T-123456)
+    const path = window.location.pathname.split('/').pop();
+    
+    // Cek: Jika tidak ada path atau path tidak diawali 'T-', lempar ke admin
+    if (!path || !path.startsWith('T-')) { 
+        window.location.href = "tentang.html"; 
+        return; 
+    }
+    
+    try {
+        // Cari data berdasarkan ID dokumen (karena ID dokumen kita adalah T-XXXXXX)
+        let doc = await db.collection("pembayaran").doc(path).get();
+        
+        if (doc.exists) {
+            render(doc.data(), doc.id);
+        } else {
+            tampilkanPenyusup();
         }
+    } catch (e) {
+        console.error(e);
+        tampilkanPenyusup();
+    }
+}
+
 
         function render(data, docId) {
             document.getElementById('loading').classList.add('hidden');
