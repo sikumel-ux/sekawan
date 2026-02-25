@@ -273,9 +273,9 @@
         loadData();
         
         const hp = (dataWarga[n]||'').replace(/^0/,'62');
-        const linkKuitansi = window.location.origin + window.location.pathname.replace('kas_tuntas.html', 'kuitansi.html') + `?id=${docRef.id}`;
+        const linkKuitansi = window.location.origin + `/?id=${kodeUnik}`;
         
-        const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${docRef.id.substring(0,8)}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIL*`;
+        const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${docRef.id.substring(0,8)}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIYANTO*`;
         
         window.open(`https://wa.me/${hp}?text=${msg}`);
         document.getElementById('iNom').value = '';
