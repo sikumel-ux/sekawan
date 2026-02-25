@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
     <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#064E3B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -208,7 +208,6 @@
         ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>'; listR.innerHTML='';
         const iuranArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-        // PROSES DATA TRANSAKSI
         dkas.docs.forEach(doc => {
             const d = doc.data(); const nom = Number(d.nom || 0);
             if(d.kat==='Masuk') tIn+=nom; else tOut+=nom;
@@ -223,12 +222,11 @@
         document.getElementById('totalMasuk').innerText = 'Rp ' + (tIn + tIur).toLocaleString('id-ID');
         document.getElementById('totalKeluar').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
 
-        // FILTER & SORTING (Terbaru di Atas)
         const s = document.getElementById('fStart').value ? new Date(document.getElementById('fStart').value) : null;
         const e = document.getElementById('fEnd').value ? new Date(document.getElementById('fEnd').value) : null;
         if(e) e.setHours(23,59,59);
 
-        allTrx.sort((a,b) => b.tgl - a.tgl); // Logic Sort Terbaru ke Lama
+        allTrx.sort((a,b) => b.tgl - a.tgl);
 
         allTrx.filter(tx => {
             if(!s && !e) return true;
@@ -240,7 +238,6 @@
             listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase tracking-tighter text-slate-700">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
         });
 
-        // REKAP LOGIC SESUAI PERMINTAAN
         dang.docs.forEach(doc => {
             const d = doc.data(); const n = (d.nama || "").trim().toUpperCase();
             dataWarga[n] = d.hp || '';
@@ -265,19 +262,37 @@
     }
 
     async function simpanIuran() {
-        const n = document.getElementById('iNama').value, nmn = Number(document.getElementById('iNom').value), tglVal = document.getElementById('iTgl').value;
+        const n = document.getElementById('iNama').value, 
+              nmn = Number(document.getElementById('iNom').value), 
+              tglVal = document.getElementById('iTgl').value;
         const blns = Array.from(document.querySelectorAll('input[name="blnCek"]:checked')).map(c => c.value);
+        
         if(!n || !nmn || blns.length === 0 || !tglVal) return alert("Lengkapi data!");
         
-        const docRef = await db.collection("pembayaran").add({ nama: n, bulan: blns.join(","), nom: nmn, tgl: new Date(tglVal) }); 
+        // --- LOGIKA KODE UNIK T-XXXXXX ---
+        const kodeUnik = "T-" + Math.floor(100000 + Math.random() * 900000); 
+        
+        // Simpan ke Firestore menggunakan kodeUnik sebagai ID Dokumen
+        await db.collection("pembayaran").doc(kodeUnik).set({ 
+            nama: n, 
+            bulan: blns.join(","), 
+            nom: nmn, 
+            tgl: new Date(tglVal),
+            kode: kodeUnik 
+        }); 
+        
         loadData();
         
         const hp = (dataWarga[n]||'').replace(/^0/,'62');
-        const linkKuitansi = window.location.origin + `/?id=${kodeUnik}`;
         
-        const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${docRef.id.substring(0,8)}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIYANTO*`;
+        // Deteksi path otomatis untuk kuitansi.html
+        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const linkKuitansi = window.location.origin + path + `/?id=${kodeUnik}`;
+        
+        const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${kodeUnik}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIYANTO*`;
         
         window.open(`https://wa.me/${hp}?text=${msg}`);
+        
         document.getElementById('iNom').value = '';
         document.querySelectorAll('input[name="blnCek"]').forEach(c => c.checked = false);
     }
@@ -295,23 +310,22 @@
     }
 
     async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+    
     function st(t) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.getElementById('screen-'+t).classList.add('active');
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById('n-'+t).classList.add('active');
     }
+    
     function openModal(id) { document.getElementById(id).style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
-</script>
-    <script>
-    // Registrasi PWA
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log("PWA Ready, Bro!"))
-      .catch(err => console.log("Gagal PWA:", err));
-}
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log("PWA Ready!"))
+          .catch(err => console.log("Gagal PWA:", err));
+    }
 </script>
 </body>
-    </html>
-                    
+</html>
