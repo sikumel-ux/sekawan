@@ -287,7 +287,7 @@
         
         // Deteksi path otomatis untuk kuitansi.html
         const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const linkKuitansi = window.location.origin + path + `/?id=${kodeUnik}`;
+        const linkKuitansi = window.location.origin + "/" + kodeUnik;
         
         const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${kodeUnik}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIYANTO*`;
         
