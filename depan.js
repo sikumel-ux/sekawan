@@ -68,27 +68,18 @@ async function loadData() {
 
     iuranArr.forEach(d => {
         const nom = Number(d.nom || 0); tIur += nom;
-        allTrx.push({ id: d.id, col: 'pembayaran', ket: `IURAN: ${(d.nama||'').split(' ')[0]}`, nom: nom, kat: 'Masuk', tgl: (d.tgl?d.tgl.toDate():new Date()) });
+        // PERBAIKAN: Menggunakan nama lengkap d.nama (bukan split)
+        allTrx.push({ id: d.id, col: 'pembayaran', ket: `IURAN: ${d.nama || ''}`, nom: nom, kat: 'Masuk', tgl: (d.tgl?d.tgl.toDate():new Date()) });
     });
 
     document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString('id-ID');
     document.getElementById('totalMasuk').innerText = 'Rp ' + (tIn + tIur).toLocaleString('id-ID');
     document.getElementById('totalKeluar').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
 
-    const s = document.getElementById('fStart').value ? new Date(document.getElementById('fStart').value) : null;
-    const e = document.getElementById('fEnd').value ? new Date(document.getElementById('fEnd').value) : null;
-    if(e) e.setHours(23,59,59);
-
     allTrx.sort((a,b) => b.tgl - a.tgl);
-
-    allTrx.filter(tx => {
-        if(!s && !e) return true;
-        if(s && tx.tgl < s) return false;
-        if(e && tx.tgl > e) return false;
-        return true;
-    }).forEach(tx => {
+    allTrx.forEach(tx => {
         const isM = tx.kat === 'Masuk';
-        listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase tracking-tighter text-slate-700">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
+        listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase text-slate-700">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
     });
 
     dang.docs.forEach(doc => {
@@ -98,21 +89,15 @@ async function loadData() {
         
         ti.insertAdjacentHTML('beforeend', `
             <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm">
-                <div>
-                    <p class="font-black text-xs uppercase text-slate-700">${n}</p>
-                    <p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p>
-                </div>
+                <div><p class="font-black text-xs uppercase text-slate-700">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div>
                 <div class="flex gap-2">
-                    <button onclick="bukaEditWarga('${doc.id}', '${n}', '${d.hp || ''}')" class="text-emerald-600 opacity-50 hover:opacity-100">
-                        <span class="material-symbols-rounded">edit</span>
-                    </button>
-                    <button onclick="hapus('anggota','${doc.id}')" class="text-red-100">
-                        <span class="material-symbols-rounded">delete</span>
-                    </button>
+                    <button onclick="bukaEditWarga('${doc.id}', '${n}', '${d.hp || ''}')" class="text-emerald-600 opacity-50"><span class="material-symbols-rounded">edit</span></button>
+                    <button onclick="hapus('anggota','${doc.id}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button>
                 </div>
             </div>`);
 
-        let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 bg-white border-b border-slate-50 uppercase">${n.split(' ')[0]}</td>`;
+        // PERBAIKAN: Menggunakan nama lengkap n (bukan split)
+        let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 bg-white border-b border-slate-50 uppercase text-[10px]">${n}</td>`;
         daftarBulan.forEach(bln => {
             const lunas = iuranArr.filter(k => (k.nama||"").toUpperCase() === n && (k.bulan||"").includes(bln));
             if(lunas.length > 0) {
@@ -141,7 +126,7 @@ async function simpanIuran() {
     const hp = (dataWarga[n]||'').replace(/^0/,'62');
     const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
     const linkKuitansi = window.location.origin + path + `kuitansi.html?id=${kodeUnik}`;
-    const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${kodeUnik}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS,%0A%0A*APRIL*`;
+    const msg = `Halo, pak/bu *${n}*..%0APembayaran Anda telah kami terima dengan no referensi *${kodeUnik}*.%0A%0A---------------------------%0ACek e-Kuitansi Anda di:%0A${linkKuitansi}%0A---------------------------%0A%0ATerimakasih atas partisipasinya.%0A%0APengurus TUNTAS`;
     
     window.open(`https://wa.me/${hp}?text=${msg}`);
     document.getElementById('iNom').value = '';
@@ -169,24 +154,22 @@ function bukaEditWarga(id, nama, hp) {
 
 async function updateAnggota() {
     const id = document.getElementById('eId').value, n = document.getElementById('eNama').value.trim().toUpperCase(), h = document.getElementById('eHp').value;
-    if(!n) return alert("Nama tidak boleh kosong!");
+    if(!n) return alert("Nama wajib diisi!");
     try {
         await db.collection("anggota").doc(id).update({ nama: n, hp: h });
-        closeModal('mEditWarga'); loadData(); alert("Data diperbarui!");
-    } catch (err) { alert("Gagal!"); }
+        closeModal('mEditWarga'); loadData(); alert("Berhasil diupdate!");
+    } catch (err) { alert("Gagal update!"); }
 }
 
-async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
+
 function st(t) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById('screen-'+t).classList.add('active');
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById('n-'+t).classList.add('active');
 }
+
 function openModal(id) { document.getElementById(id).style.display='flex'; }
 function closeModal(id) { document.getElementById(id).style.display='none'; }
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ready!"));
-          }
-                           
+            
