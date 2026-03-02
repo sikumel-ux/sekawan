@@ -80,7 +80,32 @@
         <div id="listPon" class="space-y-2">
             </div>
     </section>
+<nav class="fixed bottom-0 inset-x-0 h-20 bg-white border-t flex justify-around items-center px-1 z-50">
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">dashboard</span>
+            <span class="text-[8px] font-bold">HOME</span>
+        </button>
+        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">group</span>
+            <span class="text-[8px] font-bold">WARGA</span>
+        </button>
+        
+        <a href="pon.html" class="flex flex-col items-center gap-1 text-orange-600">
+            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                <span class="material-symbols-rounded">menu_book</span>
+            </div>
+            <span class="text-[8px] font-black">PON</span>
+        </a>
 
+        <button onclick="st('rekap')" id="n-rekap" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">analytics</span>
+            <span class="text-[8px] font-bold">REKAP</span>
+        </button>
+        <button onclick="st('bayar')" id="n-bayar" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">payments</span>
+            <span class="text-[8px] font-bold">BAYAR</span>
+        </button>
+</nav>
     <script>
         // Konfigurasi Firebase
         const config = {
