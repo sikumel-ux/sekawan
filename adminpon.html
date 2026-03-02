@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Admin</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link rel="stylesheet" href="adminpon.css">
+</head>
+<body>
+
+<div id="mainApp" class="max-w-md mx-auto p-5">
+    <header class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center text-white shadow-lg">
+                <span class="material-symbols-rounded">wallet</span>
+            </div>
+            <h1 class="text-xl font-black text-emerald-900">Tuntas.</h1>
+        </div>
+    </header>
+
+    <div id="screen-home" class="tab-content active space-y-4">
+        <div class="p-8 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+            <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Saldo Kas Utama</p>
+            <h2 id="totalSaldo" class="text-4xl font-black mt-1">Rp 0</h2>
+            <span class="material-symbols-rounded absolute -right-4 -bottom-4 text-8xl opacity-10">payments</span>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="st('bayar')" class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center gap-2">
+                <span class="material-symbols-rounded text-emerald-600">add_circle</span>
+                <span class="text-[10px] font-black text-slate-600 uppercase">Iuran</span>
+            </button>
+            <button onclick="openModal('mKas')" class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center gap-2">
+                <span class="material-symbols-rounded text-emerald-900">account_balance_wallet</span>
+                <span class="text-[10px] font-black text-slate-600 uppercase">Kas Umum</span>
+            </button>
+        </div>
+
+        <div class="pt-2">
+            <h3 class="font-black text-[10px] text-slate-400 mb-3 uppercase tracking-widest px-1">Histori Terakhir</h3>
+            <div id="listRiwayat" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <div id="screen-warga" class="tab-content space-y-4">
+        <div class="flex justify-between items-center px-1">
+            <h3 class="font-black text-emerald-900 uppercase">Daftar Warga</h3>
+            <button onclick="openModal('mAnggota')" class="bg-emerald-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">+ Warga</button>
+        </div>
+        <div id="tBodyWarga" class="space-y-2"></div>
+    </div>
+
+    <div id="screen-rekap" class="tab-content space-y-4">
+        <h3 class="font-black text-emerald-900 uppercase px-1">Rekap Iuran</h3>
+        <div class="table-scroll bg-white">
+            <table class="w-full text-left text-[11px]">
+                <thead><tr id="th-rekap" class="text-slate-400 uppercase font-black"></tr></thead>
+                <tbody id="tb-rekap"></tbody>
+                <tfoot id="tf-rekap" class="bg-emerald-50 font-black text-emerald-900"></tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div id="screen-bayar" class="tab-content space-y-4">
+        <div class="bg-white p-6 rounded-[2.5rem] border shadow-sm space-y-4">
+            <h3 class="font-black text-emerald-900 uppercase text-center">Input Pembayaran</h3>
+            <div id="gridBulan" class="grid grid-cols-3 gap-2"></div>
+            <select id="iNama" class="modern-in font-bold"></select>
+            <input type="number" id="iNom" class="modern-in text-2xl font-black text-center" placeholder="0">
+            <button onclick="simpanIuran()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs">Simpan Iuran</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white border-t flex justify-around items-center px-1 z-50">
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">dashboard</span>
+            <span class="text-[8px] font-bold">HOME</span>
+        </button>
+        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">group</span>
+            <span class="text-[8px] font-bold">WARGA</span>
+        </button>
+        <a href="/pon" class="flex flex-col items-center gap-1 text-orange-600">
+            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                <span class="material-symbols-rounded">menu_book</span>
+            </div>
+            <span class="text-[8px] font-black">PON</span>
+        </a>
+        <button onclick="st('rekap')" id="n-rekap" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">analytics</span>
+            <span class="text-[8px] font-bold">REKAP</span>
+        </button>
+        <button onclick="st('bayar')" id="n-bayar" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">payments</span>
+            <span class="text-[8px] font-bold">BAYAR</span>
+        </button>
+    </nav>
+</div>
+
+<div id="mKas" class="hidden modal-overlay fixed inset-0 bg-black/50 items-center justify-center p-6 z-[100]" onclick="if(event.target==this)closeModal('mKas')">
+    <div class="bg-white p-6 rounded-[2.5rem] w-full max-w-sm space-y-4">
+        <h3 class="font-black uppercase text-center">Catat Kas Umum</h3>
+        <input type="date" id="kTgl" class="modern-in">
+        <select id="kKat" class="modern-in">
+            <option value="Masuk">Masuk (+)</option>
+            <option value="Keluar">Keluar (-)</option>
+        </select>
+        <input type="text" id="kKet" class="modern-in" placeholder="KETERANGAN">
+        <input type="number" id="kNom" class="modern-in" placeholder="NOMINAL">
+        <button onclick="simpanKas()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black">SIMPAN</button>
+    </div>
+</div>
+
+<div id="mAnggota" class="hidden modal-overlay fixed inset-0 bg-black/50 items-center justify-center p-6 z-[100]" onclick="if(event.target==this)closeModal('mAnggota')">
+    <div class="bg-white p-6 rounded-[2.5rem] w-full max-w-sm space-y-4">
+        <h3 class="font-black uppercase text-center text-emerald-900">Tambah Warga</h3>
+        <input type="text" id="aNama" class="modern-in uppercase" placeholder="NAMA LENGKAP">
+        <input type="number" id="aHp" class="modern-in" placeholder="NOMOR WHATSAPP">
+        <button onclick="simpanAnggota()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black">TAMBAH</button>
+    </div>
+</div>
+
+<script src="adminpon.js"></script>
+</body>
+      </html>
+      
