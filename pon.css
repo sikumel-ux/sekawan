@@ -1,0 +1,16 @@
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 100px; }
+.sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 130px; }
+.table-scroll { overflow-x: auto; border-radius: 1rem; border: 1px solid #E2E8F0; background: white; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+.modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; }
+
+/* Navbar logic */
+nav button, nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; color: #94A3B8; transition: 0.3s; }
+nav button.active { color: #064E3B; transform: translateY(-3px); }
+nav span.material-symbols-rounded { font-size: 22px; }
+
+.modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+::-webkit-scrollbar { display: none; }
