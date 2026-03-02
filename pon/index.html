@@ -3,63 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PON Mandiri - TUNTAS</title>
+    <title>PON Mandiri - Buku Kas</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FDFCFB; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FDFCFB; padding-bottom: 40px; }
         .modern-in { width:100%; padding:14px; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-5 max-w-md mx-auto pb-20">
+<body class="p-5 max-w-md mx-auto">
 
-    <header class="flex items-center gap-3 mb-8">
-        <div class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-100">
-            <span class="material-symbols-rounded">payments</span>
+    <header class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-100">
+                <span class="material-symbols-rounded">menu_book</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-black text-slate-800 uppercase leading-none">PON Mandiri</h1>
+                <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mt-1">Buku Kas Terpisah</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-xl font-black text-slate-800 uppercase leading-none">PON Mandiri</h1>
-            <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mt-1">Pencatatan Terpisah</p>
-        </div>
+        <a href="index.html" class="w-10 h-10 bg-white border rounded-xl flex items-center justify-center text-slate-400">
+            <span class="material-symbols-rounded">close</span>
+        </a>
     </header>
 
+    <div class="bg-slate-900 p-7 rounded-[2.5rem] text-white card-shadow mb-6 relative overflow-hidden">
+        <p class="text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]">Sisa Saldo PON</p>
+        <h2 id="totalPon" class="text-3xl font-black mt-1 text-orange-400">Rp 0</h2>
+        <div class="flex gap-4 mt-4 pt-4 border-t border-white/10">
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase">Total Masuk</p>
+                <p id="totalMasukPon" class="text-xs font-bold text-emerald-400">Rp 0</p>
+            </div>
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase">Total Keluar</p>
+                <p id="totalKeluarPon" class="text-xs font-bold text-red-400">Rp 0</p>
+            </div>
+        </div>
+    </div>
+
     <section class="bg-white p-6 rounded-[2.5rem] border border-orange-50 card-shadow space-y-4 mb-8">
-        <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Nama Pembayar</label>
-            <input type="text" id="pNama" class="modern-in uppercase" placeholder="NAMA LENGKAP">
+        <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Tanggal</label>
+                <input type="date" id="pTgl" class="modern-in">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Jenis</label>
+                <select id="pKat" class="modern-in">
+                    <option value="Masuk">Masuk (+)</option>
+                    <option value="Keluar">Keluar (-)</option>
+                </select>
+            </div>
         </div>
         <div class="space-y-1">
-            <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Keterangan / Keperluan</label>
-            <input type="text" id="pKet" class="modern-in" placeholder="Contoh: Titipan Langsung">
+            <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Keterangan</label>
+            <input type="text" id="pKet" class="modern-in uppercase" placeholder="CONTOH: BELI ATK">
         </div>
         <div class="space-y-1">
             <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Nominal Rp</label>
-            <input type="number" id="pNom" class="modern-in text-xl font-black text-orange-700" placeholder="0">
+            <input type="number" id="pNom" class="modern-in text-xl font-black text-slate-800" placeholder="0">
         </div>
-        <button onclick="simpanPon()" class="w-full bg-orange-600 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg shadow-orange-100 active:scale-95 transition-all">Simpan Catatan</button>
+        <button onclick="simpanPon()" class="w-full bg-orange-600 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg shadow-orange-100 active:scale-95 transition-all">Catat Transaksi</button>
     </section>
 
-    <div class="bg-orange-50 p-5 rounded-3xl border border-orange-100 mb-6 text-center">
-        <p class="text-[10px] font-bold text-orange-700 uppercase tracking-widest">Total Terkumpul (PON)</p>
-        <h2 id="totalPon" class="text-2xl font-black text-slate-800">Rp 0</h2>
-    </div>
-
     <section class="space-y-3">
-        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Riwayat PON</h3>
+        <div class="flex justify-between items-center px-1">
+            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Riwayat Kas PON</h3>
+        </div>
         <div id="listPon" class="space-y-2">
             </div>
     </section>
 
-    <a href="index.html" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white border border-slate-100 px-6 py-3 rounded-full shadow-xl flex items-center gap-2 text-xs font-bold text-slate-500">
-        <span class="material-symbols-rounded text-sm">arrow_back</span> KEMBALI KE ADMIN
-    </a>
-
     <script>
-        // Konfigurasi Firebase (Samakan dengan kastuntas.html)
+        // Konfigurasi Firebase
         const config = {
             apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
             authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -71,31 +94,33 @@
         firebase.initializeApp(config);
         const db = firebase.firestore();
 
-        // Load data saat pertama buka
+        // Set tanggal hari ini sebagai default
+        document.getElementById('pTgl').value = new Date().toISOString().split('T')[0];
+
         loadPon();
 
         async function simpanPon() {
-            const n = document.getElementById('pNama').value.trim().toUpperCase();
-            const k = document.getElementById('pKet').value.trim();
-            const m = Number(document.getElementById('pNom').value);
+            const tgl = document.getElementById('pTgl').value;
+            const kat = document.getElementById('pKat').value;
+            const ket = document.getElementById('pKet').value.trim().toUpperCase();
+            const nom = Number(document.getElementById('pNom').value);
 
-            if(!n || !m) return alert("Nama dan Nominal wajib diisi!");
+            if(!tgl || !ket || !nom) return alert("Lengkapi semua kolom!");
 
             try {
                 await db.collection("pon_mandiri").add({
-                    nama: n,
-                    ket: k,
-                    nom: m,
-                    tgl: new Date()
+                    tgl: new Date(tgl),
+                    kat: kat,
+                    ket: ket,
+                    nom: nom,
+                    createdAt: new Date()
                 });
                 
                 // Reset form
-                document.getElementById('pNama').value = '';
                 document.getElementById('pKet').value = '';
                 document.getElementById('pNom').value = '';
                 
                 loadPon();
-                alert("Data PON berhasil disimpan!");
             } catch (e) {
                 alert("Gagal menyimpan!");
             }
@@ -104,22 +129,32 @@
         async function loadPon() {
             const snap = await db.collection("pon_mandiri").orderBy("tgl", "desc").get();
             const list = document.getElementById('listPon');
-            let total = 0;
+            let tIn = 0, tOut = 0;
             list.innerHTML = '';
 
             snap.forEach(doc => {
                 const d = doc.data();
-                total += Number(d.nom);
+                const isM = d.kat === 'Masuk';
+                const n = Number(d.nom);
                 
+                if(isM) tIn += n; else tOut += n;
+
                 list.insertAdjacentHTML('beforeend', `
                     <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
-                        <div>
-                            <p class="text-xs font-black text-slate-700 uppercase">${d.nama}</p>
-                            <p class="text-[9px] text-slate-400 font-bold">${d.ket || 'Tanpa keterangan'}</p>
+                        <div class="flex gap-3 items-center">
+                            <div class="w-8 h-8 rounded-lg ${isM ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">
+                                ${isM ? 'IN' : 'OUT'}
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-black text-slate-700 uppercase leading-tight">${d.ket}</p>
+                                <p class="text-[8px] text-slate-400 font-bold">${d.tgl.toDate().toLocaleDateString('id-ID')}</p>
+                            </div>
                         </div>
                         <div class="text-right">
-                            <p class="font-black text-orange-600 text-xs">Rp ${d.nom.toLocaleString()}</p>
-                            <button onclick="hapusPon('${doc.id}')" class="text-slate-300 hover:text-red-500 transition-colors">
+                            <p class="font-black ${isM ? 'text-emerald-700' : 'text-red-600'} text-xs">
+                                ${isM ? '+' : '-'} ${n.toLocaleString()}
+                            </p>
+                            <button onclick="hapusPon('${doc.id}')" class="text-slate-200 hover:text-red-400 transition-colors">
                                 <span class="material-symbols-rounded text-sm">delete</span>
                             </button>
                         </div>
@@ -127,16 +162,17 @@
                 `);
             });
 
-            document.getElementById('totalPon').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('totalMasukPon').innerText = 'Rp ' + tIn.toLocaleString('id-ID');
+            document.getElementById('totalKeluarPon').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
+            document.getElementById('totalPon').innerText = 'Rp ' + (tIn - tOut).toLocaleString('id-ID');
         }
 
         async function hapusPon(id) {
-            if(confirm("Hapus catatan ini?")) {
+            if(confirm("Hapus transaksi ini?")) {
                 await db.collection("pon_mandiri").doc(id).delete();
                 loadPon();
             }
         }
     </script>
 </body>
-  </html>
-  
+</html>
