@@ -1,4 +1,3 @@
-// Konfigurasi Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
     authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -11,37 +10,45 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Set Tanggal Hari Ini
 document.getElementById('pTgl').value = new Date().toISOString().split('T')[0];
 
-// 1. Simpan Transaksi Baru
+// NOTIFIKASI CUSTOM
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true
+});
+
 async function simpanPon() {
     const tgl = document.getElementById('pTgl').value;
     const kat = document.getElementById('pKat').value;
     const ket = document.getElementById('pKet').value.trim().toUpperCase();
     const nom = Number(document.getElementById('pNom').value);
 
-    if (!ket || !nom) return alert("Keterangan & Nominal harus diisi!");
+    if (!ket || !nom) {
+        return Swal.fire({ icon: 'error', title: 'Oops!', text: 'Keterangan & Nominal harus diisi.', borderRadius: '2rem' });
+    }
 
     await db.collection("pon_mandiri").add({
-        tgl: new Date(tgl),
-        kat: kat,
-        ket: ket,
-        nom: nom,
-        createdAt: new Date()
+        tgl: new Date(tgl), kat, ket, nom, createdAt: new Date()
     });
 
     document.getElementById('pKet').value = '';
     document.getElementById('pNom').value = '';
+    
+    Toast.fire({ icon: 'success', title: 'Berhasil disimpan!' });
     loadPon();
 }
 
-// 2. Tampilkan Data & Hitung Saldo
 async function loadPon() {
     const snap = await db.collection("pon_mandiri").orderBy("tgl", "desc").get();
     const list = document.getElementById('listPon');
     let total = 0;
     list.innerHTML = '';
+    
+    document.getElementById('countData').innerText = `${snap.size} DATA`;
 
     snap.forEach(doc => {
         const d = doc.data();
@@ -49,32 +56,28 @@ async function loadPon() {
         const isM = d.kat === 'Masuk';
         if (isM) total += d.nom; else total -= d.nom;
 
-        const dateStr = d.tgl.toDate().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-
         list.insertAdjacentHTML('beforeend', `
-            <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm">
-                <div class="flex gap-3 items-center">
-                    <div class="w-8 h-8 rounded-lg ${isM ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">
-                        ${isM ? 'IN' : 'OUT'}
+            <div class="bg-white p-5 rounded-[1.8rem] flex justify-between items-center border border-slate-50 shadow-sm transition-all hover:shadow-md">
+                <div class="flex gap-4 items-center">
+                    <div class="w-10 h-10 rounded-2xl ${isM ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center">
+                        <span class="material-symbols-rounded text-lg">${isM ? 'north_east' : 'south_west'}</span>
                     </div>
                     <div>
-                        <p class="text-[11px] font-black text-slate-700 uppercase leading-tight">${d.ket}</p>
-                        <p class="text-[8px] text-slate-300 font-bold">${dateStr}</p>
+                        <p class="text-[12px] font-black text-slate-700 uppercase leading-tight tracking-tight">${d.ket}</p>
+                        <p class="text-[9px] text-slate-300 font-black mt-0.5">${d.tgl.toDate().toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="text-right">
-                        <p class="font-black text-xs ${isM ? 'text-emerald-700' : 'text-red-600'}">
-                            ${isM ? '+' : '-'} ${d.nom.toLocaleString('id-ID')}
-                        </p>
-                        <div class="flex gap-2 justify-end mt-1">
-                            <button onclick="openEdit('${id}', '${d.tgl.toDate().toISOString().split('T')[0]}', '${d.kat}', '${d.ket}', ${d.nom})" class="text-slate-300 hover:text-blue-500">
-                                <span class="material-symbols-rounded text-xs">edit</span>
-                            </button>
-                            <button onclick="hapusPon('${id}')" class="text-slate-300 hover:text-red-500">
-                                <span class="material-symbols-rounded text-xs">delete</span>
-                            </button>
-                        </div>
+                <div class="text-right">
+                    <p class="font-black text-[13px] ${isM ? 'text-emerald-600' : 'text-rose-600'}">
+                        ${isM ? '+' : '-'} ${d.nom.toLocaleString('id-ID')}
+                    </p>
+                    <div class="flex gap-3 justify-end mt-1">
+                        <button onclick="openEdit('${id}', '${d.tgl.toDate().toISOString().split('T')[0]}', '${d.kat}', '${d.ket}', ${d.nom})" class="text-slate-200 hover:text-orange-400 transition-colors">
+                            <span class="material-symbols-rounded text-sm">edit_note</span>
+                        </button>
+                        <button onclick="hapusPon('${id}')" class="text-slate-200 hover:text-rose-500 transition-colors">
+                            <span class="material-symbols-rounded text-sm">delete</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -84,15 +87,26 @@ async function loadPon() {
     document.getElementById('totalPon').innerText = 'Rp ' + total.toLocaleString('id-ID');
 }
 
-// 3. Fungsi Hapus
 async function hapusPon(id) {
-    if (confirm("Hapus transaksi ini?")) {
-        await db.collection("pon_mandiri").doc(id).delete();
-        loadPon();
-    }
+    Swal.fire({
+        title: 'Hapus Data?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#F97316',
+        cancelButtonColor: '#F1F5F9',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        customClass: { popup: 'rounded-[2rem]', confirmButton: 'rounded-xl font-bold', cancelButton: 'rounded-xl font-bold text-slate-500' }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            await db.collection("pon_mandiri").doc(id).delete();
+            Toast.fire({ icon: 'success', title: 'Data berhasil dihapus' });
+            loadPon();
+        }
+    });
 }
 
-// 4. Fungsi Edit
 function openEdit(id, tgl, kat, ket, nom) {
     document.getElementById('editId').value = id;
     document.getElementById('eTgl').value = tgl;
@@ -114,16 +128,13 @@ async function updatePon() {
     const nom = Number(document.getElementById('eNom').value);
 
     await db.collection("pon_mandiri").doc(id).update({
-        tgl: new Date(tgl),
-        kat: kat,
-        ket: ket,
-        nom: nom
+        tgl: new Date(tgl), kat, ket, nom
     });
 
     closeModal();
+    Toast.fire({ icon: 'success', title: 'Data diperbarui!' });
     loadPon();
 }
 
-// Jalankan load data saat buka
 loadPon();
-                 
+
