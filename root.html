@@ -28,6 +28,16 @@
 <body>
 
 <div id="mainApp" class="max-w-md mx-auto p-5">
+    <header class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center text-white shadow-lg shadow-emerald-900/20">
+                <span class="material-symbols-rounded">account_balance_wallet</span>
+            </div>
+            <h1 class="text-xl font-black text-emerald-900 tracking-tighter uppercase">Tuntas.</h1>
+        </div>
+        <button onclick="location.reload()" class="w-10 h-10 rounded-xl border flex items-center justify-center text-slate-400"><span class="material-symbols-rounded">sync</span></button>
+    </header>
+
     <div id="screen-home" class="tab-content active space-y-4">
         <div class="p-8 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl">
             <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Saldo Bersih</p>
@@ -67,17 +77,12 @@
             <p class="text-[10px] font-bold opacity-60 uppercase">Saldo PON</p>
             <h2 id="totalPon" class="text-4xl font-black mt-1">Rp 0</h2>
         </div>
-        
         <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-                <input type="date" id="pTgl" class="modern-in">
-                <select id="pKat" class="modern-in"><option value="Masuk">Masuk</option><option value="Keluar">Keluar</option></select>
-            </div>
+            <div class="grid grid-cols-2 gap-2"><input type="date" id="pTgl" class="modern-in"><select id="pKat" class="modern-in"><option value="Masuk">Masuk</option><option value="Keluar">Keluar</option></select></div>
             <input type="text" id="pKet" class="modern-in uppercase" placeholder="Keterangan PON">
             <input type="number" id="pNom" class="modern-in font-bold" placeholder="Nominal Rp">
             <button onclick="simpanPon()" class="w-full bg-emerald-950 text-white p-4 rounded-xl font-black text-xs uppercase">Simpan Transaksi PON</button>
         </div>
-
         <div id="listPon" class="space-y-3"></div>
     </div>
 
@@ -87,6 +92,7 @@
             <table class="w-full text-left text-[11px]">
                 <thead><tr id="th-rekap" class="text-slate-400 uppercase font-black"><th class="sticky-col p-4 bg-white">Nama</th></tr></thead>
                 <tbody id="tb-rekap"></tbody>
+                <tfoot id="tf-rekap" class="bg-emerald-50 font-black text-emerald-900"></tfoot>
             </table>
         </div>
     </div>
@@ -111,24 +117,8 @@
     </nav>
 </div>
 
-<div id="mKas" class="modal" onclick="if(event.target==this)closeModal('mKas')">
-    <div class="modal-content bg-white p-6 rounded-3xl w-full max-w-xs space-y-3">
-        <h3 class="font-black uppercase text-center">Kas Umum</h3>
-        <input type="date" id="kTgl" class="modern-in">
-        <select id="kKat" class="modern-in"><option value="Masuk">Masuk</option><option value="Keluar">Keluar</option></select>
-        <input type="text" id="kKet" class="modern-in" placeholder="Keterangan">
-        <input type="number" id="kNom" class="modern-in" placeholder="Nominal">
-        <button onclick="simpanKas()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black uppercase">Simpan</button>
-    </div>
-</div>
-
-<div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')">
-    <div class="modal-content bg-white p-6 rounded-3xl w-full max-w-xs space-y-3">
-        <input type="text" id="aNama" class="modern-in uppercase" placeholder="Nama Warga">
-        <input type="number" id="aHp" class="modern-in" placeholder="628xxx">
-        <button onclick="simpanAnggota()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black uppercase">Tambah</button>
-    </div>
-</div>
+<div id="mKas" class="modal" onclick="if(event.target==this)closeModal('mKas')"><div class="modal-content bg-white p-6 rounded-3xl w-full max-w-xs space-y-3"><input type="date" id="kTgl" class="modern-in"><select id="kKat" class="modern-in"><option value="Masuk">Masuk</option><option value="Keluar">Keluar</option></select><input type="text" id="kKet" class="modern-in" placeholder="Keterangan"><input type="number" id="kNom" class="modern-in" placeholder="Nominal"><button onclick="simpanKas()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black uppercase">Simpan</button></div></div>
+<div id="mAnggota" class="modal" onclick="if(event.target==this)closeModal('mAnggota')"><div class="modal-content bg-white p-6 rounded-3xl w-full max-w-xs space-y-3"><input type="text" id="aNama" class="modern-in uppercase" placeholder="Nama Warga"><input type="number" id="aHp" class="modern-in" placeholder="628xxx"><button onclick="simpanAnggota()" class="w-full bg-emerald-900 text-white p-4 rounded-xl font-black uppercase">Tambah</button></div></div>
 
 <script>
     const config = {
@@ -149,91 +139,69 @@
         document.getElementById('iTgl').value = today;
         document.getElementById('pTgl').value = today;
         document.getElementById('kTgl').value = today;
-        
-        const grid = document.getElementById('gridBulan');
-        grid.innerHTML = '';
-        daftarBulan.forEach(bln => {
-            grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-black py-3 text-center border rounded-xl bg-white text-slate-300 peer-checked:bg-emerald-900 peer-checked:text-white uppercase transition-all">${bln.substring(0,3)}</div></label>`;
-        });
+        const grid = document.getElementById('gridBulan'); grid.innerHTML = '';
+        daftarBulan.forEach(bln => { grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-black py-3 text-center border rounded-xl bg-white text-slate-300 peer-checked:bg-emerald-900 peer-checked:text-white uppercase transition-all">${bln.substring(0,3)}</div></label>`; });
         loadData();
     }
 
     async function loadData() {
-        const [dkas, diur, dang, dpon] = await Promise.all([
-            db.collection("kas").get(), 
-            db.collection("pembayaran").get(), 
-            db.collection("anggota").orderBy("nama","asc").get(),
-            db.collection("pon").get()
-        ]);
-
-        const sVal = document.getElementById('fStart').value;
-        const eVal = document.getElementById('fEnd').value;
-        const s = sVal ? new Date(sVal) : null;
-        const e = eVal ? new Date(eVal) : null;
-        if(e) e.setHours(23,59,59);
+        const [dkas, diur, dang, dpon] = await Promise.all([db.collection("kas").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get(), db.collection("pon").get()]);
+        const sVal = document.getElementById('fStart').value, eVal = document.getElementById('fEnd').value;
+        const s = sVal ? new Date(sVal) : null, e = eVal ? new Date(eVal) : null; if(e) e.setHours(23,59,59);
 
         let saldoAwal = 0, tInFiltered = 0, tOutFiltered = 0, allTrx = [];
-        const ti=document.getElementById('tBodyWarga'), tr=document.getElementById('tb-rekap'), sel=document.getElementById('iNama'), listR = document.getElementById('listRiwayat'), th = document.getElementById('th-rekap');
+        const ti=document.getElementById('tBodyWarga'), tr=document.getElementById('tb-rekap'), tf=document.getElementById('tf-rekap'), sel=document.getElementById('iNama'), listR = document.getElementById('listRiwayat'), th = document.getElementById('th-rekap');
         
-        ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>'; listR.innerHTML='';
+        ti.innerHTML=''; tr.innerHTML=''; listR.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>';
         th.innerHTML = '<th class="sticky-col p-4 bg-white">Nama</th>';
-        daftarBulan.forEach(b => th.innerHTML += `<th class="p-3 text-center text-slate-400 font-bold">${b.substring(0,3)}</th>`);
+        let footerTotals = {}; 
+        daftarBulan.forEach(b => { th.innerHTML += `<th class="p-3 text-center text-slate-400 font-bold">${b.substring(0,3)}</th>`; footerTotals[b] = 0; });
 
         const iuranArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
-        dkas.docs.forEach(doc => {
-            const d = doc.data(); 
-            allTrx.push({ id: doc.id, col: 'kas', ket: d.ket, nom: Number(d.nom), kat: d.kat, tgl: d.tgl.toDate() });
-        });
-        iuranArr.forEach(d => {
-            allTrx.push({ id: d.id, col: 'pembayaran', ket: `IURAN: ${(d.nama||'').split(' ')[0]}`, nom: Number(d.nom), kat: 'Masuk', tgl: d.tgl ? d.tgl.toDate() : new Date() });
-        });
+        dkas.docs.forEach(doc => { const d = doc.data(); allTrx.push({ id: doc.id, col: 'kas', ket: d.ket, nom: Number(d.nom), kat: d.kat, tgl: d.tgl.toDate() }); });
+        iuranArr.forEach(d => { allTrx.push({ id: d.id, col: 'pembayaran', ket: `IURAN: ${(d.nama||'').split(' ')[0]}`, nom: Number(d.nom), kat: 'Masuk', tgl: d.tgl ? d.tgl.toDate() : new Date() }); });
 
-        // Hitung Saldo Awal & Filter
         allTrx.forEach(tx => {
             const isM = tx.kat === 'Masuk';
-            if (s && tx.tgl < s) {
-                saldoAwal += isM ? tx.nom : -tx.nom;
-            } else if ((!s || tx.tgl >= s) && (!e || tx.tgl <= e)) {
-                if (isM) tInFiltered += tx.nom; else tOutFiltered += tx.nom;
-            }
+            if (s && tx.tgl < s) saldoAwal += isM ? tx.nom : -tx.nom;
+            else if ((!s || tx.tgl >= s) && (!e || tx.tgl <= e)) { if (isM) tInFiltered += tx.nom; else tOutFiltered += tx.nom; }
         });
 
         document.getElementById('totalSaldo').innerText = 'Rp ' + (saldoAwal + tInFiltered - tOutFiltered).toLocaleString('id-ID');
         document.getElementById('totalMasuk').innerText = 'Rp ' + tInFiltered.toLocaleString('id-ID');
         document.getElementById('totalKeluar').innerText = 'Rp ' + tOutFiltered.toLocaleString('id-ID');
 
-        if (s) listR.insertAdjacentHTML('beforeend', `<div class="p-2 bg-slate-100 rounded-xl mb-3 text-center text-[10px] font-bold text-slate-500 uppercase">Saldo Sebelum ${s.toLocaleDateString('id-ID')}: Rp ${saldoAwal.toLocaleString('id-ID')}</div>`);
-
         allTrx.sort((a,b) => b.tgl - a.tgl).filter(tx => (!s || tx.tgl >= s) && (!e || tx.tgl <= e)).forEach(tx => {
             const isM = tx.kat === 'Masuk';
-            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 mb-2"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase text-slate-700">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right flex items-center gap-2"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
+            listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 mb-2"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase text-slate-700">${tx.ket}</p></div></div><div class="text-right flex items-center gap-2"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
         });
 
-        // Warga & Rekap Nominal
         dang.docs.forEach(doc => {
-            const d = doc.data(); const n = (d.nama || "").trim().toUpperCase();
-            dataWarga[n] = d.hp || '';
+            const d = doc.data(); const n = (d.nama || "").trim().toUpperCase(); dataWarga[n] = d.hp || '';
             sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
-            ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm"><div><p class="font-black text-xs uppercase text-slate-700">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-200 hover:text-red-600 transition-colors"><span class="material-symbols-rounded">delete</span></button></div>`);
-
+            ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 mb-2"><div><p class="font-black text-xs uppercase text-slate-700">${n}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button></div>`);
+            
             let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 bg-white border-b uppercase">${n.split(' ')[0]}</td>`;
             daftarBulan.forEach(bln => {
                 const lunas = iuranArr.filter(k => (k.nama||"").toUpperCase() === n && (k.bulan||"").includes(bln));
                 if(lunas.length > 0) {
                     let nomBln = 0; lunas.forEach(l => nomBln += (Number(l.nom) / (l.bulan||"").split(',').length));
                     row += `<td class="text-center text-emerald-600 font-black">${(nomBln/1000).toFixed(0)}K</td>`;
-                } else { row += `<td class="text-center text-slate-200">-</td>`; }
+                    footerTotals[bln] += nomBln;
+                } else row += `<td class="text-center text-slate-200">-</td>`;
             });
             tr.insertAdjacentHTML('beforeend', row + `</tr>`);
         });
 
-        // Data PON
-        let totalPon = 0;
-        const lp = document.getElementById('listPon'); lp.innerHTML = '';
+        // RENDER TOTAL FOOTER
+        let ftRow = `<tr><td class="sticky-col p-4 font-black bg-emerald-50 text-emerald-900 uppercase">TOTAL</td>`;
+        daftarBulan.forEach(bln => { ftRow += `<td class="text-center p-4 bg-emerald-50 text-emerald-800 font-black">${(footerTotals[bln]/1000).toFixed(0)}K</td>`; });
+        tf.innerHTML = ftRow + `</tr>`;
+
+        let totalPon = 0; const lp = document.getElementById('listPon'); lp.innerHTML = '';
         dpon.docs.forEach(doc => {
-            const d = doc.data(); const isM = d.kat === 'Masuk';
-            totalPon += isM ? Number(d.nom) : -Number(d.nom);
-            lp.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-50 flex justify-between"><div><p class="text-xs font-black uppercase">${d.ket}</p><p class="text-[8px] text-slate-300 font-bold">${d.tgl.toDate().toLocaleDateString('id-ID')}</p></div><div class="flex items-center gap-2"><p class="${isM?'text-emerald-600':'text-red-600'} font-black text-xs">${isM?'+':'-'} ${Number(d.nom).toLocaleString()}</p><button onclick="hapus('pon','${doc.id}')" class="text-slate-100"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
+            const d = doc.data(); const isM = d.kat === 'Masuk'; totalPon += isM ? Number(d.nom) : -Number(d.nom);
+            lp.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-50 flex justify-between mb-2"><div><p class="text-xs font-black uppercase">${d.ket}</p></div><div class="flex items-center gap-2"><p class="${isM?'text-emerald-600':'text-red-600'} font-black text-xs">${Number(d.nom).toLocaleString()}</p><button onclick="hapus('pon','${doc.id}')" class="text-slate-100"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
         });
         document.getElementById('totalPon').innerText = 'Rp ' + totalPon.toLocaleString('id-ID');
     }
@@ -244,44 +212,19 @@
         if(!n || !nmn || blns.length === 0) return Swal.fire('Error','Lengkapi data!','error');
         const kode = "T-" + Math.floor(100000 + Math.random() * 900000); 
         await db.collection("pembayaran").doc(kode).set({ nama: n, bulan: blns.join(","), nom: nmn, tgl: new Date(tglVal), kode: kode }); 
-        Swal.fire('Sukses','Iuran Tersimpan','success');
-        init();
+        Swal.fire('Sukses','Iuran Tersimpan','success'); loadData();
         const hp = (dataWarga[n]||'').replace(/^0/,'62');
-        const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const link = window.location.origin + path + `kuitansi.html?id=${kode}`;
+        const link = window.location.origin + window.location.pathname.replace('kastuntas.html','') + `kuitansi.html?id=${kode}`;
         window.open(`https://wa.me/${hp}?text=Terimakasih *${n}*, Iuran *${blns.join(", ")}* sebesar *Rp ${nmn.toLocaleString()}* telah diterima.%0ACek Kuitansi: ${link}`);
     }
 
-    async function simpanPon() {
-        const tgl = document.getElementById('pTgl').value, kat = document.getElementById('pKat').value, ket = document.getElementById('pKet').value, nom = Number(document.getElementById('pNom').value);
-        if(!ket || !nom) return;
-        await db.collection("pon").add({ kat, ket: ket.toUpperCase(), nom, tgl: new Date(tgl) });
-        document.getElementById('pKet').value = ''; document.getElementById('pNom').value = '';
-        loadData();
-    }
-
-    async function simpanKas() {
-        const tgl = document.getElementById('kTgl').value, kat = document.getElementById('kKat').value, ket = document.getElementById('kKet').value, nom = Number(document.getElementById('kNom').value);
-        if(!ket || !nom) return;
-        await db.collection("kas").add({ kat, ket, nom, tgl: new Date(tgl) });
-        closeModal('mKas'); loadData();
-    }
-
-    async function simpanAnggota() {
-        const n = document.getElementById('aNama').value.trim().toUpperCase(), h = document.getElementById('aHp').value;
-        if(n) { await db.collection("anggota").add({ nama: n, hp: h }); closeModal('mAnggota'); loadData(); }
-    }
-
+    async function simpanPon() { const tgl = document.getElementById('pTgl').value, kat = document.getElementById('pKat').value, ket = document.getElementById('pKet').value, nom = Number(document.getElementById('pNom').value); if(!ket || !nom) return; await db.collection("pon").add({ kat, ket: ket.toUpperCase(), nom, tgl: new Date(tgl) }); document.getElementById('pKet').value = ''; document.getElementById('pNom').value = ''; loadData(); }
+    async function simpanKas() { const tgl = document.getElementById('kTgl').value, kat = document.getElementById('kKat').value, ket = document.getElementById('kKet').value, nom = Number(document.getElementById('kNom').value); if(!ket || !nom) return; await db.collection("kas").add({ kat, ket, nom, tgl: new Date(tgl) }); closeModal('mKas'); loadData(); }
+    async function simpanAnggota() { const n = document.getElementById('aNama').value.trim().toUpperCase(), h = document.getElementById('aHp').value; if(n) { await db.collection("anggota").add({ nama: n, hp: h }); closeModal('mAnggota'); loadData(); } }
     async function hapus(c, id) { if(confirm("Hapus data ini?")) { await db.collection(c).doc(id).delete(); loadData(); } }
-    function st(t) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('screen-'+t).classList.add('active');
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById('n-'+t).classList.add('active');
-    }
+    function st(t) { document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById('screen-'+t).classList.add('active'); document.querySelectorAll('nav button').forEach(b => b.classList.remove('active')); document.getElementById('n-'+t).classList.add('active'); }
     function openModal(id) { document.getElementById(id).style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
-    
     init();
 </script>
 </body>
