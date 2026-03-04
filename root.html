@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#064E3B">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TUNTAS - Admin</title>
@@ -15,17 +11,15 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="pon/pon-style.css">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 100px; }
-        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 90px; }
-        .table-scroll { overflow-x: auto; border-radius: 1rem; border: 1px solid #E2E8F0; background: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 90px; }
+        .table-scroll { overflow-x: auto; border-radius: 1rem; border: 1px solid #E2E8F0; background: white; }
         nav button.active { color: #064E3B; transform: translateY(-5px); }
         nav button { color: #94A3B8; transition: all 0.3s; }
         .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
     </style>
 </head>
 <body>
@@ -78,7 +72,6 @@
 </div>
 
 <script>
-    // Konfigurasi Firebase Anda
     const config = {
         apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
         authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -92,57 +85,77 @@
     const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
 
     async function loadData() {
-        // Ambil SEMUA data dari Firestore
-        const [dkas, diur, dang, dpon] = await Promise.all([
-            db.collection("kas").get(), 
-            db.collection("pembayaran").get(), 
-            db.collection("anggota").orderBy("nama","asc").get(),
-            db.collection("pon").get()
-        ]);
+        console.log("Memulai load data...");
+        try {
+            // Ambil data (pakai dua kemungkinan nama untuk PON)
+            const [dkas, diur, dang, dpon1, dpon2] = await Promise.all([
+                db.collection("kas").get(), 
+                db.collection("pembayaran").get(), 
+                db.collection("anggota").orderBy("nama","asc").get(),
+                db.collection("pon").get(),
+                db.collection("pon_mandiri").get()
+            ]);
 
-        // 1. Render Warga & Siapkan Rekap
-        const ti = document.getElementById('tBodyWarga');
-        const tr = document.getElementById('tb-rekap');
-        const th = document.getElementById('th-rekap');
-        ti.innerHTML = ''; tr.innerHTML = ''; th.innerHTML = '<th class="sticky-col p-4 bg-white">Nama</th>';
-        
-        daftarBulan.forEach(b => th.innerHTML += `<th class="p-3 text-center">${b.substring(0,3)}</th>`);
+            // 1. WARGA & REKAP
+            const ti = document.getElementById('tBodyWarga');
+            const tr = document.getElementById('tb-rekap');
+            const th = document.getElementById('th-rekap');
+            ti.innerHTML = ''; tr.innerHTML = ''; th.innerHTML = '<th class="sticky-col p-4 bg-white">Nama</th>';
+            daftarBulan.forEach(b => th.innerHTML += `<th class="p-3 text-center">${b.substring(0,3)}</th>`);
 
-        const iuranArr = diur.docs.map(doc => doc.data());
+            const iuranArr = diur.docs.map(doc => doc.data());
 
-        dang.docs.forEach(doc => {
-            const d = doc.data();
-            const nama = (d.nama || "").toUpperCase();
-            ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm"><p class="font-black text-xs text-slate-700">${nama}</p></div>`);
+            dang.docs.forEach(doc => {
+                const d = doc.data();
+                const nama = (d.nama || "TANPA NAMA").toUpperCase();
+                ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm"><p class="font-black text-xs text-slate-700">${nama}</p></div>`);
 
-            // Baris Rekap per Warga
-            let row = `<tr><td class="sticky-col p-4 font-bold bg-white border-b uppercase">${nama.split(' ')[0]}</td>`;
-            daftarBulan.forEach(bln => {
-                const lunas = iuranArr.find(i => (i.nama||"").toUpperCase() === nama && (i.bulan||"").includes(bln));
-                row += `<td class="text-center ${lunas ? 'text-emerald-600 font-black' : 'text-slate-200'}">${lunas ? 'OK' : '-'}</td>`;
+                let row = `<tr><td class="sticky-col p-4 font-bold bg-white border-b uppercase">${nama.split(' ')[0]}</td>`;
+                daftarBulan.forEach(bln => {
+                    const lunas = iuranArr.find(i => (i.nama||"").toUpperCase() === nama && (i.bulan||"").includes(bln));
+                    row += `<td class="text-center ${lunas ? 'text-emerald-600 font-black' : 'text-slate-200'}">${lunas ? 'OK' : '-'}</td>`;
+                });
+                tr.insertAdjacentHTML('beforeend', row + `</tr>`);
             });
-            tr.insertAdjacentHTML('beforeend', row + `</tr>`);
-        });
 
-        // 2. Render Data PON
-        let totalPon = 0;
-        const lp = document.getElementById('listPon');
-        lp.innerHTML = '';
-        dpon.docs.forEach(doc => {
-            const d = doc.data();
-            const isM = d.kat === 'Masuk';
-            totalPon += isM ? Number(d.nom) : -Number(d.nom);
-            lp.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-50 flex justify-between"><div><p class="text-xs font-black">${d.ket}</p></div><p class="${isM?'text-emerald-600':'text-red-600'} font-black text-xs">${isM?'+':'-'} ${Number(d.nom).toLocaleString()}</p></div>`);
-        });
-        document.getElementById('totalPon').innerText = 'Rp ' + totalPon.toLocaleString('id-ID');
+            // 2. PON (Gabungkan data dari 'pon' dan 'pon_mandiri')
+            let totalPon = 0;
+            const lp = document.getElementById('listPon');
+            lp.innerHTML = '';
+            
+            const gabungPon = [...dpon1.docs, ...dpon2.docs];
+            console.log("Jumlah data PON ditemukan:", gabungPon.length);
 
-        // 3. Saldo Utama
-        let tIn = 0, tOut = 0;
-        dkas.docs.forEach(doc => {
-            const d = doc.data();
-            if(d.kat==='Masuk') tIn += Number(d.nom); else tOut += Number(d.nom);
-        });
-        document.getElementById('totalSaldo').innerText = 'Rp ' + (tIn - tOut).toLocaleString('id-ID');
+            gabungPon.forEach(doc => {
+                const d = doc.data();
+                const isM = d.kat === 'Masuk';
+                const nom = Number(d.nom || 0);
+                totalPon += isM ? nom : -nom;
+                const tglStr = d.tgl ? (d.tgl.toDate ? d.tgl.toDate().toLocaleDateString('id-ID') : d.tgl) : '-';
+                
+                lp.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl border border-slate-50 flex justify-between"><div><p class="text-xs font-black uppercase">${d.ket || 'TANPA KET'}</p><p class="text-[8px] text-slate-300">${tglStr}</p></div><p class="${isM?'text-emerald-600':'text-red-600'} font-black text-xs">${isM?'+':'-'} ${nom.toLocaleString()}</p></div>`);
+            });
+            document.getElementById('totalPon').innerText = 'Rp ' + totalPon.toLocaleString('id-ID');
+
+            // 3. KAS UMUM & RINGKASAN SALDO
+            let tIn = 0, tOut = 0;
+            const lr = document.getElementById('listRiwayat');
+            lr.innerHTML = '';
+
+            dkas.docs.forEach(doc => {
+                const d = doc.data();
+                const nom = Number(d.nom || 0);
+                if(d.kat==='Masuk') tIn += nom; else tOut += nom;
+                lr.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center mb-2 border border-slate-50"><div><p class="text-xs font-black uppercase">${d.ket}</p></div><p class="font-black text-xs ${d.kat==='Masuk'?'text-emerald-600':'text-red-600'}">${nom.toLocaleString()}</p></div>`);
+            });
+            
+            // Tambahkan iuran ke saldo masuk
+            iuranArr.forEach(i => tIn += Number(i.nom || 0));
+            document.getElementById('totalSaldo').innerText = 'Rp ' + (tIn - tOut).toLocaleString('id-ID');
+
+        } catch (error) {
+            console.error("Error saat load data:", error);
+        }
     }
 
     function st(t) {
@@ -152,11 +165,7 @@
         document.getElementById('n-'+t).classList.add('active');
     }
 
-    // Jalankan loadData saat pertama buka
-    loadData();
+    window.onload = loadData;
 </script>
-
-<script src="pon/pon-script.js"></script>
-
 </body>
 </html>
