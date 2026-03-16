@@ -1,0 +1,53 @@
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: #F1F5F9; 
+    background-image: radial-gradient(circle at 2px 2px, #E2E8F0 1px, transparent 0);
+    background-size: 24px 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.bento-card { 
+    background: white; 
+    border-radius: 2.5rem; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+.line-accent { 
+    height: 16px; 
+    background: #064E3B; 
+    width: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    z-index: 10;
+}
+
+.bg-aksen-muda { 
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
+}
+
+.sekawan-footer {
+    margin-top: 24px;
+    text-align: center;
+    opacity: 0.5;
+}
+
+input, textarea, select {
+    transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #059669 !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
