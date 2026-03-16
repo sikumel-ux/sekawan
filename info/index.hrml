@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="bento-card">
+        <div class="line-accent"></div>
+        <div class="p-8 pt-12">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-black text-emerald-900 tracking-tighter italic">TUNTAS.</h1>
+                <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.3em] mt-1">Turun Tangan Atasi Sampah</p>
+                
+                <div class="mt-8">
+                    <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">PENGUMUMAN</h2>
+                    <div class="w-10 h-1 bg-emerald-500 mx-auto mt-2 rounded-full"></div>
+                </div>
+            </div>
+
+            <div class="bg-aksen-muda p-6 rounded-[2.5rem] border border-emerald-100 mb-8 shadow-sm">
+                <h3 id="v-judul" class="text-sm font-black text-emerald-900 uppercase mb-2 tracking-tight"></h3>
+                <div id="v-isi" class="text-[13px] text-slate-700 leading-relaxed font-medium whitespace-pre-line">
+                    Memuat informasi terbaru...
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-5">
+                <div class="inline-flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 w-fit">
+                    <p class="text-[9px] font-bold text-slate-500 uppercase">
+                        Tanggal: <span id="v-tgl" class="text-slate-900">-</span>
+                    </p>
+                </div>
+
+                <div class="text-right border-t border-dashed border-slate-200 pt-6">
+                    <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-2">Tertanda,</p>
+                    <p class="text-[13px] font-black text-emerald-900 uppercase">TUNTAS RT 04</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sekawan-footer">
+        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.4em]">Digital Bulletin v1.0</p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        // Gunakan Config Firebase yang sama
+        const firebaseConfig = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadLastInfo() {
+            try {
+                const snapshot = await db.collection("pengumuman").orderBy("tgl", "desc").limit(1).get();
+                if (!snapshot.empty) {
+                    const data = snapshot.docs[0].data();
+                    document.getElementById('v-judul').innerText = data.judul;
+                    document.getElementById('v-isi').innerText = data.isi;
+                    if(data.tgl) {
+                        const d = data.tgl.toDate();
+                        document.getElementById('v-tgl').innerText = d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+                    }
+                }
+            } catch (err) { console.error(err); }
+        }
+        loadLastInfo();
+    </script>
+</body>
+</html>
+  
