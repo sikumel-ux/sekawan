@@ -3,145 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembuat Visual Pengumuman TUNTAS</title>
+    <title>TUNTAS Visual Editor - Wide Mode</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* --- CSS INTI BENTO (Unik & Clean) --- */
+        * { box-sizing: border-box; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: #F1F5F9; 
-            background-image: radial-gradient(circle at 2px 2px, #E2E8F0 1px, transparent 0);
+            background-image: radial-gradient(circle at 2px 2px, #CBD5E1 1px, transparent 0);
             background-size: 32px 32px;
             margin: 0;
             padding: 40px 20px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
         }
 
-        /* Container Utama untuk Form dan Preview */
-        .main-container {
+        .main-wrapper {
             display: flex;
+            flex-direction: column; /* Stacked di mobile */
+            align-items: center;
             gap: 40px;
             max-width: 1200px;
             width: 100%;
-            align-items: flex-start;
         }
 
-        /* --- Style Bagian FORM (Nggak di-Screenshot) --- */
-        .form-section {
-            flex: 1;
+        /* --- EDITOR SECTION --- */
+        .editor-container {
+            width: 100%;
+            max-width: 600px; /* Editor lebih lebar biar ngetik enak */
             background: white;
             padding: 30px;
-            border-radius: 2rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 1px solid #E2E8F0;
-            position: sticky;
-            top: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        .form-group { margin-bottom: 20px; }
-        .form-label {
-            display: block;
-            font-size: 10px;
-            font-weight: 800;
-            color: #94A3B8;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            margin-bottom: 8px;
-            margin-left: 4px;
+        .editor-header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #F8FAFC; padding-bottom: 15px; }
+        .editor-header h1 { font-weight: 900; color: #1E293B; margin: 0; font-size: 22px; letter-spacing: -0.5px; }
+        
+        .field { margin-bottom: 20px; }
+        .label { 
+            display: block; font-size: 11px; font-weight: 800; color: #64748B; 
+            text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px;
         }
-        .form-input, .form-textarea {
+        .input, .textarea {
+            width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #F1F5F9;
+            background: #F8FAFC; font-family: inherit; font-size: 15px; outline: none; transition: 0.2s;
+        }
+        .input:focus, .textarea:focus { border-color: #10B981; background: white; }
+        .textarea { height: 140px; resize: vertical; }
+
+        /* --- PREVIEW AREA (WIDE CARD) --- */
+        .preview-container {
             width: 100%;
-            padding: 16px;
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            border-radius: 1rem;
-            font-size: 14px;
-            color: #1E293B;
-            transition: all 0.2s;
-        }
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #10B981;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
-        .form-textarea { resize: vertical; min-height: 120px; }
-
-        /* --- Style Bagian PREVIEW (Yang di-Screenshot) --- */
-        .preview-section {
-            flex: 1;
             display: flex;
             justify-content: center;
+            padding-bottom: 60px;
         }
 
-        /* Kartu Bento Pengumuman */
-        .bento-card { 
-            background: white; 
-            border-radius: 3rem; 
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+        .bento-card {
+            width: 100%;
+            max-width: 650px; /* LEBIH LEBAR (dari 400px ke 650px) */
+            background: white;
+            border-radius: 50px;
             position: relative;
             overflow: hidden;
-            width: 100%;
-            max-width: 450px; /* Ukuran pas buat di-screenshot HP */
-            border: 1px solid rgba(255,255,255,0.8);
-            padding: 40px;
+            box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.15);
+            padding: 60px; /* Padding dalam lebih lega */
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
-        /* Aksen Garis Hijau Tebal di Atas */
-        .line-accent { 
-            height: 20px; 
-            background: #064E3B; /* Emerald Tua */
-            width: 100%; 
-            position: absolute; 
-            top: 0; 
-            left: 0;
-            z-index: 10;
+        .top-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 20px; background: #064E3B;
         }
 
-        /* Kotak Isi Pengumuman (Aksen Muda) */
-        .content-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); /* Emerald Super Muda */
-            padding: 30px;
-            border-radius: 2.5rem;
-            border: 1px solid #d1fae5;
-            margin-bottom: 30px;
-            min-height: 200px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        .brand-header { text-align: center; margin-bottom: 40px; }
+        .brand-name { font-weight: 900; font-size: 42px; color: #064E3B; margin: 0; letter-spacing: -2.5px; }
+        .brand-tagline { font-size: 12px; font-weight: 800; color: #10B981; text-transform: uppercase; letter-spacing: 0.4em; margin-top: 6px; }
+
+        .title-box { text-align: center; margin-bottom: 35px; }
+        .title-box h2 { font-weight: 900; font-size: 24px; color: #1E293B; margin: 0; letter-spacing: 0.1em; }
+        .title-line { width: 60px; height: 6px; background: #10B981; margin: 12px auto; border-radius: 10px; }
+
+        .content-area {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 40px; /* Area teks lebih lega */
+            border-radius: 35px;
+            margin-bottom: 40px;
+            border: 1px solid #BBF7D0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .p-judul { font-weight: 900; font-size: 20px; color: #064E3B; margin-bottom: 12px; text-transform: uppercase; letter-spacing: -0.5px; }
+        .p-isi { font-size: 16px; color: #334155; line-height: 1.7; font-weight: 500; white-space: pre-line; }
+
+        .footer-info { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #F1F5F9;
         }
 
-        /* Tipografi Preview */
-        .preview-title {
-            font-size: 16px;
-            font-weight: 900;
-            color: #064E3B;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
-            line-height: 1.2;
+        .date-pill {
+            background: #F8FAFC; padding: 12px 20px; border-radius: 50px;
+            border: 1px solid #E2E8F0; font-size: 12px; font-weight: 800; color: #64748B;
         }
-        .preview-text {
-            font-size: 14px;
-            color: #334155;
-            line-height: 1.6;
-            font-weight: 500;
-            white-space: pre-line; /* Penting biar enter-nya fungsi */
+        .date-pill span { color: #1E293B; margin-left: 5px; }
+
+        .signature { text-align: right; }
+        .sig-label { font-size: 11px; font-weight: 800; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; }
+        .sig-name { font-weight: 900; font-size: 18px; color: #064E3B; margin-top: 8px; }
+
+        @media (max-width: 600px) {
+            .bento-card { padding: 30px; border-radius: 30px; }
+            .footer-info { flex-direction: column; align-items: center; gap: 30px; text-align: center; }
+            .brand-name { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="editor-container">
+            <div class="editor-header">
+                <h1>EDITOR PENGUMUMAN</h1>
+            </div>
+
+            <div class="field">
+                <label class="label">Judul Informasi</label>
+                <input type="text" id="in-judul" class="input" placeholder="Misal: JADWAL PENGAMBILAN SAMPAH">
+            </div>
+
+            <div class="field">
+                <label class="label">Isi Detail</label>
+                <textarea id="in-isi" class="textarea" placeholder="Tulis rincian pengumuman di sini..."></textarea>
+            </div>
+
+            <div class="field">
+                <label class="label">Tanggal Terbit</label>
+                <input type="date" id="in-tgl" class="input">
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <div class="bento-card" id="capture">
+                <div class="top-line"></div>
+                
+                <div class="brand-header">
+                    <h1 class="brand-name">TUNTAS.</h1>
+                    <div class="brand-tagline">Turun Tangan Atasi Sampah</div>
+                </div>
+
+                <div class="title-box">
+                    <h2>PENGUMUMAN</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="content-area">
+                    <div id="p-judul" class="p-judul">JUDUL PENGUMUMAN</div>
+                    <div id="p-isi" class="p-isi">Isi pengumuman akan tampil secara dinamis di sini. Area ini sudah diperlebar agar teks yang panjang tidak terlihat sesak.</div>
+                </div>
+
+                <div class="footer-info">
+                    <div class="date-pill">
+                        TANGGAL: <span id="p-tgl">-</span>
+                    </div>
+                    
+                    <div class="signature">
+                        <div class="sig-label">Tertanda,</div>
+                        <div class="sig-name">TUNTAS RT 04</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inJudul = document.getElementById('in-judul');
+        const inIsi = document.getElementById('in-isi');
+        const inTgl = document.getElementById('in-tgl');
+
+        const pJudul = document.getElementById('p-judul');
+        const pIsi = document.getElementById('p-isi');
+        const pTgl = document.getElementById('p-tgl');
+
+        function update() {
+            pJudul.innerText = inJudul.value || "JUDUL PENGUMUMAN";
+            pIsi.innerText = inIsi.value || "Silakan tulis isi pengumuman...";
+            
+            if (inTgl.value) {
+                const d = new Date(inTgl.value);
+                pTgl.innerText = d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+            }
         }
 
-        /* Footer Screenshot */
-        .screenshot-footer {
-            margin-top: 30px;
-            text-align: center;
-            opacity: 0.4;
-            font-size: 9px;
-            font-weight: 700;
-            color: #64728b;
-            text-transform: uppercase;
-            letter-spacing: 0.4em
-      
+        inJudul.addEventListener('input', update);
+        inIsi.addEventListener('input', update);
+        inTgl.addEventListener('change', update);
+
+        inTgl.valueAsDate = new Date();
+        update();
+    </script>
+</body>
+</html>
