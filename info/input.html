@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin TUNTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="bento-card">
+        <div class="line-accent bg-emerald-600"></div>
+        <div class="p-8 pt-12">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-black text-emerald-900 tracking-tighter">BUAT PENGUMUMAN</h1>
+                <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-1">Admin Dashboard RT 04</p>
+            </div>
+
+            <form id="formPengumuman" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Judul Info</label>
+                    <input type="text" id="judul" required placeholder="Contoh: Kerja Bakti Rutin"
+                        class="w-full mt-1 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 outline-none">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Isi Pengumuman</label>
+                    <textarea id="isi" required rows="5" placeholder="Tulis informasi lengkap di sini..."
+                        class="w-full mt-1 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium text-slate-600 outline-none"></textarea>
+                </div>
+
+                <button type="submit" id="btnKirim"
+                    class="w-full bg-emerald-800 hover:bg-emerald-900 text-white font-black py-4 rounded-2xl shadow-lg transition-all active:scale-95 uppercase tracking-widest text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Kirim Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="script-auth.js"></script> <script>
+        document.getElementById('formPengumuman').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnKirim');
+            const data = {
+                judul: document.getElementById('judul').value,
+                isi: document.getElementById('isi').value,
+                tgl: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = "Mengirim...";
+                await db.collection("pengumuman").add(data);
+                alert("Pengumuman berhasil dipublish!");
+                e.target.reset();
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim Sekarang';
+            }
+        });
+    </script>
+</body>
+</html>
