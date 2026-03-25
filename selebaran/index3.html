@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Sosialisasi TUNTAS - Desktop Only</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #ffffff; 
+            margin: 0; 
+            padding: 0;
+            color: #1E293B;
+            /* Mengunci lebar minimal agar tidak responsive */
+            min-width: 1200px; 
+        }
+
+        .container {
+            width: 1200px; /* Lebar statis */
+            margin: 0 auto;
+            padding: 100px 60px;
+        }
+
+        /* HEADER */
+        .brand-header { text-align: center; margin-bottom: 80px; }
+        .brand-name { font-weight: 900; font-size: 110px; color: #064E3B; margin: 0; letter-spacing: -5px; line-height: 1; }
+        .brand-tagline { font-size: 26px; font-weight: 800; color: #10B981; text-transform: uppercase; letter-spacing: 0.6em; margin-top: 20px; }
+
+        .title-box { text-align: center; margin-bottom: 90px; }
+        .title-box h2 { font-weight: 900; font-size: 46px; color: #1E293B; margin: 0; line-height: 1.4; letter-spacing: 0.02em; }
+        .title-line { width: 200px; height: 15px; background: #10B981; margin: 30px auto; border-radius: 20px; }
+
+        /* CONTENT AREA */
+        h3 { 
+            color: #064E3B; 
+            font-size: 38px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            margin-bottom: 30px; 
+            border-bottom: 8px solid #BBF7D0; 
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        p { 
+            font-size: 30px; 
+            line-height: 1.6; 
+            margin-bottom: 50px; 
+            text-align: justify; 
+            font-weight: 500; 
+            color: #334155;
+        }
+
+        /* GRID INFO - TETAP 2 KOLOM */
+        .grid-info { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 80px; 
+            margin: 60px 0;
+        }
+
+        .list-item { 
+            font-size: 28px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 25px; 
+            font-weight: 700; 
+            line-height: 1.4;
+        }
+        .list-item::before { content: "✔"; color: #10B981; font-weight: 900; flex-shrink: 0; }
+
+        /* IURAN BOX */
+        .iuran-box {
+            background: #064E3B;
+            color: white;
+            padding: 80px;
+            border-radius: 50px;
+            text-align: center;
+            margin: 80px 0;
+        }
+        .iuran-text { font-size: 40px; font-weight: 700; margin-bottom: 20px; display: block; }
+        .iuran-amount { font-size: 120px; font-weight: 900; color: #FACC15; }
+        .iuran-period { font-size: 40px; font-weight: 800; opacity: 0.9; }
+
+        /* SIGNATURE - TETAP SEJAJAR */
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 120px;
+            padding-top: 80px;
+            border-top: 6px dashed #E2E8F0;
+            text-align: center;
+        }
+        .sig-label { font-size: 24px; font-weight: 800; color: #94A3B8; text-transform: uppercase; margin-bottom: 100px; }
+        .sig-name { font-weight: 900; font-size: 38px; color: #064E3B; text-transform: uppercase; }
+
+        .footer-quote {
+            text-align: center; 
+            font-style: italic; 
+            font-size: 28px; 
+            margin-top: 60px; 
+            color: #64748b;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="brand-header">
+            <h1 class="brand-name">TUNTAS.</h1>
+            <div class="brand-tagline">Turun Tangan Atasi Sampah</div>
+        </div>
+
+        <div class="title-box">
+            <h2>SOSIALISASI PROGRAM <br>PEMBAKARAN SAMPAH TERPADU RT 04</h2>
+            <div class="title-line"></div>
+        </div>
+
+        <div class="content-area">
+            <h3>Latar Belakang</h3>
+            <p>Dalam rangka meningkatkan kemandirian dan pengelolaan lingkungan di tingkat RT, diperlukan upaya untuk memanfaatkan fasilitas yang ada secara lebih optimal dan bermanfaat bagi warga. Melalui pengelolaan sampah yang terpusat, lingkungan dapat tetap terjaga kebersihannya sekaligus membuka peluang sumber pendapatan baru bagi kas RT.</p>
+
+            <div class="grid-info">
+                <div>
+                    <h3>Tujuan Program</h3>
+                    <div class="list-item">Pengelolaan sampah lebih tertib & terkoordinasi</div>
+                    <div class="list-item">Menjaga kebersihan & kenyamanan RT</div>
+                    <div class="list-item">Optimalisasi fasilitas bersama</div>
+                    <div class="list-item">Sumber pendapatan kas RT</div>
+                    <div class="list-item">Meningkatkan gotong royong warga</div>
+                </div>
+                <div>
+                    <h3>Pemanfaatan Iuran</h3>
+                    <div class="list-item">Pembangunan fasilitas pembakaran terpadu</div>
+                    <div class="list-item">Perawatan & pengelolaan keamanan alat</div>
+                    <div class="list-item">Pengadaan peralatan pendukung</div>
+                    <div class="list-item">Operasional pengelolaan sampah</div>
+                    <div class="list-item">Memperkuat kas sosial warga</div>
+                </div>
+            </div>
+
+            <h3>Iuran Warga</h3>
+            <p>Untuk mendukung keberlangsungan program secara berkelanjutan, setiap Kepala Keluarga diharapkan berpartisipasi melalui iuran sebesar:</p>
+            
+            <div class="iuran-box">
+                <span class="iuran-text">Rp</span>
+                <span class="iuran-amount">40.000</span>
+                <span class="iuran-period">/ Bulan / KK</span>
+            </div>
+
+            <p class="footer-quote">
+                "Mari bersama-sama membangun lingkungan RT yang bersih, tertib, dan mandiri."
+            </p>
+
+            <div class="signature-grid">
+                <div>
+                    <div class="sig-label">Ketua RT 04</div>
+                    <div class="sig-name">Didi Sabrang</div>
+                </div>
+                <div>
+                    <div class="sig-label">Pengelola TUNTAS</div>
+                    <div class="sig-name">Apriyanto</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
