@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS Mobile</title>
+    <title>TUNTAS Mobile - Program RT 04</title>
     
     <meta name="theme-color" content="#166534">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,178 +20,217 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { primary: '#166534', accent: '#84cc16' }
+                    colors: {
+                        primary: '#166534', // Hijau Tua
+                        accent: '#84cc16',  // Hijau Muda Lime
+                        dark: '#0a0a0a'
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        body { -webkit-tap-highlight-color: transparent; }
+        body { 
+            -webkit-tap-highlight-color: transparent; 
+            overscroll-behavior-y: contain;
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .safe-bottom { padding-bottom: calc(4rem + env(safe-area-inset-bottom)); }
         
-        /* Card Neumorphism Soft */
-        .app-card {
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(229, 231, 235, 0.5);
+        /* Glassmorphism Effect */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
         }
 
-        /* Active State Bottom Nav */
-        .nav-active { color: #166534; font-weight: 800; }
-        .nav-active i { transform: translateY(-4px); color: #84cc16; transition: all 0.3s; }
+        /* Neumorphic Card */
+        .app-card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+        }
+
+        /* Active State Animation */
+        .btn-active:active { transform: scale(0.95); }
+        
+        /* Safe Area Padding */
+        .pb-safe { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
     </style>
 </head>
-<body class="bg-[#F8FAF9] text-gray-900 font-sans selection:bg-green-100" x-data="{ page: 'home' }">
+<body class="bg-[#F9FBF9] text-gray-900 font-sans" x-data="{ page: 'home' }">
 
-    <header class="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-5 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
+    <header class="fixed top-0 w-full z-40 glass-nav border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-green-200/50">
                 <i class="fa-solid fa-leaf text-white text-sm"></i>
             </div>
-            <h1 class="text-xl font-extrabold tracking-tight text-primary">TUNTAS</h1>
+            <div>
+                <h1 class="text-lg font-extrabold tracking-tighter leading-none text-primary">TUNTAS</h1>
+                <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase">RT 04 Bantul</p>
+            </div>
         </div>
-        <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center relative">
-            <i class="fa-regular fa-bell text-gray-600"></i>
-            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 relative btn-active transition-all">
+                <i class="fa-regular fa-bell text-lg"></i>
+                <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            </button>
+            <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden">
+                <img src="https://ui-avatars.com/api/?name=Warga+Tuntas&background=166534&color=fff" alt="User">
+            </div>
+        </div>
     </header>
 
-    <main class="pt-24 safe-bottom px-5 space-y-8">
+    <main class="pt-28 pb-safe px-6 space-y-8">
         
-        <div class="bg-gradient-to-br from-primary to-green-800 rounded-[32px] p-6 text-white relative overflow-hidden shadow-xl">
-            <div class="relative z-10">
-                <p class="text-green-200 text-xs font-bold uppercase tracking-wider">Maret 2026</p>
-                <h2 class="text-2xl font-extrabold mt-1">Halo, Warga RT 04! 👋</h2>
-                <p class="text-green-100/80 text-sm mt-2 leading-relaxed">Mari kita jaga lingkungan tetap asri dengan pembuangan sampah yang tertata.</p>
-                <div class="mt-6 flex gap-3">
-                    <button class="bg-accent text-primary px-5 py-2.5 rounded-full font-bold text-xs shadow-lg">Lapor Sampah</button>
-                    <button class="bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full font-bold text-xs">Jadwal Pick-up</button>
-                </div>
-            </div>
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <section>
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="font-extrabold text-lg">Kegiatan Terbaru</h3>
-                <a href="#" class="text-primary font-bold text-xs uppercase tracking-tighter">Lihat Semua</a>
-            </div>
-            <div class="flex overflow-x-auto no-scrollbar gap-4 -mx-5 px-5">
-                <div class="min-w-[280px] app-card overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?w=400" class="w-full h-32 object-cover" />
-                    <div class="p-4">
-                        <span class="text-[10px] bg-green-100 text-primary font-bold px-2 py-0.5 rounded">Giat Warga</span>
-                        <h4 class="font-bold text-sm mt-2 leading-snug">Kerja Bakti Massal Minggu Kliwon</h4>
-                        <p class="text-xs text-gray-400 mt-1"><i class="fa-regular fa-calendar me-1"></i> 22 - 03 - 2026</p>
+        <section id="keuangan" class="transform transition-all">
+            <div class="bg-gradient-to-br from-primary to-green-900 rounded-[32px] p-7 text-white shadow-2xl shadow-green-100 relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p class="text-green-200 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Total Saldo Kas RT</p>
+                            <h2 class="text-3xl font-extrabold tracking-tighter">Rp 4.250.000</h2>
+                        </div>
+                        <div class="bg-white/10 p-3 rounded-2xl backdrop-blur-md border border-white/10">
+                            <i class="fa-solid fa-wallet text-xl text-accent"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-5 border-t border-white/10">
+                        <div class="flex flex-col">
+                            <span class="text-[9px] text-green-300 font-bold uppercase mb-1">Masuk (01 - 04 - 2026)</span>
+                            <span class="text-sm font-extrabold text-white">+ 1.500.000</span>
+                        </div>
+                        <div class="flex flex-col border-l border-white/10 ps-4">
+                            <span class="text-[9px] text-green-300 font-bold uppercase mb-1">Keluar (01 - 04 - 2026)</span>
+                            <span class="text-sm font-extrabold text-red-300">- 750.000</span>
+                        </div>
                     </div>
                 </div>
-                <div class="min-w-[280px] app-card overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1532996123724-84d2c942a60b?w=400" class="w-full h-32 object-cover" />
-                    <div class="p-4">
-                        <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">Edukasi</span>
-                        <h4 class="font-bold text-sm mt-2 leading-snug">Sosialisasi Filter Insenator Baru</h4>
-                        <p class="text-xs text-gray-400 mt-1"><i class="fa-regular fa-calendar me-1"></i> 18 - 03 - 2026</p>
-                    </div>
-                </div>
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
             </div>
         </section>
 
-        <section id="keuangan">
-            <h3 class="font-extrabold text-lg mb-4">Ringkasan Kas</h3>
-            <div class="app-card p-5">
-                <div class="flex items-center justify-between border-b border-gray-50 pb-4">
-                    <div>
-                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Saldo Saat Ini</p>
-                        <p class="text-2xl font-extrabold text-primary tracking-tighter">Rp 4.250.000</p>
+        <section>
+            <div class="flex justify-between items-center mb-4 px-1">
+                <h3 class="font-extrabold text-lg tracking-tight">Giat Warga</h3>
+                <button class="text-primary font-bold text-xs uppercase tracking-tighter">Semua</button>
+            </div>
+            <div class="flex overflow-x-auto no-scrollbar gap-4 -mx-6 px-6">
+                <div class="min-w-[270px] bg-white rounded-[28px] overflow-hidden border border-gray-100 shadow-sm btn-active transition-all">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?w=400" class="w-full h-32 object-cover" />
+                        <span class="absolute top-3 left-3 bg-primary text-white px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase">Baru</span>
                     </div>
-                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
-                        <i class="fa-solid fa-wallet text-gray-400"></i>
+                    <div class="p-4">
+                        <h4 class="font-bold text-sm leading-tight text-dark">Kerja Bakti Minggu Kliwon</h4>
+                        <div class="flex items-center gap-3 mt-3 text-[10px] text-gray-400 font-semibold">
+                            <span><i class="fa-regular fa-calendar me-1"></i> 22-03-2026</span>
+                            <span><i class="fa-solid fa-location-dot me-1 text-accent"></i> Area TPS</span>
+                        </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 pt-4">
-                    <div class="border-r border-gray-50">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">Masuk (Mar)</p>
-                        <p class="text-sm font-bold text-green-600">+1.500.000</p>
+                <div class="min-w-[270px] bg-white rounded-[28px] overflow-hidden border border-gray-100 shadow-sm btn-active transition-all">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1532996123724-84d2c942a60b?w=400" class="w-full h-32 object-cover" />
+                        <span class="absolute top-3 left-3 bg-blue-600 text-white px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase">Edukasi</span>
                     </div>
-                    <div class="ps-2">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">Keluar (Mar)</p>
-                        <p class="text-sm font-bold text-red-500">-750.000</p>
+                    <div class="p-4">
+                        <h4 class="font-bold text-sm leading-tight text-dark">Sosialisasi Pemilahan Sampah</h4>
+                        <div class="flex items-center gap-3 mt-3 text-[10px] text-gray-400 font-semibold">
+                            <span><i class="fa-regular fa-calendar me-1"></i> 18-03-2026</span>
+                            <span><i class="fa-solid fa-location-dot me-1 text-accent"></i> Balai RT</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="program">
-            <h3 class="font-extrabold text-lg mb-4">Program Unggulan</h3>
-            <div class="space-y-3">
-                <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100">
-                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-fire text-xl"></i>
+            <h3 class="font-extrabold text-lg mb-4 tracking-tight px-1">Program Unggulan</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="flex items-center gap-4 bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm btn-active transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100">
+                        <i class="fa-solid fa-fire-burner text-2xl"></i>
                     </div>
                     <div class="flex-1">
-                        <h5 class="font-bold text-sm">Pembakaran Terpadu</h5>
-                        <p class="text-xs text-gray-500">Suhu tinggi & bebas asap pekat.</p>
+                        <h5 class="font-bold text-sm text-dark">Insenator Terpadu</h5>
+                        <p class="text-[11px] text-gray-400 mt-0.5">Pembakaran minim asap.</p>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100">
-                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-seedling text-xl"></i>
+                <div class="flex items-center gap-4 bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm btn-active transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 border border-green-100">
+                        <i class="fa-solid fa-box-archive text-2xl"></i>
                     </div>
                     <div class="flex-1">
-                        <h5 class="font-bold text-sm">Kompos Warga</h5>
-                        <p class="text-xs text-gray-500">Ubah sampah organik jadi pupuk.</p>
+                        <h5 class="font-bold text-sm text-dark">Bank Sampah</h5>
+                        <p class="text-[11px] text-gray-400 mt-0.5">Tukar sampah jadi saldo.</p>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center">
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-100 px-6 pt-3 pb-6 z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <button @click="page = 'home'" :class="page === 'home' ? 'nav-active' : 'text-gray-400'" class="flex flex-col items-center gap-1 transition-all">
-                <i class="fa-solid fa-house-chimney text-xl"></i>
-                <span class="text-[10px]">Home</span>
+    <nav class="fixed bottom-0 w-full glass-nav border-t border-gray-100 px-8 pt-3 pb-8 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <div class="max-w-md mx-auto flex justify-between items-center relative">
+            
+            <button @click="page = 'home'" :class="page === 'home' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 transition-all outline-none">
+                <i class="fa-solid fa-house-chimney text-xl" :class="page === 'home' ? 'scale-110' : ''"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Home</span>
+                <div x-show="page === 'home'" class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></div>
             </button>
-            <button @click="page = 'program'" :class="page === 'program' ? 'nav-active' : 'text-gray-400'" class="flex flex-col items-center gap-1 transition-all">
-                <i class="fa-solid fa-grid-2 text-xl"></i>
-                <span class="text-[10px]">Program</span>
+
+            <button @click="page = 'program'" :class="page === 'program' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 transition-all outline-none">
+                <i class="fa-solid fa-swatchbook text-xl" :class="page === 'program' ? 'scale-110' : ''"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Program</span>
+                <div x-show="page === 'program'" class="w-1.5 h-1.5 bg-accent rounded-full"></div>
             </button>
-            <button class="w-14 h-14 bg-primary rounded-full -translate-y-6 flex items-center justify-center shadow-xl shadow-green-200 border-4 border-white">
-                <i class="fa-solid fa-plus text-white text-xl"></i>
+
+            <div class="relative -translate-y-8">
+                <button class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-2xl shadow-green-300 border-[6px] border-white active:scale-90 transition-all duration-300 group">
+                    <i class="fa-solid fa-plus text-white text-2xl group-hover:rotate-90 transition-transform"></i>
+                </button>
+            </div>
+
+            <button @click="page = 'laporan'" :class="page === 'laporan' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 transition-all outline-none">
+                <i class="fa-solid fa-chart-pie text-xl" :class="page === 'laporan' ? 'scale-110' : ''"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Kas</span>
+                <div x-show="page === 'laporan'" class="w-1.5 h-1.5 bg-accent rounded-full"></div>
             </button>
-            <button @click="page = 'laporan'" :class="page === 'laporan' ? 'nav-active' : 'text-gray-400'" class="flex flex-col items-center gap-1 transition-all">
-                <i class="fa-solid fa-chart-pie text-xl"></i>
-                <span class="text-[10px]">Laporan</span>
+
+            <button @click="page = 'profil'" :class="page === 'profil' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 transition-all outline-none">
+                <i class="fa-solid fa-circle-user text-xl" :class="page === 'profil' ? 'scale-110' : ''"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Profil</span>
+                <div x-show="page === 'profil'" class="w-1.5 h-1.5 bg-accent rounded-full"></div>
             </button>
-            <button @click="page = 'profil'" :class="page === 'profil' ? 'nav-active' : 'text-gray-400'" class="flex flex-col items-center gap-1 transition-all">
-                <i class="fa-solid fa-user text-xl"></i>
-                <span class="text-[10px]">Profil</span>
-            </button>
+
         </div>
     </nav>
 
-    <div class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-dark bg-gray-900 text-white px-6 py-3 rounded-full text-xs font-bold shadow-2xl z-50 flex items-center gap-3 opacity-0 pointer-events-none transform translate-y-4 transition-all" id="toast">
-        <i class="fa-solid fa-circle-check text-accent"></i>
-        Fitur ini segera hadir di RT 04!
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-dark text-white px-6 py-3.5 rounded-2xl text-[11px] font-bold shadow-2xl z-[60] flex items-center gap-3 opacity-0 pointer-events-none transform translate-y-4 transition-all duration-500">
+        <i class="fa-solid fa-bolt text-accent"></i>
+        <span>Fitur ini segera aktif untuk RT 04!</span>
     </div>
 
     <script>
-        // Animasi klik sederhana untuk demo
+        // Animasi Sederhana untuk Klik
         document.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', () => {
                 const toast = document.getElementById('toast');
-                toast.style.opacity = '1';
-                toast.style.transform = 'translate(-50%, 0)';
+                toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                
                 setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translate(-50%, 1rem)';
-                }, 2000);
+                    toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                }, 2500);
             });
         });
     </script>
