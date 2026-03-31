@@ -1,150 +1,270 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUNTAS - Lingkungan Bersih & Sehat</title>
+    <title>TUNTAS - Pengelolaan Sampah Modern RT</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        primary: '#166534', // Hijau Tua
+                        accent: '#84cc16',  // Hijau Muda Lime
+                        dark: '#1f2937',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .hero-gradient { background: linear-gradient(135deg, #166534 0%, #3f6212 100%); }
+        /* Custom CSS untuk mempermanis */
+        [x-cloak] { display: none !important; }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Efek Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #166534 0%, #84cc16 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Super Smooth Hover Card */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 antialiased" x-data="{ mobileMenu: false }">
 
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="text-2xl font-bold text-green-700 tracking-tight">TUNTAS</div>
-            <div class="hidden md:flex space-x-6 font-medium text-sm">
-                <a href="#" class="hover:text-green-600">Beranda</a>
-                <a href="#tentang" class="hover:text-green-600">Tentang</a>
-                <a href="#program" class="hover:text-green-600">Program</a>
-                <a href="#keuangan" class="hover:text-green-600">Keuangan</a>
-                <a href="#kontak" class="hover:text-green-600">Kontak</a>
+    <nav class="fixed top-0 w-full z-50 glass border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-leaf text-white text-sm"></i>
+                </div>
+                <span class="text-2xl font-extrabold tracking-tighter text-primary">TUNTAS</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 font-semibold text-sm text-gray-700">
+                <a href="#" class="hover:text-primary transition">Beranda</a>
+                <a href="#tentang" class="hover:text-primary transition">Tentang</a>
+                <a href="#program" class="hover:text-primary transition">Program</a>
+                <a href="#keuangan" class="hover:text-primary transition">Keuangan</a>
+                <a href="#kontak" class="bg-primary text-white px-5 py-2.5 rounded-full hover:bg-black transition shadow-md">Hubungi</a>
             </div>
-            <button class="md:hidden text-green-700"><i class="fa-solid fa-bars-staggered text-xl"></i></button>
+
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden text-primary p-2">
+                <i class="fa-solid fa-bars-staggered text-2xl"></i>
+            </button>
+        </div>
+
+        <div x-show="mobileMenu" x-transition x-cloak class="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 p-6 shadow-xl">
+            <div class="flex flex-col gap-4 font-semibold">
+                <a href="#" @click="mobileMenu = false" class="py-2 border-b">Beranda</a>
+                <a href="#tentang" @click="mobileMenu = false" class="py-2 border-b">Tentang</a>
+                <a href="#program" @click="mobileMenu = false" class="py-2 border-b">Program</a>
+                <a href="#keuangan" @click="mobileMenu = false" class="py-2 border-b">Keuangan</a>
+                <a href="#kontak" @click="mobileMenu = false" class="bg-primary text-white text-center py-3 rounded-lg">Hubungi</a>
+            </div>
         </div>
     </nav>
 
-    <section class="hero-gradient text-white py-16 px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <span class="bg-white/20 px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">Program RT 04</span>
-            <h1 class="text-3xl md:text-5xl font-bold mt-6 leading-tight">Bersama Warga, Mewujudkan Lingkungan Bersih dan Sehat</h1>
-            <p class="mt-4 text-green-100 text-lg">Program pengelolaan sampah terpadu untuk kebaikan dan kenyamanan bersama.</p>
-            <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#program" class="bg-white text-green-800 px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-green-50 transition">Lihat Program</a>
-                <a href="#kontak" class="bg-green-700 border border-green-400 px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition">Hubungi Kami</a>
+    <section class="relative pt-32 pb-20 px-6 bg-white overflow-hidden" x-data="{ activeSlide: 1, slides: [1, 2] }" x-init="setInterval(() => activeSlide = activeSlide === slides.length ? 1 : activeSlide + 1, 5000)">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            
+            <div data-aos="fade-right">
+                <span class="inline-flex items-center gap-2 bg-green-100 text-primary px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-green-200">
+                    <i class="fa-solid fa-star text-accent hover:rotate-180 transition-transform"></i>
+                    PROGRAM UNGGULAN RT 04 BANTUL
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-dark mt-6 leading-tight tracking-tighter">
+                    Mewujudkan Lingkungan <span class="gradient-text">Bersih & Sehat</span> Bersama-sama.
+                </h1>
+                <p class="mt-6 text-lg text-gray-600 leading-relaxed">
+                    Sistem Tempat Pembakaran Sampah Terpadu (TUNTAS) yang modern, ramah lingkungan, dan dikelola secara transparan oleh warga.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                    <a href="#program" class="group bg-primary text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:bg-black transition-all flex items-center justify-center gap-2 text-lg">
+                        Eksplor Program
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <section id="program" class="py-16 px-4 max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-            <h2 class="text-2xl font-bold text-gray-900">Layanan & Program</h2>
-            <p class="text-gray-500">Inisiatif nyata untuk lingkungan RT kita.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                <div class="w-12 h-12 bg-green-100 text-green-700 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-recycle text-xl"></i>
-                </div>
-                <h3 class="font-bold mb-2">Pengelolaan Terpadu</h3>
-                <p class="text-sm text-gray-500">Pemisahan sampah organik dan anorganik dari sumbernya.</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                <div class="w-12 h-12 bg-orange-100 text-orange-700 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-fire-burner text-xl"></i>
-                </div>
-                <h3 class="font-bold mb-2">Pembakaran Sehat</h3>
-                <p class="text-sm text-gray-500">Sistem pembakaran terkontrol dengan emisi yang diminimalisir.</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-users text-xl"></i>
-                </div>
-                <h3 class="font-bold mb-2">Edukasi Warga</h3>
-                <p class="text-sm text-gray-500">Sosialisasi rutin pentingnya menjaga kebersihan lingkungan.</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-                <div class="w-12 h-12 bg-brown-100 text-yellow-800 rounded-lg flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-hands-holding-child text-xl"></i>
-                </div>
-                <h3 class="font-bold mb-2">Gotong Royong</h3>
-                <p class="text-sm text-gray-500">Kegiatan kerja bakti rutin bulanan bersama seluruh warga.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="keuangan" class="bg-white py-16 px-4">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Laporan Keuangan</h2>
-                    <p class="text-gray-500 text-sm">Transparansi dana program TUNTAS periode Maret 2026.</p>
-                </div>
-                <div class="mt-4 md:mt-0 flex gap-4">
-                    <div class="text-right border-r pr-4 border-gray-200">
-                        <span class="text-xs uppercase text-gray-400 font-bold">Total Saldo</span>
-                        <p class="text-xl font-bold text-green-600">Rp 4.250.000</p>
+            <div class="relative rounded-3xl overflow-hidden shadow-2xl shadow-green-100 border-4 border-white aspect-[4/3]" data-aos="fade-left">
+                <div x-show="activeSlide === 1" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1532996123724-84d2c942a60b?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Pengelolaan Sampah">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-8">
+                        <p class="text-white font-bold text-xl">Proses Pemilahan Sampah Organik</p>
                     </div>
+                </div>
+                <div x-show="activeSlide === 2" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" class="absolute inset-0" x-cloak>
+                    <img src="https://images.unsplash.com/photo-1618477461839-eb673a3ff5d6?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Alat Pembakaran">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-8">
+                        <p class="text-white font-bold text-xl">Insenator Ramah Lingkungan TUNTAS</p>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-4 right-4 flex gap-2">
+                    <template x-for="slide in slides" :key="slide">
+                        <button @click="activeSlide = slide" :class="activeSlide === slide ? 'bg-accent w-8' : 'bg-white/50 w-3'" class="h-3 rounded-full transition-all duration-300"></button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="program" class="py-24 px-6 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+                <span class="text-accent font-bold uppercase tracking-widest text-sm">Layanan Kami</span>
+                <h2 class="text-4xl font-extrabold text-dark mt-2 tracking-tight">Pilar Utama Program TUNTAS</h2>
+                <p class="text-gray-600 mt-4 text-lg">Empat fokus utama kami untuk menciptakan lingkungan RT yang lebih baik.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="feature-card bg-white p-8 rounded-3xl border border-gray-100 shadow-sm" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-green-100 text-primary rounded-2xl flex items-center justify-center mb-6 border border-green-200 shadow-inner">
+                        <i class="fa-solid fa-recycle text-3xl hover:rotate-90 transition-transform duration-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Pemisahan Sumber</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Edukasi warga memisahkan sampah organik & anorganik sejak dari dapur rumah.</p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl border border-gray-100 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-lime-100 text-accent rounded-2xl flex items-center justify-center mb-6 border border-lime-200 shadow-inner">
+                        <i class="fa-solid fa-fire-burner text-3xl hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Insenator Sehat</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Teknologi pembakaran suhu tinggi dengan filter ganda untuk minimalkan polusi asap.</p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl border border-gray-100 shadow-sm" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-sky-100 text-sky-700 rounded-2xl flex items-center justify-center mb-6 border border-sky-200 shadow-inner">
+                        <i class="fa-solid fa-chart-line text-3xl hover:-translate-y-1 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Laporan Transparan</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Akses terbuka data keuangan dan operasional program untuk seluruh warga RT.</p>
+                </div>
+
+                <div class="feature-card bg-white p-8 rounded-3xl border border-gray-100 shadow-sm" data-aos="fade-up" data-aos-delay="400">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mb-6 border border-amber-200 shadow-inner">
+                        <i class="fa-solid fa-handshake-angle text-3xl hover:rotate-12 transition-transform"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark mb-3">Aksi Gotong Royong</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">Jadwal rutin kerja bakti warga untuk perawatan alat dan kebersihan area.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="keuangan" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-12 mb-16 items-center" data-aos="fade-up">
+                <div class="md:col-span-2">
+                    <span class="text-accent font-bold uppercase tracking-widest text-sm">Transparansi Dana</span>
+                    <h2 class="text-4xl font-extrabold text-dark mt-2 tracking-tight">Update Kas Program</h2>
+                    <p class="text-gray-600 mt-4 text-lg max-w-xl">Laporan pemasukan dan pengeluaran dana TUNTAS periode <strong class="text-primary">Maret 2026</strong>. Diperbarui setiap bulan.</p>
+                </div>
+                <div class="bg-primary text-white p-8 rounded-3xl shadow-xl flex flex-col items-center text-center transform hover:scale-105 transition duration-500">
+                    <span class="text-sm font-medium text-green-200">TOTAL SALDO KAS</span>
+                    <p class="text-4xl font-extrabold mt-2 leading-none">Rp 4.250.000</p>
+                    <span class="text-xs bg-accent/20 text-accent px-3 py-1 rounded-full mt-4 border border-accent/30">+15% vs Bulan Lalu</span>
                 </div>
             </div>
             
-            <div class="overflow-x-auto rounded-xl border border-gray-100">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 text-gray-600 uppercase text-[10px] font-bold">
-                        <tr>
-                            <th class="px-6 py-4">Tanggal</th>
-                            <th class="px-6 py-4">Keterangan</th>
-                            <th class="px-6 py-4">Masuk</th>
-                            <th class="px-6 py-4 text-red-500">Keluar</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr>
-                            <td class="px-6 py-4">15 - 03 - 2026</td>
-                            <td class="px-6 py-4">Iuran Warga Maret</td>
-                            <td class="px-6 py-4 text-green-600">+1.500.000</td>
-                            <td class="px-6 py-4">0</td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4">20 - 03 - 2026</td>
-                            <td class="px-6 py-4">Pembelian Filter Asap</td>
-                            <td class="px-6 py-4">0</td>
-                            <td class="px-6 py-4 text-red-500">-750.000</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden" data-aos="fade-up">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider">
+                            <tr>
+                                <th class="px-8 py-5">Tanggal</th>
+                                <th class="px-8 py-5">Keterangan Kegiatan</th>
+                                <th class="px-8 py-5 text-green-600">Pemasukan (Rp)</th>
+                                <th class="px-8 py-5 text-red-600">Pengeluaran (Rp)</th>
+                                <th class="px-8 py-5 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-gray-700 font-medium">
+                            <tr class="hover:bg-gray-50/50 transition">
+                                <td class="px-8 py-5 font-mono text-gray-500">15 - 03 - 2026</td>
+                                <td class="px-8 py-5">Iuran Bulanan Warga (75 Rumah)</td>
+                                <td class="px-8 py-5 text-lg text-green-600 font-bold">+ 1.500.000</td>
+                                <td class="px-8 py-5">- 0</td>
+                                <td class="px-8 py-5 text-right"><button class="text-primary hover:text-accent"><i class="fa-solid fa-file-invoice"></i></button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/50 transition">
+                                <td class="px-8 py-5 font-mono text-gray-500">20 - 03 - 2026</td>
+                                <td class="px-8 py-5">Pembelian Filter Karbon & Perawatan Alat</td>
+                                <td class="px-8 py-5">- 0</td>
+                                <td class="px-8 py-5 text-lg text-red-600 font-bold">- 750.000</td>
+                                <td class="px-8 py-5 text-right"><button class="text-primary hover:text-accent"><i class="fa-solid fa-file-invoice"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
-            <div>
-                <h3 class="text-white font-bold text-xl mb-4">TUNTAS</h3>
-                <p>Program RT untuk lingkungan yang lebih hijau, sehat, dan nyaman bagi masa depan anak cucu kita.</p>
+    <footer class="bg-dark text-gray-300 py-16 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
+            <div class="md:col-span-2">
+                 <a href="#" class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-leaf text-primary text-sm"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tighter text-white">TUNTAS</span>
+                </a>
+                <p class="max-w-md leading-relaxed">Komitmen warga RT 04 Bantul untuk menciptakan lingkungan yang bersih, sehat, dan nyaman bagi masa depan.</p>
             </div>
             <div>
-                <h4 class="text-white font-bold mb-4">Navigasi</h4>
-                <ul class="space-y-2">
-                    <li><a href="#" class="hover:underline">Beranda</a></li>
-                    <li><a href="#" class="hover:underline">Laporan Keuangan</a></li>
-                    <li><a href="#" class="hover:underline">Galeri Kegiatan</a></li>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-xs">Menu Cepat</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="#" class="hover:text-accent transition">Beranda</a></li>
+                    <li><a href="#program" class="hover:text-accent transition">Detail Program</a></li>
+                    <li><a href="#keuangan" class="hover:text-accent transition">Laporan Keuangan</a></li>
                 </ul>
             </div>
             <div>
-                <h4 class="text-white font-bold mb-4">Kontak Kami</h4>
-                <p>Sekretariat RT 04, Bantul, Yogyakarta</p>
-                <p class="mt-2 text-green-500"><i class="fa-brands fa-whatsapp"></i> +62 812-3456-7890</p>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-xs">Hubungi Pengurus</h4>
+                <p>Sekretariat RT 04, Jl. Imogiri Barat, Bantul</p>
+                <p class="mt-3 text-lg font-bold text-accent"><i class="fa-brands fa-whatsapp"></i> 0812-3456-7890</p>
             </div>
         </div>
-        <div class="max-w-6xl mx-auto border-t border-gray-800 mt-8 pt-8 text-center text-[10px] uppercase tracking-widest">
-            &copy; 2026 TUNTAS Community Program. All Rights Reserved.
+        <div class="max-w-7xl mx-auto border-t border-gray-700 mt-12 pt-8 text-center text-xs uppercase tracking-widest text-gray-500">
+            &copy; 2026 TUNTAS Community. Sleek Edition.
         </div>
     </footer>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.css"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800, // Durasi animasi (ms)
+            once: true, // Animasi hanya jalan sekali saat di-scroll
+        });
+    </script>
 </body>
 </html>
