@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS Mobile - Official App</title>
+    
+    <meta name="theme-color" content="#166534">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { primary: '#166534', accent: '#84cc16', dark: '#0f172a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: contain; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .app-card { background: #ffffff; border-radius: 28px; border: 1px solid rgba(229, 231, 235, 0.7); shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .pb-nav { padding-bottom: 120px; }
+    </style>
+</head>
+<body class="bg-[#F8FAF8] text-gray-900 font-sans" x-data="{ activeTab: 'home', selectedFaq: null }">
+
+    <header class="fixed top-0 w-full z-50 glass-header border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-green-200/50">
+                <i class="fa-solid fa-leaf text-white text-sm"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-extrabold tracking-tighter leading-none text-primary italic">TUNTAS</h1>
+                <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase">RT 04 Management</p>
+            </div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 relative border border-gray-100">
+            <i class="fa-regular fa-bell"></i>
+            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+        </div>
+    </header>
+
+    <main class="pt-28 pb-nav px-6">
+
+        <div x-show="activeTab === 'home'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4">
+            <section class="mb-9">
+                <div class="bg-gradient-to-br from-primary to-green-900 rounded-[32px] p-7 text-white shadow-2xl shadow-green-200/40 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-green-200 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">Saldo Kas RT 04</p>
+                        <h2 class="text-3xl font-extrabold tracking-tighter mb-6">Rp 4.250.000</h2>
+                        <div class="grid grid-cols-2 gap-4 pt-5 border-t border-white/10 text-[11px]">
+                            <div class="flex flex-col">
+                                <span class="text-green-300 font-bold uppercase mb-1">Masuk (Mar)</span>
+                                <span class="font-extrabold">+ 1.500.000</span>
+                            </div>
+                            <div class="flex flex-col border-l border-white/10 ps-4">
+                                <span class="text-green-300 font-bold uppercase mb-1">Keluar (Mar)</span>
+                                <span class="font-extrabold text-red-300">- 750.000</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-accent/20 rounded-full blur-3xl"></div>
+                </div>
+            </section>
+
+            <section class="mb-9">
+                <h3 class="font-extrabold text-lg tracking-tight mb-4 px-1">Giat Warga</h3>
+                <div class="flex overflow-x-auto no-scrollbar gap-4 -mx-6 px-6">
+                    <div class="min-w-[260px] bg-white rounded-[28px] overflow-hidden border border-gray-100 shadow-sm active:scale-95 transition-transform">
+                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?w=400" class="w-full h-32 object-cover" />
+                        <div class="p-4">
+                            <span class="text-[9px] bg-green-100 text-primary font-bold px-2 py-0.5 rounded-full uppercase">Baru</span>
+                            <h4 class="font-bold text-sm mt-2">Kerja Bakti Minggu Kliwon</h4>
+                            <p class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-calendar me-1"></i> 22-03-2026</p>
+                        </div>
+                    </div>
+                    <div class="min-w-[260px] bg-white rounded-[28px] overflow-hidden border border-gray-100 shadow-sm active:scale-95 transition-transform">
+                        <img src="https://images.unsplash.com/photo-1532996123724-84d2c942a60b?w=400" class="w-full h-32 object-cover" />
+                        <div class="p-4">
+                            <span class="text-[9px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">Edukasi</span>
+                            <h4 class="font-bold text-sm mt-2">Filter Insenator Baru</h4>
+                            <p class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-calendar me-1"></i> 18-03-2026</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="font-extrabold text-lg tracking-tight mb-4 px-1 text-primary italic">Apa itu TUNTAS?</h3>
+                <div class="app-card p-6 bg-white">
+                    <p class="text-[11px] text-gray-500 leading-relaxed mb-4 italic">
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation."
+                    </p>
+                    <button class="text-primary text-[11px] font-bold border-b border-primary border-dashed">Baca Selengkapnya</button>
+                </div>
+            </section>
+        </div>
+
+        <div x-show="activeTab === 'program'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4">
+            <h3 class="font-extrabold text-lg tracking-tight mb-4 px-1 uppercase">Program RT 04</h3>
+            
+            <div class="space-y-4 mb-9">
+                <div class="flex items-center gap-4 bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 shadow-inner">
+                        <i class="fa-solid fa-fire text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h5 class="font-bold text-sm">Insenator Terpadu</h5>
+                        <p class="text-[11px] text-gray-400">Pengelolaan sampah residu.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0 shadow-inner">
+                        <i class="fa-solid fa-seedling text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h5 class="font-bold text-sm">Kompos Mandiri</h5>
+                        <p class="text-[11px] text-gray-400">Pupuk dari sampah dapur.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="font-extrabold text-lg tracking-tight mb-4 px-1">Panduan Warga</h3>
+            <div class="space-y-3">
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                    <button @click="selectedFaq !== 1 ? selectedFaq = 1 : selectedFaq = null" class="w-full px-6 py-5 flex justify-between items-center text-left">
+                        <span class="text-sm font-bold text-dark">Cara Bergabung?</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 text-primary" :class="selectedFaq === 1 ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="selectedFaq === 1" x-collapse x-cloak class="px-6 pb-5 pt-2 border-t border-gray-50">
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Daftarkan rumah anda ke admin RT 04 melalui WhatsApp. Iuran bulanan Rp 20.000 sudah termasuk jasa ambil sampah.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-red-50 overflow-hidden shadow-sm">
+                    <button @click="selectedFaq !== 2 ? selectedFaq = 2 : selectedFaq = null" class="w-full px-6 py-5 flex justify-between items-center text-left">
+                        <span class="text-sm font-bold text-red-600">Sampah Dilarang?</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 text-red-600" :class="selectedFaq === 2 ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="selectedFaq === 2" x-collapse x-cloak class="px-6 pb-5 pt-2 border-t border-gray-50">
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Dilarang: Limbah B3 (baterai, aki), sampah medis, bangkai, dan puing bangunan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'kas'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4">
+            <h3 class="font-extrabold text-lg tracking-tight mb-4 px-1 uppercase">Log Keuangan RT</h3>
+            <div class="space-y-4">
+                <div class="app-card p-5 flex justify-between items-center bg-white">
+                    <div>
+                        <p class="text-xs font-extrabold">Iuran Warga - Maret</p>
+                        <p class="text-[10px] text-gray-400">28/03/2026 • Kas Masuk</p>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">+1.500.000</span>
+                </div>
+                <div class="app-card p-5 flex justify-between items-center bg-white">
+                    <div>
+                        <p class="text-xs font-extrabold">Solar Insenator</p>
+                        <p class="text-[10px] text-gray-400">25/03/2026 • Operasional</p>
+                    </div>
+                    <span class="text-sm font-bold text-red-500">-300.000</span>
+                </div>
+                <div class="app-card p-5 flex justify-between items-center bg-white opacity-60">
+                    <div>
+                        <p class="text-xs font-extrabold text-gray-400">Maintenance Bulanan</p>
+                        <p class="text-[10px] text-gray-400">15/03/2026 • Service</p>
+                    </div>
+                    <span class="text-sm font-bold text-gray-400">-450.000</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full glass-header border-t border-gray-100 px-8 pt-3 pb-8 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <div class="max-w-md mx-auto flex justify-between items-center relative">
+            
+            <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 outline-none transition-all duration-300">
+                <i class="fa-solid fa-house-chimney text-xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Home</span>
+            </button>
+
+            <button @click="activeTab = 'program'" :class="activeTab === 'program' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 outline-none transition-all duration-300">
+                <i class="fa-solid fa-swatchbook text-xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Program</span>
+            </button>
+
+            <div class="relative -translate-y-8">
+                <button class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-green-300 border-[6px] border-white active:scale-90 transition-transform">
+                    <i class="fa-solid fa-plus text-white text-2xl"></i>
+                </button>
+            </div>
+
+            <button @click="activeTab = 'kas'" :class="activeTab === 'kas' ? 'text-primary' : 'text-gray-300'" class="flex flex-col items-center gap-1.5 outline-none transition-all duration-300">
+                <i class="fa-solid fa-chart-pie text-xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Laporan</span>
+            </button>
+
+            <button class="flex flex-col items-center gap-1.5 text-gray-300 outline-none">
+                <i class="fa-solid fa-circle-user text-xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Profil</span>
+            </button>
+
+        </div>
+    </nav>
+
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3.5 rounded-2xl text-[10px] font-bold shadow-2xl z-[60] flex items-center gap-3 opacity-0 transform translate-y-4 transition-all duration-500 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-accent"></i>
+        <span>Pilihan berhasil diubah!</span>
+    </div>
+
+    <script>
+        // Logika Toast Sederhana saat Tab Berganti
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const toast = document.getElementById('toast');
+                toast.classList.replace('opacity-0', 'opacity-100');
+                toast.classList.replace('translate-y-4', 'translate-y-0');
+                setTimeout(() => {
+                    toast.classList.replace('opacity-100', 'opacity-0');
+                    toast.classList.replace('translate-y-0', 'translate-y-4');
+                }, 1500);
+            });
+        });
+    </script>
+
+</body>
+</html>
