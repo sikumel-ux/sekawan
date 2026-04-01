@@ -70,7 +70,7 @@ async function loadData() {
             tIur += nom;
             // PERBAIKAN: Nama Lengkap dimunculkan di Histori
             allTrx.push({ 
-                ket: `IURAN: ${d.nama || 'WARGA'}`, 
+                ket: `Pembayaran: ${d.nama || 'WARGA'}`, 
                 nom: nom, 
                 kat: 'Masuk', 
                 tgl: (d.tgl ? d.tgl.toDate() : new Date()) 
