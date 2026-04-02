@@ -9,9 +9,9 @@ const config = {
 firebase.initializeApp(config);
 const db = firebase.firestore(), auth = firebase.auth();
 
-// GITHUB CONFIG
-const GITHUB_TOKEN = "GANTI_TOKEN_DISINI"; 
-const GITHUB_REPO = "Username/RepoName"; // Contoh: opick/tuntas-media
+// GITHUB CONFIG - HARUS DIISI
+const GITHUB_TOKEN = "GANTI_DENGAN_TOKEN_KAMU"; 
+const GITHUB_REPO = "Username/RepoName"; 
 const GITHUB_BRANCH = "main";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
@@ -24,7 +24,7 @@ auth.onAuthStateChanged(user => {
 
 async function login() {
     const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-    try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Akses Ditolak!"); }
+    try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Sandi Salah!"); }
 }
 async function logout() { if(confirm("Keluar Panel?")) await auth.signOut(); }
 
@@ -35,9 +35,9 @@ function init() {
     const grid = document.getElementById('gridBulan');
     const thr = document.getElementById('th-rekap');
     if(grid && thr) {
-        grid.innerHTML = ''; thr.innerHTML = '<th class="sticky-col shadow-sm">WARGA</th>';
+        grid.innerHTML = ''; thr.innerHTML = '<th class="sticky-col shadow-sm">NAMA</th>';
         daftarBulan.forEach(bln => {
-            grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-black py-4 text-center border rounded-2xl bg-white text-slate-300 peer-checked:bg-primary peer-checked:text-white uppercase transition-all shadow-sm">${bln.substring(0,3)}</div></label>`;
+            grid.innerHTML += `<label class="relative block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-black py-4 text-center border-2 border-emerald-800/40 rounded-2xl bg-transparent text-emerald-200 peer-checked:bg-white peer-checked:text-primary peer-checked:border-white uppercase transition-all shadow-sm">${bln.substring(0,3)}</div></label>`;
             thr.innerHTML += `<th>${bln.substring(0,3)}</th>`;
         });
     }
@@ -45,7 +45,6 @@ function init() {
     loadBeritaAdmin();
 }
 
-// GITHUB UPLOAD LOGIC
 async function uploadToGithub(file) {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
@@ -85,7 +84,7 @@ async function simpanBerita() {
         const tFmt = `${d.getDate().toString().padStart(2, '0')} - ${(d.getMonth()+1).toString().padStart(2, '0')} - ${d.getFullYear()}`;
         await db.collection("berita").add({ judul: j, img: imgUrl, isi: isi, tgl: tFmt, createdAt: new Date(tRaw) });
         alert("Giat Berhasil Publish!"); location.reload();
-    } catch (e) { alert("Gagal Upload!"); btn.disabled = false; }
+    } catch (e) { alert("Gagal Upload!"); btn.disabled = false; btn.innerText = "PUBLISH GIAT"; }
 }
 
 async function loadData() {
@@ -110,14 +109,14 @@ async function loadData() {
     document.getElementById('totalKeluar').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
     allTrx.sort((a,b) => b.tgl - a.tgl).forEach(tx => {
         const isM = tx.kat === 'Masuk';
-        listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-5 rounded-[24px] flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-4 items-center"><div class="w-10 h-10 rounded-xl ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[10px] italic">${isM?'IN':'OUT'}</div><div><p class="text-[11px] font-black uppercase text-slate-700 italic">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="flex items-center gap-4"><p class="font-black text-[11px] ${isM?'text-emerald-700':'text-red-500'} italic">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
+        listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-5 rounded-[28px] flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-4 items-center"><div class="w-10 h-10 rounded-2xl ${isM?'bg-emerald-50 text-emerald-600':'bg-orange-50 text-orange-600'} flex items-center justify-center font-black text-[10px] italic">${isM?'IN':'OUT'}</div><div><p class="text-[11px] font-black uppercase text-slate-700 italic">${tx.ket}</p><p class="font-mono text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="flex items-center gap-4"><p class="font-black text-[11px] ${isM?'text-emerald-700':'text-orange-500'} italic">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapus('${tx.col}','${tx.id}')" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
     });
     dang.docs.forEach(doc => {
         const d = doc.data(); const n = (d.nama || "").toUpperCase();
         dataWarga[n] = d.hp || '';
         sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
         ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50"><div><p class="font-black text-xs uppercase text-slate-700 italic">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-100"><span class="material-symbols-rounded">delete</span></button></div>`);
-        let row = `<tr><td class="sticky-col font-bold uppercase">${n.split(' ')[0]}</td>`;
+        let row = `<tr><td class="sticky-col font-black uppercase">${n.split(' ')[0]}</td>`;
         daftarBulan.forEach(bln => {
             const lunas = iuranArr.filter(k => (k.nama||"").toUpperCase() === n && (k.bulan||"").includes(bln));
             if(lunas.length > 0) {
@@ -136,7 +135,7 @@ async function simpanIuran() {
     const k = "T-" + Math.floor(100000 + Math.random() * 900000); 
     await db.collection("pembayaran").doc(k).set({ nama: n, bulan: blns.join(","), nom: nmn, tgl: new Date(tglVal), kode: k }); 
     const hp = (dataWarga[n]||'').replace(/^0/,'62');
-    window.open(`https://wa.me/${hp}?text=Halo *${n}*, iuran Anda diterima (Ref: ${k}). Cek kuitansi: ${window.location.origin}/kuitansi.html?id=${k}`);
+    window.open(`https://wa.me/${hp}?text=Halo *${n}*, iuran diterima (Ref: ${k}). Cek kuitansi: ${window.location.origin}/kuitansi.html?id=${k}`);
     location.reload();
 }
 
@@ -146,14 +145,14 @@ async function loadBeritaAdmin() {
     listB.innerHTML = '';
     snap.forEach(doc => {
         const b = doc.data();
-        listB.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-4 items-center"><img src="${b.img}" class="w-12 h-12 rounded-xl object-cover"><p class="text-[10px] font-black uppercase italic text-slate-700 truncate max-w-[120px]">${b.judul}</p></div><button onclick="hapus('berita','${doc.id}')" class="text-red-100"><span class="material-symbols-rounded">delete</span></button></div>`);
+        listB.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-3xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-4 items-center"><img src="${b.img}" class="w-12 h-12 rounded-2xl object-cover"><p class="text-[10px] font-black uppercase italic text-slate-700 truncate max-w-[120px]">${b.judul}</p></div><button onclick="hapus('berita','${doc.id}')" class="text-red-100"><span class="material-symbols-rounded">delete</span></button></div>`);
     });
 }
 
 async function simpanKas() {
     const tgl = document.getElementById('kTgl').value, kat = document.getElementById('kKat').value, ket = document.getElementById('kKet').value.toUpperCase(), nom = Number(document.getElementById('kNom').value);
     await db.collection("kas").add({ kat, ket, nom, tgl: new Date(tgl) });
-    alert("Kas Tersimpan!"); loadData();
+    alert("Kas Simpan!"); loadData();
 }
 
 async function simpanAnggota() {
@@ -161,12 +160,11 @@ async function simpanAnggota() {
     if(n) { await db.collection("anggota").add({ nama: n, hp: h }); loadData(); }
 }
 
-async function hapus(c, id) { if(confirm("Hapus Permanen?")) { await db.collection(c).doc(id).delete(); loadData(); loadBeritaAdmin(); } }
+async function hapus(c, id) { if(confirm("Hapus?")) { await db.collection(c).doc(id).delete(); loadData(); loadBeritaAdmin(); } }
 
 function st(t) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById('screen-'+t).classList.add('active');
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById('n-'+t).classList.add('active');
-                      }
-            
+}
