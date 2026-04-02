@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS RT 04 - Home</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <link rel="stylesheet" href="warga.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { primary: '#166534', accent: '#84cc16' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans text-slate-800" x-data="{ activeTab: 'home', selectedFaq: null }">
+
+    <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-green-100">
+                <i class="fa-solid fa-leaf text-white text-sm"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-extrabold tracking-tighter text-primary italic">TUNTAS</h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">RT 04 Dongkelan</p>
+            </div>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 border border-slate-100 relative">
+            <i class="fa-regular fa-bell"></i>
+            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-32 px-6">
+
+        <div x-show="activeTab === 'home'" class="tab-content active space-y-9">
+            <section>
+                <div class="bg-gradient-to-br from-primary to-green-900 rounded-[32px] p-7 text-white shadow-2xl shadow-green-200/40 relative overflow-hidden">
+                    <p class="text-green-200 text-[10px] font-bold uppercase tracking-widest mb-1">Saldo Kas RT 04</p>
+                    <h2 id="totalSaldo" class="text-3xl font-extrabold tracking-tighter mb-6">Rp 0</h2>
+                    <div class="grid grid-cols-2 gap-4 pt-5 border-t border-white/10">
+                        <div class="flex flex-col">
+                            <span class="text-green-300 font-bold uppercase text-[9px]">Masuk (Mar)</span>
+                            <span id="totalMasuk" class="font-extrabold text-sm">+ 0</span>
+                        </div>
+                        <div class="flex flex-col border-l border-white/10 ps-4">
+                            <span class="text-green-300 font-bold uppercase text-[9px]">Keluar (Mar)</span>
+                            <span id="totalKeluar" class="font-extrabold text-red-300 text-sm">- 0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="font-extrabold text-lg mb-4 px-1 italic">Giat Warga</h3>
+                <div id="newsSlider" class="flex overflow-x-auto no-scrollbar gap-4 -mx-6 px-6">
+                    <p class="text-[10px] text-slate-400 italic">Memuat kegiatan...</p>
+                </div>
+            </section>
+
+            <section class="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
+                <h3 class="font-extrabold text-sm mb-2 text-primary">Mengenal TUNTAS</h3>
+                <p class="text-[11px] text-slate-500 leading-relaxed mb-4 italic">
+                    TUNTAS adalah sistem pengelolaan sampah mandiri RT 04 yang berfokus pada pemilahan sampah organik dan anorganik langsung dari rumah warga...
+                </p>
+                <button @click="activeTab = 'tentang'" class="text-[10px] font-extrabold text-primary border-b border-primary border-dashed pb-0.5 uppercase">Baca Detail →</button>
+            </section>
+        </div>
+
+        <div x-show="activeTab === 'tentang'" x-cloak class="tab-content active space-y-6">
+            <h2 class="text-2xl font-extrabold tracking-tighter">Filosofi <span class="text-primary italic">TUNTAS</span></h2>
+            <div class="bg-white p-6 rounded-[32px] border border-slate-100 space-y-4 shadow-sm">
+                <p class="text-xs text-slate-500 leading-relaxed font-semibold">
+                    "TUNTAS" (Turun Tangan Atasi Sampah) merupakan inisiatif warga RT 04 Dongkelan untuk menciptakan lingkungan yang asri dan bebas tumpukan residu.
+                </p>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Kami menggunakan alat insenator ramah lingkungan hasil swadaya warga untuk memproses residu, dan metode pengomposan untuk sampah dapur. Dana dari iuran warga dikelola secara transparan melalui aplikasi ini.
+                </p>
+            </div>
+            
+            <h3 class="font-extrabold text-lg px-1">Tanya Jawab</h3>
+            <div class="space-y-3">
+                <template x-for="(faq, index) in [
+                    {q: 'Bagaimana cara setor sampah?', a: 'Sampah dipilah jadi 2: Organik & Anorganik. Petugas ambil tiap pukul 07.00.'},
+                    {q: 'Berapa biaya iuran bulanan?', a: 'Iuran disepakati Rp 20.000 per bulan untuk operasional alat & petugas.'}
+                ]">
+                    <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                        <button @click="selectedFaq === index ? selectedFaq = null : selectedFaq = index" class="w-full px-5 py-4 flex justify-between items-center text-left">
+                            <span class="text-[11px] font-bold" x-text="faq.q"></span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-300 transition-transform" :class="selectedFaq === index ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="selectedFaq === index" x-collapse class="px-5 pb-4 pt-1 text-[11px] text-slate-400 leading-relaxed" x-text="faq.a"></div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'kas'" x-cloak class="tab-content active space-y-6">
+            <h2 class="text-2xl font-extrabold tracking-tighter px-1 uppercase italic">Riwayat Kas</h2>
+            <div id="listRiwayat" class="space-y-3">
+                </div>
+        </div>
+
+        <div x-show="activeTab === 'profil'" x-cloak class="tab-content active flex flex-col items-center">
+            <div class="w-24 h-24 rounded-[32px] border-4 border-white shadow-xl overflow-hidden mb-4 bg-primary flex items-center justify-center text-white text-3xl">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <h2 class="text-xl font-extrabold uppercase italic">Warga RT 04</h2>
+            <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-8">Panggungharjo, Bantul</p>
+            
+            <div class="w-full space-y-3">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <i class="fa-solid fa-id-card text-primary"></i>
+                    <div class="flex-1">
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Status Akun</p>
+                        <p class="text-xs font-bold">Warga Aktif</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <i class="fa-solid fa-shield-check text-green-500"></i>
+                    <div class="flex-1">
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Iuran Terakhir</p>
+                        <p class="text-xs font-bold">Maret 2026 (Lunas)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-100 px-8 pt-3 pb-8 z-50 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
+        <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-primary' : 'text-slate-300'" class="nav-btn">
+            <i class="fa-solid fa-house-chimney text-lg"></i>
+            <span>Home</span>
+        </button>
+        <button @click="activeTab = 'tentang'" :class="activeTab === 'tentang' ? 'text-primary' : 'text-slate-300'" class="nav-btn">
+            <i class="fa-solid fa-book-open-reader text-lg"></i>
+            <span>Tuntas</span>
+        </button>
+        <div class="relative -translate-y-6">
+            <button class="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white active:scale-90 transition-transform">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+        <button @click="activeTab = 'kas'" :class="activeTab === 'kas' ? 'text-primary' : 'text-slate-300'" class="nav-btn">
+            <i class="fa-solid fa-chart-line text-lg"></i>
+            <span>Kas</span>
+        </button>
+        <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-primary' : 'text-slate-300'" class="nav-btn">
+            <i class="fa-solid fa-circle-user text-lg"></i>
+            <span>Profil</span>
+        </button>
+    </nav>
+
+    <script src="warga.js"></script>
+</body>
+  </html>
+  
