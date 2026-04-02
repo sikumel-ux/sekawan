@@ -1,28 +1,23 @@
-/* Base Style */
 [x-cloak] { display: none !important; }
 body { background-color: #F8FAF8; overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; }
 
-/* Custom Utilities */
+/* Navigation */
+.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; transition: all 0.3s ease; width: 60px; }
+.nav-btn span { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+.nav-btn.text-primary { transform: translateY(-2px); }
+
+/* Custom Scrollbar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Animation Tab */
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-
+/* Pop-up Animation */
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(100px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-/* Nav Button Styling */
-.nav-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.3s ease;
-}
-
-.nav-btn.active span { font-weight: 800; color: #166534; }
-.nav-btn span { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: inherit; }
+/* Tab Animation */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
