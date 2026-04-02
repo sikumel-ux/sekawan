@@ -1,0 +1,55 @@
+/* Base Reset */
+[x-cloak] { display: none !important; }
+body { background-color: #F9FBF9; overscroll-behavior-y: contain; }
+
+/* Tab Animation */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: slideUp 0.4s ease-out; }
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Table Utilities */
+.table-container { 
+    overflow-x: auto; 
+    border-radius: 24px; 
+    background: white;
+}
+
+.sticky-col { 
+    position: sticky; 
+    left: 0; 
+    z-index: 10; 
+    background: white; 
+    border-right: 1px solid #f1f5f9;
+}
+
+/* Nav Styles */
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #cbd5e1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-btn.active { color: #166534; transform: translateY(-2px); }
+.nav-btn span { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Form Styles */
+.input-admin {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    font-size: 11px;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-admin:focus { border-color: #166534; }
