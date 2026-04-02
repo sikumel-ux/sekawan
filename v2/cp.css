@@ -1,29 +1,28 @@
 [x-cloak] { display: none !important; }
 body { background-color: #F8FAF8; overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; }
 
-/* Navigation */
-.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; transition: all 0.3s ease; width: 60px; cursor: pointer; }
+/* Navigation - Ikon atas, Teks bawah */
+.nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 20%; padding: 8px 0; cursor: pointer; }
 .nav-btn span { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-.nav-btn.text-primary { transform: translateY(-2px); }
+.nav-btn.text-primary { transform: translateY(-4px); }
 
-/* Custom Scrollbar */
+/* UI Elements */
+.input-admin { @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all mb-4 uppercase placeholder:normal-case; }
+
+/* Scrollbar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* UI Elements */
-.input-admin { @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all mb-4 uppercase placeholder:normal-case; }
-
-/* Pop-up Animation */
+/* Pop-up & Tab Animation */
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(100px); }
     to { opacity: 1; transform: translateY(0); }
 }
 .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-/* Tab Animation */
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-th { @apply p-3 font-black text-[9px] italic text-slate-400; }
-td { @apply p-3 border-b border-slate-50 font-bold; }
+th { @apply p-4 font-black text-[9px] italic text-slate-400 uppercase; }
+td { @apply p-4 border-b border-slate-50 font-bold; }
