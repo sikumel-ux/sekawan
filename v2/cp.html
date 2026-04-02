@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS CP - Premium</title>
+    <title>TUNTAS CP - RT 04</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Space+Grotesque:wght@300;500;700&display=swap" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -17,115 +16,129 @@
     <link rel="stylesheet" href="cp.css">
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }, colors: { primary: '#166534' } } }
+            theme: { 
+                extend: { 
+                    fontFamily: { 
+                        sans: ['Bricolage Grotesque', 'sans-serif'],
+                        mono: ['Space Grotesque', 'monospace']
+                    }, 
+                    colors: { primary: '#064e3b', accent: '#059669' } 
+                } 
+            }
         }
     </script>
 </head>
-<body class="font-sans">
+<body class="font-sans antialiased">
 
     <div id="loginPage" class="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center p-10">
-        <div class="w-20 h-20 bg-primary rounded-[28px] flex items-center justify-center mb-8 shadow-2xl shadow-green-200">
-            <i class="fa-solid fa-shield-halved text-white text-3xl"></i>
+        <div class="w-20 h-20 bg-primary rounded-[28px] flex items-center justify-center mb-8 shadow-2xl shadow-green-900/20">
+            <i class="fa-solid fa-fingerprint text-white text-3xl"></i>
         </div>
-        <h1 class="text-2xl font-black italic text-primary uppercase mb-10 tracking-tighter text-center">Tuntas <br>Control Panel</h1>
+        <h1 class="text-3xl font-extrabold italic text-primary uppercase mb-12 tracking-tighter text-center leading-none">Admin <br>Control Panel</h1>
         <div class="w-full max-w-xs space-y-4">
-            <input type="email" id="email" placeholder="Admin Email" class="input-admin">
-            <input type="password" id="pass" placeholder="Password" class="input-admin">
-            <button onclick="login()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[11px] shadow-lg">Authenticate</button>
+            <input type="email" id="email" placeholder="Email Address" class="input-admin">
+            <input type="password" id="pass" placeholder="Secret Key" class="input-admin">
+            <button onclick="login()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[11px] shadow-xl active:scale-95 transition-all tracking-widest">Akses Masuk</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-50 px-8 py-5 flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-black italic text-primary leading-none uppercase tracking-tighter">CP TUNTAS</h1>
-                <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-1 italic">RT 04 Management</p>
+        <header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-md px-8 py-6 flex justify-between items-center border-b border-slate-50">
+            <div class="flex flex-col">
+                <h1 class="text-2xl font-black italic text-primary leading-none uppercase tracking-tighter">CP.TUNTAS</h1>
+                <p class="font-mono text-[8px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1 italic">RT 04 Panggungharjo</p>
             </div>
-            <button onclick="logout()" class="w-10 h-10 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center border border-red-100"><i class="fa-solid fa-power-off"></i></button>
+            <button onclick="logout()" class="w-11 h-11 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all border border-red-100">
+                <i class="fa-solid fa-power-off text-sm"></i>
+            </button>
         </header>
 
-        <main class="pt-28 pb-32 px-6 max-w-2xl mx-auto">
+        <main class="pt-28 pb-36 px-6 max-w-2xl mx-auto">
+            
             <div id="screen-home" class="tab-content active space-y-6">
-                <section class="card-main text-center bg-slate-900 text-white">
-                    <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] mb-2 italic">Saldo Kas Sekarang</p>
+                <section class="card-green">
+                    <p class="text-emerald-200/60 text-[9px] font-bold uppercase tracking-[0.4em] mb-2 italic">Saldo Kas Terkini</p>
                     <h2 id="totalSaldo" class="text-4xl font-black italic tracking-tighter text-white">Rp 0</h2>
-                    <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/10">
-                        <div><p class="text-[8px] font-bold text-slate-500 uppercase">Total Masuk</p><p id="totalMasuk" class="text-xs font-black text-emerald-400 italic">Rp 0</p></div>
-                        <div><p class="text-[8px] font-bold text-slate-500 uppercase">Total Keluar</p><p id="totalKeluar" class="text-xs font-black text-red-400 italic">Rp 0</p></div>
+                    <div class="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-white/10">
+                        <div><p class="text-[8px] font-bold text-emerald-300/50 uppercase">Masuk</p><p id="totalMasuk" class="text-[13px] font-black text-emerald-300 italic">Rp 0</p></div>
+                        <div><p class="text-[8px] font-bold text-emerald-300/50 uppercase">Keluar</p><p id="totalKeluar" class="text-[13px] font-black text-orange-300 italic">Rp 0</p></div>
                     </div>
                 </section>
-                <div class="flex justify-between items-end">
-                    <h3 class="font-black italic text-sm uppercase text-slate-700">Log Transaksi</h3>
+                <div class="flex justify-between items-center px-2">
+                    <h3 class="font-black italic text-[11px] uppercase text-slate-400 tracking-widest italic">Riwayat Transaksi</h3>
                     <div class="flex gap-2">
-                        <input type="date" id="fStart" onchange="loadData()" class="text-[10px] font-bold bg-white border border-slate-100 rounded-xl px-3 py-2 outline-none">
-                        <input type="date" id="fEnd" onchange="loadData()" class="text-[10px] font-bold bg-white border border-slate-100 rounded-xl px-3 py-2 outline-none">
+                        <input type="date" id="fStart" onchange="loadData()" class="text-[9px] font-bold bg-white border border-slate-100 rounded-lg px-2 py-1 outline-none">
                     </div>
                 </div>
                 <div id="listRiwayat" class="space-y-3"></div>
             </div>
 
             <div id="screen-iuran" class="tab-content space-y-6">
-                <div class="card-main">
-                    <h3 class="font-black italic uppercase text-[11px] mb-6 text-primary tracking-widest italic">Pencatatan Iuran</h3>
-                    <select id="iNama" class="input-admin"></select>
-                    <div id="gridBulan" class="grid grid-cols-3 gap-2 mb-6"></div>
-                    <input type="number" id="iNom" placeholder="NOMINAL PEMBAYARAN" class="input-admin">
-                    <input type="date" id="iTgl" class="input-admin">
-                    <button onclick="simpanIuran()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[10px] shadow-xl shadow-green-100 active:scale-95 transition-all">Simpan & WhatsApp</button>
+                <div class="card-green">
+                    <h3 class="font-black italic uppercase text-[11px] mb-8 text-emerald-200 tracking-[0.2em] italic">Input Iuran Warga</h3>
+                    <select id="iNama" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white"></select>
+                    <div id="gridBulan" class="grid grid-cols-3 gap-2 mb-8"></div>
+                    <input type="number" id="iNom" placeholder="NOMINAL (RP)" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <input type="date" id="iTgl" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <button onclick="simpanIuran()" class="w-full bg-white text-primary py-5 rounded-[24px] font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">Simpan & WhatsApp</button>
                 </div>
-                <div class="overflow-x-auto no-scrollbar bg-white rounded-[32px] border border-slate-100 shadow-sm">
-                    <table class="w-full text-[10px]">
-                        <thead><tr id="th-rekap" class="bg-slate-50 text-slate-400 uppercase italic"></tr></thead>
-                        <tbody id="tb-rekap" class="text-slate-600 italic"></tbody>
-                        <tfoot id="tf-rekap"></tfoot>
-                    </table>
+                <div class="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto no-scrollbar">
+                        <table class="w-full text-[10px]">
+                            <thead><tr id="th-rekap" class="bg-slate-50 text-slate-400 uppercase italic"></tr></thead>
+                            <tbody id="tb-rekap" class="text-slate-600 italic"></tbody>
+                            <tfoot id="tf-rekap"></tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div id="screen-giat" class="tab-content space-y-6">
-                <div class="card-main">
-                    <h3 class="font-black italic uppercase text-[11px] mb-6 text-primary tracking-widest italic">Update Giat Warga</h3>
-                    <input type="text" id="bJudul" placeholder="JUDUL KEGIATAN" class="input-admin">
-                    <label for="bFile" class="upload-box" id="imgPreview">
-                        <i class="fa-solid fa-camera text-slate-300 text-2xl"></i>
-                        <span class="text-[9px] font-black text-slate-400 uppercase italic">Klik Upload Foto Giat</span>
+                <div class="card-green">
+                    <h3 class="font-black italic uppercase text-[11px] mb-8 text-emerald-200 tracking-[0.2em] italic">Post Giat Warga</h3>
+                    <input type="text" id="bJudul" placeholder="JUDUL KEGIATAN" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <label for="bFile" class="upload-box-green" id="imgPreview">
+                        <i class="fa-solid fa-cloud-arrow-up text-emerald-400 text-2xl"></i>
+                        <span class="text-[9px] font-black text-emerald-400 uppercase italic">Upload Foto via GitHub</span>
                         <input type="file" id="bFile" class="hidden" accept="image/*" onchange="previewImage(this)">
                     </label>
-                    <textarea id="bIsi" placeholder="TULIS CERITA KEGIATAN..." class="input-admin h-32 py-4 resize-none"></textarea>
-                    <input type="date" id="bTgl" class="input-admin">
-                    <button id="btnPublish" onclick="simpanBerita()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[10px] shadow-lg">Publish Giat</button>
+                    <textarea id="bIsi" placeholder="ISI BERITA..." class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white h-32 py-4 resize-none"></textarea>
+                    <input type="date" id="bTgl" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <button id="btnPublish" onclick="simpanBerita()" class="w-full bg-white text-primary py-5 rounded-[24px] font-black uppercase text-[10px] tracking-widest shadow-xl">Publish Berita</button>
                 </div>
-                <div id="listBeritaAdmin" class="space-y-3 pb-10"></div>
+                <div id="listBeritaAdmin" class="space-y-3"></div>
             </div>
 
             <div id="screen-master" class="tab-content space-y-6">
-                <div class="card-main">
-                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-slate-400 italic tracking-widest">Master Data Warga</h3>
-                    <input type="text" id="aNama" placeholder="NAMA LENGKAP WARGA" class="input-admin">
-                    <input type="text" id="aHp" placeholder="NOMOR WA (08...)" class="input-admin">
-                    <button onclick="simpanAnggota()" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black uppercase text-[10px]">Tambah Anggota</button>
+                <div class="bg-white p-8 rounded-[36px] border border-slate-100">
+                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-slate-300 tracking-[0.2em]">Tambah Anggota</h3>
+                    <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="input-admin">
+                    <input type="text" id="aHp" placeholder="NO WHATSAPP" class="input-admin">
+                    <button onclick="simpanAnggota()" class="w-full bg-primary text-white py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest">Tambah Warga</button>
                 </div>
-                <div class="card-main">
-                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-slate-400 italic tracking-widest">Input Kas Umum</h3>
-                    <input type="text" id="kKet" placeholder="KETERANGAN TRANS" class="input-admin">
-                    <input type="number" id="kNom" placeholder="NOMINAL TRANS" class="input-admin">
-                    <select id="kKat" class="input-admin"><option value="Keluar">Uang Keluar (Out)</option><option value="Masuk">Uang Masuk (In)</option></select>
-                    <input type="date" id="kTgl" class="input-admin">
-                    <button onclick="simpanKas()" class="w-full bg-primary text-white py-4 rounded-2xl font-black uppercase text-[10px]">Simpan Transaksi</button>
+                <div class="card-green">
+                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-emerald-300/50 tracking-[0.2em]">Kas Umum</h3>
+                    <input type="text" id="kKet" placeholder="KETERANGAN" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <input type="number" id="kNom" placeholder="NOMINAL" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <select id="kKat" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white"><option value="Keluar">Keluar</option><option value="Masuk">Masuk</option></select>
+                    <input type="date" id="kTgl" class="input-admin !bg-emerald-900/40 !border-emerald-700 !text-white">
+                    <button onclick="simpanKas()" class="w-full bg-white text-primary py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest">Simpan Kas</button>
                 </div>
-                <div id="tBodyWarga" class="grid grid-cols-1 gap-2"></div>
+                <div id="tBodyWarga" class="space-y-2"></div>
             </div>
+
         </main>
 
-        <nav class="nav-container">
-            <button id="n-home" onclick="st('home')" class="nav-btn active"><i class="fa-solid fa-grip-vertical"></i><span>Dash</span></button>
-            <button id="n-iuran" onclick="st('iuran')" class="nav-btn"><i class="fa-solid fa-receipt"></i><span>Iuran</span></button>
-            <button id="n-giat" onclick="st('giat')" class="nav-btn"><i class="fa-solid fa-camera-retro"></i><span>Giat</span></button>
-            <button id="n-master" onclick="st('master')" class="nav-btn"><i class="fa-solid fa-user-gear"></i><span>Data</span></button>
+        <nav class="fixed bottom-8 left-6 right-6 z-[100] flex justify-center">
+            <div class="bg-slate-900/90 backdrop-blur-2xl px-6 py-4 rounded-[36px] border border-white/10 flex gap-8 items-center shadow-2xl shadow-slate-900/40">
+                <button id="n-home" onclick="st('home')" class="nav-icon active"><i class="fa-solid fa-house-chimney"></i></button>
+                <button id="n-iuran" onclick="st('iuran')" class="nav-icon"><i class="fa-solid fa-receipt"></i></button>
+                <button id="n-giat" onclick="st('giat')" class="nav-icon"><i class="fa-solid fa-camera-retro"></i></button>
+                <button id="n-master" onclick="st('master')" class="nav-icon"><i class="fa-solid fa-database"></i></button>
+            </div>
         </nav>
     </div>
 
     <script src="cp.js"></script>
 </body>
-                                                                                                                    </html>
-                            
+</html>
