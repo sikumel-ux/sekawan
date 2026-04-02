@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS Admin - Panel Kendali RT 04</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { primary: '#166534', accent: '#84cc16', dark: '#0f172a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body { background-color: #F8FAF8; -webkit-tap-highlight-color: transparent; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Table Sticky Corner */
+        .table-container { overflow-x: auto; border-radius: 16px; border: 1px solid #f1f5f9; }
+        .sticky-col { position: sticky; left: 0; z-index: 10; border-right: 2px solid #f8fafc; }
+        
+        nav button.active { color: #166534; }
+        nav button.active i { transform: scale(1.2); color: #166534; }
+        nav button.active span { color: #166534; font-weight: 800; }
+    </style>
+</head>
+<body class="font-sans text-slate-800">
+
+    <header class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
+                <i class="fa-solid fa-user-gear text-sm"></i>
+            </div>
+            <div>
+                <h1 class="text-sm font-extrabold text-primary leading-none uppercase tracking-tighter">Admin Panel</h1>
+                <p class="text-[9px] font-bold text-slate-400 tracking-widest uppercase">RT 04 Dongkelan</p>
+            </div>
+        </div>
+        <button onclick="location.reload()" class="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-rotate text-xs"></i>
+        </button>
+    </header>
+
+    <main class="pt-24 pb-32 px-6">
+
+        <div id="screen-home" class="tab-content active space-y-8">
+            <section class="bg-primary rounded-[32px] p-6 text-white shadow-2xl shadow-green-200/50 relative overflow-hidden">
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest mb-1">Total Saldo Bersih</p>
+                <h2 id="totalSaldo" class="text-3xl font-extrabold tracking-tighter">Rp 0</h2>
+                <div class="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/10">
+                    <div>
+                        <p class="text-[9px] opacity-60 uppercase font-bold">Total Masuk</p>
+                        <p id="totalMasuk" class="text-xs font-extrabold text-accent">Rp 0</p>
+                    </div>
+                    <div class="border-l border-white/10 ps-3">
+                        <p class="text-[9px] opacity-60 uppercase font-bold">Total Keluar</p>
+                        <p id="totalKeluar" class="text-xs font-extrabold text-red-300">Rp 0</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-extrabold text-sm uppercase tracking-tight">Histori Terakhir</h3>
+                    <button class="text-[10px] font-bold text-primary px-3 py-1 bg-green-50 rounded-lg">LIHAT SEMUA</button>
+                </div>
+                <div id="listRiwayat" class="space-y-3 italic text-slate-400 text-xs text-center py-10">
+                    Memuat data transaksi...
+                </div>
+            </section>
+        </div>
+
+        <div id="screen-warga" class="tab-content space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-lg tracking-tight text-primary">Daftar Anggota</h3>
+                <button class="w-10 h-10 bg-primary text-white rounded-xl shadow-lg shadow-green-100 flex items-center justify-center">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                </button>
+            </div>
+            <div id="tBodyWarga" class="space-y-3 italic text-slate-400 text-xs text-center py-10">
+                Menarik data warga...
+            </div>
+        </div>
+
+        <div id="screen-rekap" class="tab-content space-y-6">
+            <h3 class="font-extrabold text-lg tracking-tight text-primary uppercase">Rekap Iuran 2026</h3>
+            <div class="table-container bg-white shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr id="th-rekap" class="border-b border-slate-100 text-[10px] uppercase tracking-tighter">
+                            </tr>
+                    </thead>
+                    <tbody id="tb-rekap" class="text-[10px]">
+                        </tbody>
+                    <tfoot id="tf-rekap">
+                        </tfoot>
+                </table>
+            </div>
+            <p class="text-[9px] text-slate-400 font-bold italic">* Nilai dalam ribuan (K)</p>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-slate-100 px-10 pt-4 pb-8 z-50 flex justify-between items-center">
+        <button id="n-home" onclick="st('home')" class="active flex flex-col items-center gap-1 transition-all text-slate-300">
+            <i class="fa-solid fa-grid-2 text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Dash</span>
+        </button>
+        <button id="n-warga" onclick="st('warga')" class="flex flex-col items-center gap-1 transition-all text-slate-300">
+            <i class="fa-solid fa-users text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Warga</span>
+        </button>
+        <button id="n-rekap" onclick="st('rekap')" class="flex flex-col items-center gap-1 transition-all text-slate-300">
+            <i class="fa-solid fa-file-invoice-dollar text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Rekap</span>
+        </button>
+    </nav>
+
+    <script>
+        // MASUKKAN JS KAMU DI SINI
+        // (Saya sudah merapikan fungsi st() agar animasi perpindahan tab lebih mulus)
+        
+        const config = {
+            apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
+            authDomain: "tuntas-sekawan.firebaseapp.com",
+            projectId: "tuntas-sekawan",
+            storageBucket: "tuntas-sekawan.firebasestorage.app",
+            messagingSenderId: "1090506516563",
+            appId: "1:1090506516563:web:63c429677caea28addfea6"
+        };
+
+        firebase.initializeApp(config);
+        const db = firebase.firestore();
+        const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
+
+        function init() {
+            const thr = document.getElementById('th-rekap');
+            thr.innerHTML = '<th class="sticky-col p-4 bg-white text-slate-400">Nama</th>';
+            daftarBulan.forEach(bln => {
+                thr.innerHTML += `<th class="text-center p-3 font-bold text-slate-400">${bln.substring(0,3)}</th>`;
+            });
+            loadData();
+        }
+
+        async function loadData() {
+            try {
+                const [dkas, diur, dang] = await Promise.all([
+                    db.collection("kas").get(), 
+                    db.collection("pembayaran").get(), 
+                    db.collection("anggota").orderBy("nama","asc").get()
+                ]);
+                
+                let tIn = 0, tOut = 0, tIur = 0;
+                let totalsBln = {}; 
+                daftarBulan.forEach(b => totalsBln[b] = 0);
+                
+                let allTrx = [];
+                const ti = document.getElementById('tBodyWarga');
+                const tr = document.getElementById('tb-rekap');
+                const listR = document.getElementById('listRiwayat');
+                
+                ti.innerHTML = ''; tr.innerHTML = ''; listR.innerHTML = '';
+
+                const iuranArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
+
+                dkas.docs.forEach(doc => {
+                    const d = doc.data(); 
+                    const nom = Number(d.nom || 0);
+                    if(d.kat === 'Masuk') tIn += nom; else tOut += nom;
+                    allTrx.push({ ket: d.ket, nom: nom, kat: d.kat, tgl: d.tgl.toDate() });
+                });
+
+                iuranArr.forEach(d => {
+                    const nom = Number(d.nom || 0); 
+                    tIur += nom;
+                    allTrx.push({ 
+                        ket: `Iuran: ${d.nama || 'WARGA'}`, 
+                        nom: nom, kat: 'Masuk', 
+                        tgl: (d.tgl ? d.tgl.toDate() : new Date()) 
+                    });
+                });
+
+                const saldoBersih = (tIn + tIur) - tOut;
+                document.getElementById('totalSaldo').innerText = 'Rp ' + saldoBersih.toLocaleString('id-ID');
+                document.getElementById('totalMasuk').innerText = 'Rp ' + (tIn + tIur).toLocaleString('id-ID');
+                document.getElementById('totalKeluar').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
+
+                allTrx.sort((a,b) => b.tgl - a.tgl);
+                allTrx.slice(0, 8).forEach(tx => {
+                    const isM = tx.kat === 'Masuk';
+                    listR.insertAdjacentHTML('beforeend', `
+                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                            <div class="flex gap-3 items-center">
+                                <div class="w-8 h-8 rounded-lg ${isM ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'} flex items-center justify-center font-bold text-[10px] shrink-0">
+                                    ${isM ? 'IN' : 'OUT'}
+                                </div>
+                                <div class="truncate max-w-[150px]">
+                                    <p class="text-[11px] font-bold uppercase text-slate-700 truncate">${tx.ket}</p>
+                                    <p class="text-[9px] text-slate-400 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p>
+                                </div>
+                            </div>
+                            <p class="font-bold text-[11px] ${isM ? 'text-emerald-700' : 'text-red-600'} shrink-0">
+                                ${isM ? '+' : '-'} ${tx.nom.toLocaleString()}
+                            </p>
+                        </div>
+                    `);
+                });
+
+                dang.docs.forEach(doc => {
+                    const d = doc.data(); 
+                    const n = (d.nama || "").trim().toUpperCase();
+                    
+                    ti.insertAdjacentHTML('beforeend', `
+                        <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm active:scale-95 transition-transform">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center border border-slate-100">
+                                    <i class="fa-solid fa-user text-xs"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-xs text-slate-700 uppercase">${n}</p>
+                                    <p class="text-[9px] text-slate-400 font-bold italic tracking-wider">${d.hp || 'No HP -'}</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-200"></i>
+                        </div>
+                    `);
+
+                    let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 bg-white border-b border-slate-50 uppercase text-[10px]">${n}</td>`;
+                    daftarBulan.forEach(bln => {
+                        const lunas = iuranArr.filter(k => (k.nama || "").toUpperCase() === n && (k.bulan || "").includes(bln));
+                        if(lunas.length > 0) {
+                            let nomBln = 0; 
+                            lunas.forEach(l => nomBln += (Number(l.nom) / (l.bulan || "").split(',').length));
+                            row += `<td class="text-center text-emerald-600 font-bold border-b border-slate-50">${(nomBln/1000).toFixed(0)}K</td>`;
+                            totalsBln[bln] += nomBln;
+                        } else { 
+                            row += `<td class="text-center text-slate-200 border-b border-slate-50">-</td>`; 
+                        }
+                    });
+                    tr.insertAdjacentHTML('beforeend', row + `</tr>`);
+                });
+
+                let frow = `<tr><td class="sticky-col p-4 font-bold bg-emerald-50 text-emerald-900 uppercase">TOTAL</td>`;
+                daftarBulan.forEach(bln => {
+                    frow += `<td class="text-center p-4 bg-emerald-50 text-emerald-800 font-bold">${(totalsBln[bln]/1000).toFixed(0)}K</td>`;
+                });
+                document.getElementById('tf-rekap').innerHTML = frow + `</tr>`;
+
+            } catch (err) {
+                console.error("Error Load Data: ", err);
+            }
+        }
+
+        function st(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('screen-' + t).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('n-' + t).classList.add('active');
+            window.scrollTo(0,0);
+        }
+    </script>
+
+</body>
+  </html>
+  
