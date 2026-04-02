@@ -1,31 +1,57 @@
+/* CP CUSTOM CSS - FINAL REVISION */
 [x-cloak] { display: none !important; }
 
-body { background-color: #F8FAF9; overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; color: #1e293b; }
+body { 
+    background-color: #fafafa; 
+    overscroll-behavior-y: contain; 
+    -webkit-tap-highlight-color: transparent; 
+    color: #1e293b;
+}
 
-/* Input & UI */
-.input-admin { @apply w-full bg-slate-50 border border-slate-100 rounded-[22px] px-6 py-4 text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all mb-4 uppercase placeholder:normal-case shadow-sm; }
-.card-main { @apply p-7 rounded-[36px] bg-white border border-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] transition-all; }
+/* UI Elements */
+.input-admin { 
+    @apply w-full bg-slate-50 border border-slate-100 rounded-[22px] px-6 py-4 text-[11px] font-black focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all mb-4 uppercase placeholder:normal-case shadow-sm; 
+}
 
-/* Floating Nav */
-.nav-container { @apply fixed bottom-8 left-8 right-8 bg-slate-900/90 backdrop-blur-2xl rounded-[36px] px-8 py-4 z-[100] flex justify-between items-center shadow-2xl border border-white/10; }
-.nav-btn { @apply flex flex-col items-center gap-1 flex-1 text-slate-500 transition-all duration-300; }
-.nav-btn i { @apply text-xl transition-all; }
-.nav-btn span { @apply text-[8px] font-black uppercase tracking-widest opacity-0 translate-y-2 transition-all; }
-.nav-btn.active { @apply text-white; }
-.nav-btn.active i { @apply -translate-y-1 scale-110; }
-.nav-btn.active span { @apply opacity-100 translate-y-0; }
+/* Cards */
+.card-green {
+    @apply bg-primary p-8 rounded-[40px] shadow-2xl shadow-green-900/20 border border-emerald-800 transition-all;
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+}
 
-/* Upload Box */
-.upload-box { @apply w-full h-40 border-2 border-dashed border-slate-100 rounded-[28px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-emerald-50/30 transition-all mb-6 overflow-hidden relative bg-slate-50/50; }
+.upload-box-green {
+    @apply w-full h-40 border-2 border-dashed border-emerald-800/50 rounded-[28px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-emerald-800/20 transition-all mb-6 overflow-hidden relative bg-emerald-900/20;
+}
 
-/* Tab Animation */
+/* Nav Icons (Warga Style) */
+.nav-icon {
+    @apply text-slate-500 text-lg transition-all duration-300 relative;
+}
+
+.nav-icon.active {
+    @apply text-white scale-125;
+}
+
+.nav-icon.active::after {
+    content: '';
+    @apply absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399];
+}
+
+/* Tab Management */
 .tab-content { display: none; }
-.tab-content.active { display: block; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.tab-content.active { 
+    display: block; 
+    animation: springUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
+}
+
+@keyframes springUp { 
+    from { opacity: 0; transform: translateY(40px) scale(0.95); } 
+    to { opacity: 1; transform: translateY(0) scale(1); } 
+}
 
 /* Table Scroll */
 .no-scrollbar::-webkit-scrollbar { display: none; }
-.sticky-col { position: sticky; left: 0; z-index: 10; background: white; border-right: 1px solid #f8faf9; }
-th { @apply p-4 font-black text-[9px] tracking-widest; }
+.sticky-col { position: sticky; left: 0; z-index: 10; background: white; border-right: 1px solid #f1f5f9; }
+
+th { @apply p-4 font-black text-[9px] tracking-[0.2em]; }
 td { @apply p-4 border-b border-slate-50 font-bold text-[10px]; }
-                                                                           
