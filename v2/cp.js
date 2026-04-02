@@ -9,8 +9,8 @@ const config = {
 firebase.initializeApp(config);
 const db = firebase.firestore(), auth = firebase.auth();
 
-// GITHUB (ISI TOKEN KAMU)
-const GITHUB_TOKEN = "GANTI_DISINI"; 
+// GITHUB CONFIG (WAJIB DIISI)
+const GITHUB_TOKEN = "GANTI_DENGAN_TOKEN_KAMU"; 
 const GITHUB_REPO = "Username/RepoName"; 
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"];
@@ -23,17 +23,18 @@ auth.onAuthStateChanged(user => {
 
 async function login() {
     const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-    try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Error!"); }
+    try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert("Akses Ditolak!"); }
 }
-async function logout() { if(confirm("Keluar?")) await auth.signOut(); }
+async function logout() { if(confirm("Keluar Panel?")) await auth.signOut(); }
 
 function init() {
     const today = new Date().toISOString().split('T')[0];
     ['iTgl', 'bTgl'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = today; });
+    
     const grid = document.getElementById('gridBulan');
     const thr = document.getElementById('th-rekap');
     if(grid) {
-        grid.innerHTML = ''; thr.innerHTML = '<th class="p-4 bg-white">NAMA</th>';
+        grid.innerHTML = ''; thr.innerHTML = '<th class="p-4 bg-white sticky left-0 z-10">NAMA</th>';
         daftarBulan.forEach(bln => {
             grid.innerHTML += `<label class="block"><input type="checkbox" name="blnCek" value="${bln}" class="hidden peer"><div class="cursor-pointer text-[9px] font-black py-3 text-center border rounded-xl bg-white text-slate-300 peer-checked:bg-primary peer-checked:text-white uppercase transition-all shadow-sm">${bln.substring(0,3)}</div></label>`;
             thr.innerHTML += `<th>${bln.substring(0,3)}</th>`;
@@ -42,6 +43,7 @@ function init() {
     loadData(); loadBeritaAdmin();
 }
 
+// UPLOAD KE GITHUB
 async function uploadToGithub(file) {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
@@ -53,7 +55,7 @@ async function uploadToGithub(file) {
                 await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${fileName}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Giat`, content: content, branch: "main" })
+                    body: JSON.stringify({ message: `Upload Giat`, content: content, branch: "main" })
                 });
                 resolve(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fileName}`);
             } catch (err) { reject(err); }
@@ -65,7 +67,7 @@ function previewImage(input) {
     const file = input.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-[22px]">`;
+        reader.onload = (e) => document.getElementById('imgPreview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
         reader.readAsDataURL(file);
     }
 }
@@ -74,21 +76,32 @@ async function loadData() {
     const [dkas, diur, dang] = await Promise.all([db.collection("kas").get(), db.collection("pembayaran").get(), db.collection("anggota").orderBy("nama","asc").get()]);
     let tIn=0, tOut=0, tIur=0;
     const ti=document.getElementById('tBodyWarga'), tr=document.getElementById('tb-rekap'), sel=document.getElementById('iNama'), listR = document.getElementById('listRiwayat');
-    ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Pilih Warga</option>'; listR.innerHTML='';
+    ti.innerHTML=''; tr.innerHTML=''; sel.innerHTML='<option value="">Cari Warga...</option>'; listR.innerHTML='';
+    
     const iuranArr = diur.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    
     dkas.docs.forEach(doc => {
         const d = doc.data(); const nom = Number(d.nom || 0);
         if(d.kat==='Masuk') tIn+=nom; else tOut+=nom;
     });
+    
     iuranArr.forEach(d => tIur += Number(d.nom || 0));
     document.getElementById('totalSaldo').innerText = 'Rp ' + ((tIn + tIur) - tOut).toLocaleString('id-ID');
     document.getElementById('totalMasuk').innerText = 'Rp ' + (tIn + tIur).toLocaleString('id-ID');
     document.getElementById('totalKeluar').innerText = 'Rp ' + tOut.toLocaleString('id-ID');
+
     dang.docs.forEach(doc => {
         const d = doc.data(); const n = (d.nama || "").toUpperCase();
         dataWarga[n] = d.hp || '';
         sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
         ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="font-black text-xs uppercase italic text-slate-700">${n}</p><p class="text-[9px] text-slate-400 font-bold">${d.hp || '-'}</p></div><button onclick="hapus('anggota','${doc.id}')" class="text-red-100"><span class="material-symbols-rounded">delete</span></button></div>`);
+        
+        let row = `<tr><td class="sticky left-0 bg-white font-black uppercase shadow-[2px_0_5px_rgba(0,0,0,0.02)]">${n.split(' ')[0]}</td>`;
+        daftarBulan.forEach(bln => {
+            const lunas = iuranArr.some(k => (k.nama||"").toUpperCase() === n && (k.bulan||"").includes(bln));
+            row += `<td class="text-center font-black ${lunas?'text-emerald-600':'text-slate-100'}">${lunas?'✔':'-'}</td>`;
+        });
+        tr.insertAdjacentHTML('beforeend', row + `</tr>`);
     });
 }
 
@@ -135,5 +148,4 @@ function st(t) {
     });
     document.getElementById('n-'+t).classList.add('text-primary');
     document.getElementById('n-'+t).classList.remove('text-slate-300');
-                                                  }
-        
+}
