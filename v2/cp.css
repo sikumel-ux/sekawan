@@ -1,0 +1,43 @@
+/* CP CUSTOM CSS */
+[x-cloak] { display: none !important; }
+
+body { 
+    background-color: #F8FAF8; 
+    overscroll-behavior-y: contain; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* UI Elements */
+.input-admin { 
+    @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all mb-4 uppercase placeholder:normal-case; 
+}
+
+/* Tab Management */
+.tab-content { display: none; }
+.tab-content.active { 
+    display: block; 
+    animation: fadeIn 0.3s ease-out; 
+}
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Nav Styles */
+.nav-btn { 
+    @apply flex flex-col items-center gap-1 flex-1 text-slate-200 transition-all; 
+}
+
+.nav-btn i { @apply transition-transform; }
+.nav-btn span { @apply text-[7px] font-black uppercase tracking-widest; }
+
+.nav-btn.active { @apply text-primary; }
+.nav-btn.active i { @apply scale-110; }
+
+/* Table & Scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.sticky-col { position: sticky; left: 0; z-index: 10; border-right: 1px solid #f1f5f9; }
+
+th { @apply p-3 font-black text-[9px] italic tracking-tighter; }
+td { @apply p-3 border-b border-slate-50; }
