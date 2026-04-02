@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS CP - RT 04</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <link rel="stylesheet" href="panel.css">
+    <script>
+        tailwind.config = {
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }, 
+                    colors: { primary: '#166534', accent: '#15803d' } 
+                } 
+            }
+        }
+    </script>
+</head>
+<body class="font-sans antialiased text-slate-800 bg-[#F8FAF8]">
+
+    <div id="loginPage" class="fixed inset-0 bg-white z-[200] flex flex-col items-center justify-center p-10 animate-slide-up">
+        <div class="w-16 h-16 bg-primary rounded-[22px] flex items-center justify-center mb-6 shadow-xl shadow-green-100">
+            <i class="fa-solid fa-leaf text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-black italic tracking-tighter text-primary uppercase mb-2">Tuntas CP</h1>
+        <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-10 italic text-center leading-relaxed">Management Digital <br> RT 04 Panggungharjo</p>
+        <div class="w-full max-w-xs space-y-4">
+            <input type="email" id="email" placeholder="Email Admin" class="input-admin">
+            <input type="password" id="pass" placeholder="Password" class="input-admin">
+            <button onclick="login()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">Akses Masuk</button>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-slate-50">
+            <div class="flex flex-col">
+                <h1 class="text-lg font-black tracking-tighter text-primary italic leading-none uppercase">Admin CP</h1>
+                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1 italic">RT 04 Dongkelan</p>
+            </div>
+            <button onclick="logout()" class="w-10 h-10 rounded-2xl bg-red-50 text-red-400 flex items-center justify-center border border-red-100 active:scale-90 transition-all">
+                <i class="fa-solid fa-power-off text-xs"></i>
+            </button>
+        </header>
+
+        <main class="pt-24 pb-36 px-6 max-w-2xl mx-auto">
+            <div id="screen-home" class="tab-content active space-y-6">
+                <section class="bg-primary p-7 rounded-[32px] text-center shadow-xl shadow-green-900/10 border border-white/10">
+                    <p class="text-emerald-200/60 text-[9px] font-black uppercase tracking-widest mb-1 italic">Saldo Kas Terkini</p>
+                    <h2 id="totalSaldo" class="text-3xl font-black tracking-tighter text-white italic">Rp 0</h2>
+                    <div class="grid grid-cols-2 gap-4 mt-6 pt-5 border-t border-white/10">
+                        <div><p class="text-[8px] font-bold text-emerald-200/40 uppercase">Masuk</p><p id="totalMasuk" class="text-xs font-black text-emerald-300 italic">Rp 0</p></div>
+                        <div><p class="text-[8px] font-bold text-emerald-200/40 uppercase">Keluar</p><p id="totalKeluar" class="text-xs font-black text-orange-200 italic">Rp 0</p></div>
+                    </div>
+                </section>
+                <div id="listRiwayat" class="space-y-3"></div>
+            </div>
+
+            <div id="screen-bayar" class="tab-content space-y-6">
+                <div class="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm">
+                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-primary tracking-widest">Input Iuran Warga</h3>
+                    <select id="iNama" class="input-admin"></select>
+                    <div id="gridBulan" class="grid grid-cols-3 gap-2 mb-6"></div>
+                    <input type="number" id="iNom" placeholder="NOMINAL RP" class="input-admin">
+                    <input type="date" id="iTgl" class="input-admin">
+                    <button onclick="simpanIuran()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[10px] shadow-lg">Simpan & WhatsApp</button>
+                </div>
+            </div>
+
+            <div id="screen-tabel" class="tab-content space-y-4">
+                <h3 class="font-black italic uppercase text-[10px] px-2 text-slate-400 tracking-widest">Rekap Pembayaran 2026</h3>
+                <div class="overflow-x-auto no-scrollbar bg-white rounded-3xl border border-slate-100 shadow-sm">
+                    <table class="w-full text-[10px]">
+                        <thead><tr id="th-rekap" class="bg-slate-50 text-slate-400 uppercase italic"></tr></thead>
+                        <tbody id="tb-rekap" class="text-slate-600 italic"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="screen-warga" class="tab-content space-y-6">
+                <div class="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm">
+                    <h3 class="font-black italic uppercase text-[10px] mb-4 text-slate-300">Data Anggota Baru</h3>
+                    <input type="text" id="aNama" placeholder="NAMA LENGKAP" class="input-admin">
+                    <input type="text" id="aHp" placeholder="NO WA (08...)" class="input-admin">
+                    <button onclick="simpanAnggota()" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black uppercase text-[10px]">Simpan Warga</button>
+                </div>
+                <div id="tBodyWarga" class="space-y-2 pb-10"></div>
+            </div>
+
+            <div id="screen-giat" class="tab-content space-y-6">
+                <div class="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm">
+                    <h3 class="font-black italic uppercase text-[10px] mb-6 text-primary tracking-widest italic">Update Giat Warga</h3>
+                    <input type="text" id="bJudul" placeholder="JUDUL KEGIATAN" class="input-admin">
+                    <label for="bFile" class="w-full h-32 border-2 border-dashed border-slate-100 rounded-[24px] flex flex-col items-center justify-center gap-2 mb-4 bg-slate-50/50 cursor-pointer overflow-hidden" id="imgPreview">
+                        <i class="fa-solid fa-camera text-slate-300 text-xl"></i>
+                        <span class="text-[8px] font-black text-slate-400 uppercase italic">Ambil / Pilih Foto</span>
+                        <input type="file" id="bFile" class="hidden" accept="image/*" onchange="previewImage(this)">
+                    </label>
+                    <textarea id="bIsi" placeholder="ISI BERITA..." class="input-admin h-24 py-4 resize-none"></textarea>
+                    <input type="date" id="bTgl" class="input-admin">
+                    <button id="btnPublish" onclick="simpanBerita()" class="w-full bg-primary text-white py-5 rounded-[24px] font-black uppercase text-[10px] shadow-lg">Publish Giat</button>
+                </div>
+                <div id="listBeritaAdmin" class="space-y-3"></div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-slate-100 px-2 pt-3 pb-8 z-[100] flex justify-around items-center shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+            <button id="n-home" onclick="st('home')" class="nav-btn text-primary">
+                <i class="fa-solid fa-house-chimney text-lg"></i>
+                <span>Dash</span>
+            </button>
+            <button id="n-bayar" onclick="st('bayar')" class="nav-btn text-slate-300">
+                <i class="fa-solid fa-circle-plus text-lg"></i>
+                <span>Bayar</span>
+            </button>
+            <button id="n-tabel" onclick="st('tabel')" class="nav-btn text-slate-300">
+                <i class="fa-solid fa-table-list text-lg"></i>
+                <span>Tabel</span>
+            </button>
+            <button id="n-warga" onclick="st('warga')" class="nav-btn text-slate-300">
+                <i class="fa-solid fa-user-group text-lg"></i>
+                <span>Warga</span>
+            </button>
+            <button id="n-giat" onclick="st('giat')" class="nav-btn text-slate-300">
+                <i class="fa-solid fa-newspaper text-lg"></i>
+                <span>Giat</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="panel.js"></script>
+</body>
+                      </html>
+                      
