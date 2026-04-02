@@ -1,57 +1,29 @@
-/* CP CUSTOM CSS - FINAL REVISION */
 [x-cloak] { display: none !important; }
+body { background-color: #F8FAF8; overscroll-behavior-y: contain; -webkit-tap-highlight-color: transparent; }
 
-body { 
-    background-color: #fafafa; 
-    overscroll-behavior-y: contain; 
-    -webkit-tap-highlight-color: transparent; 
-    color: #1e293b;
-}
+/* Navigation */
+.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; transition: all 0.3s ease; width: 60px; cursor: pointer; }
+.nav-btn span { font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+.nav-btn.text-primary { transform: translateY(-2px); }
+
+/* Custom Scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* UI Elements */
-.input-admin { 
-    @apply w-full bg-slate-50 border border-slate-100 rounded-[22px] px-6 py-4 text-[11px] font-black focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all mb-4 uppercase placeholder:normal-case shadow-sm; 
-}
+.input-admin { @apply w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all mb-4 uppercase placeholder:normal-case; }
 
-/* Cards */
-.card-green {
-    @apply bg-primary p-8 rounded-[40px] shadow-2xl shadow-green-900/20 border border-emerald-800 transition-all;
-    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+/* Pop-up Animation */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(100px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+.animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-.upload-box-green {
-    @apply w-full h-40 border-2 border-dashed border-emerald-800/50 rounded-[28px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-emerald-800/20 transition-all mb-6 overflow-hidden relative bg-emerald-900/20;
-}
-
-/* Nav Icons (Warga Style) */
-.nav-icon {
-    @apply text-slate-500 text-lg transition-all duration-300 relative;
-}
-
-.nav-icon.active {
-    @apply text-white scale-125;
-}
-
-.nav-icon.active::after {
-    content: '';
-    @apply absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399];
-}
-
-/* Tab Management */
+/* Tab Animation */
 .tab-content { display: none; }
-.tab-content.active { 
-    display: block; 
-    animation: springUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
-}
+.tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-@keyframes springUp { 
-    from { opacity: 0; transform: translateY(40px) scale(0.95); } 
-    to { opacity: 1; transform: translateY(0) scale(1); } 
-}
-
-/* Table Scroll */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.sticky-col { position: sticky; left: 0; z-index: 10; background: white; border-right: 1px solid #f1f5f9; }
-
-th { @apply p-4 font-black text-[9px] tracking-[0.2em]; }
-td { @apply p-4 border-b border-slate-50 font-bold text-[10px]; }
+th { @apply p-3 font-black text-[9px] italic text-slate-400; }
+td { @apply p-3 border-b border-slate-50 font-bold; }
