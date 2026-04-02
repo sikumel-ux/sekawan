@@ -1,4 +1,4 @@
-// CONFIGURATION (Firebase)
+// CONFIG (Gunakan Milikmu)
 const config = {
     apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is",
     authDomain: "tuntas-sekawan.firebaseapp.com",
@@ -11,13 +11,12 @@ const config = {
 firebase.initializeApp(config);
 const db = firebase.firestore();
 
-// INITIALIZE
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    loadBeritaWarga();
+    loadBerita();
+    renderUserHistory(); // Mock data bayar
 });
 
-// LOGIKA UTAMA LOAD DATA KAS (SESUAI JS ASLIMU)
 async function loadData() {
     try {
         const [dkas, diur] = await Promise.all([
@@ -31,122 +30,90 @@ async function loadData() {
 
         const iuranArr = diur.docs.map(doc => doc.data());
 
-        // 1. Olah Kas Umum
         dkas.docs.forEach(doc => {
             const d = doc.data(); 
             const nom = Number(d.nom || 0);
             if(d.kat === 'Masuk') tIn += nom; else tOut += nom;
-            allTrx.push({ 
-                ket: d.ket, 
-                nom: nom, 
-                kat: d.kat, 
-                tgl: (d.tgl && d.tgl.toDate ? d.tgl.toDate() : new Date()) 
-            });
+            
+            // Filter 2 Bulan Terakhir (Maret & April 2026)
+            const tglTrx = d.tgl.toDate();
+            if(tglTrx.getMonth() >= 2 && tglTrx.getFullYear() === 2026) {
+                allTrx.push({ ket: d.ket, nom: nom, kat: d.kat, tgl: tglTrx });
+            }
         });
 
-        // 2. Olah Iuran Warga
         iuranArr.forEach(d => {
-            const nom = Number(d.nom || 0); 
-            tIur += nom;
-            allTrx.push({ 
-                ket: `Iuran: ${d.nama || 'Warga'}`, 
-                nom: nom, 
-                kat: 'Masuk', 
-                tgl: (d.tgl && d.tgl.toDate ? d.tgl.toDate() : new Date()) 
-            });
+            const nom = Number(d.nom || 0); tIur += nom;
+            const tglIur = (d.tgl ? d.tgl.toDate() : new Date());
+            if(tglIur.getMonth() >= 2 && tglIur.getFullYear() === 2026) {
+                allTrx.push({ ket: `Iuran: ${d.nama || 'Warga'}`, nom: nom, kat: 'Masuk', tgl: tglIur });
+            }
         });
 
-        // 3. Update Dashboard Saldo (Logika aslimu)
         const saldoBersih = (tIn + tIur) - tOut;
-        
-        if(document.getElementById('totalSaldo')) {
-            document.getElementById('totalSaldo').innerText = 'Rp ' + saldoBersih.toLocaleString('id-ID');
-        }
-        if(document.getElementById('totalMasuk')) {
-            document.getElementById('totalMasuk').innerText = '+ ' + (tIn + tIur).toLocaleString('id-ID');
-        }
-        if(document.getElementById('totalKeluar')) {
-            document.getElementById('totalKeluar').innerText = '- ' + tOut.toLocaleString('id-ID');
-        }
+        const fmt = (n) => 'Rp ' + n.toLocaleString('id-ID');
 
-        // 4. Render Histori Lengkap di Tab Kas
+        document.getElementById('totalSaldoHome').innerText = fmt(saldoBersih);
+        document.getElementById('totalSaldoKas').innerText = fmt(saldoBersih);
+        document.getElementById('tMasuk').innerText = '+ ' + (tIn + tIur).toLocaleString();
+        document.getElementById('tKeluar').innerText = '- ' + tOut.toLocaleString();
+
         if(listR) {
             listR.innerHTML = '';
             allTrx.sort((a,b) => b.tgl - a.tgl);
             allTrx.forEach(tx => {
                 const isM = tx.kat === 'Masuk';
                 listR.insertAdjacentHTML('beforeend', `
-                    <div class="bg-white p-5 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm active:scale-95 transition-all">
-                        <div class="flex gap-4 items-center">
-                            <div class="w-10 h-10 rounded-xl ${isM ? 'bg-emerald-50 text-primary' : 'bg-red-50 text-red-500'} flex items-center justify-center shrink-0">
-                                <i class="fa-solid ${isM ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} text-xs"></i>
-                            </div>
-                            <div>
-                                <p class="text-[11px] font-black text-slate-700 uppercase tracking-tighter leading-none mb-1.5">${tx.ket}</p>
-                                <p class="text-[9px] text-slate-400 font-bold uppercase italic">${tx.tgl.toLocaleDateString('id-ID')}</p>
-                            </div>
+                    <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                        <div class="flex gap-3 items-center">
+                            <div class="w-8 h-8 rounded-lg ${isM ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'} flex items-center justify-center text-[10px]"><i class="fa-solid ${isM ? 'fa-arrow-up' : 'fa-arrow-down'}"></i></div>
+                            <div><p class="text-[10px] font-black uppercase text-slate-700 italic">${tx.ket}</p><p class="text-[8px] text-slate-400 font-bold uppercase">${tx.tgl.toLocaleDateString('id-ID')}</p></div>
                         </div>
-                        <p class="font-extrabold text-[11px] ${isM ? 'text-emerald-700' : 'text-red-500'}">
-                            ${isM ? '+' : '-'} ${tx.nom.toLocaleString()}
-                        </p>
+                        <p class="font-black text-[10px] ${isM ? 'text-green-600' : 'text-red-500'}">${isM ? '+' : '-'} ${tx.nom.toLocaleString()}</p>
                     </div>
                 `);
             });
         }
-    } catch (err) { console.error("Data Kas Error:", err); }
+    } catch (err) { console.error(err); }
 }
 
-// LOGIKA LOAD BERITA (BLOG & SLIDER)
-async function loadBeritaWarga() {
-    const slider = document.getElementById('newsSlider');
-    const blogContainer = document.getElementById('blogContainer');
-    
+async function loadBerita() {
+    const slider = document.getElementById('blogContainer');
     try {
         const snap = await db.collection("berita").orderBy("createdAt", "desc").get();
-        
-        if(slider) slider.innerHTML = '';
-        if(blogContainer) blogContainer.innerHTML = '';
-
-        if(snap.empty) {
-            if(slider) slider.innerHTML = '<p class="text-[10px] text-slate-400 italic">Belum ada giat warga.</p>';
-            return;
-        }
-
-        snap.forEach(doc => {
-            const b = doc.data();
-            
-            // Render Slider di Home
-            if(slider) {
+        if(slider) {
+            slider.innerHTML = '';
+            snap.forEach(doc => {
+                const b = doc.data();
+                const postData = JSON.stringify(b).replace(/"/g, '&quot;');
                 slider.insertAdjacentHTML('beforeend', `
-                    <div @click="activeTab = 'blog'" class="min-w-[280px] bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm relative active:scale-95 transition-transform">
-                        <img src="${b.img}" class="w-full h-36 object-cover bg-slate-50" />
-                        <div class="p-4 bg-white/80 backdrop-blur-sm">
-                            <h4 class="font-extrabold text-[10px] uppercase text-slate-700 truncate tracking-tight">${b.judul}</h4>
-                            <p class="text-[8px] text-slate-400 mt-2 font-black uppercase italic">${b.tgl}</p>
+                    <div class="min-w-[220px] bg-white rounded-[28px] overflow-hidden border border-slate-100 shadow-lg shadow-slate-200/40" 
+                         @click="selectedPost = ${postData}; showDetail = true">
+                        <img src="${b.img}" class="w-full h-28 object-cover" />
+                        <div class="p-4">
+                            <h4 class="font-black text-[10px] uppercase text-slate-700 truncate italic">${b.judul}</h4>
+                            <p class="text-[8px] text-slate-400 mt-2 font-bold italic uppercase tracking-tighter">Klik baca detail</p>
                         </div>
                     </div>
                 `);
-            }
-
-            // Render Blog Lengkap di Tab Blog
-            if(blogContainer) {
-                blogContainer.insertAdjacentHTML('beforeend', `
-                    <article class="space-y-4 border-b border-slate-100 pb-10 last:border-0">
-                        <div class="relative">
-                            <img src="${b.img}" class="w-full h-56 object-cover rounded-[40px] shadow-xl shadow-green-900/5 bg-slate-50" />
-                            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full shadow-sm">
-                                <span class="text-[9px] font-black text-primary uppercase italic tracking-widest">${b.tgl}</span>
-                            </div>
-                        </div>
-                        <div class="px-2">
-                            <h3 class="text-xl font-black leading-tight text-slate-800 uppercase italic mb-3 tracking-tighter">${b.judul}</h3>
-                            <p class="text-[11px] text-slate-500 leading-relaxed font-semibold italic">
-                                ${b.isi || 'Admin belum menambahkan detail deskripsi untuk kegiatan ini.'}
-                            </p>
-                        </div>
-                    </article>
-                `);
-            }
-        });
-    } catch (err) { console.error("Berita Error:", err); }
+            });
+        }
+    } catch (err) { console.error(err); }
 }
+
+function renderUserHistory() {
+    const container = document.getElementById('historyBayar');
+    const months = [
+        {m: 'Januari 2026', s: 'Lunas', c: 'text-emerald-500'},
+        {m: 'Februari 2026', s: 'Lunas', c: 'text-emerald-500'},
+        {m: 'Maret 2026', s: 'Lunas', c: 'text-emerald-500'},
+        {m: 'April 2026', s: 'Belum Bayar', c: 'text-slate-300'}
+    ];
+    container.innerHTML = months.map(h => `
+        <div class="flex justify-between items-center border-b border-slate-50 pb-3 last:border-0">
+            <span class="text-[10px] font-black text-slate-600 uppercase italic">${h.m}</span>
+            <span class="text-[9px] font-black uppercase ${h.c} italic tracking-widest">${h.s}</span>
+        </div>
+    `).reverse().join('');
+            }
+                        
