@@ -229,7 +229,7 @@
             allTrx.push({ id: doc.id, col: 'kas', ket: d.ket, nom: Number(d.nom || 0), kat: d.kat, tgl: d.tgl.toDate() });
         });
         iuranArr.forEach(d => {
-            allTrx.push({ id: d.id, col: 'pembayaran', ket: `IURAN: ${d.nama||''}`, nom: Number(d.nom || 0), kat: 'Masuk', tgl: (d.tgl?d.tgl.toDate():new Date()) });
+            allTrx.push({ id: d.id, col: 'pembayaran', ket: `PEMBAYARAN: ${d.nama||''}`, nom: Number(d.nom || 0), kat: 'Masuk', tgl: (d.tgl?d.tgl.toDate():new Date()) });
         });
 
         // 2. HITUNG SALDO AWAL VS FILTER
