@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS RT 04 - Green Movement</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <script>
+        tailwind.config = {
+            theme: { 
+                extend: { 
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }, 
+                    colors: { 
+                        primary: '#166534', // Deep Green
+                        accent: '#a3e635',  // Lime Green
+                        softgreen: '#f0fdf4' // Very Light Green Background
+                    } 
+                } 
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .nav-btn { @apply flex flex-col items-center gap-1 transition-colors; }
+        .nav-btn span { @apply text-[10px] font-bold uppercase; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="font-sans text-slate-800 bg-softgreen/50" x-data="{ activeTab: 'home', showDetail: false, selectedPost: {} }">
+
+    <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-green-100 px-6 py-4 flex justify-between items-center">
+        <div class="flex flex-col">
+            <h1 class="text-xl font-black tracking-tighter text-primary italic leading-none uppercase">Tuntas</h1>
+            <p class="text-[8px] font-bold text-green-600/60 uppercase tracking-[0.2em] mt-1 italic">Turun Tangan Atasi Sampah</p>
+        </div>
+        <button onclick="alert('Dalam Pengembangan')" class="w-10 h-10 rounded-2xl bg-green-100 text-primary flex items-center justify-center border border-green-200 active:scale-90 transition-all">
+            <i class="fa-solid fa-leaf text-xs"></i>
+        </button>
+    </header>
+
+    <main class="pt-24 pb-32 px-6">
+
+        <div x-show="activeTab === 'home'" class="tab-content active space-y-8">
+            <section class="bg-white p-7 rounded-[32px] border border-green-100 shadow-xl shadow-green-900/5 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col items-center">
+                    <p class="text-green-600/50 text-[10px] font-black uppercase tracking-widest mb-2 italic">Saldo Tuntas Terkumpul</p>
+                    <h2 id="totalSaldoHome" class="text-3xl font-black tracking-tighter text-primary italic">Rp 0</h2>
+                    <div class="mt-4 px-4 py-1.5 bg-accent/20 rounded-full border border-accent/30">
+                        <span class="text-[9px] font-bold text-primary uppercase italic tracking-tighter">Update: 02 - 04 - 2026</span>
+                    </div>
+                </div>
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-accent/10 rounded-full"></div>
+                <div class="absolute -left-4 -top-4 w-16 h-16 bg-primary/5 rounded-full"></div>
+            </section>
+
+            <section>
+                <h3 class="font-black text-lg italic uppercase tracking-tighter mb-4 px-1 text-primary">Giat Warga</h3>
+                <div id="blogContainer" class="flex overflow-x-auto no-scrollbar gap-4 -mx-6 px-6">
+                    </div>
+            </section>
+
+            <section class="bg-primary p-6 rounded-[32px] shadow-lg shadow-green-900/20">
+                <h4 class="font-black text-xs text-accent uppercase mb-2">Sekilas TUNTAS</h4>
+                <p class="text-[11px] text-white/80 leading-relaxed italic mb-4">
+                    Gerakan pengelolaan residu sampah mandiri di RT 04 Panggungharjo menggunakan teknologi insenator ramah lingkungan...
+                </p>
+                <button @click="activeTab = 'tentang'" class="text-[10px] font-black text-accent border-b-2 border-accent border-dashed pb-0.5 uppercase italic">Pelajari Gerakan Kami →</button>
+            </section>
+        </div>
+
+        <div x-show="activeTab === 'tentang'" x-cloak class="tab-content active space-y-6">
+            <h2 class="text-2xl font-black italic text-primary uppercase px-1">Tentang <br>TUNTAS RT 04</h2>
+            <div class="space-y-6 bg-white p-6 rounded-[32px] border border-green-50 shadow-sm">
+                <div class="space-y-4">
+                    <p class="text-[11px] text-slate-500 leading-relaxed italic">TUNTAS merupakan singkatan dari <b class="text-primary">Turun Tangan Atasi Sampah</b>, sebuah inisiatif kemandirian warga dalam mengelola limbah domestik.</p>
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=500" class="w-full h-40 object-cover rounded-2xl shadow-md grayscale-[20%] hover:grayscale-0 transition-all">
+                </div>
+                
+                <div class="pt-4 border-t border-green-50 space-y-4">
+                    <h4 class="text-xs font-black text-primary uppercase italic">Tanya Jawab Lingkungan</h4>
+                    <div class="p-4 bg-softgreen rounded-2xl border border-green-100 italic">
+                        <p class="font-black text-primary mb-1 leading-tight text-[10px]">1. Bagaimana sampah dikelola?</p>
+                        <p class="text-[10px] text-green-800/70">Dipilah dari rumah. Residu dibakar di insenator suhu tinggi rendah emisi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'kas'" x-cloak class="tab-content active space-y-6">
+            <section class="bg-white p-7 rounded-[32px] border border-green-100 shadow-xl shadow-green-900/5">
+                <p class="text-green-600/40 text-[10px] font-black uppercase tracking-widest mb-1 italic">Kas RT Terkini</p>
+                <h2 id="totalSaldoKas" class="text-3xl font-black tracking-tighter text-primary italic leading-none mb-1">Rp 0</h2>
+                <div class="flex gap-4 mt-6">
+                    <div class="flex-1"><p class="text-[8px] font-bold text-slate-400 uppercase">Masuk</p><p id="tMasuk" class="text-xs font-black text-emerald-600 uppercase">+ 0</p></div>
+                    <div class="flex-1 border-l border-green-50 ps-4"><p class="text-[8px] font-bold text-slate-400 uppercase">Keluar</p><p id="tKeluar" class="text-xs font-black text-orange-600 uppercase">- 0</p></div>
+                </div>
+            </section>
+
+            <div class="px-1">
+                <h3 class="font-black text-lg uppercase italic tracking-tighter mb-1 text-primary">Riwayat Transaksi</h3>
+                <div id="listRiwayat" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <div x-show="activeTab === 'profil'" x-cloak class="tab-content active space-y-6 pt-4">
+            <div class="flex flex-col items-center">
+                <div class="w-24 h-24 rounded-[32px] bg-primary border-4 border-white shadow-xl flex items-center justify-center text-white text-3xl mb-4 relative overflow-hidden">
+                    <i class="fa-solid fa-user-leaf z-10"></i>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-primary to-accent opacity-50"></div>
+                </div>
+                <h2 class="text-xl font-black uppercase italic mb-1 text-primary">Haidar Abicandra</h2>
+                <span class="px-4 py-1 bg-accent text-primary text-[8px] font-black uppercase rounded-full italic tracking-widest">Pahlawan Lingkungan</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-2xl border border-green-100 shadow-sm flex flex-col items-center text-center">
+                    <p class="text-[8px] text-green-600/40 font-black uppercase mb-1">Bergabung</p>
+                    <p class="text-xs font-black text-primary uppercase italic">Mei 2024</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-green-100 shadow-sm flex flex-col items-center text-center">
+                    <p class="text-[8px] text-green-600/40 font-black uppercase mb-1">Bank Sampah</p>
+                    <p class="text-xs font-black text-primary italic">Rp 45.000</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[32px] border border-green-100 shadow-sm">
+                <h3 class="font-black text-[10px] text-green-600/40 uppercase mb-4 italic tracking-widest border-b border-green-50 pb-2">Iuran Sampah</h3>
+                <div id="historyBayar" class="space-y-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <div x-show="showDetail" x-transition x-cloak class="fixed inset-0 z-[60] bg-primary/20 backdrop-blur-sm flex items-end">
+        <div class="bg-white w-full rounded-t-[40px] max-h-[85vh] overflow-y-auto p-8 border-t-4 border-accent">
+            <div class="w-12 h-1.5 bg-green-100 rounded-full mx-auto mb-8" @click="showDetail = false"></div>
+            <img :src="selectedPost.img" class="w-full h-48 object-cover rounded-[32px] mb-6 shadow-lg shadow-green-900/10">
+            <div class="flex gap-2 mb-3 items-center">
+                <span x-text="selectedPost.tgl" class="bg-accent/20 text-primary text-[8px] font-black px-3 py-1 rounded-full italic uppercase"></span>
+            </div>
+            <h3 x-text="selectedPost.judul" class="text-xl font-black text-primary uppercase italic leading-tight mb-4 tracking-tighter"></h3>
+            <p x-text="selectedPost.isi" class="text-xs text-slate-500 leading-relaxed italic mb-8"></p>
+            <button @click="showDetail = false" class="w-full py-4 bg-primary text-white rounded-2xl font-black uppercase text-[10px] shadow-lg shadow-green-200 tracking-[0.2em]">Kembali</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-green-50 px-6 pt-3 pb-8 z-50 flex justify-between items-center">
+        
+        <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-primary' : 'text-green-200'" class="nav-btn">
+            <i class="fa-solid fa-house-chimney text-lg"></i>
+            <span>Home</span>
+        </button>
+
+        <button @click="activeTab = 'tentang'" :class="activeTab === 'tentang' ? 'text-primary' : 'text-green-200'" class="nav-btn">
+            <i class="fa-solid fa-seedling text-lg"></i>
+            <span>Visi</span>
+        </button>
+        
+        <div class="relative -translate-y-6">
+            <a href="https://wa.me/628123456789" class="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white active:scale-90 transition-transform shadow-green-200/50">
+                <i class="fa-brands fa-whatsapp text-2xl"></i>
+            </a>
+        </div>
+
+        <button @click="activeTab = 'kas'" :class="activeTab === 'kas' ? 'text-primary' : 'text-green-200'" class="nav-btn">
+            <i class="fa-solid fa-wallet text-lg"></i>
+            <span>Kas</span>
+        </button>
+
+        <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-primary' : 'text-green-200'" class="nav-btn">
+            <i class="fa-solid fa-user-ninja text-lg"></i>
+            <span>Warga</span>
+        </button>
+    </nav>
+
+    <script src="app-warga.js?v=1.2"></script>
+</body>
+</html>
