@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS</title>
+    <title>TUNTAS - RT 04</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
         :root { --tuntas: #059669; }
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
@@ -17,8 +19,8 @@
         .tab-content.active { display: block; }
         nav button.active { color: var(--tuntas); }
         nav button { color: #94a3b8; transition: all 0.3s; }
-        /* Hilangkan scrollbar tapi tetap bisa scroll */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .table-scroll { overflow-x: auto; border-radius: 1.5rem; border: 1px solid #f1f5f9; background: white; }
+        .sticky-col { position: sticky; left: 0; z-index: 10; }
     </style>
 </head>
 <body class="pb-24">
@@ -35,9 +37,9 @@
         </div>
     </header>
 
-    <main class="p-6 max-w-md mx-auto">
+    <main class="p-6 space-y-6 max-w-md mx-auto">
         
-        <section class="mb-6 space-y-4">
+        <section class="space-y-4">
             <div class="p-7 bg-tuntas rounded-[2.5rem] text-white tuntas-shadow relative overflow-hidden border-b-4 border-emerald-800">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold opacity-70 uppercase tracking-[0.2em]">Total Saldo Kas</p>
@@ -72,28 +74,26 @@
             </section>
 
             <section class="space-y-3">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Histori Terakhir</h2>
-                <div id="listRiwayat" class="space-y-2">
-                    <p class="text-[10px] text-center text-slate-400 py-4 italic">Belum ada transaksi</p>
+                <div class="flex items-center justify-between px-1">
+                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histori Terakhir</h2>
+                    <button onclick="st('history')" class="text-[10px] font-bold text-tuntas">Lihat Semua</button>
                 </div>
+                <div id="listRiwayat" class="space-y-2"></div>
             </section>
         </div>
 
         <div id="screen-history" class="tab-content space-y-4">
-            <div class="flex items-center justify-between px-1">
-                <h3 class="font-bold text-tuntas text-lg">Semua Riwayat</h3>
-                <i class="fa-solid fa-clock-rotate-left text-slate-300"></i>
-            </div>
-            <div id="listRiwayatLengkap" class="space-y-3">
-                </div>
+            <h3 class="font-bold text-tuntas text-lg px-1">Riwayat Lengkap</h3>
+            <div id="listRiwayatLengkap" class="space-y-3"></div>
         </div>
 
         <div id="screen-rekap" class="tab-content space-y-4">
-            <h3 class="font-bold text-tuntas text-lg px-1">Laporan Iuran</h3>
-            <div class="overflow-x-auto bg-white rounded-3xl border border-slate-100 p-2">
+            <h3 class="font-bold text-tuntas text-lg px-1">Laporan Iuran Warga</h3>
+            <div class="table-scroll">
                 <table class="w-full text-left text-[11px]">
-                    <thead><tr id="th-rekap" class="text-slate-400 uppercase font-bold border-b"></tr></thead>
+                    <thead><tr id="th-rekap" class="text-slate-400 uppercase font-bold"></tr></thead>
                     <tbody id="tb-rekap"></tbody>
+                    <tfoot id="tf-rekap" class="bg-emerald-50 font-bold text-tuntas"></tfoot>
                 </table>
             </div>
         </div>
@@ -101,7 +101,7 @@
         <div id="screen-warga" class="tab-content space-y-4">
             <h3 class="font-bold text-tuntas text-lg px-1">Daftar Anggota</h3>
             <div id="tBodyWarga" class="grid grid-cols-1 gap-2"></div>
-            <a href="https://wa.me/6285163233482" class="flex items-center gap-3 p-4 bg-tuntas text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-all w-full justify-center mt-4">
+            <a href="https://wa.me/6285163233482" class="flex items-center gap-3 p-4 bg-tuntas text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-all w-full justify-center mt-4 text-decoration-none">
                 <i class="fa-brands fa-whatsapp text-xl"></i>
                 <span class="text-xs uppercase tracking-wider">Hubungi Pengelola</span>
             </a>
@@ -127,29 +127,7 @@
         </button>
     </nav>
 
-    <script>
-        // FUNGSI PINDAH HALAMAN (TAB)
-        function st(tabName) {
-            // Sembunyikan semua screen
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Tampilkan screen tujuan
-            document.getElementById('screen-' + tabName).classList.add('active');
-            
-            // Reset semua tombol nav
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-            // Highlight tombol yang diklik
-            document.getElementById('n-' + tabName).classList.add('active');
-
-            // Scroll ke atas otomatis
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Contoh penanganan data riwayat (Logika ini nanti masuk ke file JS kamu)
-        function renderRiwayat(data) {
-            const container = document.getElementById('listRiwayatLengkap');
-            // Logic looping data firebase kamu di sini...
-        }
-    </script>
+    <script src="depannyax.js"></script>
 </body>
     </html>
     
