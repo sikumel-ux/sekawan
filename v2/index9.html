@@ -20,40 +20,22 @@
         nav button.active { color: var(--tuntas); }
         nav button { color: #94a3b8; transition: all 0.3s; }
         
-        /* Animasi Running Text */
-        .running-text-container {
-            background: #ecfdf5; 
-            border-bottom: 1px solid #d1fae5;
-            overflow: hidden;
-            white-space: nowrap;
-            padding: 8px 0;
-        }
-        .running-text {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 25s linear infinite;
-            font-size: 10px;
-            font-weight: 700;
-            color: #065f46;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
+        /* Running Text */
+        .running-text-container { background: #ecfdf5; border-bottom: 1px solid #d1fae5; overflow: hidden; white-space: nowrap; padding: 8px 0; }
+        .running-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 10px; font-weight: 700; color: #065f46; text-transform: uppercase; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
         /* Gallery Slider */
         .gallery-slider { display: flex; overflow-x: auto; gap: 12px; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .gallery-slider::-webkit-scrollbar { display: none; }
-        .gallery-item { flex: 0 0 85%; scroll-snap-align: center; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 16/9; }
+        .gallery-item { flex: 0 0 85%; scroll-snap-align: center; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 16/9; background: #e2e8f0; }
     </style>
 </head>
 <body class="pb-24">
 
     <header class="bg-white p-5 sticky top-0 z-40 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg">
                 <i class="fa-brands fa-screenpal text-lg"></i>
             </div>
             <div>
@@ -65,8 +47,7 @@
 
     <div class="running-text-container">
         <div class="running-text">
-            <i class="fa-solid fa-bullhorn mr-2"></i> 
-            Info TUNTAS: Pengambilan sampah hari ini berjalan normal. Pastikan sampah sudah diletakkan di depan rumah sebelum jam 07.00 WIB. Jaga kebersihan, jaga kesehatan warga RT 04 Dongkelan!
+            <i class="fa-solid fa-bullhorn mr-2"></i> Info: Pengambilan sampah hari Selasa & Jumat jam 07.00 WIB. Jaga kebersihan lingkungan RT 04 Dongkelan!
         </div>
     </div>
 
@@ -94,116 +75,62 @@
         </section>
 
         <div id="screen-home" class="tab-content active space-y-8">
-            
             <section class="space-y-3">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Misi Kami</h2>
-                <div class="bg-emerald-900 p-6 rounded-[2.5rem] text-white relative overflow-hidden border-b-4 border-emerald-950">
-                    <p class="text-[12px] leading-relaxed relative z-10">
-                        <span class="font-bold text-yellow-400 underline decoration-yellow-400/30">TUNTAS</span> adalah program swadaya lingkungan warga <span class="font-bold">RT 04 Dongkelan</span> untuk melokalisir polusi asap dan mengelola sampah rumah tangga secara kolektif.
-                    </p>
-                    <i class="fa-solid fa-leaf absolute -right-4 -bottom-4 text-6xl opacity-10"></i>
+                <div class="flex items-center justify-between px-1">
+                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histori Terakhir</h2>
+                    <button onclick="st('history')" class="text-[10px] font-bold text-tuntas">Lihat Semua</button>
                 </div>
+                <div id="listRiwayat" class="space-y-2"></div>
+            </section>
+
+            <section class="bg-emerald-900 p-6 rounded-[2.5rem] text-white relative overflow-hidden">
+                <h2 class="text-xs font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-leaf"></i> Misi TUNTAS</h2>
+                <p class="text-[11px] leading-relaxed opacity-90">Program swadaya warga RT 04 untuk lingkungan bebas polusi asap melalui pengelolaan sampah terpadu.</p>
             </section>
 
             <section class="space-y-3">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Maksud & Tujuan</h2>
-                <div class="grid grid-cols-1 gap-2">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex gap-4 items-center">
-                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center text-tuntas">
-                            <i class="fa-solid fa-smog"></i>
-                        </div>
-                        <p class="text-[11px] text-slate-600 font-medium">Menghilangkan kebiasaan membakar sampah yang memicu polusi udara.</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex gap-4 items-center">
-                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center text-tuntas">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </div>
-                        <p class="text-[11px] text-slate-600 font-medium">Mewujudkan lingkungan RT 04 yang bersih, rapi, dan nyaman.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="space-y-3">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Dokumentasi</h2>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Gallery</h2>
                 <div class="gallery-slider">
-                    <div class="gallery-item bg-slate-200">
-                        <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" alt="Kegiatan 1">
-                    </div>
-                    <div class="gallery-item bg-slate-200">
-                        <img src="https://images.unsplash.com/photo-1618477461853-cf6ed80fafa5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" alt="Kegiatan 2">
-                    </div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1618477461853-cf6ed80fafa5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover"></div>
                 </div>
             </section>
 
-            <section class="space-y-3">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Tanya Jawab (FAQ)</h2>
-                <div class="space-y-2">
-                    <details class="group bg-white rounded-2xl border border-slate-100 p-4 transition-all">
-                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-[11px]">
-                            Jadwal Pengambilan Sampah
-                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="text-[10px] text-slate-500 mt-3 pt-3 border-t leading-relaxed">Sampah diambil rutin setiap hari Selasa dan Jumat pagi. Mohon sampah sudah siap di depan rumah sebelum pukul 07.00 WIB.</p>
-                    </details>
-                    <details class="group bg-white rounded-2xl border border-slate-100 p-4 transition-all">
-                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-[11px]">
-                            Berapa Biaya Iuran?
-                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="text-[10px] text-slate-500 mt-3 pt-3 border-t leading-relaxed">Iuran TUNTAS sebesar Rp 15.000 per bulan, digunakan untuk biaya angkut armada dan pemeliharaan kebersihan TPS.</p>
-                    </details>
-                    <details class="group bg-white rounded-2xl border border-slate-100 p-4 transition-all">
-                        <summary class="list-none flex justify-between items-center cursor-pointer font-bold text-[11px]">
-                            Cara Menjadi Anggota
-                            <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="text-[10px] text-slate-500 mt-3 pt-3 border-t leading-relaxed">Warga RT 04 yang ingin bergabung bisa langsung menghubungi pengurus RT atau Admin TUNTAS melalui tombol WhatsApp di bawah.</p>
-                    </details>
-                </div>
+            <section class="space-y-2">
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">FAQ</h2>
+                <details class="bg-white rounded-2xl border border-slate-100 p-4"><summary class="text-[11px] font-bold list-none">Jadwal?</summary><p class="text-[10px] text-slate-500 mt-2">Selasa & Jumat pagi jam 07.00.</p></details>
+                <details class="bg-white rounded-2xl border border-slate-100 p-4"><summary class="text-[11px] font-bold list-none">Biaya?</summary><p class="text-[10px] text-slate-500 mt-2">Iuran Rp 15.000 / bulan.</p></details>
             </section>
 
-            <section class="pt-2">
-                <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center justify-center gap-4 bg-emerald-500 hover:bg-emerald-600 text-white p-5 rounded-[2rem] shadow-xl shadow-emerald-100 transition-all active:scale-95">
-                    <i class="fa-brands fa-whatsapp text-3xl"></i>
-                    <div class="text-left leading-tight">
-                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-wider">Ada Kendala?</p>
-                        <p class="text-sm font-extrabold">Hubungi Admin TUNTAS</p>
-                    </div>
-                </a>
-            </section>
-
+            <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center justify-center gap-4 bg-emerald-500 text-white p-5 rounded-[2rem] shadow-lg shadow-emerald-100">
+                <i class="fa-brands fa-whatsapp text-2xl"></i>
+                <div class="text-left"><p class="text-[10px] font-bold opacity-80 uppercase">Ada Kendala?</p><p class="text-sm font-bold">Hubungi Admin TUNTAS</p></div>
+            </a>
         </div>
 
         <div id="screen-history" class="tab-content space-y-4">
-            <div class="flex items-center justify-between px-1">
-                <h3 class="font-bold text-tuntas text-lg">Riwayat Transaksi</h3>
-                <i class="fa-solid fa-clock-rotate-left text-slate-300"></i>
-            </div>
+            <h3 class="font-bold text-tuntas text-lg px-1">Riwayat Lengkap</h3>
             <div id="listRiwayatLengkap" class="space-y-3"></div>
         </div>
 
         <div id="screen-warga" class="tab-content space-y-4">
-            <div class="flex items-center justify-between px-1">
-                <h3 class="font-bold text-tuntas text-lg">Daftar Anggota</h3>
-                <i class="fa-solid fa-users text-slate-300"></i>
-            </div>
+            <h3 class="font-bold text-tuntas text-lg px-1">Daftar Anggota</h3>
             <div id="tBodyWarga" class="grid grid-cols-1 gap-2"></div>
         </div>
-
     </main>
 
-    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-md border-t flex justify-around items-center px-6 z-50">
-        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1">
-            <i class="fa-solid fa-house-chimney text-xl"></i>
-            <span class="text-[9px] font-bold uppercase tracking-tighter">Beranda</span>
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-md border-t flex justify-around items-center px-4 z-50">
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1 flex-1">
+            <i class="fa-solid fa-house-chimney text-lg"></i>
+            <span class="text-[8px] font-bold uppercase">Beranda</span>
         </button>
-        <button onclick="st('history')" id="n-history" class="flex flex-col items-center gap-1">
-            <i class="fa-solid fa-list-ul text-xl"></i>
-            <span class="text-[9px] font-bold uppercase tracking-tighter">Riwayat</span>
+        <button onclick="st('history')" id="n-history" class="flex flex-col items-center gap-1 flex-1">
+            <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+            <span class="text-[8px] font-bold uppercase">Riwayat</span>
         </button>
-        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1">
-            <i class="fa-solid fa-id-card-clip text-xl"></i>
-            <span class="text-[9px] font-bold uppercase tracking-tighter">Anggota</span>
+        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1 flex-1">
+            <i class="fa-solid fa-users text-lg"></i>
+            <span class="text-[8px] font-bold uppercase">Anggota</span>
         </button>
     </nav>
 
