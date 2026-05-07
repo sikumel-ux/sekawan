@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Admin</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 100px; }
+        .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 120px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; }
+        nav button.active { color: #064E3B; transform: translateY(-5px); }
+        nav button.active-pon { color: #EA580C; transform: translateY(-5px); }
+        nav button { color: #94A3B8; transition: all 0.3s; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="hidden flex flex-col items-center justify-center min-h-screen p-6 max-w-sm mx-auto">
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-xl w-full text-center space-y-6">
+        <div class="w-16 h-16 bg-emerald-900 rounded-2xl flex items-center justify-center mx-auto text-white shadow-lg">
+            <span class="material-symbols-rounded text-3xl">account_balance_wallet</span>
+        </div>
+        <h1 class="text-2xl font-black text-emerald-900 uppercase tracking-tighter">Tuntas. Admin</h1>
+        <div class="space-y-3">
+            <input type="email" id="email" class="modern-in" placeholder="Email Admin">
+            <input type="password" id="pass" class="modern-in" placeholder="Password">
+            <button onclick="login()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase tracking-widest">Masuk</button>
+        </div>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden max-w-md mx-auto p-5">
+    <header class="flex justify-between items-center mb-6">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center text-white"><span class="material-symbols-rounded">wallet</span></div>
+            <h1 class="text-xl font-black text-emerald-900">Tuntas.</h1>
+        </div>
+        <button onclick="logout()" class="w-10 h-10 rounded-xl border flex items-center justify-center text-red-400"><span class="material-symbols-rounded">logout</span></button>
+    </header>
+
+    <div id="screen-home" class="tab-content active space-y-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+            <div class="flex justify-between items-center px-1">
+                <p class="text-[10px] font-black text-slate-400 uppercase">Filter Laporan</p>
+                <button onclick="downloadPDF()" class="flex items-center gap-1 text-emerald-700 font-black text-[9px] uppercase bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                    <span class="material-symbols-rounded !text-sm">download</span> PDF
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[8px] font-bold text-slate-400 ml-2 uppercase">Dari</label>
+                    <input type="date" id="fMulai" onchange="loadData()" class="modern-in !py-2 !text-[11px]">
+                </div>
+                <div>
+                    <label class="text-[8px] font-bold text-slate-400 ml-2 uppercase">Sampai</label>
+                    <input type="date" id="fSelesai" onchange="loadData()" class="modern-in !py-2 !text-[11px]">
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+            <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Saldo Periode (Filter)</p>
+            <h2 id="totalSaldo" class="text-4xl font-black mt-1">Rp 0</h2>
+            <div class="mt-4 pt-4 border-t border-white/10 flex justify-between">
+                 <p class="text-[9px] font-bold opacity-50 uppercase">Total Kas Keseluruhan:</p>
+                 <p id="saldoSelamanya" class="text-[10px] font-black">Rp 0</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm text-center">
+                <p class="text-[9px] font-bold text-emerald-500 uppercase">Masuk (Filter)</p>
+                <p id="totalMasuk" class="text-lg font-black text-slate-800">Rp 0</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm text-center">
+                <p class="text-[9px] font-bold text-red-500 uppercase">Keluar (Filter)</p>
+                <p id="totalKeluar" class="text-lg font-black text-slate-800">Rp 0</p>
+            </div>
+        </div>
+
+        <button onclick="openModal('mKas')" class="w-full bg-white border-2 border-emerald-900 text-emerald-900 p-4 rounded-3xl font-black text-xs uppercase shadow-sm">Catat Kas Umum</button>
+        
+        <div class="pt-4">
+            <h3 class="font-black text-xs text-slate-400 uppercase tracking-tighter mb-3">Histori Transaksi Terfilter</h3>
+            <div id="listRiwayat" class="space-y-2"></div>
+        </div>
+    </div>
+    
+    </div>
+
+<script>
+    // [Firebase Config tetap sama]
+    const config = { apiKey: "AIzaSyDjxOJZeiLHaxoaS3-hVdbIGfIXCfCT2Is", authDomain: "tuntas-sekawan.firebaseapp.com", projectId: "tuntas-sekawan", storageBucket: "tuntas-sekawan.firebasestorage.app", messagingSenderId: "1090506516563", appId: "1:1090506516563:web:63c429677caea28addfea6" };
+    firebase.initializeApp(config);
+    const db = firebase.firestore(), auth = firebase.auth();
+    
+    let cacheAllTrx = []; // Untuk kebutuhan download PDF
+    let saldoKeseluruhanGlobal = 0;
+
+    // LOGIN & INIT
+    auth.onAuthStateChanged(user => {
+        if (user) { document.getElementById('mainApp').classList.remove('hidden'); document.getElementById('loginPage').classList.add('hidden'); init(); }
+        else { document.getElementById('mainApp').classList.add('hidden'); document.getElementById('loginPage').classList.remove('hidden'); }
+    });
+
+    function init() {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        document.getElementById('fMulai').value = startOfMonth;
+        document.getElementById('fSelesai').value = now.toISOString().split('T')[0];
+        loadData();
+    }
+
+    async function loadData() {
+        const [dkas, diur, dang] = await Promise.all([
+            db.collection("kas").get(), 
+            db.collection("pembayaran").get(), 
+            db.collection("anggota").orderBy("nama","asc").get()
+        ]);
+        
+        const fMulai = new Date(document.getElementById('fMulai').value);
+        const fSelesai = new Date(document.getElementById('fSelesai').value);
+        fSelesai.setHours(23,59,59);
+
+        let tInFilter = 0, tOutFilter = 0;
+        let tInTotal = 0, tOutTotal = 0;
+        let trxFilter = [];
+        
+        const listR = document.getElementById('listRiwayat');
+        listR.innerHTML = '';
+
+        // Gabungkan semua data transaksi
+        let allSource = [];
+        dkas.docs.forEach(doc => {
+            const d = doc.data();
+            allSource.push({ tgl: d.tgl.toDate(), ket: d.ket, nom: Number(d.nom), kat: d.kat });
+        });
+        diur.docs.forEach(doc => {
+            const d = doc.data();
+            allSource.push({ tgl: d.tgl.toDate(), ket: `Iuran: ${d.nama}`, nom: Number(d.nom), kat: 'Masuk' });
+        });
+
+        // Proses Perhitungan
+        allSource.forEach(tx => {
+            // Hitung Total Saldo (Tanpa Filter)
+            if(tx.kat === 'Masuk') tInTotal += tx.nom; else tOutTotal += tx.nom;
+
+            // Hitung Saldo Periode (Dengan Filter)
+            if(tx.tgl >= fMulai && tx.tgl <= fSelesai) {
+                trxFilter.push(tx);
+                if(tx.kat === 'Masuk') tInFilter += tx.nom; else tOutFilter += tx.nom;
+            }
+        });
+
+        cacheAllTrx = trxFilter.sort((a,b) => b.tgl - a.tgl);
+        saldoKeseluruhanGlobal = tInTotal - tOutTotal;
+
+        // Update UI
+        document.getElementById('totalSaldo').innerText = 'Rp ' + (tInFilter - tOutFilter).toLocaleString('id-ID');
+        document.getElementById('saldoSelamanya').innerText = 'Rp ' + saldoKeseluruhanGlobal.toLocaleString('id-ID');
+        document.getElementById('totalMasuk').innerText = 'Rp ' + tInFilter.toLocaleString('id-ID');
+        document.getElementById('totalKeluar').innerText = 'Rp ' + tOutFilter.toLocaleString('id-ID');
+
+        // Render Riwayat
+        if(cacheAllTrx.length === 0) {
+            listR.innerHTML = '<p class="text-center text-[10px] font-bold text-slate-300 py-4 uppercase">Kosong</p>';
+        } else {
+            cacheAllTrx.forEach(tx => {
+                const isM = tx.kat === 'Masuk';
+                listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase text-slate-700 tracking-tighter">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p></div></div>`);
+            });
+        }
+    }
+
+    // FUNGSI DOWNLOAD PDF
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const tglAwal = document.getElementById('fMulai').value;
+        const tglAkhir = document.getElementById('fSelesai').value;
+        const saldoPeriode = document.getElementById('totalSaldo').innerText;
+
+        // Header
+        doc.setFontSize(22); doc.setTextColor(6, 78, 59); doc.setFont("helvetica", "bold");
+        doc.text("TUNTAS.", 14, 20);
+        
+        doc.setFontSize(10); doc.setTextColor(100); doc.setFont("helvetica", "normal");
+        doc.text("LAPORAN TRANSAKSI KAS", 14, 28);
+        doc.text(`Periode: ${tglAwal} s/d ${tglAkhir}`, 14, 33);
+
+        // Kotak Saldo
+        doc.setFillColor(248, 250, 252); doc.roundedRect(14, 40, 182, 30, 3, 3, 'F');
+        
+        doc.setFontSize(9); doc.setTextColor(150);
+        doc.text("SALDO PERIODE (FILTER)", 20, 50);
+        doc.text("TOTAL SALDO KESELURUHAN", 120, 50);
+
+        doc.setFontSize(16); doc.setTextColor(6, 78, 59); doc.setFont("helvetica", "bold");
+        doc.text(saldoPeriode, 20, 60);
+        doc.text("Rp " + saldoKeseluruhanGlobal.toLocaleString('id-ID'), 120, 60);
+
+        // Tabel Rincian
+        const tableBody = cacheAllTrx.map(t => [
+            t.tgl.toLocaleDateString('id-ID'),
+            t.ket.toUpperCase(),
+            t.kat.toUpperCase(),
+            t.nom.toLocaleString('id-ID')
+        ]);
+
+        doc.autoTable({
+            startY: 80,
+            head: [['Tanggal', 'Keterangan', 'Kat', 'Nominal (Rp)']],
+            body: tableBody,
+            headStyles: { fillColor: [6, 78, 59], fontSize: 9 },
+            styles: { fontSize: 8, cellPadding: 3 },
+            columnStyles: { 3: { halign: 'right' } }
+        });
+
+        doc.save(`Laporan_Tuntas_${tglAwal}_ke_${tglAkhir}.pdf`);
+    }
+
+    // (Fungsi penunjang lainnya tetap sama seperti versi sebelumnya)
+    function openModal(id) { document.getElementById(id).style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    async function logout() { if(confirm("Keluar?")) await auth.signOut(); }
+</script>
+
+</body>
+</html>
