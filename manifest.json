@@ -1,19 +1,19 @@
 {
-  "short_name": "Tuntas",
+  "short_name": "Tuntas V.02",
   "name": "Tuntas",
   "icons": [
     {
-      "src": "sampah.png",
+      "src": "ninja.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "sampah.png",
+      "src": "ninja.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": "kasku.html",
+  "start_url": "saldo16.html",
   "display": "standalone",
   "theme_color": "#064E3B",
   "background_color": "#F1F5F9"
