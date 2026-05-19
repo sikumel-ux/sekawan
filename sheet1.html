@@ -2,7 +2,6 @@
 <html>
 <head>
   <base target="_top">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -10,74 +9,174 @@
 
   <style>
     body {
-      background: #f3f4f6;
-      font-family: sans-serif;
+      background: #eef2ff;
+      font-family: 'Inter', sans-serif;
     }
 
-    .card {
+    .glass-card {
       background: white;
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 24px;
+      box-shadow:
+        0 10px 25px rgba(0,0,0,0.06),
+        0 2px 10px rgba(0,0,0,0.04);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    .nav-item {
+      transition: 0.2s;
+    }
+
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      background: #2563eb;
+      color: white;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.4);
     }
   </style>
 </head>
 
-<body class="p-4">
+<body>
 
-  <div class="max-w-md mx-auto space-y-4">
+<div class="max-w-md mx-auto min-h-screen pb-32">
 
-    <div>
-      <h1 class="text-3xl font-bold">Kas Digital</h1>
-      <p class="text-gray-500">Dashboard Keuangan</p>
-    </div>
+  <div class="bg-blue-600 rounded-b-[40px] p-6 text-white shadow-xl">
 
-    <div class="grid grid-cols-3 gap-3">
-      <div class="card">
-        <p class="text-sm text-gray-500">Masuk</p>
-        <h2 id="masuk" class="text-green-600 font-bold text-xl">0</h2>
+    <div class="flex justify-between items-center">
+      <div>
+        <p class="text-blue-100 text-sm">Selamat Datang</p>
+        <h1 class="text-3xl font-bold mt-1">Kas Digital</h1>
       </div>
 
-      <div class="card">
-        <p class="text-sm text-gray-500">Keluar</p>
-        <h2 id="keluar" class="text-red-600 font-bold text-xl">0</h2>
-      </div>
-
-      <div class="card">
-        <p class="text-sm text-gray-500">Saldo</p>
-        <h2 id="saldo" class="text-blue-600 font-bold text-xl">0</h2>
+      <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl">
+        💰
       </div>
     </div>
 
-    <div class="card">
+    <div class="mt-6 glass-card p-5 text-black">
+      <p class="text-gray-500 text-sm">Total Saldo</p>
+      <h2 id="saldo" class="text-3xl font-bold mt-2 text-blue-600">Rp0</h2>
+
+      <div class="grid grid-cols-2 gap-3 mt-5">
+
+        <div class="bg-green-50 rounded-2xl p-3">
+          <p class="text-xs text-green-700">Kas Masuk</p>
+          <h3 id="masuk" class="font-bold text-green-600 mt-1">Rp0</h3>
+        </div>
+
+        <div class="bg-red-50 rounded-2xl p-3">
+          <p class="text-xs text-red-700">Kas Keluar</p>
+          <h3 id="keluar" class="font-bold text-red-600 mt-1">Rp0</h3>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="p-4 space-y-5 -mt-6">
+
+    <div class="glass-card p-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-bold text-lg">Cashflow</h2>
+        <span class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+          Bulan Ini
+        </span>
+      </div>
+
       <canvas id="chart"></canvas>
     </div>
 
-    <div class="card space-y-3">
-      <h2 class="font-bold text-lg">Tambah Transaksi</h2>
+    <div class="glass-card p-4 space-y-4">
 
-      <input id="tanggal" type="date" class="w-full border p-3 rounded-xl">
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-lg">Tambah Transaksi</h2>
+        <span class="text-xs text-gray-400">Input Cepat</span>
+      </div>
 
-      <select id="jenis" class="w-full border p-3 rounded-xl">
+      <input id="tanggal" type="date"
+        class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+
+      <select id="jenis"
+        class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
         <option>Masuk</option>
         <option>Keluar</option>
       </select>
 
-      <input id="kategori" placeholder="Kategori" class="w-full border p-3 rounded-xl">
+      <input id="kategori"
+        placeholder="Kategori"
+        class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
 
-      <input id="keterangan" placeholder="Keterangan" class="w-full border p-3 rounded-xl">
+      <input id="keterangan"
+        placeholder="Keterangan"
+        class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
 
-      <input id="nominal" type="number" placeholder="Nominal" class="w-full border p-3 rounded-xl">
+      <input id="nominal"
+        type="number"
+        placeholder="Nominal"
+        class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
 
       <button onclick="simpan()"
-        class="w-full bg-blue-600 text-white p-3 rounded-xl font-bold">
-        Simpan
+        class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold shadow-lg">
+        Simpan Transaksi
       </button>
+
     </div>
 
-    <div class="space-y-3" id="listTransaksi"></div>
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold text-lg">Riwayat Transaksi</h2>
+        <span class="text-xs text-gray-500">Terbaru</span>
+      </div>
+
+      <div class="space-y-3" id="listTransaksi"></div>
+    </div>
 
   </div>
+
+  <button class="fab">+</button>
+
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl">
+
+    <div class="max-w-md mx-auto grid grid-cols-4 text-center py-3">
+
+      <div class="nav-item text-blue-600">
+        <div class="text-xl">🏠</div>
+        <p class="text-xs mt-1">Home</p>
+      </div>
+
+      <div class="nav-item text-gray-400">
+        <div class="text-xl">📊</div>
+        <p class="text-xs mt-1">Laporan</p>
+      </div>
+
+      <div class="nav-item text-gray-400">
+        <div class="text-xl">💳</div>
+        <p class="text-xs mt-1">Kas</p>
+      </div>
+
+      <div class="nav-item text-gray-400">
+        <div class="text-xl">⚙️</div>
+        <p class="text-xs mt-1">Setting</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script>
 
@@ -91,6 +190,7 @@ function rupiah(angka) {
 }
 
 function loadSummary() {
+
   google.script.run.withSuccessHandler(res => {
 
     document.getElementById('masuk').innerText = rupiah(res.masuk);
@@ -113,15 +213,24 @@ function renderChart(masuk, keluar) {
   chart = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Masuk', 'Keluar'],
+      labels: ['Kas Masuk', 'Kas Keluar'],
       datasets: [{
-        data: [masuk, keluar]
+        data: [masuk, keluar],
+        borderRadius: 12
       }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
     }
   });
 }
 
 function loadTransaksi() {
+
   google.script.run.withSuccessHandler(data => {
 
     let html = '';
@@ -129,32 +238,51 @@ function loadTransaksi() {
     data.forEach(row => {
 
       const warna = row[2] === 'Masuk'
-        ? 'text-green-600'
-        : 'text-red-600';
+        ? 'text-green-600 bg-green-50'
+        : 'text-red-600 bg-red-50';
+
+      const icon = row[2] === 'Masuk'
+        ? '⬇️'
+        : '⬆️';
 
       html += `
-        <div class="card">
-          <div class="flex justify-between items-start">
+
+      <div class="glass-card p-4">
+
+        <div class="flex justify-between items-center">
+
+          <div class="flex items-center gap-3">
+
+            <div class="w-12 h-12 rounded-2xl ${warna} flex items-center justify-center text-xl">
+              ${icon}
+            </div>
+
             <div>
               <h3 class="font-bold">${row[3]}</h3>
               <p class="text-sm text-gray-500">${row[4]}</p>
-              <p class="text-xs text-gray-400">${row[1]}</p>
+              <p class="text-xs text-gray-400 mt-1">${row[1]}</p>
             </div>
 
-            <div class="text-right">
-              <p class="font-bold ${warna}">
-                ${rupiah(row[5])}
-              </p>
-
-              <button
-                onclick="hapus('${row[0]}')"
-                class="text-xs text-red-500 mt-2">
-                Hapus
-              </button>
-            </div>
           </div>
+
+          <div class="text-right">
+            <h3 class="font-bold ${warna.includes('green') ? 'text-green-600' : 'text-red-600'}">
+              ${rupiah(row[5])}
+            </h3>
+
+            <button
+              onclick="hapus('${row[0]}')"
+              class="text-xs text-gray-400 mt-2">
+              Hapus
+            </button>
+          </div>
+
         </div>
+
+      </div>
+
       `;
+
     });
 
     document.getElementById('listTransaksi').innerHTML = html;
@@ -188,7 +316,7 @@ function simpan() {
 
 function hapus(id) {
 
-  if (confirm('Hapus transaksi?')) {
+  if (confirm('Hapus transaksi ini?')) {
 
     google.script.run.withSuccessHandler(() => {
       loadSummary();
