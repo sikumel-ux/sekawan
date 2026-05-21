@@ -8,506 +8,15 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0">
 
-  <title>Dashboard Admin</title>
+  <title>
+    Kas Sampah TUNTAS
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="admin.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-
-    * {
-
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-
-    }
-
-    body {
-
-      font-family: Inter, sans-serif;
-      background: #f5f7fb;
-      color: #111827;
-
-    }
-
-    .app {
-
-      max-width: 480px;
-      margin: auto;
-      min-height: 100vh;
-      padding-bottom: 120px;
-
-    }
-
-    /* PAGE */
-
-    .page {
-
-      display: none;
-
-    }
-
-    .active-page {
-
-      display: block;
-
-    }
-
-    /* HEADER */
-
-    .header {
-
-      background:
-        linear-gradient(
-          135deg,
-          #16a34a,
-          #15803d,
-          #166534
-        );
-
-      padding: 24px;
-      border-radius: 0 0 40px 40px;
-      color: white;
-
-    }
-
-    .header-top {
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-    }
-
-    .sub {
-
-      opacity: .8;
-      font-size: 14px;
-
-    }
-
-    .header h1 {
-
-      margin-top: 6px;
-      font-size: 30px;
-
-    }
-
-    .logout-btn {
-
-      border: none;
-      background:
-        rgba(255,255,255,.2);
-
-      color: white;
-      padding: 12px 18px;
-      border-radius: 18px;
-
-    }
-
-    /* SALDO */
-
-    .saldo-card {
-
-      background: white;
-      border-radius: 30px;
-      padding: 22px;
-      margin-top: 24px;
-      color: #111827;
-
-      box-shadow:
-        0 10px 30px rgba(0,0,0,.08);
-
-    }
-
-    .saldo-label {
-
-      color: #6b7280;
-
-    }
-
-    .saldo-card h2 {
-
-      margin-top: 10px;
-      font-size: 36px;
-      color: #16a34a;
-
-    }
-
-    .summary {
-
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 20px;
-
-    }
-
-    .summary-item {
-
-      border-radius: 22px;
-      padding: 16px;
-
-    }
-
-    .income {
-
-      background: #dcfce7;
-
-    }
-
-    .expense {
-
-      background: #fee2e2;
-
-    }
-
-    /* CARD */
-
-    .card {
-
-      background: white;
-      border-radius: 28px;
-      padding: 20px;
-      margin: 20px;
-
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.05);
-
-    }
-
-    .section-title {
-
-      margin-bottom: 16px;
-
-    }
-
-    /* FILTER */
-
-    .filter-box {
-
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-
-    }
-
-    input,
-    select {
-
-      width: 100%;
-      border: none;
-      background: #f3f4f6;
-      padding: 16px;
-      border-radius: 18px;
-      outline: none;
-      margin-top: 12px;
-
-    }
-
-    .filter-btn,
-    .save-btn {
-
-      width: 100%;
-      border: none;
-      margin-top: 14px;
-      padding: 16px;
-      border-radius: 22px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #16a34a,
-          #15803d
-        );
-
-      color: white;
-      font-weight: bold;
-
-    }
-
-    /* CHART */
-
-    .chart-header {
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-
-    }
-
-    /* TRANSAKSI */
-
-    .transaksi-list {
-
-      padding: 0 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-
-    }
-
-    .transaksi-item {
-
-      background: white;
-      border-radius: 26px;
-      padding: 18px;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.05);
-
-    }
-
-    .transaksi-left {
-
-      display: flex;
-      gap: 14px;
-      align-items: center;
-
-    }
-
-    .icon {
-
-      width: 54px;
-      height: 54px;
-      border-radius: 18px;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      font-size: 22px;
-
-    }
-
-    .icon.in {
-
-      background: #dcfce7;
-
-    }
-
-    .icon.out {
-
-      background: #fee2e2;
-
-    }
-
-    .transaksi-info h3 {
-
-      font-size: 16px;
-
-    }
-
-    .transaksi-info p {
-
-      margin-top: 4px;
-      color: #6b7280;
-      font-size: 13px;
-
-    }
-
-    .transaksi-info small {
-
-      display: block;
-      margin-top: 6px;
-      color: #9ca3af;
-
-    }
-
-    .right-area {
-
-      text-align: right;
-
-    }
-
-    .nominal {
-
-      font-weight: bold;
-
-    }
-
-    .nominal.in {
-
-      color: #16a34a;
-
-    }
-
-    .nominal.out {
-
-      color: #dc2626;
-
-    }
-
-    .delete-btn {
-
-      margin-top: 10px;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: #fee2e2;
-      color: #dc2626;
-
-    }
-
-    /* FAB */
-
-    .fab {
-
-      position: fixed;
-      right: 24px;
-      bottom: 95px;
-
-      width: 68px;
-      height: 68px;
-
-      border-radius: 999px;
-      border: none;
-
-      background:
-        linear-gradient(
-          135deg,
-          #16a34a,
-          #15803d
-        );
-
-      color: white;
-      font-size: 36px;
-
-      box-shadow:
-        0 15px 30px rgba(22,163,74,.3);
-
-    }
-
-    /* NAVIGATION */
-
-    .bottom-nav {
-
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-
-      background:
-        rgba(255,255,255,.96);
-
-      backdrop-filter: blur(14px);
-
-      border-top:
-        1px solid rgba(0,0,0,.05);
-
-    }
-
-    .nav-grid {
-
-      max-width: 480px;
-      margin: auto;
-
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-
-      padding: 12px 0;
-
-    }
-
-    .nav-item {
-
-      text-align: center;
-      font-size: 12px;
-      color: #6b7280;
-
-    }
-
-    .nav-item.active {
-
-      color: #16a34a;
-
-    }
-
-    .nav-icon {
-
-      width: 42px;
-      height: 42px;
-
-      margin: auto;
-      margin-bottom: 6px;
-
-      border-radius: 16px;
-      background: #f3f4f6;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-    }
-
-    .nav-item.active .nav-icon {
-
-      background: #dcfce7;
-
-    }
-
-    /* MODAL */
-
-    .modal {
-
-      position: fixed;
-      inset: 0;
-
-      background: rgba(0,0,0,.4);
-
-      display: flex;
-      align-items: end;
-
-    }
-
-    .hidden {
-
-      display: none;
-
-    }
-
-    .modal-content {
-
-      width: 100%;
-      max-width: 480px;
-      margin: auto;
-
-      background: white;
-
-      border-radius: 36px 36px 0 0;
-
-      padding: 24px;
-
-    }
-
-    /* SIMPLE PAGE */
-
-    .simple-page {
-
-      padding: 30px 20px 120px;
-
-    }
-
-    .simple-page h2 {
-
-      font-size: 28px;
-      margin-bottom: 10px;
-
-    }
-
-    .simple-page p {
-
-      color: #6b7280;
-      line-height: 1.7;
-
-    }
-
-  </style>
 
 </head>
 
@@ -515,7 +24,7 @@
 
 <div class="app">
 
-  <!-- DASHBOARD -->
+  <!-- HOME -->
 
   <section
     id="dashboardPage"
@@ -631,14 +140,6 @@
 
     </div>
 
-    <!-- LIST -->
-
-    <div
-      class="transaksi-list"
-      id="listTransaksi">
-
-    </div>
-
   </section>
 
   <!-- LAPORAN -->
@@ -654,8 +155,42 @@
       </h2>
 
       <p>
-        Halaman laporan kas.
+        Statistik realtime kas.
       </p>
+
+      <div class="laporan-box">
+
+        <div class="laporan-card">
+
+          <p>Total Pemasukan</p>
+
+          <h3 id="lapMasuk">
+            Rp0
+          </h3>
+
+        </div>
+
+        <div class="laporan-card">
+
+          <p>Total Pengeluaran</p>
+
+          <h3 id="lapKeluar">
+            Rp0
+          </h3>
+
+        </div>
+
+        <div class="laporan-card">
+
+          <p>Saldo Akhir</p>
+
+          <h3 id="lapSaldo">
+            Rp0
+          </h3>
+
+        </div>
+
+      </div>
 
     </div>
 
@@ -670,12 +205,18 @@
     <div class="simple-page">
 
       <h2>
-        📅 Histori
+        📅 Histori Transaksi
       </h2>
 
       <p>
-        Semua histori transaksi.
+        Semua transaksi realtime.
       </p>
+
+    </div>
+
+    <div
+      class="transaksi-list"
+      id="listTransaksi">
 
     </div>
 
@@ -694,7 +235,7 @@
       </h2>
 
       <p>
-        Dark mode segera hadir 😄
+        Dark mode dan export PDF segera hadir 😄
       </p>
 
     </div>
@@ -826,393 +367,7 @@
 
 </div>
 
-<script>
-
-const API_URL =
-'https://script.google.com/macros/s/AKfycbxv9xeWPqNdqrl7yiY-8mN9IZV9bVTNwk78k-klWiG330wjzvuhIb78JRGtJvm7Yep9Pg/exec';
-
-let chart;
-
-/* LOGIN */
-
-const user =
-  JSON.parse(
-    localStorage.getItem('user')
-  );
-
-if(
-  !user ||
-  user.role !== 'admin'
-){
-
-  window.location.href =
-    'login.html';
-
-}
-
-/* LOGOUT */
-
-function logout(){
-
-  localStorage.clear();
-
-  window.location.href =
-    'login.html';
-
-}
-
-/* RUPIAH */
-
-function rupiah(angka){
-
-  return new Intl.NumberFormat(
-    'id-ID',
-    {
-      style: 'currency',
-      currency: 'IDR'
-    }
-  ).format(angka);
-
-}
-
-/* LOAD DATA */
-
-async function loadData(){
-
-  const res =
-    await fetch(API_URL);
-
-  const data =
-    await res.json();
-
-  renderData(data);
-
-}
-
-/* RENDER */
-
-function renderData(data){
-
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  const list =
-    document.getElementById(
-      'listTransaksi'
-    );
-
-  list.innerHTML = '';
-
-  data.reverse().forEach(item => {
-
-    if(item.jenis === 'Masuk'){
-
-      totalMasuk += item.nominal;
-
-    } else {
-
-      totalKeluar += item.nominal;
-
-    }
-
-    const isMasuk =
-      item.jenis === 'Masuk';
-
-    list.innerHTML += `
-
-      <div class="transaksi-item">
-
-        <div class="transaksi-left">
-
-          <div class="icon ${
-            isMasuk ? 'in' : 'out'
-          }">
-
-            ${
-              isMasuk ? '⬇️' : '⬆️'
-            }
-
-          </div>
-
-          <div class="transaksi-info">
-
-            <h3>
-              ${item.kategori}
-            </h3>
-
-            <p>
-              ${item.keterangan}
-            </p>
-
-            <small>
-              ${item.tanggal}
-            </small>
-
-          </div>
-
-        </div>
-
-        <div class="right-area">
-
-          <div class="nominal ${
-            isMasuk ? 'in' : 'out'
-          }">
-
-            ${rupiah(item.nominal)}
-
-          </div>
-
-          <button
-            class="delete-btn"
-            onclick="hapus('${item.id}')">
-
-            Hapus
-
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-  document.getElementById('masuk')
-    .innerText =
-      rupiah(totalMasuk);
-
-  document.getElementById('keluar')
-    .innerText =
-      rupiah(totalKeluar);
-
-  document.getElementById('saldo')
-    .innerText =
-      rupiah(
-        totalMasuk - totalKeluar
-      );
-
-  renderChart(
-    totalMasuk,
-    totalKeluar
-  );
-
-}
-
-/* CHART */
-
-function renderChart(
-  masuk,
-  keluar
-){
-
-  const ctx =
-    document.getElementById(
-      'chart'
-    );
-
-  if(chart){
-
-    chart.destroy();
-
-  }
-
-  chart = new Chart(ctx, {
-
-    type: 'doughnut',
-
-    data: {
-
-      labels: [
-        'Masuk',
-        'Keluar'
-      ],
-
-      datasets: [{
-
-        data: [
-          masuk,
-          keluar
-        ],
-
-        borderRadius: 12
-
-      }]
-
-    }
-
-  });
-
-}
-
-/* FILTER */
-
-async function filterTanggal(){
-
-  const start =
-    document.getElementById(
-      'startDate'
-    ).value;
-
-  const end =
-    document.getElementById(
-      'endDate'
-    ).value;
-
-  const res =
-    await fetch(API_URL);
-
-  const data =
-    await res.json();
-
-  const filtered =
-    data.filter(item => {
-
-      const tgl =
-        new Date(item.tanggal);
-
-      return (
-
-        (!start ||
-          tgl >= new Date(start))
-
-        &&
-
-        (!end ||
-          tgl <= new Date(end))
-
-      );
-
-    });
-
-  renderData(filtered);
-
-}
-
-/* MODAL */
-
-function toggleModal(){
-
-  document
-    .getElementById('modal')
-    .classList
-    .toggle('hidden');
-
-}
-
-/* SIMPAN */
-
-async function simpan(){
-
-  const payload = {
-
-    action: 'simpan',
-
-    tanggal:
-      document.getElementById('tanggal').value,
-
-    jenis:
-      document.getElementById('jenis').value,
-
-    kategori:
-      document.getElementById('kategori').value,
-
-    keterangan:
-      document.getElementById('keterangan').value,
-
-    nominal:
-      document.getElementById('nominal').value
-
-  };
-
-  await fetch(API_URL, {
-
-    method: 'POST',
-
-    headers: {
-      'Content-Type': 'text/plain'
-    },
-
-    body: JSON.stringify(payload)
-
-  });
-
-  toggleModal();
-
-  loadData();
-
-}
-
-/* HAPUS */
-
-async function hapus(id){
-
-  await fetch(API_URL, {
-
-    method: 'POST',
-
-    headers: {
-      'Content-Type': 'text/plain'
-    },
-
-    body: JSON.stringify({
-
-      action: 'hapus',
-
-      id
-
-    })
-
-  });
-
-  loadData();
-
-}
-
-/* NAVIGATION */
-
-function showPage(
-  page,
-  element
-){
-
-  document
-    .querySelectorAll('.page')
-    .forEach(el => {
-
-      el.classList.remove(
-        'active-page'
-      );
-
-    });
-
-  document
-    .querySelectorAll('.nav-item')
-    .forEach(el => {
-
-      el.classList.remove(
-        'active'
-      );
-
-    });
-
-  document
-    .getElementById(
-      page + 'Page'
-    )
-    .classList.add(
-      'active-page'
-    );
-
-  element.classList.add(
-    'active'
-  );
-
-}
-
-loadData();
-
-</script>
+<script src="admin.js"></script>
 
 </body>
 </html>
