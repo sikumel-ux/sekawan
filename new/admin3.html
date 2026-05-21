@@ -878,4 +878,406 @@
 <script>
 
 const API_URL =
-'https://script.google.com/macros/s/AKfycbxv9xeWPqNdqrl7yiY-8mN9IZV9bVTNwk78k-klWiG330
+'https://script.google.com/macros/s/AKfycbxv9xeWPqNdqrl7yiY-8mN9IZV9bVTNwk78k-klWiG330wjzvuhIb78JRGtJvm7Yep9Pg/exec';
+
+let chart;
+
+/* FORMAT */
+
+function rupiah(angka){
+
+  return new Intl.NumberFormat(
+    'id-ID',
+    {
+      style:'currency',
+      currency:'IDR'
+    }
+  ).format(angka);
+
+}
+
+/* LOAD DATA */
+
+async function loadData(){
+
+  const res =
+  await fetch(API_URL);
+
+  const data =
+  await res.json();
+
+  renderData(data);
+
+}
+
+/* RENDER */
+
+function renderData(data){
+
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+
+  const list =
+  document.getElementById(
+    'listTransaksi'
+  );
+
+  list.innerHTML = '';
+
+  data.reverse().forEach(item => {
+
+    const nominal =
+    Number(item.nominal);
+
+    const isMasuk =
+    item.jenis === 'Masuk';
+
+    if(isMasuk){
+
+      totalMasuk += nominal;
+
+    }else{
+
+      totalKeluar += nominal;
+
+    }
+
+    list.innerHTML += `
+
+      <div class="transaksi-item">
+
+        <div class="transaksi-left">
+
+          <div class="icon ${
+            isMasuk ? 'in' : 'out'
+          }">
+
+            ${
+              isMasuk
+
+              ?
+
+              '<i class="fa-solid fa-arrow-down"></i>'
+
+              :
+
+              '<i class="fa-solid fa-arrow-up"></i>'
+
+            }
+
+          </div>
+
+          <div class="transaksi-info">
+
+            <h3>
+              ${item.kategori}
+            </h3>
+
+            <p>
+              ${item.keterangan}
+            </p>
+
+            <small>
+              ${item.tanggal}
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="right-area">
+
+          <div class="nominal ${
+            isMasuk ? 'in' : 'out'
+          }">
+
+            ${rupiah(nominal)}
+
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="hapus('${item.id}')">
+
+            Hapus
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  document.getElementById(
+    'masuk'
+  ).innerText =
+  rupiah(totalMasuk);
+
+  document.getElementById(
+    'keluar'
+  ).innerText =
+  rupiah(totalKeluar);
+
+  document.getElementById(
+    'saldo'
+  ).innerText =
+  rupiah(
+    totalMasuk - totalKeluar
+  );
+
+  document.getElementById(
+    'lapMasuk'
+  ).innerText =
+  rupiah(totalMasuk);
+
+  document.getElementById(
+    'lapKeluar'
+  ).innerText =
+  rupiah(totalKeluar);
+
+  document.getElementById(
+    'lapSaldo'
+  ).innerText =
+  rupiah(
+    totalMasuk - totalKeluar
+  );
+
+  renderChart(
+    totalMasuk,
+    totalKeluar
+  );
+
+}
+
+/* CHART */
+
+function renderChart(
+  masuk,
+  keluar
+){
+
+  const ctx =
+  document.getElementById(
+    'chart'
+  );
+
+  if(chart){
+
+    chart.destroy();
+
+  }
+
+  chart = new Chart(ctx, {
+
+    type:'doughnut',
+
+    data:{
+
+      labels:[
+        'Masuk',
+        'Keluar'
+      ],
+
+      datasets:[{
+
+        data:[
+          masuk,
+          keluar
+        ],
+
+        borderRadius:12
+
+      }]
+
+    }
+
+  });
+
+}
+
+/* FILTER */
+
+async function filterTanggal(){
+
+  const start =
+  document.getElementById(
+    'startDate'
+  ).value;
+
+  const end =
+  document.getElementById(
+    'endDate'
+  ).value;
+
+  const res =
+  await fetch(API_URL);
+
+  const data =
+  await res.json();
+
+  const filtered =
+  data.filter(item => {
+
+    const tgl =
+    new Date(item.tanggal);
+
+    return (
+
+      (!start ||
+        tgl >= new Date(start))
+
+      &&
+
+      (!end ||
+        tgl <= new Date(end))
+
+    );
+
+  });
+
+  renderData(filtered);
+
+}
+
+/* MODAL */
+
+function toggleModal(){
+
+  document
+  .getElementById('modal')
+  .classList
+  .toggle('hidden');
+
+}
+
+/* SIMPAN */
+
+async function simpan(){
+
+  const payload = {
+
+    action:'simpan',
+
+    tanggal:
+    document.getElementById(
+      'tanggal'
+    ).value,
+
+    jenis:
+    document.getElementById(
+      'jenis'
+    ).value,
+
+    kategori:
+    document.getElementById(
+      'kategori'
+    ).value,
+
+    keterangan:
+    document.getElementById(
+      'keterangan'
+    ).value,
+
+    nominal:
+    document.getElementById(
+      'nominal'
+    ).value
+
+  };
+
+  await fetch(API_URL, {
+
+    method:'POST',
+
+    headers:{
+      'Content-Type':'text/plain'
+    },
+
+    body:JSON.stringify(payload)
+
+  });
+
+  toggleModal();
+
+  loadData();
+
+}
+
+/* HAPUS */
+
+async function hapus(id){
+
+  await fetch(API_URL, {
+
+    method:'POST',
+
+    headers:{
+      'Content-Type':'text/plain'
+    },
+
+    body:JSON.stringify({
+
+      action:'hapus',
+
+      id:id
+
+    })
+
+  });
+
+  loadData();
+
+}
+
+/* NAVIGATION */
+
+function showPage(
+  page,
+  element
+){
+
+  document
+  .querySelectorAll('.page')
+  .forEach(el => {
+
+    el.classList.remove(
+      'active-page'
+    );
+
+  });
+
+  document
+  .querySelectorAll('.nav-item')
+  .forEach(el => {
+
+    el.classList.remove(
+      'active'
+    );
+
+  });
+
+  document
+  .getElementById(
+    page + 'Page'
+  )
+  .classList.add(
+    'active-page'
+  );
+
+  element.classList.add(
+    'active'
+  );
+
+}
+
+/* INIT */
+
+loadData();
+
+</script>
+
+</body>
+</html>
