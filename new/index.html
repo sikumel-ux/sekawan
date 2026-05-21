@@ -23,7 +23,7 @@
     }
 
     .gradient-header {
-      background: linear-gradient(135deg,#0085ff 0%,#0066ff 55%,#0047cc 100%);
+      background: linear-gradient(135deg,#16a34a 0%,#15803d 55%,#166534 100%);
     }
 
     .bottom-nav {
@@ -45,14 +45,32 @@
       width: 64px;
       height: 64px;
       border-radius: 999px;
-      background: linear-gradient(135deg,#0085ff,#005eff);
+      background: linear-gradient(135deg,#16a34a,#15803d);
       color: white;
       font-size: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 15px 30px rgba(0,102,255,0.35);
+      box-shadow: 0 15px 30px rgba(22,163,74,0.35);
       z-index: 999;
+      transition: .25s;
+    }
+
+    .fab:hover {
+      transform: scale(1.05);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .animate-slideup {
+      animation: slideUp .25s ease;
     }
   </style>
 </head>
@@ -79,7 +97,7 @@
 
     <div class="mt-6 premium-card p-5 text-black">
       <p class="text-gray-500 text-sm">Total Saldo</p>
-      <h2 id="saldo" class="text-3xl font-bold mt-2 text-blue-600">Rp0</h2>
+      <h2 id="saldo" class="text-3xl font-bold mt-2 text-green-600">Rp0</h2>
 
       <div class="grid grid-cols-2 gap-3 mt-5">
 
@@ -122,7 +140,7 @@
     <div class="premium-card p-4">
       <div class="flex justify-between items-center mb-3">
         <h2 class="font-bold text-lg">Cashflow</h2>
-        <span class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+        <span class="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full">
           Bulan Ini
         </span>
       </div>
@@ -160,7 +178,7 @@
         class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
 
       <button onclick="simpan()"
-        class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white p-4 rounded-3xl font-bold shadow-xl">
+        class="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white p-4 rounded-3xl font-bold shadow-xl">
         Simpan Transaksi
       </button>
 
@@ -168,15 +186,25 @@
 
     <div>
 
-      <div class="premium-card p-3 mb-4 flex items-center gap-3">
-        <input
-          type="text"
-          placeholder="Cari transaksi..."
-          class="flex-1 bg-transparent outline-none text-sm">
+      <div class="premium-card p-3 mb-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-sm text-gray-600">Filter Histori Transaksi</h3>
+          <button onclick="filterTanggal()" class="bg-green-100 text-green-600 px-4 py-2 rounded-xl text-sm font-semibold">
+            Terapkan
+          </button>
+        </div>
 
-        <button class="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm">
-          Filter
-        </button>
+        <div class="grid grid-cols-2 gap-3">
+          <input
+            type="date"
+            id="startDate"
+            class="w-full bg-gray-100 rounded-2xl px-4 py-3 outline-none text-sm">
+
+          <input
+            type="date"
+            id="endDate"
+            class="w-full bg-gray-100 rounded-2xl px-4 py-3 outline-none text-sm">
+        </div>
       </div>
 
       <div class="flex justify-between items-center mb-4">
@@ -189,36 +217,207 @@
 
   </div>
 
-  <button class="fab">+</button>
+  <button class="fab" onclick="toggleSheet()">+</button>
 
-  <div class="bottom-nav">
+  <div id="bottomSheet"
+    class="fixed inset-0 bg-black/40 hidden z-[1000]">
 
-    <div class="max-w-md mx-auto grid grid-cols-4 text-center py-3">
+    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[36px] p-5 animate-slideup">
 
-      <div class="nav-item text-blue-600">
-        <div class="w-10 h-10 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center">🏠</div>
-        <div class="text-xl">🏠</div>
-        <p class="text-xs mt-1">Home</p>
+      <div class="w-16 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
+
+      <div class="flex justify-between items-center mb-5">
+        <div>
+          <h2 class="font-bold text-xl">Quick Action</h2>
+          <p class="text-sm text-gray-500 mt-1">Tambah transaksi cepat</p>
+        </div>
+
+        <button onclick="toggleSheet()"
+          class="w-10 h-10 rounded-full bg-gray-100">
+          ✕
+        </button>
       </div>
 
-      <div class="nav-item text-gray-400">
-        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">📊</div>
-        <p class="text-xs mt-1">Laporan</p>
+      <div class="grid grid-cols-2 gap-4">
+
+        <button class="premium-card p-5 text-left hover:scale-[1.02] transition">
+          <div class="w-14 h-14 rounded-3xl bg-green-100 flex items-center justify-center text-2xl mb-4">
+            💸
+          </div>
+
+          <h3 class="font-bold text-lg">Kas Masuk</h3>
+          <p class="text-sm text-gray-500 mt-1">Tambah pemasukan</p>
+        </button>
+
+        <button class="premium-card p-5 text-left hover:scale-[1.02] transition">
+          <div class="w-14 h-14 rounded-3xl bg-red-100 flex items-center justify-center text-2xl mb-4">
+            💳
+          </div>
+
+          <h3 class="font-bold text-lg">Kas Keluar</h3>
+          <p class="text-sm text-gray-500 mt-1">Tambah pengeluaran</p>
+        </button>
+
       </div>
 
-      <div class="nav-item text-gray-400">
-        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">💳</div>
-        <p class="text-xs mt-1">Kas</p>
-      </div>
+      <div class="premium-card p-4 mt-5 flex items-center justify-between">
 
-      <div class="nav-item text-gray-400">
-        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">⚙️</div>
-        <p class="text-xs mt-1">Setting</p>
+        <div>
+          <p class="text-sm text-gray-500">Total Transaksi</p>
+          <h3 class="font-bold text-xl mt-1">128</h3>
+        </div>
+
+        <div class="w-14 h-14 rounded-3xl bg-green-100 flex items-center justify-center text-2xl text-green-600">
+          📈
+        </div>
+
       </div>
 
     </div>
 
   </div>
+
+  <div class="bottom-nav">
+
+    <div class="max-w-md mx-auto grid grid-cols-4 text-center py-3">
+
+      <button onclick="showPage('homePage')" class="nav-item text-green-600">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-green-100 flex items-center justify-center">🏠</div>
+        <p class="text-xs mt-1">Home</p>
+      </button>
+
+      <button onclick="showPage('transaksiPage')" class="nav-item text-gray-400">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">💳</div>
+        <p class="text-xs mt-1">Transaksi</p>
+      </button>
+
+      <button onclick="showPage('laporanPage')" class="nav-item text-gray-400">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">📊</div>
+        <p class="text-xs mt-1">Laporan</p>
+      </button>
+
+      <button onclick="showPage('settingPage')" class="nav-item text-gray-400">
+        <div class="w-10 h-10 mx-auto rounded-2xl bg-gray-100 flex items-center justify-center">⚙️</div>
+        <p class="text-xs mt-1">Setting</p>
+      </button>
+
+    </div>
+
+  </div>
+
+  <div id="homePage" class="hidden"></div>
+
+  <div id="transaksiPage" class="hidden fixed inset-0 bg-[#f5f7fb] z-[997] overflow-auto p-4 pb-32">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6 mt-4">
+        <div>
+          <p class="text-sm text-gray-500">Kas Sampah TUNTAS</p>
+          <h1 class="text-3xl font-bold text-green-700 mt-1">Transaksi</h1>
+        </div>
+
+        <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+          💳
+        </div>
+      </div>
+
+      <div class="premium-card p-5 mb-4">
+        <h2 class="font-bold text-lg mb-4">Tambah Transaksi</h2>
+
+        <div class="space-y-3">
+          <input id="tanggal2" type="date" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+
+          <select id="jenis2" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+            <option>Masuk</option>
+            <option>Keluar</option>
+          </select>
+
+          <input id="kategori2" placeholder="Kategori" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+
+          <input id="keterangan2" placeholder="Keterangan" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+
+          <input id="nominal2" type="number" placeholder="Nominal" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+
+          <button onclick="simpanPageTransaksi(); toggleSheet();"
+            class="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white p-4 rounded-3xl font-bold shadow-xl">
+            Simpan Transaksi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="laporanPage" class="hidden fixed inset-0 bg-[#f5f7fb] z-[997] overflow-auto p-4 pb-32">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6 mt-4">
+        <div>
+          <p class="text-sm text-gray-500">Kas Sampah TUNTAS</p>
+          <h1 class="text-3xl font-bold text-green-700 mt-1">Laporan</h1>
+        </div>
+
+        <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+          📊
+        </div>
+      </div>
+
+      <div class="premium-card p-5 mb-4">
+        <h2 class="font-bold text-lg mb-4">Filter Laporan</h2>
+
+        <div class="grid grid-cols-2 gap-3">
+          <input type="date" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+          <input type="date" class="w-full bg-gray-100 rounded-2xl p-4 outline-none">
+        </div>
+
+        <button onclick="filterTanggal()" class="w-full mt-4 bg-green-100 text-green-700 p-4 rounded-3xl font-bold">
+          Tampilkan Laporan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingPage" class="hidden fixed inset-0 bg-[#f5f7fb] z-[997] overflow-auto p-4 pb-32">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6 mt-4">
+        <div>
+          <p class="text-sm text-gray-500">Kas Sampah TUNTAS</p>
+          <h1 class="text-3xl font-bold text-green-700 mt-1">Pengaturan</h1>
+        </div>
+
+        <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">
+          ⚙️
+        </div>
+      </div>
+
+      <div class="premium-card p-5 space-y-4">
+
+        <div class="premium-card p-4 bg-gradient-to-r from-green-600 to-emerald-500 text-white border-0 shadow-none">
+          <p class="text-sm text-green-100">Kas Sampah TUNTAS</p>
+          <h2 class="text-2xl font-bold mt-2">Smart Finance App</h2>
+          <p class="text-sm mt-2 text-green-100">Versi Premium Mobile</p>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">Dark Mode</h3>
+            <p class="text-sm text-gray-500">Segera hadir</p>
+          </div>
+
+          <button onclick="toggleDarkDummy()" class="w-12 h-7 rounded-full bg-gray-200"></button>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">Export PDF</h3>
+            <p class="text-sm text-gray-500">Segera hadir</p>
+          </div>
+
+          <button onclick="exportDummy()" class="text-xl">📄</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
 
 </div>
 
@@ -275,57 +474,70 @@ function renderChart(masuk, keluar) {
 
 function loadTransaksi() {
 
+  showLoading();
+
+  google.script.run.withSuccessHandler(data => {
+
+    renderRiwayat(data);
+    updateStatistikRealtime(data);
+
+  }).getTransaksi();
+}
+
+function exportDummy() {
+  alert('Fitur export PDF segera hadir 😄');
+}
+
+function toggleDarkDummy() {
+  alert('Dark mode segera hadir 😄');
+}
+
+function filterTanggal() {
+
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+
   google.script.run.withSuccessHandler(data => {
 
     let html = '';
 
     data.forEach(row => {
 
-      const warna = row[2] === 'Masuk'
-        ? 'text-green-600 bg-green-50'
-        : 'text-red-600 bg-red-50';
+      const tanggal = new Date(row[1]);
+      const startDate = start ? new Date(start) : null;
+      const endDate = end ? new Date(end) : null;
 
-      const icon = row[2] === 'Masuk'
-        ? '⬇️'
-        : '⬆️';
+      if ((!startDate || tanggal >= startDate) && (!endDate || tanggal <= endDate)) {
 
-      html += `
+        const warna = row[2] === 'Masuk'
+          ? 'text-green-600 bg-green-50'
+          : 'text-red-600 bg-red-50';
 
-      <div class="premium-card p-4">
+        const icon = row[2] === 'Masuk' ? '⬇️' : '⬆️';
 
-        <div class="flex justify-between items-center">
+        html += `
+        <div class="premium-card p-4">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl ${warna} flex items-center justify-center text-xl">
+                ${icon}
+              </div>
 
-          <div class="flex items-center gap-3">
-
-            <div class="w-12 h-12 rounded-2xl ${warna} flex items-center justify-center text-xl">
-              ${icon}
+              <div>
+                <h3 class="font-bold">${row[3]}</h3>
+                <p class="text-sm text-gray-500">${row[4]}</p>
+                <p class="text-xs text-gray-400 mt-1">${row[1]}</p>
+              </div>
             </div>
 
-            <div>
-              <h3 class="font-bold">${row[3]}</h3>
-              <p class="text-sm text-gray-500">${row[4]}</p>
-              <p class="text-xs text-gray-400 mt-1">${row[1]}</p>
+            <div class="text-right">
+              <h3 class="font-bold ${warna.includes('green') ? 'text-green-600' : 'text-red-600'}">
+                ${rupiah(row[5])}
+              </h3>
             </div>
-
           </div>
-
-          <div class="text-right">
-            <h3 class="font-bold ${warna.includes('green') ? 'text-green-600' : 'text-red-600'}">
-              ${rupiah(row[5])}
-            </h3>
-
-            <button
-              onclick="hapus('${row[0]}')"
-              class="text-xs text-gray-400 mt-2">
-              Hapus
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-
-      `;
+        </div>`;
+      }
 
     });
 
@@ -356,6 +568,134 @@ function simpan() {
     document.getElementById('nominal').value = '';
 
   }).simpanTransaksi(data);
+}
+
+function updateStatistikRealtime(data) {
+
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+
+  data.forEach(row => {
+    if (row[2] === 'Masuk') {
+      totalMasuk += Number(row[5]);
+    } else {
+      totalKeluar += Number(row[5]);
+    }
+  });
+
+  const saldo = totalMasuk - totalKeluar;
+
+  document.getElementById('masuk').innerText = rupiah(totalMasuk);
+  document.getElementById('keluar').innerText = rupiah(totalKeluar);
+  document.getElementById('saldo').innerText = rupiah(saldo);
+
+  renderChart(totalMasuk, totalKeluar);
+}
+
+function renderRiwayat(data) {
+
+  let html = '';
+
+  data.reverse().forEach(row => {
+
+    const warna = row[2] === 'Masuk'
+      ? 'text-green-600 bg-green-50'
+      : 'text-red-600 bg-red-50';
+
+    const icon = row[2] === 'Masuk'
+      ? '⬇️'
+      : '⬆️';
+
+    html += `
+
+    <div class="premium-card p-4 hover:scale-[1.01] transition-all duration-200">
+
+      <div class="flex justify-between items-center">
+
+        <div class="flex items-center gap-3">
+
+          <div class="w-12 h-12 rounded-2xl ${warna} flex items-center justify-center text-xl shadow-sm">
+            ${icon}
+          </div>
+
+          <div>
+            <h3 class="font-bold text-gray-800">${row[3]}</h3>
+            <p class="text-sm text-gray-500">${row[4]}</p>
+            <p class="text-xs text-gray-400 mt-1">${row[1]}</p>
+          </div>
+
+        </div>
+
+        <div class="text-right">
+          <h3 class="font-bold ${row[2] === 'Masuk' ? 'text-green-600' : 'text-red-600'}">
+            ${rupiah(row[5])}
+          </h3>
+
+          <button
+            onclick="hapus('${row[0]}')"
+            class="text-xs text-gray-400 mt-2 hover:text-red-500">
+            Hapus
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    `;
+  });
+
+  document.getElementById('listTransaksi').innerHTML = html;
+}
+
+function showLoading() {
+  document.getElementById('listTransaksi').innerHTML = `
+    <div class="space-y-3 animate-pulse">
+      <div class="premium-card h-24"></div>
+      <div class="premium-card h-24"></div>
+      <div class="premium-card h-24"></div>
+    </div>
+  `;
+}
+
+function showPage(pageId) {
+
+  const pages = ['transaksiPage', 'laporanPage', 'settingPage'];
+
+  pages.forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+
+  if (pageId !== 'homePage') {
+    document.getElementById(pageId).classList.remove('hidden');
+  }
+}
+
+function simpanPageTransaksi() {
+
+  const data = {
+    tanggal: document.getElementById('tanggal2').value,
+    jenis: document.getElementById('jenis2').value,
+    kategori: document.getElementById('kategori2').value,
+    keterangan: document.getElementById('keterangan2').value,
+    nominal: document.getElementById('nominal2').value
+  };
+
+  google.script.run.withSuccessHandler(() => {
+    loadSummary();
+    loadTransaksi();
+    alert('Transaksi berhasil disimpan 😄');
+
+    document.getElementById('tanggal2').value = '';
+    document.getElementById('kategori2').value = '';
+    document.getElementById('keterangan2').value = '';
+    document.getElementById('nominal2').value = '';
+  }).simpanTransaksi(data);
+}
+
+function toggleSheet() {
+  const sheet = document.getElementById('bottomSheet');
+  sheet.classList.toggle('hidden');
 }
 
 function hapus(id) {
