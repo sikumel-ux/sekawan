@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard Anggota</title>
+
+  <link rel="stylesheet"
+    href="style.css">
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+  <div>
+
+    <p class="small">
+      Kas Sampah TUNTAS
+    </p>
+
+    <h1>
+      Dashboard Anggota
+    </h1>
+
+  </div>
+
+  <button onclick="logout()">
+    Logout
+  </button>
+
+</div>
+
+<iframe
+  src="member-view.html"
+  class="app-frame">
+</iframe>
+
+<script src="auth.js"></script>
+
+<script>
+checkAnggota();
+</script>
+
+</body>
+</html>
