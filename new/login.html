@@ -11,13 +11,18 @@
   <title>Login - Kas Sampah TUNTAS</title>
 
   <link rel="stylesheet"
-    href="style.css">
+    href="login.css">
 
 </head>
 
-<body class="login-body">
+<body>
 
-<div class="login-container">
+  <!-- BACKGROUND -->
+
+  <div class="blur blur1"></div>
+  <div class="blur blur2"></div>
+
+  <!-- LOGIN CARD -->
 
   <div class="login-card">
 
@@ -33,29 +38,144 @@
       Smart Finance
     </h1>
 
+    <p class="description">
+      Sistem laporan kas modern
+      untuk pengelolaan keuangan
+      komunitas dan bank sampah.
+    </p>
+
+    <!-- FORM -->
+
     <div class="form-group">
 
-      <input
-        type="email"
-        id="email"
-        placeholder="Email">
+      <div class="input-group">
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Password">
+        <span class="icon">
+          ✉️
+        </span>
 
-      <button onclick="login()">
+        <input
+          type="email"
+          id="email"
+          placeholder="Email">
+
+      </div>
+
+      <div class="input-group">
+
+        <span class="icon">
+          🔒
+        </span>
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Password">
+
+      </div>
+
+      <button
+        class="login-btn"
+        onclick="login()">
+
         Login
+
       </button>
+
+    </div>
+
+    <div class="footer">
+
+      Smart Finance App © 2026<br>
+      Kas Sampah TUNTAS
 
     </div>
 
   </div>
 
-</div>
+  <script>
 
-<script src="auth.js"></script>
+    const API_URL =
+      'YOUR_APPS_SCRIPT_WEBAPP_URL';
+
+    async function login() {
+
+      const email =
+        document.getElementById('email').value;
+
+      const password =
+        document.getElementById('password').value;
+
+      if (!email || !password) {
+
+        alert('Isi email dan password');
+
+        return;
+
+      }
+
+      try {
+
+        const res =
+          await fetch(API_URL, {
+
+            method: 'POST',
+
+            body: JSON.stringify({
+
+              action: 'login',
+
+              email,
+
+              password
+
+            })
+
+          });
+
+        const data =
+          await res.json();
+
+        if (data.success) {
+
+          localStorage.setItem(
+            'user',
+            JSON.stringify(data.user)
+          );
+
+          if (
+            data.user.role === 'admin'
+          ) {
+
+            window.location.href =
+              'admin.html';
+
+          } else {
+
+            window.location.href =
+              'anggota.html';
+
+          }
+
+        } else {
+
+          alert(
+            'Email atau password salah'
+          );
+
+        }
+
+      } catch(err) {
+
+        alert(
+          'Gagal terhubung ke server'
+        );
+
+      }
+
+    }
+
+  </script>
 
 </body>
 </html>
