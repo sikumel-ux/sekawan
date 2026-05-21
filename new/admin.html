@@ -11,41 +11,611 @@
   <title>Admin Dashboard</title>
 
   <link rel="stylesheet"
-    href="style.css">
+    href="admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
 
-<div class="topbar">
+<div class="app">
 
-  <div>
+  <!-- HEADER -->
 
-    <p class="small">
-      Kas Sampah TUNTAS
-    </p>
+  <div class="header">
 
-    <h1>
-      Dashboard Admin
-    </h1>
+    <div class="header-top">
+
+      <div>
+
+        <p class="sub">
+          Kas Sampah TUNTAS
+        </p>
+
+        <h1>
+          Dashboard Admin
+        </h1>
+
+      </div>
+
+      <button
+        class="logout-btn"
+        onclick="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+    <!-- SALDO -->
+
+    <div class="saldo-card">
+
+      <p class="saldo-label">
+        Total Saldo
+      </p>
+
+      <h2 id="saldo">
+        Rp0
+      </h2>
+
+      <div class="summary">
+
+        <div class="summary-item income">
+
+          <span>Kas Masuk</span>
+
+          <h3 id="masuk">
+            Rp0
+          </h3>
+
+        </div>
+
+        <div class="summary-item expense">
+
+          <span>Kas Keluar</span>
+
+          <h3 id="keluar">
+            Rp0
+          </h3>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
-  <button onclick="logout()">
-    Logout
+  <!-- FILTER -->
+
+  <div class="card">
+
+    <h3 class="section-title">
+      Filter Histori
+    </h3>
+
+    <div class="filter-box">
+
+      <input
+        type="date"
+        id="startDate">
+
+      <input
+        type="date"
+        id="endDate">
+
+    </div>
+
+    <button
+      class="filter-btn"
+      onclick="filterTanggal()">
+
+      Terapkan Filter
+
+    </button>
+
+  </div>
+
+  <!-- CHART -->
+
+  <div class="card">
+
+    <div class="chart-header">
+
+      <h3>
+        Cashflow
+      </h3>
+
+      <span>
+        Bulan Ini
+      </span>
+
+    </div>
+
+    <canvas id="chart"></canvas>
+
+  </div>
+
+  <!-- TRANSAKSI -->
+
+  <div
+    class="transaksi-list"
+    id="listTransaksi">
+
+  </div>
+
+  <!-- FAB -->
+
+  <button
+    class="fab"
+    onclick="toggleModal()">
+
+    +
+
   </button>
 
 </div>
 
-<iframe
-  src="index.html"
-  class="app-frame">
-</iframe>
+<!-- MODAL -->
 
-<script src="auth.js"></script>
+<div
+  class="modal hidden"
+  id="modal">
+
+  <div class="modal-content">
+
+    <h2>
+      Tambah Transaksi
+    </h2>
+
+    <input
+      type="date"
+      id="tanggal">
+
+    <select id="jenis">
+
+      <option>
+        Masuk
+      </option>
+
+      <option>
+        Keluar
+      </option>
+
+    </select>
+
+    <input
+      type="text"
+      id="kategori"
+      placeholder="Kategori">
+
+    <input
+      type="text"
+      id="keterangan"
+      placeholder="Keterangan">
+
+    <input
+      type="number"
+      id="nominal"
+      placeholder="Nominal">
+
+    <button
+      class="save-btn"
+      onclick="simpan()">
+
+      Simpan
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- NAVIGATION -->
+
+<div class="bottom-nav">
+
+  <div class="nav-grid">
+
+    <div class="nav-item active">
+
+      <div class="nav-icon">
+        🏠
+      </div>
+
+      <p>Home</p>
+
+    </div>
+
+    <div class="nav-item">
+
+      <div class="nav-icon">
+        📊
+      </div>
+
+      <p>Laporan</p>
+
+    </div>
+
+    <div class="nav-item">
+
+      <div class="nav-icon">
+        📅
+      </div>
+
+      <p>Histori</p>
+
+    </div>
+
+    <div class="nav-item">
+
+      <div class="nav-icon">
+        ⚙️
+      </div>
+
+      <p>Setting</p>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script>
-checkAdmin();
+
+const API_URL =
+  'GANTI_DENGAN_URL_APPS_SCRIPT';
+
+let chart;
+
+/* LOGIN CHECK */
+
+const user =
+  JSON.parse(
+    localStorage.getItem('user')
+  );
+
+if (
+  !user ||
+  user.role !== 'admin'
+) {
+
+  window.location.href =
+    'login.html';
+
+}
+
+/* LOGOUT */
+
+function logout() {
+
+  localStorage.clear();
+
+  window.location.href =
+    'login.html';
+
+}
+
+/* RUPIAH */
+
+function rupiah(angka) {
+
+  return new Intl.NumberFormat(
+    'id-ID',
+    {
+      style: 'currency',
+      currency: 'IDR'
+    }
+  ).format(angka);
+
+}
+
+/* LOAD DATA */
+
+async function loadData() {
+
+  const res =
+    await fetch(API_URL);
+
+  const data =
+    await res.json();
+
+  renderData(data);
+
+}
+
+/* RENDER */
+
+function renderData(data) {
+
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+
+  const list =
+    document.getElementById(
+      'listTransaksi'
+    );
+
+  list.innerHTML = '';
+
+  data.reverse().forEach(item => {
+
+    if (item.jenis === 'Masuk') {
+
+      totalMasuk += item.nominal;
+
+    } else {
+
+      totalKeluar += item.nominal;
+
+    }
+
+    const isMasuk =
+      item.jenis === 'Masuk';
+
+    list.innerHTML += `
+
+      <div class="transaksi-item">
+
+        <div class="transaksi-left">
+
+          <div class="icon ${
+            isMasuk ? 'in' : 'out'
+          }">
+
+            ${
+              isMasuk ? '⬇️' : '⬆️'
+            }
+
+          </div>
+
+          <div class="transaksi-info">
+
+            <h3>
+              ${item.kategori}
+            </h3>
+
+            <p>
+              ${item.keterangan}
+            </p>
+
+            <small>
+              ${item.tanggal}
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="right-area">
+
+          <div class="nominal ${
+            isMasuk ? 'in' : 'out'
+          }">
+
+            ${rupiah(item.nominal)}
+
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="hapus('${item.id}')">
+
+            Hapus
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  document.getElementById('masuk')
+    .innerText =
+      rupiah(totalMasuk);
+
+  document.getElementById('keluar')
+    .innerText =
+      rupiah(totalKeluar);
+
+  document.getElementById('saldo')
+    .innerText =
+      rupiah(
+        totalMasuk - totalKeluar
+      );
+
+  renderChart(
+    totalMasuk,
+    totalKeluar
+  );
+
+}
+
+/* FILTER */
+
+async function filterTanggal() {
+
+  const start =
+    document.getElementById(
+      'startDate'
+    ).value;
+
+  const end =
+    document.getElementById(
+      'endDate'
+    ).value;
+
+  const res =
+    await fetch(API_URL);
+
+  const data =
+    await res.json();
+
+  const filtered =
+    data.filter(item => {
+
+      const tgl =
+        new Date(item.tanggal);
+
+      return (
+
+        (!start ||
+          tgl >= new Date(start))
+
+        &&
+
+        (!end ||
+          tgl <= new Date(end))
+
+      );
+
+    });
+
+  renderData(filtered);
+
+}
+
+/* CHART */
+
+function renderChart(
+  masuk,
+  keluar
+) {
+
+  const ctx =
+    document.getElementById(
+      'chart'
+    );
+
+  if (chart) {
+
+    chart.destroy();
+
+  }
+
+  chart = new Chart(ctx, {
+
+    type: 'doughnut',
+
+    data: {
+
+      labels: [
+        'Masuk',
+        'Keluar'
+      ],
+
+      datasets: [{
+
+        data: [
+          masuk,
+          keluar
+        ],
+
+        borderRadius: 12
+
+      }]
+
+    }
+
+  });
+
+}
+
+/* MODAL */
+
+function toggleModal() {
+
+  document
+    .getElementById('modal')
+    .classList
+    .toggle('hidden');
+
+}
+
+/* SIMPAN */
+
+async function simpan() {
+
+  const payload = {
+
+    action: 'simpan',
+
+    tanggal:
+      document.getElementById('tanggal').value,
+
+    jenis:
+      document.getElementById('jenis').value,
+
+    kategori:
+      document.getElementById('kategori').value,
+
+    keterangan:
+      document.getElementById('keterangan').value,
+
+    nominal:
+      document.getElementById('nominal').value
+
+  };
+
+  await fetch(API_URL, {
+
+    method: 'POST',
+
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+
+    body: JSON.stringify(payload)
+
+  });
+
+  toggleModal();
+
+  loadData();
+
+}
+
+/* HAPUS */
+
+async function hapus(id) {
+
+  const yakin =
+    confirm(
+      'Hapus transaksi ini?'
+    );
+
+  if (!yakin) return;
+
+  await fetch(API_URL, {
+
+    method: 'POST',
+
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+
+    body: JSON.stringify({
+
+      action: 'hapus',
+
+      id
+
+    })
+
+  });
+
+  loadData();
+
+}
+
+loadData();
+
 </script>
 
 </body>
