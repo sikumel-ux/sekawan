@@ -1,5 +1,5 @@
 const API_LOGIN =
-  'YOUR_APPS_SCRIPT_WEBAPP_URL';
+  'https://script.google.com/macros/s/AKfycbxv9xeWPqNdqrl7yiY-8mN9IZV9bVTNwk78k-klWiG330wjzvuhIb78JRGtJvm7Yep9Pg/exec';
 
 async function login() {
 
