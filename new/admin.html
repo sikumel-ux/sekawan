@@ -129,17 +129,13 @@
         Cashflow
       </h3>
 
-      <span>
-        Bulan Ini
-      </span>
-
     </div>
 
     <canvas id="chart"></canvas>
 
   </div>
 
-  <!-- TRANSAKSI -->
+  <!-- LIST -->
 
   <div
     class="transaksi-list"
@@ -267,7 +263,7 @@
 <script>
 
 const API_URL =
-  'GANTI_DENGAN_URL_APPS_SCRIPT';
+'https://script.google.com/macros/s/AKfycbxv9xeWPqNdqrl7yiY-8mN9IZV9bVTNwk78k-klWiG330wjzvuhIb78JRGtJvm7Yep9Pg/exec';
 
 let chart;
 
@@ -299,7 +295,7 @@ function logout() {
 
 }
 
-/* RUPIAH */
+/* FORMAT RUPIAH */
 
 function rupiah(angka) {
 
@@ -317,17 +313,27 @@ function rupiah(angka) {
 
 async function loadData() {
 
-  const res =
-    await fetch(API_URL);
+  try {
 
-  const data =
-    await res.json();
+    const res =
+      await fetch(API_URL);
 
-  renderData(data);
+    const data =
+      await res.json();
+
+    renderData(data);
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert('Gagal load data');
+
+  }
 
 }
 
-/* RENDER */
+/* RENDER DATA */
 
 function renderData(data) {
 
@@ -343,7 +349,7 @@ function renderData(data) {
 
   data.reverse().forEach(item => {
 
-    if (item.jenis === 'Masuk') {
+    if(item.jenis === 'Masuk') {
 
       totalMasuk += item.nominal;
 
@@ -437,6 +443,50 @@ function renderData(data) {
 
 }
 
+/* CHART */
+
+function renderChart(
+  masuk,
+  keluar
+) {
+
+  const ctx =
+    document.getElementById('chart');
+
+  if(chart) {
+
+    chart.destroy();
+
+  }
+
+  chart = new Chart(ctx, {
+
+    type: 'doughnut',
+
+    data: {
+
+      labels: [
+        'Masuk',
+        'Keluar'
+      ],
+
+      datasets: [{
+
+        data: [
+          masuk,
+          keluar
+        ],
+
+        borderRadius: 12
+
+      }]
+
+    }
+
+  });
+
+}
+
 /* FILTER */
 
 async function filterTanggal() {
@@ -481,52 +531,6 @@ async function filterTanggal() {
 
 }
 
-/* CHART */
-
-function renderChart(
-  masuk,
-  keluar
-) {
-
-  const ctx =
-    document.getElementById(
-      'chart'
-    );
-
-  if (chart) {
-
-    chart.destroy();
-
-  }
-
-  chart = new Chart(ctx, {
-
-    type: 'doughnut',
-
-    data: {
-
-      labels: [
-        'Masuk',
-        'Keluar'
-      ],
-
-      datasets: [{
-
-        data: [
-          masuk,
-          keluar
-        ],
-
-        borderRadius: 12
-
-      }]
-
-    }
-
-  });
-
-}
-
 /* MODAL */
 
 function toggleModal() {
@@ -563,21 +567,47 @@ async function simpan() {
 
   };
 
-  await fetch(API_URL, {
+  try {
 
-    method: 'POST',
+    const res =
+      await fetch(API_URL, {
 
-    headers: {
-      'Content-Type': 'text/plain'
-    },
+        method: 'POST',
 
-    body: JSON.stringify(payload)
+        headers: {
+          'Content-Type': 'text/plain'
+        },
 
-  });
+        body: JSON.stringify(payload)
 
-  toggleModal();
+      });
 
-  loadData();
+    const result =
+      await res.json();
+
+    console.log(result);
+
+    if(result.success) {
+
+      alert('Berhasil disimpan');
+
+      toggleModal();
+
+      loadData();
+
+    } else {
+
+      alert('Gagal simpan');
+
+    }
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert('Error koneksi');
+
+  }
 
 }
 
@@ -590,27 +620,37 @@ async function hapus(id) {
       'Hapus transaksi ini?'
     );
 
-  if (!yakin) return;
+  if(!yakin) return;
 
-  await fetch(API_URL, {
+  try {
 
-    method: 'POST',
+    await fetch(API_URL, {
 
-    headers: {
-      'Content-Type': 'text/plain'
-    },
+      method: 'POST',
 
-    body: JSON.stringify({
+      headers: {
+        'Content-Type': 'text/plain'
+      },
 
-      action: 'hapus',
+      body: JSON.stringify({
 
-      id
+        action: 'hapus',
 
-    })
+        id
 
-  });
+      })
 
-  loadData();
+    });
+
+    loadData();
+
+  } catch(err) {
+
+    console.log(err);
+
+    alert('Gagal hapus');
+
+  }
 
 }
 
