@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - KOPITALIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
-            --bg-main: #1A1714;
-            --text-main: #E5E1DC;
-            --text-muted: #9C968E;
-            --color-income: #4ADE80;
-            --color-expense: #F87171;
-            --color-pending: #FBBF24;
-            --color-accent: #D4AF37;
-            --border-color: #2D2823;
+            --bg-main: #F4F7F6;
+            --bg-card: #FFFFFF;
+            --color-primary: #00674F; /* Hijau Utama Request Lo, Bro */
+            --color-primary-light: rgba(0, 103, 79, 0.1);
+            --text-main: #2D3130;
+            --text-muted: #7C8381;
+            --color-income: #10B981;
+            --color-expense: #EF4444;
+            --color-pending: #F59E0B;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
@@ -30,30 +37,32 @@
             min-height: 100vh;
         }
 
-        /* --- LAYOUT CONTAINER --- */
         .app-container {
             display: flex;
             flex-direction: column;
         }
 
-        /* --- HEADER / TOP NAV (Mobile & Desktop) --- */
+        /* --- TOP NAVBAR --- */
         .top-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-sm);
             position: sticky;
             top: 0;
-            background-color: var(--bg-main);
             z-index: 100;
         }
 
         .brand-logo {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--color-accent);
-            letter-spacing: 1px;
+            color: var(--color-primary);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .desktop-nav {
@@ -67,18 +76,28 @@
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
         .desktop-nav a:hover, .desktop-nav .active a {
-            color: var(--color-accent);
+            color: var(--color-primary);
+            background-color: var(--color-primary-light);
         }
 
-        .logout-link {
-            color: var(--color-expense) !important;
+        .desktop-nav .logout-link {
+            color: var(--color-expense);
+        }
+        .desktop-nav .logout-link:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-expense);
         }
 
-        /* --- MAIN CONTENT (Clean, No-Card Style) --- */
+        /* --- MAIN CONTENT --- */
         main {
             flex-grow: 1;
             padding: 1.5rem;
@@ -94,25 +113,48 @@
         .page-title h1 {
             font-size: 1.5rem;
             font-weight: 700;
+            color: var(--text-main);
         }
 
         .page-title p {
             color: var(--text-muted);
             font-size: 0.85rem;
-            margin-top: 0.25rem;
         }
 
-        /* --- RINGKASAN KAS (Clean Typography Focus) --- */
+        /* --- CARD STYLE FOR KAS (GRID) --- */
         .cash-overview {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
 
-        .stat-group {
+        .card-stat {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card-icon.total { background-color: var(--color-primary-light); color: var(--color-primary); }
+        .card-icon.income { background-color: rgba(16, 185, 129, 0.1); color: var(--color-income); }
+        .card-icon.expense { background-color: rgba(239, 64, 64, 0.1); color: var(--color-expense); }
+
+        .stat-details {
             display: flex;
             flex-direction: column;
         }
@@ -120,35 +162,43 @@
         .stat-label {
             font-size: 0.8rem;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
+            font-weight: 500;
         }
 
         .stat-amount {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 700;
+            margin-top: 0.1rem;
         }
 
-        .stat-amount.income { color: var(--color-income); }
-        .stat-amount.expense { color: var(--color-expense); }
-
-        /* --- GRID UTAMA --- */
+        /* --- DASHBOARD GRID --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 2.5rem;
-            margin-bottom: 2.5rem;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* App Card Layout */
+        .app-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Input Form Clean */
+        /* Form Controls ala Apps */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -157,50 +207,63 @@
             display: block;
             font-size: 0.8rem;
             color: var(--text-muted);
+            font-weight: 500;
             margin-bottom: 0.4rem;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            background-color: transparent;
-            border: 1px solid var(--border-color);
+            background-color: #F8FAFA;
+            border: 1px solid #E2E8F0;
             color: var(--text-main);
-            padding: 0.75rem;
-            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
             outline: none;
             font-size: 0.9rem;
-            transition: border-color 0.2s;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .form-group input:focus, .form-group select:focus {
-            border-color: var(--color-accent);
+            border-color: var(--color-primary);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(0, 103, 79, 0.1);
         }
 
         .btn-submit {
             width: 100%;
-            background-color: var(--color-accent);
-            color: #1A1714;
+            background-color: var(--color-primary);
+            color: #FFFFFF;
             border: none;
-            padding: 0.75rem;
-            border-radius: 4px;
+            padding: 0.85rem;
+            border-radius: 8px;
             font-weight: 600;
+            font-size: 0.9rem;
             margin-top: 0.5rem;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 103, 79, 0.2);
+            transition: all 0.2s;
         }
 
-        /* Chart Area Clean */
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 103, 79, 0.3);
+        }
+
+        /* Mock Chart Placeholder */
         .chart-placeholder {
-            border: 1px dashed var(--border-color);
-            height: 180px;
+            background-color: #F8FAFA;
+            border: 2px dashed #E2E8F0;
+            height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
             font-size: 0.85rem;
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
-        /* --- TABLE HISTORI (Responsive Wrapper) --- */
+        /* --- TABLE HISTORI TRANSAKSI --- */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -212,100 +275,92 @@
             border-collapse: collapse;
             text-align: left;
             font-size: 0.85rem;
-            white-space: nowrap; /* Mencegah teks kepotong bungkus rusak di mobile */
+            white-space: nowrap;
         }
 
         th {
             color: var(--text-muted);
-            font-weight: 500;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 2px solid #F1F5F9;
+            background-color: #F8FAFA;
         }
 
         td {
             padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #F1F5F9;
         }
 
-        /* Status Badge Minimalis */
-        .status-text {
-            font-weight: 600;
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges Typography Focus */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
             font-size: 0.75rem;
-            text-transform: uppercase;
+            font-weight: 600;
         }
-        .status-text.success { color: var(--color-income); }
-        .status-text.pending { color: var(--color-pending); }
-        .status-text.failed { color: var(--color-expense); }
+        .status-badge.success { background-color: rgba(16, 185, 129, 0.1); color: var(--color-income); }
+        .status-badge.pending { background-color: rgba(245, 158, 11, 0.1); color: var(--color-pending); }
 
-        .type-in { color: var(--color-income); }
-        .type-out { color: var(--color-expense); }
+        .type-in { color: var(--color-income); font-weight: 600; }
+        .type-out { color: var(--color-expense); font-weight: 600; }
 
-        /* --- BOTTOM NAVIGATION (Khusus Mobile) --- */
+        /* --- MOBILE NAVIGATION BAR (Bawah HP) --- */
         .mobile-nav {
             display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #151210; /* Sedikit lebih gelap dari bg-main */
-            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
             grid-template-columns: repeat(3, 1fr);
-            text-align: center;
             z-index: 100;
+            border-top: 1px solid #E2E8F0;
         }
 
         .mobile-nav a {
             color: var(--text-muted);
             text-decoration: none;
-            padding: 0.85rem 0;
-            font-size: 0.8rem;
+            padding: 0.75rem 0;
+            font-size: 0.75rem;
             font-weight: 500;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-nav a i {
+            font-size: 1.2rem;
         }
 
         .mobile-nav .active, .mobile-nav a:hover {
-            color: var(--color-accent);
+            color: var(--color-primary);
         }
 
         .mobile-nav .logout-item {
             color: var(--color-expense);
         }
 
-
-        /* ======================== 
-           RESPONSIVE MEDIA QUERIES 
-           ======================== */
-        
-        /* Layar Tablet & Desktop (Lebih besar dari 768px) */
+        /* --- RESPONSIVE MEDIA BREAKPOINTS --- */
         @media (min-width: 768px) {
-            main {
-                padding: 2.5rem;
-            }
-            .cash-overview {
-                grid-template-columns: repeat(3, 1fr); /* Kas berjejer ke samping */
-            }
-            .dashboard-grid {
-                grid-template-columns: 1.5fr 1fr; /* Form dan grafik berjejer */
-                gap: 2rem;
-            }
-            .mobile-nav {
-                display: none !important; /* Sembunyikan menu bawah */
-            }
+            main { padding: 2.5rem; }
+            .cash-overview { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+            .dashboard-grid { grid-template-columns: 1fr 1.2fr; gap: 1.5rem; }
+            .mobile-nav { display: none !important; }
         }
 
-        /* Layar HP (Maksimal 767px) */
         @media (max-width: 767px) {
-            .desktop-nav {
-                display: none; /* Sembunyikan navigasi atas di HP */
-            }
-            .mobile-nav {
-                display: grid; /* Aktifkan menu bawah di HP */
-            }
-            main {
-                padding-bottom: 5rem; /* Kasih space biar ga tertutup menu bawah */
-            }
+            .desktop-nav { display: none; }
+            .mobile-nav { display: grid; }
+            main { padding-bottom: 5.5rem; } /* Space biar card paling bawah ga kelipet menu mobile */
+            .page-title { margin-bottom: 1.5rem; }
         }
     </style>
 </head>
@@ -314,83 +369,94 @@
     <div class="app-container">
         <!-- TOP NAVBAR -->
         <nav class="top-navbar">
-            <div class="brand-logo">KOPITALIS</div>
-            <!-- Navigasi Atas (Hanya muncul di Desktop) -->
+            <div class="brand-logo">
+                <i class="fa-solid : f97c fa-mug-hot"></i> KOPITALIS
+            </div>
+            <!-- Navigasi Utama (Desktop Only) -->
             <ul class="desktop-nav">
-                <li class="active"><a href="#">Dashboard</a></li>
-                <li><a href="#">Laporan</a></li>
-                <li><a href="logout.html" class="logout-link">Logout</a></li>
+                <li class="active"><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-wallet"></i> Laporan</a></li>
+                <li><a href="logout.html" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
             </ul>
         </nav>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN CONTENT AREA -->
         <main>
             <div class="page-title">
-                <h1>Panel Admin</h1>
-                <p>Arus kas harian dan rekaman transaksi realtime.</p>
+                <h1>Panel Keuangan</h1>
+                <p>Kelola arus kas masuk dan operasional bisnis Anda.</p>
             </div>
 
-            <!-- 1. RINGKASAN KAS -->
+            <!-- 1. KAS OVERVIEW (CARD MODE) -->
             <section class="cash-overview">
-                <div class="stat-group">
-                    <span class="stat-label">Total Saldo Kas</span>
-                    <span class="stat-amount">Rp 14.250.000</span>
+                <div class="card-stat">
+                    <div class="card-icon total"><i class="fa-solid fa-vault"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Total Saldo Kas</span>
+                        <span class="stat-amount">Rp 14.250.000</span>
+                    </div>
                 </div>
-                <div class="stat-group">
-                    <span class="stat-label">Kas Masuk (Bulan Ini)</span>
-                    <span class="stat-amount income">+ Rp 8.420.000</span>
+                <div class="card-stat">
+                    <div class="card-icon income"><i class="fa-solid fa-arrow-down-long"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Kas Masuk (Bulan Ini)</span>
+                        <span class="stat-amount" style="color: var(--color-income);">+ Rp 8.420.000</span>
+                    </div>
                 </div>
-                <div class="stat-group">
-                    <span class="stat-label">Kas Keluar (Bulan Ini)</span>
-                    <span class="stat-amount expense">- Rp 2.170.000</span>
+                <div class="card-stat">
+                    <div class="card-icon expense"><i class="fa-solid fa-arrow-up-long"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Kas Keluar (Bulan Ini)</span>
+                        <span class="stat-amount" style="color: var(--color-expense);">- Rp 2.170.000</span>
+                    </div>
                 </div>
             </section>
 
             <div class="dashboard-grid">
-                <!-- 2. INPUT TRANSAKSI -->
-                <section>
-                    <h3 class="section-title">Input Transaksi</h3>
+                <!-- 2. INPUT TRANSAKSI (CARD MANAJEMEN) -->
+                <section class="app-card">
+                    <h3 class="section-title"><i class="fa-solid fa-pen-to-square" style="color: var(--color-primary);"></i> Input Transaksi</h3>
                     <form>
                         <div class="form-group">
-                            <label>Jenis Kas</label>
+                            <label>Jenis Catatan</label>
                             <select>
                                 <option value="in">Kas Masuk</option>
                                 <option value="out">Kas Keluar</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Nominal (Rp)</label>
-                            <input type="number" placeholder="0">
+                            <label>Nominal Pembayaran (Rp)</label>
+                            <input type="number" placeholder="Contoh: 50000">
                         </div>
                         <div class="form-group">
-                            <label>Keterangan</label>
-                            <input type="text" placeholder="Detail transaksi...">
+                            <label>Keterangan Transaksi</label>
+                            <input type="text" placeholder="Detail keperluan...">
                         </div>
-                        <button type="submit" class="btn-submit">Simpan Catatan</button>
+                        <button type="submit" class="btn-submit">Simpan ke Basis Data</button>
                     </form>
                 </section>
 
-                <!-- 3. GRAFIK TREN (PLACEHOLDER) -->
-                <section>
-                    <h3 class="section-title">Tren Arus Kas</h3>
+                <!-- 3. ANALYTICS CHART (CARD TREN) -->
+                <section class="app-card">
+                    <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color: var(--color-primary);"></i> Analisis Arus Kas</h3>
                     <div class="chart-placeholder">
-                        [ Grafik Line Pemasukan vs Pengeluaran ]
+                        <i class="fa-solid fa-chart-area" style="font-size: 1.5rem; margin-right: 0.5rem;"></i> Visualisasi Tren Garis (Line Chart)
                     </div>
                 </section>
             </div>
 
-            <!-- 4. HISTORI TRANSAKSI -->
-            <section>
-                <h3 class="section-title">Histori Transaksi Terbaru</h3>
+            <!-- 4. HISTORI TRANSAKSI (CARD UTAMA JURNAL) -->
+            <section class="app-card">
+                <h3 class="section-title" style="margin-bottom: 1rem;"><i class="fa-solid fa-list-check" style="color: var(--color-primary);"></i> Catatan Mutasi Terbaru</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Keterangan</th>
+                                <th>Keterangan Alokasi</th>
                                 <th>Jenis</th>
                                 <th>Nominal</th>
-                                <th>Status</th>
+                                <th>Status Verifikasi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -399,21 +465,21 @@
                                 <td>Penjualan Kasir Shift 1</td>
                                 <td class="type-in">Masuk</td>
                                 <td>Rp 450.000</td>
-                                <td class="status-text success">Selesai</td>
+                                <td><span class="status-badge success">Selesai</span></td>
                             </tr>
                             <tr>
                                 <td>22 Mei 2026</td>
                                 <td>Restock Bahan Baku Kopi</td>
                                 <td class="type-out">Keluar</td>
                                 <td>Rp 1.200.000</td>
-                                <td class="status-text success">Selesai</td>
+                                <td><span class="status-badge success">Selesai</span></td>
                             </tr>
                             <tr>
                                 <td>21 Mei 2026</td>
                                 <td>Pembayaran Supplier Cup</td>
                                 <td class="type-out">Keluar</td>
                                 <td>Rp 350.000</td>
-                                <td class="status-text pending">Pending</td>
+                                <td><span class="status-badge pending">Pending</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -421,18 +487,21 @@
             </section>
         </main>
 
-        <!-- NAVIGATION BAR BAWAH (Hanya muncul di HP) -->
-        <div class="mobile-nav">
+        <!-- APP-STYLE BOTTOM NAVIGATION (Mobile View Only) -->
+        <nav class="mobile-nav">
             <a href="#" class="active">
+                <i class="fa-solid fa-chart-pie"></i>
                 <span>Dashboard</span>
             </a>
             <a href="#">
+                <i class="fa-solid fa-wallet"></i>
                 <span>Laporan</span>
             </a>
             <a href="logout.html" class="logout-item">
+                <i class="fa-solid fa-right-from-bracket"></i>
                 <span>Logout</span>
             </a>
-        </div>
+        </nav>
     </div>
 
 </body>
