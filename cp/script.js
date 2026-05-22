@@ -2,18 +2,29 @@
  * TUNTAS Kas Engine - Pure Native Light-Eco Framework
  */
 
-// 1. DATA DATABASE DUMMY
+// 1. DATABASE DUMMY (KAS UMUM)
 let dataKas = [
     { id: "1", tanggal: "2026-05-20", jenis: "Pemasukan", kategori: "Penjualan Sampah", keterangan: "Setor botol plastik RT 04", nominal: 350000 },
     { id: "2", tanggal: "2026-05-21", jenis: "Pengeluaran", kategori: "Operasional", keterangan: "Bensin armada angkut", nominal: 75000 }
 ];
 
-// Data Dummy Sesuai Sheet Users & Profile lo, bro
+// DATA DUMMY IURAN BULANAN PERSONAL (Kewajiban Anggota)
+const tarifIuranBulanan = 20000; 
+const historiIuranDummy = [
+    { bulan: "Januari 2026", lunas: true, nominal: 20000 },
+    { bulan: "Februari 2026", lunas: true, nominal: 20000 },
+    { bulan: "Maret 2026", lunas: true, nominal: 20000 },
+    { bulan: "April 2026", lunas: true, nominal: 20000 },
+    { bulan: "Mei 2026", lunas: false, nominal: 0 },
+    { bulan: "Juni 2026", lunas: false, nominal: 0 }
+];
+
+// DATA PROFILE USER LOGGED IN
 const userLogged = {
-    nama: "Hendra Wijaya",
-    no_hp: "081234567890",
-    role: "Bendahara",
-    bulan_bergabung: "November 2025"
+    nama: "Rian Suryadi",
+    no_hp: "0857-1234-5678",
+    role: "Anggota RT 04",
+    bulan_bergabung: "Juli 2025"
 };
 
 // 2. DOM ELEMENT REGISTRATION
@@ -56,7 +67,7 @@ function formatTanggal(stringTanggal) {
     return new Date(stringTanggal).toLocaleDateString('id-ID', opsi);
 }
 
-// 5. MATH & RENDER ENGINE
+// 5. MATH & RENDER ENGINE (TAB 1 - HOME KAS)
 function updateSummary() {
     let pemasukan = 0;
     let pengeluaran = 0;
@@ -114,7 +125,7 @@ function renderList() {
     });
 }
 
-// 6. FORM HANDLER
+// 6. FORM HANDLER (TAB 2 - INPUT)
 formKas.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -132,7 +143,7 @@ formKas.addEventListener('submit', function(e) {
     formKas.reset();
     setDefaultDate();
 
-    // Selesai input, auto oper tab aktif balik ke halaman Home biar langsung keliatan hasilnya
+    // Selesai input, auto oper tab ke halaman Home
     document.querySelector('[data-tab="tab-home"]').click();
 });
 
@@ -150,16 +161,68 @@ function setDefaultDate() {
     document.getElementById('tanggal').value = localISOTime;
 }
 
-// 7. INJECT PROFILE DATA
-function initProfile() {
-    document.getElementById('app-bar-role').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${userLogged.role}`;
-    document.getElementById('profile-nama').innerText = userLogged.nama;
-    document.getElementById('profile-role').innerText = `${userLogged.role} TUNTAS`;
-    document.getElementById('profile-hp').innerText = userLogged.no_hp;
-    document.getElementById('profile-join').innerText = userLogged.bulan_bergabung;
+// 7. PROFILE & UPLOAD MANAGEMENT (TAB 3 - PROFILE)
+function triggerPhotoUpload() {
+    document.getElementById('upload-foto-input').click();
 }
 
-// RUN SYSTEM
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profile-img').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function renderHistoriIuran() {
+    const listIuranEl = document.getElementById('list-iuran-bulanan');
+    const statTotalBayarEl = document.getElementById('stat-total-bayar');
+    const statTotalTunggakanEl = document.getElementById('stat-total-tunggakan');
+    
+    if(!listIuranEl) return;
+
+    let totalBayar = 0;
+    let totalTunggakan = 0;
+    listIuranEl.innerHTML = '';
+
+    historiIuranDummy.forEach(item => {
+        if (item.lunas) {
+            totalBayar += item.nominal;
+        } else {
+            totalTunggakan += tarifIuranBulanan;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'iuran-item';
+        
+        row.innerHTML = `
+            <span class="iuran-month">${item.bulan}</span>
+            <div class="iuran-status ${item.lunas ? 'status-paid' : 'status-unpaid'}">
+                <i class="${item.lunas ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'}"></i>
+                <span>${item.lunas ? 'Lunas' : 'Belum Bayar'}</span>
+            </div>
+        `;
+        listIuranEl.appendChild(row);
+    });
+
+    statTotalBayarEl.innerText = formatRupiah(totalBayar);
+    statTotalTunggakanEl.innerText = formatRupiah(totalTunggakan);
+}
+
+function initProfile() {
+    document.getElementById('app-bar-role').innerHTML = `<i class="fa-solid fa-user"></i> Warga`;
+    document.getElementById('profile-nama').innerText = userLogged.nama;
+    document.getElementById('profile-role').innerText = userLogged.role;
+    document.getElementById('profile-hp').innerText = userLogged.no_hp;
+    document.getElementById('profile-join').innerText = userLogged.bulan_bergabung;
+    
+    renderHistoriIuran();
+}
+
+// 8. INITIALIZE ALL ENGINE
 function initApp() {
     setDefaultDate();
     renderList();
