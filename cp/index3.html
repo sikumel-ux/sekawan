@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS Kas</title>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TOP BAR (Fixed App Header) -->
+    <header class="app-bar">
+        <div class="logo">
+            <i class="fa-solid fa-leaf"></i>
+            <h1>TUNTAS <span class="brand-sub">Kas</span></h1>
+        </div>
+        <div class="user-badge" id="app-bar-role">
+            <i class="fa-solid fa-shield-halved"></i> Admin
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER FOR APP TABS -->
+    <div class="app-container">
+        
+        <!-- ================= TAB 1: HOME / DASHBOARD KAS ================= -->
+        <div id="tab-home" class="app-tab active">
+            <!-- Summary Area -->
+            <section class="summary-card-main">
+                <p>Sisa Saldo Kas</p>
+                <h2 id="total-saldo">Rp 0</h2>
+                <div class="summary-split">
+                    <div class="split-box">
+                        <small><i class="fa-solid fa-arrow-down-long"></i> Total Masuk</small>
+                        <span id="total-pemasukan">Rp 0</span>
+                    </div>
+                    <div class="split-line"></div>
+                    <div class="split-box">
+                        <small><i class="fa-solid fa-arrow-up-long"></i> Total Keluar</small>
+                        <span id="total-pengeluaran">Rp 0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Area -->
+            <main class="history-section">
+                <div class="section-title">
+                    <h3>Riwayat Transaksi</h3>
+                </div>
+                <div class="transaction-list" id="list-transaksi-mobile">
+                    <!-- Data dinamis dari JS -->
+                </div>
+            </main>
+        </div>
+
+        <!-- ================= TAB 2: INPUT TRANSAKSI ================= -->
+        <div id="tab-input" class="app-tab">
+            <div class="form-card">
+                <div class="form-header">
+                    <h3><i class="fa-solid fa-pen-to-square"></i> Catat Transaksi</h3>
+                    <p>Pastikan data kas sampah yang dimasukkan sudah valid</p>
+                </div>
+                
+                <form id="form-kas">
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal</label>
+                        <input type="date" id="tanggal" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jenis">Jenis</label>
+                            <select id="jenis" required>
+                                <option value="" disabled selected>Pilih...</option>
+                                <option value="Pemasukan">Pemasukan</option>
+                                <option value="Pengeluaran">Pengeluaran</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="kategori">Kategori</label>
+                            <select id="kategori" required>
+                                <option value="" disabled selected>Pilih...</option>
+                                <option value="Iuran Warga">Iuran Warga</option>
+                                <option value="Penjualan Sampah">Jual Sampah</option>
+                                <option value="Operasional">Operasional</option>
+                                <option value="Lain-lain">Lain-lain</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nominal">Nominal (Rp)</label>
+                        <input type="number" id="nominal" placeholder="Contoh: 50000" inputmode="numeric" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keterangan">Keterangan / Catatan</label>
+                        <textarea id="keterangan" rows="3" placeholder="Contoh: Hasil penjualan kardus & botol plastik..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-paper-plane"></i> Simpan ke Google Sheets
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: PROFILE ================= -->
+        <div id="tab-profile" class="app-tab">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 id="profile-nama">Memuat...</h3>
+                    <p id="profile-role">Bendahara TUNTAS</p>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <span class="label"><i class="fa-solid fa-phone"></i> No. WhatsApp</span>
+                        <span class="value" id="profile-hp">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label"><i class="fa-solid fa-calendar-check"></i> Bergabung Sejak</span>
+                        <span class="value" id="profile-join">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR (Fixed Native App Style) -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-tab="tab-home">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-tab="tab-input">
+            <div class="nav-center-circle">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            <span>Input</span>
+        </button>
+        <button class="nav-item" data-tab="tab-profile">
+            <i class="fa-solid fa-circle-user"></i>
+            <span>Profil</span>
+        </button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
