@@ -1,4 +1,4 @@
-/* RESET & VARIABLE GREEN PALETTE */
+/* RESET & BASE APP VARIABLES */
 * {
     margin: 0;
     padding: 0;
@@ -8,31 +8,32 @@
 }
 
 body {
-    background-color: #f1f7f3; /* Hijau mint super terang & bersih */
-    color: #1b3d22; /* Hijau botol gelap untuk teks utama */
-    padding-top: 75px; /* Memberi ruang untuk top bar fixed */
-    line-height: 1.4;
+    background-color: #f6f9f7; /* Background light super bersih */
+    color: #1e2922; /* Teks gelap organik */
+    padding-top: 75px; /* Spasi aman top bar */
+    padding-bottom: 90px; /* Spasi aman bottom nav bar */
 }
 
 .app-container {
-    max-width: 600px; /* Dikunci seukuran layar HP di desktop agar konsisten */
+    max-width: 500px; /* Dikunci rasio layar HP demi look PWA */
     margin: 0 auto;
-    padding: 12px;
+    padding: 0 16px;
 }
 
-/* TOP BAR (STICKY APP HEADER) */
+/* TOP BAR SYSTEM */
 .app-bar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 65px;
+    height: 60px;
     background: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 16px;
-    box-shadow: 0 2px 10px rgba(27, 61, 34, 0.05);
+    box-shadow: 0 2px 12px rgba(0, 103, 79, 0.04);
+    border-bottom: 1px solid #eef3f0;
     z-index: 100;
 }
 
@@ -43,186 +44,109 @@ body {
 }
 
 .logo i {
-    font-size: 22px;
-    color: #2e7d32;
+    font-size: 20px;
+    color: #00674F; /* Go Green Main Color */
 }
 
 .logo h1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    color: #1b5e20;
+    color: #00674F;
     letter-spacing: -0.3px;
 }
 
 .logo h1 .brand-sub {
-    color: #81c784;
+    color: #008539;
     font-weight: 400;
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+.user-badge {
+    background: #e5f3ee;
+    color: #00674F;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
     font-weight: 600;
 }
 
-/* COMPACT APP DASHBOARD CARDS */
-.summary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
+/* TAB NAVIGATION SYSTEM CONTROL */
+.app-tab {
+    display: none; /* Sembunyikan semua tab secara default */
 }
 
-.card {
-    background: #ffffff;
-    padding: 14px;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.04);
-    border: 1px solid #e1ebe3;
+.app-tab.active {
+    display: block; /* Hanya tampilkan tab yang aktif */
+    animation: fadeEffect 0.2s ease-in-out;
 }
 
-.card p {
-    font-size: 11px;
-    color: #557a5e;
-    font-weight: 500;
+@keyframes fadeEffect {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.card h3 {
-    font-size: 16px;
+/* PREMIUM APP CARD REKAP (HOME) */
+.summary-card-main {
+    background: linear-gradient(135deg, #00674F 0%, #008539 100%);
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 103, 79, 0.15);
+    margin-bottom: 24px;
+}
+
+.summary-card-main p {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+.summary-card-main h2 {
+    font-size: 28px;
     font-weight: 700;
     margin-top: 2px;
+    letter-spacing: -0.5px;
 }
 
-/* Spesifik Card Saldo Utama (Lebar Penuh) */
-.card.balance {
-    grid-column: 1 / -1;
-    background: #e8f5e9;
-    border: 1px solid #c8e6c9;
-    padding: 16px;
-}
-
-.card.balance p { color: #2e7d32; }
-.card.balance h3 { font-size: 22px; color: #1b5e20; }
-
-.card.income h3 { color: #2e7d32; }
-.card.expense h3 { color: #c62828; }
-
-
-/* COLLAPSIBLE FORM CONTAINER */
-.form-collapsible {
-    background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.04);
-    border: 1px solid #e1ebe3;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.form-toggle-btn {
-    width: 100%;
-    padding: 14px 16px;
-    background: #ffffff;
-    border: none;
+.summary-split {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    font-weight: 600;
-    color: #2e7d32;
-    cursor: pointer;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.toggle-icon {
-    transition: transform 0.3s ease;
-    color: #88a48d;
-}
-
-/* Class Utility JS untuk muter panah accordion */
-.toggle-icon.active {
-    transform: rotate(180deg);
-}
-
-.form-content {
-    max-height: 0; /* Tertutup secara default di HP */
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    padding: 0 16px;
-}
-
-/* Saat form dibuka lewat JS */
-.form-content.show {
-    padding: 0 16px 20px 16px;
-    max-height: 600px; /* Angka aman penampung form */
-}
-
-.form-row {
-    display: flex;
-    gap: 10px;
-}
-
-.form-row .form-group {
+.split-box {
     flex: 1;
 }
 
-.form-group {
-    margin-bottom: 12px;
-}
-
-.form-group label {
+.split-box small {
     display: block;
     font-size: 11px;
-    font-weight: 600;
-    color: #557a5e;
-    margin-bottom: 4px;
-    text-transform: uppercase;
+    opacity: 0.8;
 }
 
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%;
-    padding: 11px;
-    background: #f7faf8;
-    border: 1px solid #cfe0d4;
-    border-radius: 8px;
-    color: #1b3d22;
-    font-size: 13px;
-    outline: none;
-}
-
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    border-color: #2e7d32;
-    background: #ffffff;
-}
-
-.btn-submit {
-    width: 100%;
-    padding: 12px;
-    background: #2e7d32;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
+.split-box span {
+    display: block;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    margin-top: 6px;
-    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+    margin-top: 2px;
 }
 
+.split-line {
+    width: 1px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 15px;
+}
 
-/* APP TRANSACTION NATIVE LIST (BUKAN TABEL) */
-.section-title h2 {
+/* TRANSACTION LIST CARD COMPONENT */
+.section-title h3 {
     font-size: 14px;
     font-weight: 600;
-    color: #557a5e;
+    color: #53695c;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 10px;
-    padding-left: 4px;
+    margin-bottom: 12px;
 }
 
 .transaction-list {
@@ -231,16 +155,15 @@ body {
     gap: 10px;
 }
 
-/* Individual Item Card Item */
 .item-card {
     background: #ffffff;
     padding: 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(27, 61, 34, 0.02);
-    border: 1px solid #e1ebe3;
+    box-shadow: 0 2px 8px rgba(0, 103, 79, 0.02);
+    border: 1px solid #eef3f0;
 }
 
 .item-left {
@@ -249,56 +172,43 @@ body {
     gap: 12px;
 }
 
-/* Bulatan Badge Jenis Transaksi */
 .item-badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-.item-badge.badge-in { background: #e8f5e9; color: #2e7d32; }
-.item-badge.badge-out { background: #ffebee; color: #c62828; }
+.item-badge.badge-in { background: #e5f3ee; color: #00674F; }
+.item-badge.badge-out { background: #fdf0f0; color: #c62828; }
 
 .item-meta h4 {
     font-size: 13px;
     font-weight: 600;
-    color: #1b3d22;
+    color: #1e2922;
 }
 
 .item-meta p {
     font-size: 11px;
-    color: #7fa487;
+    color: #6c8074;
     margin-top: 1px;
-}
-
-.item-meta small {
-    display: block;
-    font-size: 11px;
-    color: #557a5e;
-    margin-top: 2px;
-    background: #f1f7f3;
-    padding: 2px 6px;
-    border-radius: 4px;
-    width: fit-content;
 }
 
 .item-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .item-nominal {
     font-size: 14px;
     font-weight: 700;
-    text-align: right;
 }
 
-.item-nominal.text-in { color: #2e7d32; }
+.item-nominal.text-in { color: #00674F; }
 .item-nominal.text-out { color: #c62828; }
 
 .btn-item-delete {
@@ -306,32 +216,186 @@ body {
     border: none;
     color: #c62828;
     padding: 6px;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
-    opacity: 0.7;
 }
 
+/* FORM TAB CARD LOOK */
+.form-card, .profile-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0, 103, 79, 0.03);
+    border: 1px solid #eef3f0;
+}
 
-/* RESPONSIVE SCALING UP (Untuk Monitor Gede) */
-@media (min-width: 768px) {
-    .app-container {
-        max-width: 800px;
-        padding: 20px 0;
-    }
-    .summary-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    .card.balance {
-        grid-column: unset;
-    }
-    .form-content {
-        max-height: none !important;
-        padding: 16px 20px 20px 20px !important;
-    }
-    .form-toggle-btn {
-        pointer-events: none; /* Kunci biar ga bisa di-collapse pas di desktop view */
-    }
-    .toggle-icon {
-        display: none;
-    }
+.form-header {
+    margin-bottom: 20px;
+}
+
+.form-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #00674F;
+}
+
+.form-header p {
+    font-size: 11px;
+    color: #6c8074;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a5e52;
+    margin-bottom: 6px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background: #f7faf8;
+    border: 1px solid #dbe3de;
+    border-radius: 10px;
+    color: #1e2922;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: #00674F;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 103, 79, 0.08);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: #00674F;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 103, 79, 0.15);
+    margin-top: 6px;
+}
+
+/* PROFILE APP SCREEN UI */
+.profile-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eef3f0;
+    margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    background: #e5f3ee;
+    color: #00674F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 10px auto;
+}
+
+.profile-header h3 { font-size: 16px; font-weight: 600; }
+.profile-header p { font-size: 12px; color: #6c8074; }
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.detail-item .label { color: #6c8074; }
+.detail-item .value { font-weight: 600; color: #1e2922; }
+
+/* FIXED BOTTOM APP NAVIGATION BAR */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 16px rgba(0, 103, 79, 0.04);
+    border-top: 1px solid #eef3f0;
+    padding-bottom: env(safe-area-inset-bottom); /* iOS PWA safe area handler */
+    z-index: 100;
+}
+
+.nav-item {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #8fa496;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 60px;
+    height: 100%;
+    gap: 4px;
+    transition: color 0.2s;
+}
+
+.nav-item i {
+    font-size: 18px;
+}
+
+/* Nav Item Aktif */
+.nav-item.active {
+    color: #00674F;
+    font-weight: 600;
+}
+
+/* Floating Action Center Circle (Input Tab Button Optimization) */
+.nav-center-circle {
+    width: 40px;
+    height: 40px;
+    background: #f7faf8;
+    border: 1px solid #dbe3de;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.nav-item.active .nav-center-circle {
+    background: #00674F;
+    color: #ffffff;
+    border-color: #00674F;
+    box-shadow: 0 4px 10px rgba(0, 103, 79, 0.2);
 }
