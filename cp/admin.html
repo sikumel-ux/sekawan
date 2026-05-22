@@ -18,7 +18,6 @@
             --text-muted: #7C8381;
             --color-income: #10B981;
             --color-expense: #EF4444;
-            --color-pending: #F59E0B;
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
             --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
             --border-radius: 12px;
@@ -303,16 +302,6 @@
             border-bottom: none;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .status-badge.success { background-color: rgba(16, 185, 129, 0.1); color: var(--color-income); }
-        .status-badge.pending { background-color: rgba(245, 158, 11, 0.1); color: var(--color-pending); }
-
         .type-in { color: var(--color-income); font-weight: 600; }
         .type-out { color: var(--color-expense); font-weight: 600; }
 
@@ -387,63 +376,63 @@
             <div class="page-header-grid">
                 <div class="page-title">
                     <h1>Laporan Keuangan</h1>
-                    <p>Pantau analisis tren grafik dan riwayat mutasi kas harian.</p>
+                    <p>Menampilkan data bulanan secara default atau kustom berdasarkan filter.</p>
                 </div>
 
-                <!-- BARU: CARD FILTER RENTANG TANGGAL -->
+                <!-- CARD FILTER RENTANG TANGGAL -->
                 <div class="filter-card">
                     <form class="filter-form">
                         <div class="filter-group">
                             <label><i class="fa-solid fa-calendar-days"></i> Mulai Dari</label>
-                            <input type="date" value="2026-05-01">
+                            <input type="date" placeholder="Pilih tanggal">
                         </div>
                         <div class="filter-group">
                             <label><i class="fa-solid fa-calendar-days"></i> Sampai Dengan</label>
-                            <input type="date" value="2026-05-22">
+                            <input type="date" placeholder="Pilih tanggal">
                         </div>
                         <button type="submit" class="btn-filter">
-                            <i class="fa-solid fa-filter"></i> Filter
+                            <i class="fa-solid fa-filter"></i> Terapkan
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- KAS OVERVIEW (CARD MODE) -->
+            <!-- KAS OVERVIEW -->
             <section class="cash-overview">
                 <div class="card-stat">
                     <div class="card-icon total"><i class="fa-solid fa-vault"></i></div>
                     <div class="stat-details">
-                        <span class="stat-label">Total Saldo Kas</span>
+                        <span class="stat-label">Total Saldo Kas Keseluruhan</span>
                         <span class="stat-amount">Rp 14.250.000</span>
                     </div>
                 </div>
                 <div class="card-stat">
                     <div class="card-icon income"><i class="fa-solid fa-arrow-down-long"></i></div>
                     <div class="stat-details">
-                        <span class="stat-label">Kas Masuk (Periode Ini)</span>
+                        <span class="stat-label">Kas Masuk (Filter / Bulan Ini)</span>
                         <span class="stat-amount" style="color: var(--color-income);">+ Rp 8.420.000</span>
                     </div>
                 </div>
                 <div class="card-stat">
                     <div class="card-icon expense"><i class="fa-solid fa-arrow-up-long"></i></div>
                     <div class="stat-details">
-                        <span class="stat-label">Kas Keluar (Periode Ini)</span>
+                        <span class="stat-label">Kas Keluar (Filter / Bulan Ini)</span>
                         <span class="stat-amount" style="color: var(--color-expense);">- Rp 2.170.000</span>
                     </div>
                 </div>
             </section>
 
-            <!-- CARD ANALYTICS CHART (FOKUS DASHBOARD) -->
+            <!-- CARD ANALYTICS CHART -->
             <section class="app-card">
-                <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color: var(--color-primary);"></i> Analisis Arus Kas Berdasarkan Filter</h3>
+                <h3 class="section-title"><i class="fa-solid fa-chart-line" style="color: var(--color-primary);"></i> Analisis Tren Arus Kas</h3>
                 <div class="chart-placeholder">
-                    <i class="fa-solid fa-chart-area" style="font-size: 1.5rem; margin-right: 0.5rem;"></i> Tren Garis Pemasukan vs Pengeluaran Periode Terpilih
+                    <i class="fa-solid fa-chart-area" style="font-size: 1.5rem; margin-right: 0.5rem;"></i> Tren Grafis Mutasi Berdasarkan Filter Terpilih
                 </div>
             </section>
 
-            <!-- CARD HISTORI TRANSAKSI (FOKUS JURNAL MUTASI) -->
+            <!-- CARD HISTORI TRANSAKSI -->
             <section class="app-card">
-                <h3 class="section-title" style="margin-bottom: 1rem;"><i class="fa-solid fa-list-check" style="color: var(--color-primary);"></i> Jurnal Mutasi Terpilih</h3>
+                <h3 class="section-title" style="margin-bottom: 1rem;"><i class="fa-solid fa-list-check" style="color: var(--color-primary);"></i> Jurnal Mutasi Kas</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -452,7 +441,6 @@
                                 <th>Keterangan Alokasi</th>
                                 <th>Jenis</th>
                                 <th>Nominal</th>
-                                <th>Status Verifikasi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -461,21 +449,18 @@
                                 <td>Penjualan Kasir Shift 1</td>
                                 <td class="type-in">Masuk</td>
                                 <td>Rp 450.000</td>
-                                <td><span class="status-badge success">Selesai</span></td>
                             </tr>
                             <tr>
                                 <td>22 Mei 2026</td>
                                 <td>Restock Bahan Baku Kopi</td>
                                 <td class="type-out">Keluar</td>
                                 <td>Rp 1.200.000</td>
-                                <td><span class="status-badge success">Selesai</span></td>
                             </tr>
                             <tr>
                                 <td>21 Mei 2026</td>
                                 <td>Pembayaran Supplier Cup</td>
                                 <td class="type-out">Keluar</td>
                                 <td>Rp 350.000</td>
-                                <td><span class="status-badge pending">Pending</span></td>
                             </tr>
                         </tbody>
                     </table>
