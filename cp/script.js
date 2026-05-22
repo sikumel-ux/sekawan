@@ -1,50 +1,47 @@
 /**
- * TUNTAS (Turun Tangan Atasi Sampah) - Kas Engine
- * Desain khusus Mobile-First & Ramah PWA
+ * TUNTAS Kas Engine - Pure Native Light-Eco Framework
  */
 
-// 1. DUMMY DATA INITIALIZATION
-// Ini buat simulasi visual di browser/HP sebelum nanti dicolok ke Google Apps Script (GAS)
+// 1. DATA DATABASE DUMMY
 let dataKas = [
-    { 
-        id: "1", 
-        tanggal: "2026-05-20", 
-        jenis: "Pemasukan", 
-        kategori: "Penjualan Sampah", 
-        keterangan: "Setor botol plastik & kardus dari RT 04", 
-        nominal: 350000 
-    },
-    { 
-        id: "2", 
-        tanggal: "2026-05-21", 
-        jenis: "Pengeluaran", 
-        kategori: "Operasional", 
-        keterangan: "Bensin armada angkut sampah", 
-        nominal: 75000 
-    },
-    { 
-        id: "3", 
-        tanggal: "2026-05-22", 
-        jenis: "Pemasukan", 
-        kategori: "Iuran Warga", 
-        keterangan: "Iuran bulanan kas kebersihan", 
-        nominal: 500000 
-    }
+    { id: "1", tanggal: "2026-05-20", jenis: "Pemasukan", kategori: "Penjualan Sampah", keterangan: "Setor botol plastik RT 04", nominal: 350000 },
+    { id: "2", tanggal: "2026-05-21", jenis: "Pengeluaran", kategori: "Operasional", keterangan: "Bensin armada angkut", nominal: 75000 }
 ];
 
-// 2. DOM ELEMENTS REGISTRATION
-const formKas = document.getElementById('form-kas');
-const listTransaksi = document.getElementById('list-transaksi');
+// Data Dummy Sesuai Sheet Users & Profile lo, bro
+const userLogged = {
+    nama: "Hendra Wijaya",
+    no_hp: "081234567890",
+    role: "Bendahara",
+    bulan_bergabung: "November 2025"
+};
+
+// 2. DOM ELEMENT REGISTRATION
+const listTransaksiMobile = document.getElementById('list-transaksi-mobile');
 const totalPemasukanEl = document.getElementById('total-pemasukan');
 const totalPengeluaranEl = document.getElementById('total-pengeluaran');
 const totalSaldoEl = document.getElementById('total-saldo');
+const formKas = document.getElementById('form-kas');
 
-// 3. UTILITY FUNCTIONS (Formatting & Helpers)
+// 3. TAB ROUTING ENGINE (BOTTOM NAVIGATION CONTROLLER)
+const navItems = document.querySelectorAll('.nav-item');
+const appTabs = document.querySelectorAll('.app-tab');
 
-/**
- * Mengubah angka murni menjadi format mata uang Rupiah
- * Contoh: 50000 -> Rp 50.000
- */
+navItems.forEach(item => {
+    item.addEventListener('click', function() {
+        const targetTab = this.getAttribute('data-tab');
+
+        // Ganti status aktif tombol Navigasi
+        navItems.forEach(nav => nav.classList.remove('active'));
+        this.classList.add('active');
+
+        // Ganti Container Tab yang aktif dilayar
+        appTabs.forEach(tab => tab.classList.remove('active'));
+        document.getElementById(targetTab).classList.add('active');
+    });
+});
+
+// 4. FORMATTERS
 function formatRupiah(angka) {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -53,170 +50,120 @@ function formatRupiah(angka) {
     }).format(angka);
 }
 
-/**
- * Mengubah format tanggal standar HTML (YYYY-MM-DD) menjadi format lokal Indonesia
- * Contoh: 2026-05-22 -> 22 Mei 2026
- */
 function formatTanggal(stringTanggal) {
     if (!stringTanggal) return "-";
     const opsi = { day: 'numeric', month: 'short', year: 'numeric' };
     return new Date(stringTanggal).toLocaleDateString('id-ID', opsi);
 }
 
-
-// 4. CORE FUNCTIONS (Kalkulasi & Render)
-
-/**
- * Menghitung ulang total pemasukan, pengeluaran, dan sisa saldo,
- * kemudian memperbarui teks pada Card Dashboard secara real-time.
- */
+// 5. MATH & RENDER ENGINE
 function updateSummary() {
-    let totalPemasukan = 0;
-    let totalPengeluaran = 0;
+    let pemasukan = 0;
+    let pengeluaran = 0;
 
     dataKas.forEach(item => {
-        if (item.jenis === 'Pemasukan') {
-            totalPemasukan += Number(item.nominal);
-        } else if (item.jenis === 'Pengeluaran') {
-            totalPengeluaran += Number(item.nominal);
-        }
+        if (item.jenis === 'Pemasukan') pemasukan += Number(item.nominal);
+        else if (item.jenis === 'Pengeluaran') pengeluaran += Number(item.nominal);
     });
 
-    const totalSaldo = totalPemasukan - totalPengeluaran;
-
-    // Suntik nilai ke elemen UI HTML
-    totalPemasukanEl.innerText = formatRupiah(totalPemasukan);
-    totalPengeluaranEl.innerText = formatRupiah(totalPengeluaran);
-    totalSaldoEl.innerText = formatRupiah(totalSaldo);
+    totalPemasukanEl.innerText = formatRupiah(pemasukan);
+    totalPengeluaranEl.innerText = formatRupiah(pengeluaran);
+    totalSaldoEl.innerText = formatRupiah(pemasukan - pengeluaran);
 }
 
-/**
- * Membaca data array dan merendernya ke dalam tabel HTML.
- * Data diurutkan secara descending (tanggal terbaru muncul paling atas).
- */
-function renderTable() {
-    // Bersihkan isi tabel lama agar tidak double render
-    listTransaksi.innerHTML = '';
+function renderList() {
+    listTransaksiMobile.innerHTML = '';
 
     if (dataKas.length === 0) {
-        listTransaksi.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align: center; color: #a0b0a2; padding: 20px;">
-                    <i class="fa-solid fa-box-open" style="display:block; font-size: 24px; margin-bottom: 8px;"></i>
-                    Belum ada data transaksi kas.
-                </td>
-            </tr>
+        listTransaksiMobile.innerHTML = `
+            <div style="text-align: center; color: #8fa496; padding: 40px 10px;">
+                <i class="fa-solid fa-receipt" style="font-size: 32px; margin-bottom: 10px; color: #dbe3de;"></i>
+                <p style="font-size: 13px;">Belum ada riwayat transaksi kas.</p>
+            </div>
         `;
         return;
     }
 
-    // Sortir: Tanggal terbaru ditaruh paling atas
     const sortedData = [...dataKas].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
 
-    // Iterasi data untuk disuntik ke baris tabel (tr)
     sortedData.forEach(item => {
-        const tr = document.createElement('tr');
-        
-        // Atur styling teks hijau untuk pemasukan, merah untuk pengeluaran
-        const kelasJenis = item.jenis === 'Pemasukan' ? 'text-pemasukan' : 'text-pengeluaran';
-        const prefixNominal = item.jenis === 'Pemasukan' ? '+' : '-';
+        const itemCard = document.createElement('div');
+        itemCard.className = 'item-card';
 
-        tr.innerHTML = `
-            <td>${formatTanggal(item.tanggal)}</td>
-            <td class="${kelasJenis}">${item.jenis}</td>
-            <td>${item.kategori}</td>
-            <td style="white-space: normal; min-width: 150px;">${item.keterangan}</td>
-            <td class="${kelasJenis}">${prefixNominal} ${formatRupiah(item.nominal)}</td>
-            <td>
-                <button class="btn-delete" onclick="hapusTransaksi('${item.id}')" title="Hapus Transaksi">
+        const isIn = item.jenis === 'Pemasukan';
+        itemCard.innerHTML = `
+            <div class="item-left">
+                <div class="item-badge ${isIn ? 'badge-in' : 'badge-out'}">
+                    <i class="${isIn ? 'fa-solid fa-arrow-down' : 'fa-solid fa-arrow-up'}"></i>
+                </div>
+                <div class="item-meta">
+                    <h4>${item.keterangan}</h4>
+                    <p>${formatTanggal(item.tanggal)} • ${item.kategori}</p>
+                </div>
+            </div>
+            <div class="item-right">
+                <div class="item-nominal ${isIn ? 'text-in' : 'text-out'}">
+                    ${isIn ? '+' : '-'}${formatRupiah(item.nominal)}
+                </div>
+                <button class="btn-item-delete" onclick="hapusTransaksi('${item.id}')">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
-            </td>
+            </div>
         `;
-        listTransaksi.appendChild(tr);
+        listTransaksiMobile.appendChild(itemCard);
     });
 }
 
-
-// 5. EVENT LISTENERS (Handling Input Form & Hapus)
-
-/**
- * Menangkap event submit dari form input transaksi
- */
+// 6. FORM HANDLER
 formKas.addEventListener('submit', function(e) {
-    e.preventDefault(); // Mencegah page refresh bawaan browser
+    e.preventDefault();
 
-    // Ambil data langsung dari element form
     const tanggal = document.getElementById('tanggal').value;
     const jenis = document.getElementById('jenis').value;
     const kategori = document.getElementById('kategori').value;
     const nominal = parseInt(document.getElementById('nominal').value, 10);
     const keterangan = document.getElementById('keterangan').value;
 
-    // Validasi dasar nominal (PWA Safe Guard)
-    if (isNaN(nominal) || nominal <= 0) {
-        alert("Harap masukkan nominal angka yang valid, bro.");
-        return;
-    }
-
-    // Generate ID unik sementara menggunakan timestamp milidetik saat ini
     const id = Date.now().toString();
+    dataKas.push({ id, tanggal, jenis, kategori, keterangan, nominal });
 
-    // Bungkus jadi object transaksi baru
-    const transaksiBaru = { id, tanggal, jenis, kategori, keterangan, nominal };
-
-    // Push ke array data kas lokal
-    dataKas.push(transaksiBaru);
-
-    // Perbarui UI tabel dan card dashboard
-    renderTable();
+    renderList();
     updateSummary();
-
-    // Reset isi form input agar siap dipakai untuk input selanjutnya
     formKas.reset();
-    
-    // Set ulang tanggal ke hari ini setelah form di-reset
     setDefaultDate();
-    
-    // Feedback soft di mobile jika dibutuhkan (bisa diganti toast notification nanti)
-    console.log("Data berhasil disimpan sementara di local engine.");
+
+    // Selesai input, auto oper tab aktif balik ke halaman Home biar langsung keliatan hasilnya
+    document.querySelector('[data-tab="tab-home"]').click();
 });
 
-/**
- * Menghapus transaksi berdasarkan ID uniknya (Simulasi Lokal)
- */
 function hapusTransaksi(id) {
-    // Alert konfirmasi native yang responsif di mobile browser
-    if (confirm("Apakah lo yakin mau menghapus riwayat transaksi kas TUNTAS ini?")) {
-        // Filter array, sisakan data yang ID-nya TIDAK cocok dengan yang dihapus
+    if (confirm("Hapus catatan transaksi kas ini?")) {
         dataKas = dataKas.filter(item => item.id !== id);
-        
-        // Segarkan visual halaman
-        renderTable();
+        renderList();
         updateSummary();
     }
 }
 
-
-// 6. INITIALIZATION RUNNER
-
-/**
- * Mengunci default date input picker agar otomatis mendeteksi tanggal hari ini (Waktu Lokal)
- */
 function setDefaultDate() {
-    const tzoffset = (new Date()).getTimezoneOffset() * 60000; // Offset zona waktu lokal
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000;
     const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().split('T')[0];
     document.getElementById('tanggal').value = localISOTime;
 }
 
-/**
- * Fungsi yang pertama kali di-fire saat aplikasi PWA dimuat di browser / HP
- */
-function initAplikasi() {
-    setDefaultDate(); // Set tanggal otomatis hari ini
-    renderTable();    // Cetak tabel kas awal
-    updateSummary();  // Hitung total saldo awal
+// 7. INJECT PROFILE DATA
+function initProfile() {
+    document.getElementById('app-bar-role').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${userLogged.role}`;
+    document.getElementById('profile-nama').innerText = userLogged.nama;
+    document.getElementById('profile-role').innerText = `${userLogged.role} TUNTAS`;
+    document.getElementById('profile-hp').innerText = userLogged.no_hp;
+    document.getElementById('profile-join').innerText = userLogged.bulan_bergabung;
 }
 
-// Jalankan sistem kas
-initAplikasi();
+// RUN SYSTEM
+function initApp() {
+    setDefaultDate();
+    renderList();
+    updateSummary();
+    initProfile();
+}
+initApp();
