@@ -1,52 +1,61 @@
-/* RESET & BASE STYLES */
+/* RESET & VARIABLE GREEN PALETTE */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-    -webkit-tap-highlight-color: transparent; /* Optimasi PWA Mobile click click */
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    background-color: #f4f7f5; /* Light Eco Background */
-    color: #2e3d30; /* Deep Organic Slate */
-    padding: 15px;
-    line-height: 1.5;
+    background-color: #f1f7f3; /* Hijau mint super terang & bersih */
+    color: #1b3d22; /* Hijau botol gelap untuk teks utama */
+    padding-top: 75px; /* Memberi ruang untuk top bar fixed */
+    line-height: 1.4;
 }
 
-.container {
-    max-width: 1200px;
+.app-container {
+    max-width: 600px; /* Dikunci seukuran layar HP di desktop agar konsisten */
     margin: 0 auto;
+    padding: 12px;
 }
 
-/* HEADER */
-.app-header {
+/* TOP BAR (STICKY APP HEADER) */
+.app-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 5px 15px 5px;
-    margin-bottom: 20px;
+    padding: 0 16px;
+    box-shadow: 0 2px 10px rgba(27, 61, 34, 0.05);
+    z-index: 100;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .logo i {
-    font-size: 26px;
-    color: #2e7d32; /* Go Green Master Color */
+    font-size: 22px;
+    color: #2e7d32;
 }
 
 .logo h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: #1b5e20;
+    letter-spacing: -0.3px;
 }
 
 .logo h1 .brand-sub {
-    color: #4caf50;
+    color: #81c784;
     font-weight: 400;
 }
 
@@ -57,228 +66,272 @@ body {
     background: #e8f5e9;
     color: #2e7d32;
     padding: 6px 12px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: 500;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-/* MOBILE SUMMARY CARDS (Scrollable Horizontal on Mobile) */
-.summary-cards {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding: 5px 5px 15px 5px;
-    margin-bottom: 15px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Sembunyikan scrollbar bawaan tapi tetep bisa di-scroll */
-.summary-cards::-webkit-scrollbar {
-    display: none;
+/* COMPACT APP DASHBOARD CARDS */
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
 .card {
-    flex: 0 0 85%; /* Card lebar di mobile agar keliatan swipe-able */
-    scroll-snap-align: start;
     background: #ffffff;
-    padding: 16px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 8px 24px rgba(46, 125, 50, 0.08); /* Soft Green-tinted Shadow */
-    border: 1px solid rgba(232, 245, 233, 0.6);
+    padding: 14px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.04);
+    border: 1px solid #e1ebe3;
 }
 
-.card-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.card-info p {
+.card p {
     font-size: 11px;
-    color: #718773;
-    text-transform: uppercase;
+    color: #557a5e;
     font-weight: 500;
-    letter-spacing: 0.5px;
 }
 
-.card-info h3 {
-    font-size: 18px;
+.card h3 {
+    font-size: 16px;
     font-weight: 700;
     margin-top: 2px;
 }
 
-/* Card Variants Color (Eco Friendly Palette) */
-.balance { border-left: 5px solid #2e7d32; }
-.balance .card-icon { background: #e8f5e9; color: #2e7d32; }
+/* Spesifik Card Saldo Utama (Lebar Penuh) */
+.card.balance {
+    grid-column: 1 / -1;
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    padding: 16px;
+}
 
-.income { border-left: 5px solid #81c784; }
-.income .card-icon { background: #f1f8e9; color: #558b2f; }
+.card.balance p { color: #2e7d32; }
+.card.balance h3 { font-size: 22px; color: #1b5e20; }
 
-.expense { border-left: 5px solid #e57373; }
-.expense .card-icon { background: #ffebee; color: #c62828; }
+.card.income h3 { color: #2e7d32; }
+.card.expense h3 { color: #c62828; }
 
 
-/* DYNAMIC CARD COMPONENT */
-.dynamic-card {
+/* COLLAPSIBLE FORM CONTAINER */
+.form-collapsible {
     background: #ffffff;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(46, 125, 50, 0.06);
-    border: 1px solid rgba(232, 245, 233, 0.5);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.04);
+    border: 1px solid #e1ebe3;
     margin-bottom: 20px;
+    overflow: hidden;
 }
 
-.dynamic-card h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1b5e20;
-    margin-bottom: 18px;
+.form-toggle-btn {
+    width: 100%;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: none;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2e7d32;
+    cursor: pointer;
 }
 
-/* MAIN LAYOUT (Mobile First Default) */
-.main-layout {
+.toggle-icon {
+    transition: transform 0.3s ease;
+    color: #88a48d;
+}
+
+/* Class Utility JS untuk muter panah accordion */
+.toggle-icon.active {
+    transform: rotate(180deg);
+}
+
+.form-content {
+    max-height: 0; /* Tertutup secara default di HP */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 16px;
+}
+
+/* Saat form dibuka lewat JS */
+.form-content.show {
+    padding: 0 16px 20px 16px;
+    max-height: 600px; /* Angka aman penampung form */
+}
+
+.form-row {
     display: flex;
-    flex-direction: column;
+    gap: 10px;
 }
 
-/* FORM STYLING (Touch Friendly) */
+.form-row .form-group {
+    flex: 1;
+}
+
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .form-group label {
     display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: #556b57;
-    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #557a5e;
+    margin-bottom: 4px;
+    text-transform: uppercase;
 }
 
 .form-group input, .form-group select, .form-group textarea {
     width: 100%;
-    padding: 12px; /* Lebih besar untuk kemudahan tap di HP */
-    background: #f9fbf9;
-    border: 1px solid #d0ded2;
-    border-radius: 10px;
-    color: #2e3d30;
-    font-size: 14px;
+    padding: 11px;
+    background: #f7faf8;
+    border: 1px solid #cfe0d4;
+    border-radius: 8px;
+    color: #1b3d22;
+    font-size: 13px;
     outline: none;
-    transition: all 0.2s ease;
 }
 
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     border-color: #2e7d32;
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
 }
 
-/* Button Touch Target Area */
 .btn-submit {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: #2e7d32;
     color: #ffffff;
     border: none;
-    border-radius: 12px;
-    font-size: 15px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+    margin-top: 6px;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+}
+
+
+/* APP TRANSACTION NATIVE LIST (BUKAN TABEL) */
+.section-title h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #557a5e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-left: 4px;
+}
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Individual Item Card Item */
+.item-card {
+    background: #ffffff;
+    padding: 14px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(27, 61, 34, 0.02);
+    border: 1px solid #e1ebe3;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Bulatan Badge Jenis Transaksi */
+.item-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
-    margin-top: 5px;
+    font-size: 14px;
 }
 
-.btn-submit:active {
-    transform: scale(0.98);
-}
+.item-badge.badge-in { background: #e8f5e9; color: #2e7d32; }
+.item-badge.badge-out { background: #ffebee; color: #c62828; }
 
-/* TABLE STYLING */
-.table-responsive {
-    overflow-x: auto;
-    margin-top: 5px;
-    border-radius: 10px;
-    border: 1px solid #e8f5e9;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
+.item-meta h4 {
     font-size: 13px;
-}
-
-th {
-    background: #f1f8e9;
-    color: #33691e;
     font-weight: 600;
-    padding: 12px 10px;
-    text-align: left;
+    color: #1b3d22;
 }
 
-td {
-    padding: 14px 10px;
-    border-bottom: 1px solid #f0f4f1;
-    background: #fff;
-    white-space: nowrap; /* Menjaga teks rapi, scrollable ke samping */
+.item-meta p {
+    font-size: 11px;
+    color: #7fa487;
+    margin-top: 1px;
 }
 
-.text-pemasukan { color: #2e7d32; font-weight: 600; }
-.text-pengeluaran { color: #c62828; font-weight: 600; }
+.item-meta small {
+    display: block;
+    font-size: 11px;
+    color: #557a5e;
+    margin-top: 2px;
+    background: #f1f7f3;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+}
 
-.btn-delete {
-    background: #ffebee;
+.item-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-nominal {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.item-nominal.text-in { color: #2e7d32; }
+.item-nominal.text-out { color: #c62828; }
+
+.btn-item-delete {
+    background: transparent;
     border: none;
     color: #c62828;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    padding: 6px;
+    font-size: 14px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    opacity: 0.7;
 }
 
 
-/* MEDIA QUERY FOR DESKTOP SCREEN (Responsive Scaling Up) */
+/* RESPONSIVE SCALING UP (Untuk Monitor Gede) */
 @media (min-width: 768px) {
-    body {
-        padding: 30px;
+    .app-container {
+        max-width: 800px;
+        padding: 20px 0;
     }
-    
-    .summary-cards {
-        display: grid;
+    .summary-grid {
         grid-template-columns: repeat(3, 1fr);
-        overflow-x: visible;
-        padding: 0;
-        margin-bottom: 25px;
     }
-    
-    .card {
-        flex: unset;
+    .card.balance {
+        grid-column: unset;
     }
-
-    .main-layout {
-        display: grid;
-        grid-template-columns: 360px 1fr;
-        gap: 25px;
-        align-items: start;
+    .form-content {
+        max-height: none !important;
+        padding: 16px 20px 20px 20px !important;
     }
-    
-    .dynamic-card {
-        margin-bottom: 0;
+    .form-toggle-btn {
+        pointer-events: none; /* Kunci biar ga bisa di-collapse pas di desktop view */
+    }
+    .toggle-icon {
+        display: none;
     }
 }
