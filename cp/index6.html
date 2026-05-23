@@ -41,7 +41,7 @@
                 <input type="text" id="lHp" class="modern-in mt-1" placeholder="Contoh: 081234xxxx">
             </div>
             <div>
-                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi (Password)</label>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi</label>
                 <div class="relative flex items-center">
                     <input type="password" id="lPass" class="modern-in mt-1 pr-12" placeholder="••••••••">
                     <button type="button" onclick="togglePasswordLogin()" class="absolute right-4 top-[calc(50%-4px)] text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
@@ -79,7 +79,7 @@
                 <p id="cardHp" class="text-[10px] opacity-70 font-semibold">-</p>
             </div>
             <div class="relative group cursor-pointer" onclick="document.getElementById('fileFoto').click()">
-                <img id="avatarWarga" src="logo.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
+                <img id="avatarWarga" src="ninja.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
                 <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span class="material-symbols-rounded text-white text-xs">photo_camera</span>
                 </div>
@@ -101,7 +101,7 @@
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-5 rounded-3xl text-white shadow-sm flex justify-between items-center">
         <div class="space-y-0.5">
             <p class="text-[9px] font-black tracking-wider text-slate-400 uppercase flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo Kas Kampung (Real-time)
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo Kas (Real-time)
             </p>
             <h3 id="widgetSaldoKas" class="text-lg font-black text-emerald-400">Rp 0</h3>
         </div>
@@ -111,7 +111,7 @@
     </div>
 
     <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Iuran Tahun Ini</p>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Pembayaran</p>
         <div id="statusBulanGrid" class="grid grid-cols-4 gap-2"></div>
     </div>
 
@@ -133,8 +133,8 @@
         <div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center border border-slate-100">
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase leading-none">Bank Transfer</p>
-                <p class="text-md font-black text-slate-800 mt-1">BCA <span id="noRekText">1234566890</span></p>
-                <p class="text-[11px] font-semibold text-slate-500 mt-0.5">a/n Tuntas Sekawan</p>
+                <p class="text-md font-black text-slate-800 mt-1">BCA <span id="noRekText">4452284387</span></p>
+                <p class="text-[11px] font-semibold text-slate-500 mt-0.5">a/n APRIYANTO</p>
             </div>
             <button onclick="salinRekening()" class="bg-emerald-900 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
                 <span class="material-symbols-rounded !text-xs">content_copy</span> Salin
