@@ -1,5 +1,5 @@
 {
-  "short_name": "Tuntas V.02",
+  "short_name": "Tuntas V.03",
   "name": "Tuntas",
   "icons": [
     {
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "saldo16.html",
+  "start_url": "saldo.html",
   "display": "standalone",
   "theme_color": "#064E3B",
   "background_color": "#F1F5F9"
