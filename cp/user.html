@@ -14,7 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 40px; }
         .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
         .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; animation: popUp 0.2s ease-out; }
         .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
@@ -41,11 +41,17 @@
         <div class="w-14 h-14 rounded-2xl bg-emerald-900 flex items-center justify-center text-white mx-auto shadow-md"><span class="material-symbols-rounded text-2xl">wallet</span></div>
         <div>
             <h2 class="text-2xl font-black text-emerald-900">Portal Warga</h2>
-            <p class="text-xs text-slate-400 font-bold mt-1">Masuk untuk melihat histori iuran Anda</p>
+            <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan nomor HP dan kata sandi Anda</p>
         </div>
         <div class="space-y-3 text-left">
-            <input type="text" id="lNama" class="modern-in uppercase" placeholder="Nama Lengkap Sesuai Data">
-            <input type="number" id="lHp" class="modern-in" placeholder="Nomor HP (Contoh: 081234xx)">
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nomor WhatsApp / HP</label>
+                <input type="text" id="lHp" class="modern-in mt-1" placeholder="Contoh: 081234xxxx">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi (Password)</label>
+                <input type="password" id="lPass" class="modern-in mt-1" placeholder="••••••••">
+            </div>
         </div>
         <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk Aplikasi</button>
     </div>
@@ -57,9 +63,14 @@
             <div class="w-8 h-8 rounded-lg bg-emerald-900 flex items-center justify-center text-white"><span class="material-symbols-rounded text-sm">wallet</span></div>
             <h1 class="text-md font-black text-emerald-900">Tuntas.warga</h1>
         </div>
-        <button onclick="logoutWarga()" class="text-slate-400 font-black text-[10px] uppercase bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
-            <span class="material-symbols-rounded !text-sm">logout</span> Keluar
-        </button>
+        <div class="flex gap-2">
+            <button onclick="openModal('mKeamanan')" class="text-slate-500 bg-slate-100 p-2 rounded-xl flex items-center justify-center" title="Ganti Password">
+                <span class="material-symbols-rounded !text-sm">lock_reset</span>
+            </button>
+            <button onclick="logoutWarga()" class="text-slate-400 font-black text-[10px] uppercase bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                <span class="material-symbols-rounded !text-sm">logout</span> Keluar
+            </button>
+        </div>
     </header>
 
     <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
@@ -104,6 +115,37 @@
         </div>
         <div id="listRiwayatPribadi" class="space-y-2"></div>
     </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-dashed border-slate-200 shadow-sm space-y-3 pt-4">
+        <div class="flex items-center gap-2 text-slate-400">
+            <span class="material-symbols-rounded text-sm">account_balance</span>
+            <p class="text-[10px] font-black uppercase tracking-wider">Informasi Rekening Pembayaran</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center border border-slate-100">
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase leading-none">Bank Transfer</p>
+                <p class="text-md font-black text-slate-800 mt-1">BCA <span id="noRekText">1234566890</span></p>
+                <p class="text-[11px] font-semibold text-slate-500 mt-0.5">a/n Tuntas Sekawan</p>
+            </div>
+            <button onclick="salinRekening()" class="bg-emerald-900 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
+                <span class="material-symbols-rounded !text-xs">content_copy</span> Salin
+            </button>
+        </div>
+        <p class="text-[9px] text-slate-400 font-semibold italic leading-relaxed text-center px-2">
+            *Pembayaran dapat dilakukan melalui transfer ke rekening di atas, kemudian klik tombol "Konfirmasi Bayar" untuk mengirimkan bukti kirim ke pengurus.
+        </p>
+    </div>
+</div>
+
+<div id="mKeamanan" class="modal" onclick="if(event.target==this)closeModal('mKeamanan')">
+    <div class="modal-content space-y-4">
+        <h3 class="font-black text-center uppercase text-emerald-900 text-sm">Ganti Kata Sandi</h3>
+        <div>
+            <label class="text-[9px] font-bold text-slate-400 ml-1 uppercase">Password Baru</label>
+            <input type="password" id="newPass" class="modern-in mt-1" placeholder="Masukkan password baru">
+        </div>
+        <button onclick="prosesGantiPassword()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg">Simpan Sandi Baru</button>
+    </div>
 </div>
 
 <script>
@@ -125,6 +167,14 @@
     }
     function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
 
+    // Standardisasi format nomor HP (menghapus spasi, strip, awalan 0/62 menjadi string murni)
+    function bersihkanNoHp(hp) {
+        if (!hp) return "";
+        let str = hp.toString().trim().replace(/[-+\s]/g, "");
+        if (str.startsWith("62")) str = "0" + str.substring(2);
+        return str;
+    }
+
     async function loadDataWargaPortal() {
         showLoading();
         try {
@@ -134,8 +184,8 @@
                 dbGlobal = json.data;
                 if(sessionStorage.getItem('warga_login')) {
                     sessionWarga = JSON.parse(sessionStorage.getItem('warga_login'));
-                    // Sinkronkan ulang data barangkali ada update foto/bulan bergabung di sheets
-                    let updateData = dbGlobal.anggota.find(a => a.Nama.trim().toUpperCase() === sessionWarga.Nama.toUpperCase());
+                    let targetHpClean = bersihkanNoHp(sessionWarga['No Hp'] || sessionWarga.hp);
+                    let updateData = dbGlobal.anggota.find(a => bersihkanNoHp(a['No Hp'] || a.hp) === targetHpClean);
                     if(updateData) {
                         sessionWarga = updateData;
                         sessionStorage.setItem('warga_login', JSON.stringify(updateData));
@@ -148,18 +198,16 @@
     }
 
     function prosesLoginWarga() {
-        const namaInput = document.getElementById('lNama').value.trim().toUpperCase();
-        const hpInput = document.getElementById('lHp').value.trim();
+        const hpInput = bersihkanNoHp(document.getElementById('lHp').value);
+        const passInput = document.getElementById('lPass').value.trim();
 
-        if(!namaInput || !hpInput) return tuntasAlert("Gagal Masuk", "Harap isi Nama dan Nomor HP Anda!", "error");
+        if(!hpInput || !passInput) return tuntasAlert("Form Kosong", "Harap isi Nomor HP dan Kata Sandi Anda!", "error");
 
-        if(!dbGlobal.anggota || dbGlobal.anggota.length === 0) return tuntasAlert("Error", "Data warga kosong di server.", "error");
-
-        // Cari data warga berdasarkan Nama & Nomor HP yang mirip/cocok
+        // LOGIN DENGAN NORMALISASI NOMOR HP
         const ketemu = dbGlobal.anggota.find(a => {
-            let sNama = (a.Nama || a.nama || '').trim().toUpperCase();
-            let sHp = (a['No Hp'] || a.hp || '').toString().trim();
-            return sNama === namaInput && (sHp.includes(hpInput) || hpInput.includes(sHp));
+            let sHp = bersihkanNoHp(a['No Hp'] || a.hp);
+            let sPass = (a['Password'] || a.password || '').toString().trim();
+            return sHp === hpInput && sPass === passInput;
         });
 
         if(ketemu) {
@@ -167,7 +215,7 @@
             sessionStorage.setItem('warga_login', JSON.stringify(ketemu));
             bukaDashboard();
         } else {
-            tuntasAlert("Warga Tidak Ditemukan", "Nama atau nomor HP tidak cocok dengan database pengurus. SIlakan hubungi admin kampung.", "error");
+            tuntasAlert("Gagal Masuk", "Nomor HP atau kata sandi salah. Silakan coba kembali.", "error");
         }
     }
 
@@ -176,7 +224,11 @@
         document.getElementById('screen-dashboard').classList.remove('hidden');
 
         const sNama = (sessionWarga.Nama || sessionWarga.nama || '').toUpperCase();
-        const sHp = sessionWarga['No Hp'] || sessionWarga.hp || '-';
+        let sHp = sessionWarga['No Hp'] || sessionWarga.hp || '-';
+        
+        // Memastikan visualisasi nomor HP di kartu tetap mempertahankan nol di depan
+        if(sHp.toString().startsWith("62")) sHp = "0" + sHp.toString().substring(2);
+
         const sGabung = sessionWarga['Bulan Bergabung'] || sessionWarga.gabung || 'Warga Lama';
         const sFoto = sessionWarga['Foto'] || sessionWarga.foto || '';
 
@@ -184,21 +236,16 @@
         document.getElementById('cardHp').innerText = "HP: " + sHp;
         document.getElementById('cardGabung').innerText = sGabung;
         
-        if(sFoto) {
-            document.getElementById('avatarWarga').src = sFoto;
-        }
+        if(sFoto) document.getElementById('avatarWarga').src = sFoto;
 
-        // Render Histori Pembayaran Pribadi & Hitung Total
         const containerRiwayat = document.getElementById('listRiwayatPribadi');
         const containerGridBulan = document.getElementById('statusBulanGrid');
-        containerRiwayat.innerHTML = '';
-        containerGridBulan.innerHTML = '';
+        containerRiwayat.innerHTML = ''; containerGridBulan.innerHTML = '';
 
         let totalBayar = 0;
         let listLunasBulan = [];
 
         if(dbGlobal.pembayaran) {
-            // Urutkan pembayaran terbaru paling atas
             const myPayment = dbGlobal.pembayaran.filter(p => (p.Nama || p.nama || '').trim().toUpperCase() === sNama)
                              .sort((a,b) => new Date(b.Tanggal || b.tgl) - new Date(a.Tanggal || a.tgl));
 
@@ -208,7 +255,6 @@
                 let tgl = p.Tanggal || p.tgl || '';
                 totalBayar += nom;
 
-                // Catat bulan apa aja yang udah lunas
                 daftarBulan.forEach(b => {
                     if(ketBln.toLowerCase().includes(b.toLowerCase())) listLunasBulan.push(b);
                 });
@@ -225,7 +271,7 @@
                         <p class="font-black text-xs text-emerald-700">Rp ${nom.toLocaleString()}</p>
                     </div>
                 `);
-            } );
+            });
 
             if(myPayment.length === 0) {
                 containerRiwayat.innerHTML = '<p class="text-center text-xs text-slate-400 font-bold py-6">Belum ada riwayat iuran tercatat.</p>';
@@ -234,7 +280,6 @@
 
         document.getElementById('cardTotalKontribusi').innerText = "Rp " + totalBayar.toLocaleString('id-ID');
 
-        // Render Grid Indikator Bulanan Cepat
         daftarBulan.forEach(bln => {
             const isLunas = listLunasBulan.includes(bln);
             containerGridBulan.insertAdjacentHTML('beforeend', `
@@ -243,6 +288,32 @@
                 </div>
             `);
         });
+    }
+
+    async function prosesGantiPassword() {
+        const passwordBaru = document.getElementById('newPass').value.trim();
+        if(!passwordBaru || passwordBaru.length < 4) return tuntasAlert("Sandi Terlalu Pendek", "Kata sandi minimal berisi 4 karakter!", "error");
+
+        showLoading();
+        try {
+            let res = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "updatePasswordWarga",
+                    hp: sessionWarga['No Hp'] || sessionWarga.hp,
+                    passwordData: passwordBaru
+                })
+            });
+            let json = await res.json();
+            if(json.status === "success") {
+                sessionWarga.Password = passwordBaru;
+                sessionStorage.setItem('warga_login', JSON.stringify(sessionWarga));
+                tuntasAlert("Berhasil", "Kata sandi akun Anda sukses diperbarui!");
+                closeModal('mKeamanan');
+                document.getElementById('newPass').value = '';
+            } else { tuntasAlert("Gagal", "Gagal menyimpan perubahan ke server", "error"); }
+        } catch(err) { console.error(err); tuntasAlert("Error", "Gagal karena gangguan jaringan!", "error"); }
+        hideLoading();
     }
 
     function uploadFotoProfil(input) {
@@ -266,18 +337,24 @@
                     if(json.status === "success") {
                         sessionWarga.Foto = base64Data;
                         sessionStorage.setItem('warga_login', JSON.stringify(sessionWarga));
-                        tuntasAlert("Foto Diperbarui", "Foto profil Anda berhasil diunggah dan disimpan!");
-                    } else { tuntasAlert("Gagal", "Gagal menyimpan foto ke server", "error"); }
-                } catch(err) { console.error(err); tuntasAlert("Error", "Gagal upload karena koneksi!", "error"); }
+                        tuntasAlert("Foto Diperbarui", "Foto profil Anda berhasil disimpan!");
+                    } else { tuntasAlert("Gagal", "Gagal menyimpan foto", "error"); }
+                } catch(err) { console.error(err); }
                 hideLoading();
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
+    function salinRekening() {
+        const noRek = document.getElementById('noRekText').innerText;
+        navigator.clipboard.writeText(noRek);
+        tuntasAlert("Berhasil Disalin", "Nomor rekening BCA " + noRek + " berhasil disalin ke papan klip!");
+    }
+
     function kontfirmasiBayarWA() {
-        const msg = `Halo Pengurus TUNTAS, saya *${(sessionWarga.Nama || '').toUpperCase()}* ingin mengonfirmasi pembayaran iuran bulanan warga. Mohon info nomor rekening atau jadwal penarikan selanjutnya ya. Terima kasih!`;
-        window.open(`https://wa.me/628123456789?text=${encodeURIComponent(msg)}`); // <--- GANTI JADI NO WA PENGURUS/ADMIN
+        const msg = `Halo Pengurus TUNTAS, saya *${(sessionWarga.Nama || '').toUpperCase()}* ingin mengonfirmasi bahwa saya baru saja melakukan pembayaran iuran warga via transfer bank. Mohon dicek ya, terima kasih!`;
+        window.open(`https://wa.me/628123456789?text=${encodeURIComponent(msg)}`); // <-- GANTI DENGAN NO WA ADMIN ASLI
     }
 
     function logoutWarga() {
@@ -285,10 +362,11 @@
         sessionWarga = null;
         document.getElementById('screen-dashboard').classList.add('hidden');
         document.getElementById('screen-login').classList.remove('hidden');
-        document.getElementById('lNama').value = '';
-        document.getElementById('lHp').value = '';
+        document.getElementById('lHp').value = ''; document.getElementById('lPass').value = '';
     }
 
+    function openModal(id) { document.getElementById(id).style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
     window.onload = loadDataWargaPortal;
 </script>
 </body>
