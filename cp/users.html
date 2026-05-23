@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Warga Portal</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 40px; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; animation: popUp 0.2s ease-out; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+        ::-webkit-scrollbar { display: none; }
+        .loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.7); z-index:200; align-items:center; justify-content:center; font-weight:bold; color:#064E3B; }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="loading" class="loading-overlay">Menghubungkan ke server...</div>
+
+<div id="customAlert" class="modal" style="z-index: 300;">
+    <div class="modal-content text-center space-y-4">
+        <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600"><span class="material-symbols-rounded">check_circle</span></div>
+        <h4 id="alertTitle" class="font-black text-slate-800 uppercase text-sm"></h4>
+        <p id="alertMsg" class="text-xs font-semibold text-slate-500 leading-relaxed"></p>
+        <button onclick="closeAlert()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs">Oke</button>
+    </div>
+</div>
+
+<div id="screen-login" class="max-w-md mx-auto min-h-screen flex flex-col justify-center p-6">
+    <div class="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-900 flex items-center justify-center text-white mx-auto shadow-md"><span class="material-symbols-rounded text-2xl">wallet</span></div>
+        <div>
+            <h2 class="text-2xl font-black text-emerald-900">Portal TUNTAS</h2>
+            <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan nomor HP dan kata sandi Anda</p>
+        </div>
+        <div class="space-y-3 text-left">
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nomor WhatsApp / HP</label>
+                <input type="text" id="lHp" class="modern-in mt-1" placeholder="Contoh: 081234xxxx">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi (Password)</label>
+                <input type="password" id="lPass" class="modern-in mt-1" placeholder="••••••••">
+            </div>
+        </div>
+        <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk Aplikasi</button>
+    </div>
+</div>
+
+<div id="screen-dashboard" class="max-w-md mx-auto p-5 space-y-5 hidden">
+    <header class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-900 flex items-center justify-center text-white"><span class="material-symbols-rounded text-sm">wallet</span></div>
+            <h1 class="text-md font-black text-emerald-900">TUNTAS</h1>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="openModal('mKeamanan')" class="text-slate-500 bg-slate-100 p-2 rounded-xl flex items-center justify-center" title="Ganti Password">
+                <span class="material-symbols-rounded !text-sm">lock_reset</span>
+            </button>
+            <button onclick="logoutWarga()" class="text-slate-400 font-black text-[10px] uppercase bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                <span class="material-symbols-rounded !text-sm">logout</span> Keluar
+            </button>
+        </div>
+    </header>
+
+    <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-xl"></div>
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <p class="text-[9px] font-black tracking-widest opacity-60 uppercase">Anggota TUNTAS</p>
+                <h3 id="cardNama" class="text-xl font-black uppercase tracking-tight">-</h3>
+                <p id="cardHp" class="text-[10px] opacity-70 font-semibold">-</p>
+            </div>
+            <div class="relative group cursor-pointer" onclick="document.getElementById('fileFoto').click()">
+                <img id="avatarWarga" src="logo.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
+                <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-rounded text-white text-xs">photo_camera</span>
+                </div>
+                <input type="file" id="fileFoto" class="hidden" accept="image/*" onchange="uploadFotoProfil(this)">
+            </div>
+        </div>
+        <div class="mt-8 pt-4 border-t border-white/10 flex justify-between items-end">
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase">Bergabung Sejak</p>
+                <p id="cardGabung" class="text-xs font-black uppercase mt-0.5">-</p>
+            </div>
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase text-right">Kontribusi Anda</p>
+                <p id="cardTotalKontribusi" class="text-sm font-black text-amber-300 mt-0.5">Rp 0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-5 rounded-3xl text-white shadow-sm flex justify-between items-center">
+        <div class="space-y-0.5">
+            <p class="text-[9px] font-black tracking-wider text-slate-400 uppercase flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo Kas Kampung (Real-time)
+            </p>
+            <h3 id="widgetSaldoKas" class="text-lg font-black text-emerald-400">Rp 0</h3>
+        </div>
+        <button onclick="bukaModalKas()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 active:scale-95 transition-all">
+            <span class="material-symbols-rounded !text-xs font-normal">analytics</span> Detail Kas
+        </button>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Iuran Tahun Ini</p>
+        <div id="statusBulanGrid" class="grid grid-cols-4 gap-2"></div>
+    </div>
+
+    <div class="space-y-3">
+        <div class="flex justify-between items-center px-1">
+            <h3 class="font-black text-xs text-slate-400 uppercase tracking-tighter">Histori Pembayaran Anda</h3>
+            <button onclick="kontfirmasiBayarWA()" class="bg-emerald-50 text-emerald-800 border border-emerald-100 px-3 py-1 rounded-lg text-[9px] font-black uppercase flex items-center gap-1">
+                <span class="material-symbols-rounded !text-xs">chat</span> Konfirmasi Bayar
+            </button>
+        </div>
+        <div id="listRiwayatPribadi" class="space-y-2"></div>
+    </div>
+
+    <div class="bg-white p-5 rounded-3xl border border-dashed border-slate-200 shadow-sm space-y-3 pt-4">
+        <div class="flex items-center gap-2 text-slate-400">
+            <span class="material-symbols-rounded text-sm">account_balance</span>
+            <p class="text-[10px] font-black uppercase tracking-wider">Informasi Rekening Pembayaran</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center border border-slate-100">
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase leading-none">Bank Transfer</p>
+                <p class="text-md font-black text-slate-800 mt-1">BCA <span id="noRekText">1234566890</span></p>
+                <p class="text-[11px] font-semibold text-slate-500 mt-0.5">a/n Tuntas Sekawan</p>
+            </div>
+            <button onclick="salinRekening()" class="bg-emerald-900 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
+                <span class="material-symbols-rounded !text-xs">content_copy</span> Salin
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="mKeamanan" class="modal" onclick="if(event.target==this)closeModal('mKeamanan')">
+    <div class="modal-content space-y-4">
+        <h3 class="font-black text-center uppercase text-emerald-900 text-sm">Ganti Kata Sandi</h3>
+        <div>
+            <label class="text-[9px] font-bold text-slate-400 ml-1 uppercase">Password Baru</label>
+            <input type="password" id="newPass" class="modern-in mt-1" placeholder="Masukkan password baru">
+        </div>
+        <button onclick="prosesGantiPassword()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg">Simpan Sandi Baru</button>
+    </div>
+</div>
+
+<div id="mDetailKas" class="modal" onclick="if(event.target==this)closeModal('mDetailKas')">
+    <div class="bg-white p-5 rounded-[2.5rem] w-full max-w-md max-h-[85vh] flex flex-col space-y-4 shadow-xl border border-slate-100">
+        <div class="text-center">
+            <h3 class="font-black uppercase text-slate-800 text-xs tracking-wider">Laporan Transaksi Kas</h3>
+            <p class="text-[10px] text-slate-400 font-bold mt-0.5">Seluruh arus kas masuk dan keluar kampung</p>
+        </div>
+        <div id="listMutasiKasMasyarakat" class="flex-1 overflow-y-auto pr-1 space-y-2 text-left max-h-[50vh]">
+            </div>
+        <button onclick="closeModal('mDetailKas')" class="w-full bg-slate-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs">Tutup Laporan</button>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+    const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    
+    let dbGlobal = { pembayaran: [], anggota: [], kas: [] };
+    let sessionWarga = null;
+
+    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+    
+    function tuntasAlert(title, message, type = 'success') {
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMsg').innerText = message;
+        document.getElementById('alertIcon').className = type === 'error' ? "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-red-50 text-red-600" : "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
+        document.getElementById('alertIcon').innerHTML = type === 'error' ? '<span class="material-symbols-rounded">gpp_maybe</span>' : '<span class="material-symbols-rounded">check_circle</span>';
+        document.getElementById('customAlert').style.display = 'flex';
+    }
+    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+
+    function bersihkanNoHp(hp) {
+        if (!hp) return "";
+        let str = hp.toString().trim().replace(/[-+\s]/g, "");
+        if (str.startsWith("62")) str = "0" + str.substring(2);
+        return str;
+    }
+
+    async function loadDataWargaPortal() {
+        showLoading();
+        try {
+            let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
+            let json = await res.json();
+            if(json.status === "success") {
+                dbGlobal = json.data;
+                
+                // HITUNG SALDO KAS GLOBAL UNTUK WIDGET
+                hitungDanTampilkanSaldoKas();
+
+                if(sessionStorage.getItem('warga_login')) {
+                    sessionWarga = JSON.parse(sessionStorage.getItem('warga_login'));
+                    let targetHpClean = bersihkanNoHp(sessionWarga['No Hp'] || sessionWarga.hp);
+                    let updateData = dbGlobal.anggota.find(a => bersihkanNoHp(a['No Hp'] || a.hp) === targetHpClean);
+                    if(updateData) {
+                        sessionWarga = updateData;
+                        sessionStorage.setItem('warga_login', JSON.stringify(updateData));
+                    }
+                    bukaDashboard();
+                }
+            }
+        } catch(e) { console.error(e); }
+        hideLoading();
+    }
+
+    function hitungDanTampilkanSaldoKas() {
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+        
+        if (dbGlobal.kas) {
+            dbGlobal.kas.forEach(k => {
+                let nom = Number(k.Nominal || k.nom || 0);
+                if ((k.Kategori || k.kat || '').toLowerCase() === 'masuk') {
+                    totalMasuk += nom;
+                } else if ((k.Kategori || k.kat || '').toLowerCase() === 'keluar') {
+                    totalKeluar += nom;
+                }
+            });
+        }
+        let sisaSaldo = totalMasuk - totalKeluar;
+        document.getElementById('widgetSaldoKas').innerText = "Rp " + sisaSaldo.toLocaleString('id-ID');
+    }
+
+    function prosesLoginWarga() {
+        const hpInput = bersihkanNoHp(document.getElementById('lHp').value);
+        const passInput = document.getElementById('lPass').value.trim();
+
+        if(!hpInput || !passInput) return tuntasAlert("Form Kosong", "Harap isi Nomor HP dan Kata Sandi Anda!", "error");
+
+        const ketemu = dbGlobal.anggota.find(a => {
+            let sHp = bersihkanNoHp(a['No Hp'] || a.hp);
+            let sPass = (a['Password'] || a.password || '').toString().trim();
+            return sHp === hpInput && sPass === passInput;
+        });
+
+        if(ketemu) {
+            sessionWarga = ketemu;
+            sessionStorage.setItem('warga_login', JSON.stringify(ketemu));
+            bukaDashboard();
+        } else {
+            tuntasAlert("Gagal Masuk", "Nomor HP atau kata sandi salah. Silakan coba kembali.", "error");
+        }
+    }
+
+    function bukaDashboard() {
+        document.getElementById('screen-login').classList.add('hidden');
+        document.getElementById('screen-dashboard').classList.remove('hidden');
+
+        const sNama = (sessionWarga.Nama || sessionWarga.nama || '').toUpperCase();
+        let sHp = sessionWarga['No Hp'] || sessionWarga.hp || '-';
+        if(sHp.toString().startsWith("62")) sHp = "0" + sHp.toString().substring(2);
+
+        const sGabung = sessionWarga['Bulan Bergabung'] || sessionWarga.gabung || 'Warga Lama';
+        const sFoto = sessionWarga['Foto'] || sessionWarga.foto || '';
+
+        document.getElementById('cardNama').innerText = sNama;
+        document.getElementById('cardHp').innerText = "HP: " + sHp;
+        document.getElementById('cardGabung').innerText = sGabung;
+        
+        if(sFoto) document.getElementById('avatarWarga').src = sFoto;
+
+        const containerRiwayat = document.getElementById('listRiwayatPribadi');
+        const containerGridBulan = document.getElementById('statusBulanGrid');
+        containerRiwayat.innerHTML = ''; containerGridBulan.innerHTML = '';
+
+        let totalBayar = 0;
+        let listLunasBulan = [];
+
+        if(dbGlobal.pembayaran) {
+            const myPayment = dbGlobal.pembayaran.filter(p => (p.Nama || p.nama || '').trim().toUpperCase() === sNama)
+                             .sort((a,b) => new Date(b.Tanggal || b.tgl) - new Date(a.Tanggal || a.tgl));
+
+            myPayment.forEach(p => {
+                let nom = Number(p.Nominal || p.nom || 0);
+                let ketBln = p.Keterangan || p.ket || '';
+                let tgl = p.Tanggal || p.tgl || '';
+                totalBayar += nom;
+
+                daftarBulan.forEach(b => {
+                    if(ketBln.toLowerCase().includes(b.toLowerCase())) listLunasBulan.push(b);
+                });
+
+                containerRiwayat.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                        <div class="flex gap-3 items-center">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[9px]">LUNAS</div>
+                            <div>
+                                <p class="text-xs font-black uppercase text-slate-700 tracking-tighter">${letBln}</p>
+                                <p class="text-[8px] text-slate-300 font-bold">${tgl}</p>
+                            </div>
+                        </div>
+                        <p class="font-black text-xs text-emerald-700">Rp ${nom.toLocaleString()}</p>
+                    </div>
+                `);
+            });
+
+            if(myPayment.length === 0) {
+                containerRiwayat.innerHTML = '<p class="text-center text-xs text-slate-400 font-bold py-6">Belum ada riwayat iuran tercatat.</p>';
+            }
+        }
+
+        document.getElementById('cardTotalKontribusi').innerText = "Rp " + totalBayar.toLocaleString('id-ID');
+
+        daftarBulan.forEach(bln => {
+            const isLunas = listLunasBulan.includes(bln);
+            containerGridBulan.insertAdjacentHTML('beforeend', `
+                <div class="p-2 rounded-xl text-center border text-[9px] font-black uppercase ${isLunas ? 'bg-emerald-900 text-white border-emerald-900':'bg-slate-50 text-slate-300 border-slate-100'}">
+                    ${bln.substring(0,3)}
+                </div>
+            `);
+        });
+    }
+
+    function bukaModalKas() {
+        const container = document.getElementById('listMutasiKasMasyarakat');
+        container.innerHTML = '';
+
+        if (!dbGlobal.kas || dbGlobal.kas.length === 0) {
+            container.innerHTML = '<p class="text-center text-xs font-bold text-slate-400 py-8">Belum ada mutasi pencatatan kas.</p>';
+            return openModal('mDetailKas');
+        }
+
+        // Urutkan transaksi kas terbaru paling atas
+        const kasSorted = [...dbGlobal.kas].sort((a,b) => new Date(b.Tanggal || b.tgl) - new Date(a.Tanggal || a.tgl));
+
+        kasSorted.forEach(k => {
+            let kat = (k.Kategori || k.kat || '').toLowerCase();
+            let nom = Number(k.Nominal || k.nom || 0);
+            let ket = k.Keterangan || k.ket || '';
+            let tgl = k.Tanggal || k.tgl || '';
+
+            let isMasuk = kat === 'masuk';
+
+            container.insertAdjacentHTML('beforeend', `
+                <div class="bg-slate-50 p-3.5 rounded-2xl flex justify-between items-center border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center font-black text-[9px] ${isMasuk ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}">
+                            ${isMasuk ? 'IN' : 'OUT'}
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase text-slate-700 tracking-tight leading-none">${ket}</p>
+                            <p class="text-[8px] text-slate-400 font-bold mt-1">${tgl}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs font-black ${isMasuk ? 'text-emerald-700' : 'text-red-600'}">
+                        ${isMasuk ? '+' : '-'} Rp ${nom.toLocaleString('id-ID')}
+                    </p>
+                </div>
+            `);
+        });
+
+        openModal('mDetailKas');
+    }
+
+    async function prosesGantiPassword() {
+        const passwordBaru = document.getElementById('newPass').value.trim();
+        if(!passwordBaru || passwordBaru.length < 4) return tuntasAlert("Sandi Terlalu Pendek", "Kata sandi minimal berisi 4 karakter!", "error");
+
+        showLoading();
+        try {
+            let res = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "updatePasswordWarga",
+                    hp: sessionWarga['No Hp'] || sessionWarga.hp,
+                    passwordData: passwordBaru
+                })
+            });
+            let json = await res.json();
+            if(json.status === "success") {
+                sessionWarga.Password = passwordBaru;
+                sessionStorage.setItem('warga_login', JSON.stringify(sessionWarga));
+                tuntasAlert("Berhasil", "Kata sandi akun Anda sukses diperbarui!");
+                closeModal('mKeamanan');
+                document.getElementById('newPass').value = '';
+            } else { tuntasAlert("Gagal", "Gagal menyimpan perubahan ke server", "error"); }
+        } catch(err) { console.error(err); tuntasAlert("Error", "Gagal karena gangguan jaringan!", "error"); }
+        hideLoading();
+    }
+
+    function uploadFotoProfil(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const base64Data = e.target.result;
+                document.getElementById('avatarWarga').src = base64Data;
+                
+                showLoading();
+                try {
+                    let res = await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            action: "updateFotoWarga",
+                            nama: (sessionWarga.Nama || sessionWarga.nama).trim().toUpperCase(),
+                            fotoData: base64Data
+                        })
+                    });
+                    let json = await res.json();
+                    if(json.status === "success") {
+                        sessionWarga.Foto = base64Data;
+                        sessionStorage.setItem('warga_login', JSON.stringify(sessionWarga));
+                        tuntasAlert("Foto Diperbarui", "Foto profil Anda berhasil disimpan!");
+                    } else { tuntasAlert("Gagal", "Gagal menyimpan foto", "error"); }
+                } catch(err) { console.error(err); }
+                hideLoading();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function salinRekening() {
+        const noRek = document.getElementById('noRekText').innerText;
+        navigator.clipboard.writeText(noRek);
+        tuntasAlert("Berhasil Disalin", "Nomor rekening BCA " + noRek + " berhasil disalin!");
+    }
+
+    function kontfirmasiBayarWA() {
+        const msg = `Halo mas Apri, saya *${(sessionWarga.Nama || '').toUpperCase()}* ingin mengonfirmasi bahwa saya baru saja melakukan pembayaran iuran warga via transfer bank. Mohon dicek ya, terima kasih!`;
+        window.open(`https://wa.me/6285163233482?text=${encodeURIComponent(msg)}`);
+    }
+
+    function logoutWarga() {
+        sessionStorage.removeItem('warga_login');
+        sessionWarga = null;
+        document.getElementById('screen-dashboard').classList.add('hidden');
+        document.getElementById('screen-login').classList.remove('hidden');
+        document.getElementById('lHp').value = ''; document.getElementById('lPass').value = '';
+    }
+
+    function openModal(id) { document.getElementById(id).style.display='flex'; }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    window.onload = loadDataWargaPortal;
+</script>
+</body>
+</html>
