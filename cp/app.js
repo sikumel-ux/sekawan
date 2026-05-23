@@ -273,4 +273,21 @@ function logoutWarga() {
 
 function openModal(id) { document.getElementById(id).style.display='flex'; }
 function closeModal(id) { document.getElementById(id).style.display='none'; }
+
+// HIDE / SHOW PASSWORD LOGIN
+function togglePasswordLogin() {
+    const passwordInput = document.getElementById('lPass');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    }
+}
+
 window.onload = loadDataWargaPortal;
