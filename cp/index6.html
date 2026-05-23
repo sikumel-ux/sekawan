@@ -10,9 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TUNTAS</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="gaya.css">
 </head>
 <body>
 
@@ -41,7 +42,12 @@
             </div>
             <div>
                 <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi (Password)</label>
-                <input type="password" id="lPass" class="modern-in mt-1" placeholder="••••••••">
+                <div class="relative flex items-center">
+                    <input type="password" id="lPass" class="modern-in mt-1 pr-12" placeholder="••••••••">
+                    <button type="button" onclick="togglePasswordLogin()" class="absolute right-4 top-[calc(50%-4px)] text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                        <i id="eyeIcon" class="fa-solid fa-eye-slash text-sm"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk Aplikasi</button>
@@ -73,7 +79,7 @@
                 <p id="cardHp" class="text-[10px] opacity-70 font-semibold">-</p>
             </div>
             <div class="relative group cursor-pointer" onclick="document.getElementById('fileFoto').click()">
-                <img id="avatarWarga" src="ninja.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
+                <img id="avatarWarga" src="logo.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
                 <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span class="material-symbols-rounded text-white text-xs">photo_camera</span>
                 </div>
