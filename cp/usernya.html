@@ -8,7 +8,7 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS - Portal Warga</title>
+    <title>TUNTAS - Portal Informasi Warga</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     
@@ -17,21 +17,52 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 40px; }
         ::-webkit-scrollbar { display: none; }
-        .loading-overlay { display:flex; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:200; align-items:center; justify-content:center; font-weight:bold; color:#064E3B; backdrop-filter: blur(4px); }
+        .loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:200; align-items:center; justify-content:center; flex-direction: column; font-weight:bold; color:#064E3B; backdrop-filter: blur(4px); }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; transition: all 0.2s; }
+        .modern-in:focus { border-color: #064E3B; background: white; }
         .pulse-text { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay flex flex-col gap-3">
+<div id="loading" class="loading-overlay gap-3">
     <div class="w-10 h-10 rounded-xl bg-emerald-900 text-white flex items-center justify-center animate-bounce">
         <span class="material-symbols-rounded">sync</span>
     </div>
-    <p class="text-xs font-black uppercase tracking-widest pulse-text text-emerald-900">Memuat Data Anggota...</p>
+    <p id="loadingText" class="text-xs font-black uppercase tracking-widest pulse-text text-emerald-900">Memproses...</p>
 </div>
 
-<div class="max-w-md mx-auto p-5 space-y-6">
+<div id="screenLogin" class="max-w-md mx-auto min-h-screen flex items-center justify-center p-6">
+    <div class="w-full bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-900 flex items-center justify-center text-white mx-auto shadow-lg shadow-emerald-900/20">
+                <span class="material-symbols-rounded !text-2xl">wallet</span>
+            </div>
+            <h1 class="text-2xl font-black text-emerald-900 tracking-tight">Tuntas.</h1>
+            <p class="text-xs font-semibold text-slate-400">Silakan masuk untuk melihat data iuran Anda</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-400 uppercase px-1 tracking-wider">Nama Lengkap (Sesuai Data RT)</label>
+                <input type="text" id="loginNama" class="modern-in uppercase" placeholder="Contoh: BUDI SANTOSO">
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-400 uppercase px-1 tracking-wider">Kata Sandi / Password</label>
+                <input type="password" id="loginPassword" class="modern-in" placeholder="••••••••">
+            </div>
+            
+            <p id="loginError" class="text-[11px] font-bold text-red-500 text-center hidden">Nama atau password salah, bro!</p>
+
+            <button onclick="prosesLogin()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black shadow-lg shadow-emerald-900/10 uppercase text-xs active:scale-[0.98] transition-transform pt-4">
+                Masuk Ke Portal
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="screenPortal" class="max-w-md mx-auto p-5 space-y-6 hidden">
     
     <header class="flex justify-between items-center">
         <div class="flex items-center gap-2">
@@ -40,17 +71,22 @@
             </div>
             <div>
                 <h1 class="text-lg font-black text-emerald-900 leading-none">Tuntas.</h1>
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Portal Anggota Resmi</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Informasi Warga Personal</p>
             </div>
         </div>
-        <button onclick="loadDataDariSheets()" class="text-slate-500 font-bold text-[9px] uppercase bg-white px-3 py-2 rounded-xl border shadow-sm flex items-center gap-1">
-            <span class="material-symbols-rounded !text-xs">sync</span> Segarkan
-        </button>
+        <div class="flex items-center gap-1.5">
+            <button onclick="logout()" class="text-red-600 font-bold text-[9px] uppercase bg-red-50 px-3 py-2 rounded-xl border border-red-100 flex items-center gap-1 active:scale-95 transition-all">
+                <span class="material-symbols-rounded !text-xs">logout</span> Keluar
+            </button>
+            <button onclick="loadDataDariSheets(true)" class="text-slate-500 font-bold text-[9px] uppercase bg-white px-3 py-2 rounded-xl border shadow-sm flex items-center gap-1 active:scale-95 transition-all">
+                <span class="material-symbols-rounded !text-xs">sync</span> Refresh
+            </button>
+        </div>
     </header>
 
     <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-4">
         <div class="relative w-20 h-20 rounded-2xl bg-slate-100 border overflow-hidden flex items-center justify-center shrink-0">
-            <img id="wargaFoto" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Foto Profil" class="w-full h-full object-cover hidden">
+            <img id="wargaFoto" src="" alt="Foto Profil" class="w-full h-full object-cover hidden">
             <span id="wargaIconDefault" class="material-symbols-rounded !text-3xl text-slate-400">account_circle</span>
         </div>
         <div class="space-y-1">
@@ -67,6 +103,9 @@
     </div>
 
     <div class="p-6 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 text-white/5 pointer-events-none">
+            <span class="material-symbols-rounded !text-[120px]">account_balance_wallet</span>
+        </div>
         <p class="text-[9px] font-bold opacity-60 uppercase tracking-widest">Saldo Kas Umum Saat Ini</p>
         <h2 id="saldoSelamanya" class="text-3xl font-black mt-0.5">Rp 0</h2>
     </div>
@@ -74,17 +113,15 @@
     <div class="space-y-3">
         <div class="px-1">
             <h3 class="font-black text-emerald-900 uppercase text-xs tracking-wider">Status Iuran Bulanan Anda</h3>
-            <p class="text-[9px] font-medium text-slate-400">Catatan pembayaran iuran Anda di tahun berjalan</p>
+            <p class="text-[9px] font-medium text-slate-400">Catatan checklist pembayaran iuran Anda di tahun berjalan</p>
         </div>
-        
-        <div id="gridIuranWarga" class="grid grid-cols-3 gap-2">
-            </div>
+        <div id="gridIuranWarga" class="grid grid-cols-3 gap-2"></div>
     </div>
 
     <div class="space-y-3">
         <div class="px-1">
             <h3 class="font-black text-emerald-900 uppercase text-xs tracking-wider">Histori Pembayaran Anda</h3>
-            <p class="text-[9px] font-medium text-slate-400">Daftar iuran yang sudah berhasil tercatat oleh admin</p>
+            <p class="text-[9px] font-medium text-slate-400">Daftar iuran yang sudah tervalidasi oleh sistem admin</p>
         </div>
         <div id="listRiwayatPersonal" class="space-y-2"></div>
     </div>
@@ -94,44 +131,98 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
     
-    // SIMULASI LOGIN: Ganti string ini sesuai dengan Nama Warga yang berhasil login, bro!
-    // Nama harus UPPERCASE dan persis seperti di database sheet Anggota.
-    const NAMA_WARGA_LOGIN = "BUDI SANTOSO"; 
-
     const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    
     let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
+    let sessionNamaWarga = ""; // Menyimpan nama warga yang sukses login saat ini
 
-    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function showLoading(text = "Memproses...") { 
+        document.getElementById('loadingText').innerText = text;
+        document.getElementById('loading').style.display = 'flex'; 
+    }
     function hideLoading() { document.getElementById('loading').style.display = 'none'; }
 
-    function init() {
-        loadDataDariSheets();
-    }
+    window.onload = function() {
+        // Cek jika warga sebelumnya sudah pernah login di browser ini (Auto Login)
+        const savedUser = localStorage.getItem('tuntas_user');
+        if (savedUser) {
+            sessionNamaWarga = savedUser;
+            loadDataDariSheets();
+        }
+    };
 
-    async function loadDataDariSheets() {
-        showLoading();
+    async function loadDataDariSheets(isRefresh = false) {
+        showLoading("Menghubungkan ke Sheets...");
         try {
             let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
             let json = await res.json();
             if(json.status === "success") {
                 dbGlobal = json.data;
-                renderPortalWarga();
+                
+                // Jika sudah dalam posisi login, langsung render datanya
+                if (sessionNamaWarga) {
+                    renderPortalWarga();
+                }
             } else {
-                alert("Gagal memuat data dari database.");
+                alert("Gagal memuat data dari pusat.");
             }
         } catch(e) {
             console.error(e);
-            alert("Gagal menyambung ke server. Silakan coba lagi.");
+            alert("Masalah koneksi internet, bro. Sila coba beberapa saat lagi.");
         }
         hideLoading();
     }
 
+    // FUNGSI PROSES VALIDASI LOGIN
+    async function prosesLogin() {
+        const inputNama = document.getElementById('loginNama').value.trim().toUpperCase();
+        const inputPass = document.getElementById('loginPassword').value.trim();
+        const errBox = document.getElementById('loginError');
+        
+        if (!inputNama || !inputPass) {
+            errBox.innerText = "Nama dan Password wajib diisi!";
+            errBox.classList.remove('hidden');
+            return;
+        }
+
+        // Jalankan fetch data terbaru dari sheets jika memori masih kosong
+        if (dbGlobal.anggota.length === 0) {
+            await loadDataDariSheets();
+        }
+
+        // Validasi kecocokan data (Menggunakan format lowercase murni di GAS)
+        const cocok = dbGlobal.anggota.find(d => 
+            (d.nama || '').trim().toUpperCase() === inputNama && 
+            (d.password || '').toString().trim() === inputPass
+        );
+
+        if (cocok) {
+            // Login Sukses! Simpan session ke localStorage biar ga perlu login terus tiap buka aplikasi
+            localStorage.setItem('tuntas_user', inputNama);
+            sessionNamaWarga = inputNama;
+            errBox.classList.add('hidden');
+            
+            // Bersihkan form login
+            document.getElementById('loginPassword').value = "";
+            
+            // Render dan tampilkan dashboard portal warga
+            renderPortalWarga();
+        } else {
+            // Login Gagal
+            errBox.innerText = "Nama atau password salah, bro!";
+            errBox.classList.remove('hidden');
+        }
+    }
+
     function renderPortalWarga() {
+        // Alihkan Tampilan Layar dari Login ke Portal Utama
+        document.getElementById('screenLogin').classList.add('hidden');
+        document.getElementById('screenPortal').classList.remove('hidden');
+
         let tInTotal = 0, tOutTotal = 0;
-        let kasSource = [];
         let iuranPersonal = [];
 
-        // 1. HITUNG SALDO KAS UMUM DARI TAB KAS (Full Lowercase GAS)
+        // 1. HITUNG SALDO TOTAL KAS UMUM DARI TAB KAS
         if(dbGlobal.kas) {
             dbGlobal.kas.forEach(d => {
                 let cleanKat = (d.kategori || "Masuk").trim().toLowerCase();
@@ -140,15 +231,14 @@
             });
         }
         
-        // 2. HITUNG SALDO DARI TAB PEMBAYARAN IURAN (Full Lowercase GAS)
+        // 2. HITUNG SALDO + FILTER HISTORI IURAN WARGA LOGIN DARI TAB PEMBAYARAN
         if(dbGlobal.pembayaran) {
             dbGlobal.pembayaran.forEach(d => {
                 let itemNama = (d.nama || "").trim().toUpperCase();
                 let itemNom = Number(d.nominal || 0);
-                tInTotal += itemNom; // Semua iuran masuk menambah kas umum
+                tInTotal += itemNom; // Semua iuran masuk menambah kas umum keseluruhan
 
-                // Filter histori khusus warga yang sedang login
-                if(itemNama === NAMA_WARGA_LOGIN) {
+                if(itemNama === sessionNamaWarga) {
                     iuranPersonal.push({
                         tgl: new Date(d.tanggal),
                         ket: (d.keterangan || "").toString().trim(),
@@ -159,40 +249,37 @@
             });
         }
 
-        // Set Tampilan Saldo Utama
+        // Tampilkan saldo bersih kas RT secara keseluruhan
         let saldoBersihGlobal = tInTotal - tOutTotal;
         document.getElementById('saldoSelamanya').innerText = 'Rp ' + saldoBersihGlobal.toLocaleString('id-ID');
 
-        // 3. CARI PROFIL WARGA DI TAB ANGGOTA (Full Lowercase GAS)
+        // 3. AMBIL DATA DETAIL PROFIL WARGA DARI TAB ANGGOTA (Termasuk No HP, Bergabung, Foto)
         if(dbGlobal.anggota) {
-            const profil = dbGlobal.anggota.find(d => (d.nama || '').trim().toUpperCase() === NAMA_WARGA_LOGIN);
-            if(profil) {
-                document.getElementById('wargaNama').innerText = profil.nama || NAMA_WARGA_LOGIN;
-                document.getElementById('wargaHp').innerText = profil.hp || '-';
-                
-                // Mengambil info tanggal bergabung, jika tidak ada di sheet kasih fallback data default
-                document.getElementById('wargaBergabung').innerText = profil.bergabung || profil.tanggal || 'Januari 2025';
-                
-                // Menangani Foto Profil jika ada kolom 'foto' di sheet Anda
-                if(profil.foto && profil.foto.trim() !== "") {
-                    const imgEl = document.getElementById('wargaFoto');
-                    imgEl.src = profil.foto;
-                    imgEl.classList.remove('hidden');
-                    document.getElementById('wargaIconDefault').classList.add('hidden');
-                }
+            const profil = dbGlobal.anggota.find(d => (d.nama || '').trim().toUpperCase() === sessionNamaWarga);
+            
+            document.getElementById('wargaNama').innerText = sessionNamaWarga;
+            document.getElementById('wargaHp').innerText = (profil && profil.hp) ? profil.hp : '-';
+            document.getElementById('wargaBergabung').innerText = (profil && (profil.bergabung || profil.tanggal)) ? (profil.bergabung || profil.tanggal) : 'Januari 2025';
+            
+            // Manajemen Foto Profil
+            const imgEl = document.getElementById('wargaFoto');
+            const iconDefault = document.getElementById('wargaIconDefault');
+            
+            if(profil && profil.foto && profil.foto.trim() !== "") {
+                imgEl.src = profil.foto;
+                imgEl.classList.remove('hidden');
+                iconDefault.classList.add('hidden');
             } else {
-                // Jika user login tidak terdaftar di tab Anggota
-                document.getElementById('wargaNama').innerText = NAMA_WARGA_LOGIN;
-                document.getElementById('wargaBergabung').innerText = '-';
+                imgEl.classList.add('hidden');
+                iconDefault.classList.remove('hidden');
             }
         }
 
-        // 4. GENERATE TAMPILAN STATUS IURAN BULANAN (GRID PERSONAL)
+        // 4. GENERATE CHECKLIST STATUS GRID IURAN 12 BULAN PERSONAL
         const gridIuran = document.getElementById('gridIuranWarga');
         gridIuran.innerHTML = '';
 
         daftarBulan.forEach(bln => {
-            // Cek apakah bulan ini ada di dalam catatan iuran personal
             const sudahBayar = iuranPersonal.some(k => {
                 let blnDb = k.ket.toLowerCase();
                 let blnCariPanjang = bln.toLowerCase();
@@ -202,7 +289,6 @@
             });
 
             if(sudahBayar) {
-                // Tampilan Box Lunas (Warna Hijau Emerald Khas Tuntas)
                 gridIuran.insertAdjacentHTML('beforeend', `
                     <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
                         <p class="text-[9px] font-bold text-emerald-400 uppercase tracking-tighter">${bln.substring(0,3)}</p>
@@ -210,7 +296,6 @@
                     </div>
                 `);
             } else {
-                // Tampilan Box Belum Bayar (Warna Abu-Abu)
                 gridIuran.insertAdjacentHTML('beforeend', `
                     <div class="p-3 bg-white border border-slate-100 rounded-xl text-center">
                         <p class="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">${bln.substring(0,3)}</p>
@@ -220,14 +305,13 @@
             }
         });
 
-        // 5. CETAK LIST HISTORI PEMBAYARAN PERSONAL
+        // 5. CETAK HISTORI PEMBAYARAN KHUSUS MILIK WARGA YANG LOGIN
         const listR = document.getElementById('listRiwayatPersonal');
         listR.innerHTML = '';
 
         if(iuranPersonal.length === 0) {
             listR.innerHTML = '<p class="text-center text-[11px] text-slate-400 py-6 font-semibold">Belum ada histori pembayaran iuran.</p>';
         } else {
-            // Urutkan histori dari tanggal pembayaran yang paling baru
             let iuranPersonalSorted = iuranPersonal.sort((a,b) => b.tgl - a.tgl);
             iuranPersonalSorted.forEach(tx => {
                 listR.insertAdjacentHTML('beforeend', `
@@ -250,7 +334,14 @@
         }
     }
 
-    window.onload = init;
+    // FUNGSI LOGOUT (KELUAR SELESAI MELIHAT PORTAL)
+    function logout() {
+        localStorage.removeItem('tuntas_user');
+        sessionNamaWarga = "";
+        document.getElementById('screenPortal').classList.add('hidden');
+        document.getElementById('screenLogin').classList.remove('hidden');
+        document.getElementById('loginNama').value = "";
+    }
 </script>
 </body>
 </html>
