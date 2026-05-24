@@ -9,17 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <link rel="stylesheet" href="depannya.css">
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body class="pb-24">
 
     <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-                <i class="fa-solid fa-recycling text-lg"></i>
-            </div>
+            <img src="logo.png" alt="Logo Tuntas" class="w-10 h-10 object-contain">
             <div>
                 <h1 class="text-lg font-bold leading-none text-tuntas tracking-tight">TUNTAS</h1>
                 <p class="text-[9px] font-bold text-tuntas uppercase tracking-widest mt-1">RT 04 Dongkelan</p>
@@ -56,11 +51,6 @@
         </section>
 
         <div id="screen-home" class="tab-content active space-y-6">
-            
-            <div class="flex flex-col items-center justify-center py-2">
-                <img src="logo.png" alt="Logo Tuntas" class="w-24 h-24 object-contain">
-            </div>
-
             <section class="bg-emerald-900 p-7 rounded-[2.5rem] text-white tuntas-shadow relative overflow-hidden border-b-4 border-emerald-950">
                 <div class="relative z-10">
                     <h2 class="text-sm font-bold mb-3 flex items-center gap-2 text-emerald-200">
@@ -115,59 +105,48 @@
                 </details>
             </section>
 
-            <section class="space-y-3">
-                <div class="flex justify-between items-center px-1">
-                    <h2 id="judulBulanKas" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Histori Kas Bulan Ini</h2>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 px-1">
-                    <button onclick="unduhPDFKas()" class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl flex items-center justify-center gap-2 text-[11px] font-bold shadow-sm active:scale-95 transition-all hover:bg-slate-50">
-                        <i class="fa-solid fa-file-pdf text-red-500 text-sm"></i> Download PDF
-                    </button>
-                    <button onclick="bukaDonasi()" class="bg-amber-500 text-white p-3 rounded-2xl flex items-center justify-center gap-2 text-[11px] font-extrabold shadow-md shadow-amber-500/20 active:scale-95 transition-all hover:bg-amber-600">
-                        <i class="fa-solid fa-heart-circle-bolt text-sm"></i> Donasi Kas <span class="bg-amber-700/30 px-1.5 py-0.5 rounded text-[7px] tracking-tighter">IKHLAS</span>
-                    </button>
-                </div>
-
-                <div id="listRiwayat" class="space-y-2">
-                    </div>
-            </section>
-        </div>
-
-        <div id="screen-rekap" class="tab-content space-y-4">
-            <h3 class="font-bold text-tuntas text-lg px-1">Laporan Iuran Warga</h3>
-            <div class="table-scroll">
-                <table class="w-full text-left text-[11px]">
-                    <thead><tr id="th-rekap" class="text-slate-400 uppercase font-bold"></tr></thead>
-                    <tbody id="tb-rekap"></tbody>
-                    <tfoot id="tf-rekap" class="bg-emerald-50 font-bold text-tuntas"></tfoot>
-                </table>
-            </div>
-            <p class="text-[9px] text-slate-400 px-1 italic">* Satuan ribuan (K). 20K = Rp 20.000</p>
-        </div>
-
-        <div id="screen-warga" class="tab-content space-y-4">
-            <h3 class="font-bold text-tuntas text-lg px-1">Daftar Anggota</h3>
-            <div id="tBodyWarga" class="grid grid-cols-1 gap-2"></div>
-            <a href="https://wa.me/6285163233482" class="flex items-center gap-3 p-4 bg-tuntas text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-all w-full justify-center mt-4">
+            <a href="https://wa.me/6285163233482" class="flex items-center gap-3 p-4 bg-tuntas text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-all w-full justify-center">
                 <i class="fa-brands fa-whatsapp text-xl"></i>
                 <span class="text-xs uppercase tracking-wider">Hubungi Pengelola</span>
             </a>
         </div>
+
+        <div id="screen-kas" class="tab-content space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h3 id="judulBulanKas" class="font-bold text-tuntas text-sm uppercase tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-xs"></i> Histori Kas Bulan Ini
+                </h3>
+                <button onclick="muatDataKasGaS()" class="text-slate-500 bg-white border px-3 py-1.5 rounded-xl text-[9px] font-bold uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
+                    <i class="fa-solid fa-arrow-rotate-right"></i> Perbarui
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 px-1">
+                <button onclick="unduhPDFKas()" class="bg-white border border-slate-200 text-slate-700 p-3 rounded-2xl flex items-center justify-center gap-2 text-[11px] font-bold shadow-sm active:scale-95 transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-file-pdf text-red-500 text-sm"></i> Download PDF
+                </button>
+                <button onclick="bukaDonasi()" class="bg-amber-500 text-white p-3 rounded-2xl flex items-center justify-center gap-2 text-[11px] font-extrabold shadow-md shadow-amber-500/20 active:scale-95 transition-all hover:bg-amber-600">
+                    <i class="fa-solid fa-heart-circle-bolt text-sm"></i> Donasi Kas <span class="bg-amber-700/30 px-1.5 py-0.5 rounded text-[7px] tracking-tighter">IKHLAS</span>
+                </button>
+            </div>
+
+            <div id="loadingKas" class="text-center py-12 text-xs font-bold text-slate-400">
+                <i class="fa-solid fa-spinner animate-spin mr-1 text-tuntas"></i> Menghubungkan ke server Kas...
+            </div>
+
+            <div id="listRiwayat" class="space-y-2 hidden">
+                </div>
+        </div>
     </main>
 
-    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-md border-t flex justify-around items-center px-6 z-50">
+    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-md border-t flex justify-around items-center px-16 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.01)]">
         <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1">
             <i class="fa-solid fa-house-chimney text-lg"></i>
-            <span class="text-[8px] font-bold uppercase">Beranda</span>
+            <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
         </button>
-        <button onclick="st('rekap')" id="n-rekap" class="flex flex-col items-center gap-1">
-            <i class="fa-solid fa-chart-pie text-lg"></i>
-            <span class="text-[8px] font-bold uppercase">Rekap</span>
-        </button>
-        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1">
-            <i class="fa-solid fa-users text-lg"></i>
-            <span class="text-[8px] font-bold uppercase">Anggota</span>
+        <button onclick="st('kas')" id="n-kas" class="flex flex-col items-center gap-1">
+            <i class="fa-solid fa-chart-line text-lg"></i>
+            <span class="text-[8px] font-bold uppercase tracking-wider">Laporan Kas</span>
         </button>
     </nav>
 
