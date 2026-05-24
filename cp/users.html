@@ -1,262 +1,185 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS - Turun Tangan Atasi Sampah</title>
+    <title>TUNTAS - Warga Portal</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #F8FAFC;
-        }
-        .bg-tuntas { background-color: #064E3B; }
-        .text-tuntas { color: #064E3B; }
-        .border-tuntas { border-color: #064E3B; }
-        ::-webkit-scrollbar { display: none; }
-        
-        /* FIX SCREEN MEMANJANG: Menyembunyikan tab yang tidak aktif */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="pb-24">
+<body>
 
-    <header class="bg-white p-5 sticky top-0 z-30 border-b flex justify-between items-center backdrop-blur-md bg-white/95 shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-tuntas rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-                <i class="fa-solid fa-recycling text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-lg font-bold leading-none text-tuntas tracking-tight">TUNTAS</h1>
-                <p class="text-[9px] font-bold text-tuntas uppercase tracking-widest mt-1">RT 04 Dongkelan</p>
-            </div>
+<div id="loading" class="loading-overlay">Menghubungkan ke server...</div>
+
+<div id="customAlert" class="modal" style="z-index: 300;">
+    <div class="modal-content text-center space-y-4">
+        <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600"><span class="material-symbols-rounded">check_circle</span></div>
+        <h4 id="alertTitle" class="font-black text-slate-800 uppercase text-sm"></h4>
+        <p id="alertMsg" class="text-xs font-semibold text-slate-500 leading-relaxed"></p>
+        <button onclick="closeAlert()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs">Oke</button>
+    </div>
+</div>
+
+<div id="screen-login" class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6">
+    
+    <div class="flex-1 flex flex-col justify-center w-full my-auto space-y-6">
+        
+        <div class="flex flex-col items-center justify-center">
+            <img src="logo_tuntas.png" alt="Logo Tuntas" class="w-24 h-24 object-contain">
+            <p class="text-[10px] font-black text-emerald-900 uppercase tracking-[0.2em] mt-3">RT 04 Dongkelan</p>
         </div>
-        <a href="warga.html" class="bg-tuntas text-white text-[10px] font-bold uppercase px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md shadow-emerald-900/20 active:scale-95 transition-all">
-            <i class="fa-solid fa-right-to-bracket"></i> Portal Warga
-        </a>
+
+        <div class="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center relative z-10">
+            <div>
+                <h2 class="text-2xl font-black text-emerald-900">Portal Warga</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan nomor HP dan kata sandi Anda</p>
+            </div>
+            
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nomor WhatsApp / HP</label>
+                    <input type="text" id="lHp" class="modern-in mt-1" placeholder="Contoh: 081234xxxx">
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi (Password)</label>
+                    <div class="relative flex items-center">
+                        <input type="password" id="lPass" class="modern-in mt-1 pr-12" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordLogin()" class="absolute right-4 top-[calc(50%-4px)] text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                            <i id="eyeIcon" class="fa-solid fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk Aplikasi</button>
+        </div>
+    </div>
+
+    <div class="text-center py-4">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            &copy; 2026 TUNTAS. All Rights Reserved.
+        </p>
+    </div>
+</div>
+
+<div id="screen-dashboard" class="max-w-md mx-auto p-5 space-y-5 hidden">
+    <header class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-900 flex items-center justify-center text-white"><span class="material-symbols-rounded text-sm">wallet</span></div>
+            <h1 class="text-md font-black text-emerald-900">Tuntas.warga</h1>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="openModal('mKeamanan')" class="text-slate-500 bg-slate-100 p-2 rounded-xl flex items-center justify-center" title="Ganti Password">
+                <span class="material-symbols-rounded !text-sm">lock_reset</span>
+            </button>
+            <button onclick="logoutWarga()" class="text-slate-400 font-black text-[10px] uppercase bg-slate-100 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                <span class="material-symbols-rounded !text-sm">logout</span> Keluar
+            </button>
+        </div>
     </header>
 
-    <main class="p-6 space-y-6 max-w-md mx-auto">
-        
-        <section class="space-y-4">
-            <div class="p-7 bg-tuntas rounded-[2.5rem] text-white shadow-xl relative overflow-hidden border-b-4 border-emerald-950 text-center">
-                <div class="relative z-10">
-                    <p class="text-[9px] font-bold opacity-70 uppercase tracking-[0.2em] flex items-center justify-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Total Saldo Kas TUNTAS
-                    </p>
-                    <h2 id="totalSaldo" class="text-3xl font-extrabold mt-1">Rp 0</h2>
-                </div>
-                <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-7xl opacity-10"></i>
+    <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-xl"></div>
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <p class="text-[9px] font-black tracking-widest opacity-60 uppercase">Anggota TUNTAS</p>
+                <h3 id="cardNama" class="text-xl font-black uppercase tracking-tight">-</h3>
+                <p id="cardHp" class="text-[10px] opacity-70 font-semibold">-</p>
             </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Masuk</p>
-                    <p id="totalMasuk" class="text-[13px] font-bold text-emerald-600 mt-1">Rp 0</p>
+            <div class="relative group cursor-pointer" onclick="document.getElementById('fileFoto').click()">
+                <img id="avatarWarga" src="logo_tuntas.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
+                <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-rounded text-white text-xs">photo_camera</span>
                 </div>
-                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm text-center">
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Keluar</p>
-                    <p id="totalKeluar" class="text-[13px] font-bold text-red-500 mt-1">Rp 0</p>
-                </div>
+                <input type="file" id="fileFoto" class="hidden" accept="image/*" onchange="uploadFotoProfil(this)">
             </div>
-        </section>
-
-        <div id="screen-home" class="tab-content active space-y-6">
-            
-            <div class="flex flex-col items-center justify-center py-2">
-                <img src="logo_tuntas.png" alt="Logo Tuntas" class="w-24 h-24 object-contain">
-            </div>
-
-            <section class="bg-emerald-900 p-7 rounded-[2.5rem] text-white shadow-md relative overflow-hidden border-b-4 border-emerald-950">
-                <div class="relative z-10">
-                    <h2 class="text-sm font-bold mb-3 flex items-center gap-2 text-emerald-200">
-                        <i class="fa-solid fa-leaf text-xs"></i> Tentang TUNTAS
-                    </h2>
-                    <p class="text-[11px] leading-relaxed opacity-95">
-                        <span class="font-bold underline decoration-yellow-400">TUNTAS</span> adalah program swadaya <span class="font-bold">RT 04 Dongkelan</span> untuk melokalisir polusi asap. Sampah dikelola terpadu guna mengurangi risiko kesehatan akibat pembakaran sampah liar.
-                    </p>
-                </div>
-                <i class="fa-solid fa-fire-burner absolute -right-6 -bottom-6 text-8xl opacity-10"></i>
-            </section>
-
-            <section class="space-y-3">
-                <div class="flex items-center gap-2 px-1">
-                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi & FAQ</h2>
-                </div>
-                
-                <details class="group bg-white rounded-2xl border border-slate-100 shadow-sm" open>
-                    <summary class="list-none p-4 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                        Jadwal Angkut Sampah
-                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="px-4 pb-4 text-[11px] text-slate-500 border-t pt-3 leading-relaxed">
-                        Rutin setiap hari <span class="text-tuntas font-bold underline">Kamis & Minggu</span> pagi. Mohon wadah sampah sudah diletakkan di depan rumah masing-masing.
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <summary class="list-none p-4 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                        Manfaat Iuran Warga?
-                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="px-4 pb-4 text-[11px] text-slate-500 border-t pt-3 leading-relaxed">
-                        Pendapatan dari iuran operasional digunakan penuh membiayai operasional armada serta petugas angkut. Sisa alokasi dimasukkan ke dalam <span class="font-bold text-slate-800">Kas RT 04</span> untuk mendukung program sosial lingkungan warga.
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <summary class="list-none p-4 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                        Sampah yang Dilarang?
-                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-[10px]"></i>
-                    </summary>
-                    <div class="px-4 pb-4 text-[11px] text-slate-500 border-t pt-3">
-                        <p class="font-bold text-red-600 text-[9px] uppercase mb-2">Dilarang Keras Masuk Wadah Rutin:</p>
-                        <div class="grid grid-cols-2 gap-2 text-[9px] font-bold text-red-700 text-center">
-                            <div class="bg-red-50 p-2 rounded-lg">Botol Beling & Karet</div>
-                            <div class="bg-red-50 p-2 rounded-lg">Elektronik & Baterai</div>
-                            <div class="bg-red-50 p-2 rounded-lg">Kaleng Gas</div>
-                            <div class="bg-red-50 p-2 rounded-lg">Limbah Medis/B3</div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="group bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <summary class="list-none p-4 flex justify-between items-center cursor-pointer font-bold text-[12px] text-slate-700">
-                        Bagaimana Cara Bergabung?
-                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                    </summary>
-                    <div class="px-4 pb-4 text-[11px] text-slate-500 border-t pt-3 leading-relaxed">
-                        Silakan hubungi pengelola TUNTAS atau pengurus RT setempat dengan mendaftarkan nomor WhatsApp Anda untuk pembuatan data akun portal.
-                    </div>
-                </details>
-            </section>
-
-            <a href="https://wa.me/6285163233482" class="flex items-center gap-3 p-4 bg-tuntas text-white rounded-2xl font-bold shadow-md active:scale-95 transition-all w-full justify-center mt-4">
-                <i class="fa-brands fa-whatsapp text-xl"></i>
-                <span class="text-xs uppercase tracking-wider">Hubungi Pengelola</span>
-            </a>
         </div>
-
-
-        <div id="screen-kas" class="tab-content space-y-4">
-            <div class="flex justify-between items-center px-1">
-                <h3 class="font-bold text-tuntas text-base uppercase tracking-tight flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left text-sm"></i> Histori Transaksi Kas
-                </h3>
-                <button onclick="muatDataKasMasyarakat()" class="text-slate-500 bg-white border px-3 py-1.5 rounded-xl text-[9px] font-bold uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
-                    <i class="fa-solid fa-arrow-rotate-right"></i> Perbarui
-                </button>
+        <div class="mt-8 pt-4 border-t border-white/10 flex justify-between items-end">
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase">Bergabung Sejak</p>
+                <p id="cardGabung" class="text-xs font-black uppercase mt-0.5">-</p>
             </div>
-            
-            <div id="loadingKas" class="text-center py-12 text-xs font-bold text-slate-400">
-                <i class="fa-solid fa-spinner animate-spin mr-1 text-tuntas"></i> Menghubungkan ke server Sheets...
+            <div>
+                <p class="text-[8px] font-bold opacity-50 uppercase text-right">Kontribusi Anda</p>
+                <p id="cardTotalKontribusi" class="text-sm font-black text-amber-300 mt-0.5">Rp 0</p>
             </div>
-            
-            <div id="listRiwayat" class="space-y-2 hidden"></div>
         </div>
+    </div>
 
-    </main>
-
-    <nav class="fixed bottom-0 inset-x-0 h-20 bg-white/90 backdrop-blur-md border-t flex justify-around items-center px-12 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
-        <button onclick="pindahTab('home')" id="n-home" class="flex flex-col items-center gap-1 text-tuntas font-bold opacity-100 transition-all">
-            <i class="fa-solid fa-house-chimney text-lg"></i>
-            <span class="text-[8px] font-bold uppercase tracking-wider">Beranda</span>
+    <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-5 rounded-3xl text-white shadow-sm flex justify-between items-center">
+        <div class="space-y-0.5">
+            <p class="text-[9px] font-black tracking-wider text-slate-400 uppercase flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo Kas Kampung (Real-time)
+            </p>
+            <h3 id="widgetSaldoKas" class="text-lg font-black text-emerald-400">Rp 0</h3>
+        </div>
+        <button onclick="bukaModalKas()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 active:scale-95 transition-all">
+            <span class="material-symbols-rounded !text-xs font-normal">analytics</span> Detail Kas
         </button>
-        <button onclick="pindahTab('kas')" id="n-kas" class="flex flex-col items-center gap-1 text-slate-400 font-medium opacity-60 transition-all">
-            <i class="fa-solid fa-chart-line text-lg"></i>
-            <span class="text-[8px] font-bold uppercase tracking-wider">Laporan Kas</span>
-        </button>
-    </nav>
+    </div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Iuran Tahun Ini</p>
+        <div id="statusBulanGrid" class="grid grid-cols-4 gap-2"></div>
+    </div>
 
-        // FUNGSI NAVIGASI TAB (FIXED STYLE)
-        function pindahTab(target) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(`screen-${target}`).classList.add('active');
+    <div class="space-y-3">
+        <div class="flex justify-between items-center px-1">
+            <h3 class="font-black text-xs text-slate-400 uppercase tracking-tighter">Histori Pembayaran Anda</h3>
+            <button onclick="kontfirmasiBayarWA()" class="bg-emerald-50 text-emerald-800 border border-emerald-100 px-3 py-1 rounded-lg text-[9px] font-black uppercase flex items-center gap-1">
+                <span class="material-symbols-rounded !text-xs">chat</span> Konfirmasi Bayar
+            </button>
+        </div>
+        <div id="listRiwayatPribadi" class="space-y-2"></div>
+    </div>
 
-            const nHome = document.getElementById('n-home');
-            const nKas = document.getElementById('n-kas');
+    <div class="bg-white p-5 rounded-3xl border border-dashed border-slate-200 shadow-sm space-y-3 pt-4">
+        <div class="flex items-center gap-2 text-slate-400">
+            <span class="material-symbols-rounded text-sm">account_balance</span>
+            <p class="text-[10px] font-black uppercase tracking-wider">Informasi Rekening Pembayaran</p>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center border border-slate-100">
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase leading-none">Bank Transfer</p>
+                <p class="text-md font-black text-slate-800 mt-1">BCA <span id="noRekText">1234566890</span></p>
+                <p class="text-[11px] font-semibold text-slate-500 mt-0.5">a/n Tuntas Sekawan</p>
+            </div>
+            <button onclick="salinRekening()" class="bg-emerald-900 text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1 shadow-sm active:scale-95 transition-transform">
+                <span class="material-symbols-rounded !text-xs">content_copy</span> Salin
+            </button>
+        </div>
+    </div>
+</div>
 
-            if(target === 'home') {
-                nHome.className = "flex flex-col items-center gap-1 text-tuntas font-bold opacity-100 transition-all";
-                nKas.className = "flex flex-col items-center gap-1 text-slate-400 font-medium opacity-60 transition-all";
-            } else if(target === 'kas') {
-                nKas.className = "flex flex-col items-center gap-1 text-tuntas font-bold opacity-100 transition-all";
-                nHome.className = "flex flex-col items-center gap-1 text-slate-400 font-medium opacity-60 transition-all";
-                muatDataKasMasyarakat();
-            }
-        }
+<div id="mKeamanan" class="modal" onclick="if(event.target==this)closeModal('mKeamanan')">
+    <div class="modal-content space-y-4">
+        <h3 class="font-black text-center uppercase text-emerald-900 text-sm">Ganti Kata Sandi</h3>
+        <div>
+            <label class="text-[9px] font-bold text-slate-400 ml-1 uppercase">Password Baru</label>
+            <input type="password" id="newPass" class="modern-in mt-1" placeholder="Masukkan password baru">
+        </div>
+        <button onclick="prosesGantiPassword()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg">Simpan Sandi Baru</button>
+    </div>
+</div>
 
-        // AMBIL DATA REAL-TIME DARI GOOGLE SHEETS
-        async function muatDataKasMasyarakat() {
-            const loader = document.getElementById('loadingKas');
-            const container = document.getElementById('listRiwayat');
-            
-            loader.classList.remove('hidden');
-            container.classList.add('hidden');
-            container.innerHTML = '';
+<div id="mDetailKas" class="modal" onclick="if(event.target==this)closeModal('mDetailKas')">
+    <div class="bg-white p-5 rounded-[2.5rem] w-full max-w-md max-h-[85vh] flex flex-col space-y-4 shadow-xl border border-slate-100">
+        <div class="text-center">
+            <h3 class="font-black uppercase text-slate-800 text-xs tracking-wider">Laporan Transaksi Kas</h3>
+            <p class="text-[10px] text-slate-400 font-bold mt-0.5">Seluruh arus kas masuk dan keluar kampung</p>
+        </div>
+        <div id="listMutasiKasMasyarakat" class="flex-1 overflow-y-auto pr-1 space-y-2 text-left max-h-[50vh]"></div>
+        <button onclick="closeModal('mDetailKas')" class="w-full bg-slate-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs">Tutup Laporan</button>
+    </div>
+</div>
 
-            try {
-                let response = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
-                let result = await response.json();
-                
-                if(result.status === "success" && result.data.kas) {
-                    let totalMasuk = 0;
-                    let totalKeluar = 0;
-                    
-                    const kasSorted = [...result.data.kas].sort((a,b) => new Date(b.Tanggal || b.tgl) - new Date(a.Tanggal || a.tgl));
-
-                    kasSorted.forEach(item => {
-                        let kategori = (item.Kategori || item.kat || '').toLowerCase();
-                        let nominal = Number(item.Nominal || item.nom || 0);
-                        let keterangan = item.Keterangan || item.ket || '';
-                        let tanggal = item.Tanggal || item.tgl || '';
-
-                        let isMasuk = kategori === 'masuk';
-                        if(isMasuk) totalMasuk += nominal;
-                        else totalKeluar += nominal;
-
-                        container.insertAdjacentHTML('beforeend', `
-                            <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-[9px] font-bold ${isMasuk ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}">
-                                        ${isMasuk ? 'IN' : 'OUT'}
-                                    </div>
-                                    <div>
-                                        <p class="text-xs font-bold uppercase text-slate-700 tracking-tight leading-none">${keterangan}</p>
-                                        <p class="text-[9px] text-slate-400 font-semibold mt-1.5">${tanggal}</p>
-                                    </div>
-                                </div>
-                                <p class="text-xs font-bold ${isMasuk ? 'text-emerald-700' : 'text-red-500'}">
-                                    ${isMasuk ? '+' : '-'} Rp ${nominal.toLocaleString('id-ID')}
-                                </p>
-                            </div>
-                        `);
-                    });
-
-                    let sisaSaldo = totalMasuk - totalKeluar;
-
-                    document.getElementById('totalSaldo').innerText = "Rp " + sisaSaldo.toLocaleString('id-ID');
-                    document.getElementById('totalMasuk').innerText = "Rp " + totalMasuk.toLocaleString('id-ID');
-                    document.getElementById('totalKeluar').innerText = "Rp " + totalKeluar.toLocaleString('id-ID');
-                    
-                    loader.classList.add('hidden');
-                    container.classList.remove('hidden');
-                } else {
-                    container.innerHTML = '<p class="text-center text-xs font-bold text-slate-400 py-6">Belum ada catatan transaksi kas.</p>';
-                }
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = '<p class="text-center text-xs font-bold text-red-400 py-6">Terjadi masalah koneksi jaringan!</p>';
-            }
-        }
-
-        window.onload = muatDataKasMasyarakat;
-    </script>
+<script src="app.js"></script>
 </body>
 </html>
