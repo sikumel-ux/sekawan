@@ -31,7 +31,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('active')
 
 // Toggle Mata pada Input Password Login
 function togglePasswordLogin() {
-    const pInput = document.getElementById('lPass');
+    const pInput = document.getElementById('lHp').closest('div').parentElement.querySelector('input[type="password"], input[type="text"]');
     const eye = document.getElementById('eyeIcon');
     if (pInput.type === "password") {
         pInput.type = "text";
@@ -121,18 +121,28 @@ function bukaDashboardWarga() {
     let totalPengeluaran = 0;
     let kontribusiSaya = 0;
     let riwayatIuranPribadi = [];
-    let mutasiKasUmum = [];
+    let mutasiKasGabungan = []; // Menampung gabungan mutasi kas umum dan iuran masuk dari semua anggota
 
     const namaUserUpper = (sessionWarga.nama || '').trim().toUpperCase();
 
-    // 1. SEDOT & FILTER DATA TAB PEMBAYARAN IURAN
+    // 1. SEDOT & FILTER DATA TAB PEMBAYARAN IURAN (DARI SEMUA ANGGOTA)
     if(dbGlobal.pembayaran) {
         dbGlobal.pembayaran.forEach(d => {
             const nominal = Number(d.nominal || 0);
-            totalPemasukan += nominal; // Iuran otomatis menambah kas masuk umum
+            totalPemasukan += nominal; // Seluruh iuran otomatis menambah kas masuk umum
 
-            // Filter khusus milik warga yang login
-            if((d.nama || '').trim().toUpperCase() === namaUserUpper) {
+            const namaPenyetor = (d.nama || '').trim().toUpperCase();
+
+            // Masukkan data pembayaran ini ke dalam daftar rincian mutasi kas masyarakat
+            mutasiKasGabungan.push({
+                tanggal: d.tanggal,
+                keterangan: `Iuran ${namaPenyetor} (${d.keterangan || ''})`,
+                nominal: nominal,
+                kategori: 'masuk'
+            });
+
+            // Filter khusus iuran milik warga yang sedang login saat ini
+            if(namaPenyetor === namaUserUpper) {
                 kontribusiSaya += nominal;
                 riwayatIuranPribadi.push({
                     tanggal: d.tanggal,
@@ -156,7 +166,7 @@ function bukaDashboardWarga() {
                 totalPengeluaran += nominal;
             }
 
-            mutasiKasUmum.push({
+            mutasiKasGabungan.push({
                 tanggal: d.tanggal,
                 keterangan: d.keterangan || 'Tanpa keterangan',
                 nominal: nominal,
@@ -165,7 +175,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // HITUNG REAL-TIME KAS RT (Pemasukan - Pengeluaran)
+    // HITUNG REAL-TIME KAS RT (Pemasukan Total - Pengeluaran Total)
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
     // SUNTIK DATA KE KARTU PROFIL & SALDO UTAMA
@@ -183,12 +193,11 @@ function bukaDashboardWarga() {
         avatar.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(namaUserUpper)}&backgroundColor=064e3b`;
     }
 
-    // 3. CETAK CHECKLIST STATUS GRID BULANAN (NYALA JIKA LUNAS)
+    // 3. CETAK CHECKLIST STATUS GRID BULANAN (MINIMALIS: HANYA WARNA HIJAU JIKA LUNAS)
     const gridBulan = document.getElementById('statusBulanGrid');
     gridBulan.innerHTML = '';
 
     daftarBulan.forEach(bln => {
-        // Logika pencocokan string bulan di tab pembayaran iuran pribadi
         const isLunas = riwayatIuranPribadi.some(r => {
             let blnDb = r.keterangan.toLowerCase();
             let cariPanjang = bln.toLowerCase();
@@ -198,21 +207,18 @@ function bukaDashboardWarga() {
         });
 
         if(isLunas) {
-            // JIKA LUNAS: Beri warna background hijau emerald murni, teks putih, dan berikan ikon check!
+            // JIKA LUNAS: Hanya kotak berwarna hijau emerald murni tanpa tulisan teks "LUNAS" tambahan, teks bulan putih tebal
             gridBulan.insertAdjacentHTML('beforeend', `
-                <div class="p-3 bg-emerald-600 border border-emerald-700 rounded-2xl text-center shadow-sm text-white animate-fade-in">
-                    <p class="text-[9px] font-bold uppercase tracking-wider opacity-80">${bln.substring(0,3)}</p>
-                    <p class="text-[10px] font-black uppercase mt-1 flex items-center justify-center gap-0.5">
-                        <span class="material-symbols-rounded !text-[11px]">verified</span> LUNAS
-                    </p>
+                <div class="p-3 bg-emerald-600 border border-emerald-700 rounded-2xl text-center shadow-sm text-white animate-fade-in flex flex-col items-center justify-center min-h-[54px]">
+                    <p class="text-xs font-black uppercase tracking-wider">${bln.substring(0,3)}</p>
                 </div>
             `);
         } else {
-            // JIKA BELUM BAYAR: Tetap abu-abu kalem bawaan default template
+            // JIKA BELUM BAYAR: Tetap abu-abu kalem bawaan default template, tulisan tengah strip (-)
             gridBulan.insertAdjacentHTML('beforeend', `
-                <div class="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-center">
+                <div class="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-center flex flex-col items-center justify-center min-h-[54px]">
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${bln.substring(0,3)}</p>
-                    <p class="text-[10px] font-bold text-slate-300 uppercase mt-1">-</p>
+                    <p class="text-[10px] font-bold text-slate-300 uppercase mt-0.5">-</p>
                 </div>
             `);
         }
@@ -225,7 +231,6 @@ function bukaDashboardWarga() {
     if(riwayatIuranPribadi.length === 0) {
         listPribadi.innerHTML = '<p class="text-center text-[11px] text-slate-400 py-6 font-semibold">Belum ada riwayat iuran masuk, bro.</p>';
     } else {
-        // Urutkan histori pembayaran dari tanggal terbaru
         let sortedPribadi = riwayatIuranPribadi.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
         sortedPribadi.forEach(tx => {
             let tglFormat = tx.tanggal ? new Date(tx.tanggal).toLocaleDateString('id-ID') : '-';
@@ -248,25 +253,25 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 5. MEMBUAT DATA MODAL DETAIL LAPORAN MUTASI KAS UMUM RT
+    // 5. MEMBUAT DATA MODAL DETAIL LAPORAN MUTASI KAS GABUNGAN (SINKRON TOTAL DENGAN SALDO REAL-TIME)
     const listMutasi = document.getElementById('listMutasiKasMasyarakat');
     listMutasi.innerHTML = '';
 
-    if(mutasiKasUmum.length === 0) {
+    if(mutasiKasGabungan.length === 0) {
         listMutasi.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Data arus mutasi kas kosong.</p>';
     } else {
-        // Urutkan mutasi kas keseluruhan dari tanggal terbaru
-        let sortedMutasi = mutasiKasUmum.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+        // Urutkan mutasi gabungan dari tanggal paling baru
+        let sortedMutasi = mutasiKasGabungan.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
         sortedMutasi.forEach(m => {
             let isM = m.kategori === 'masuk';
             let tglMFormat = m.tanggal ? new Date(m.tanggal).toLocaleDateString('id-ID') : '-';
             listMutasi.insertAdjacentHTML('beforeend', `
                 <div class="p-3 border-b border-slate-100 flex justify-between items-center text-[11px]">
-                    <div>
-                        <p class="font-bold text-slate-800 uppercase tracking-tight">${m.keterangan}</p>
+                    <div class="max-w-[70%]">
+                        <p class="font-bold text-slate-800 uppercase tracking-tight break-words">${m.keterangan}</p>
                         <p class="text-[8px] text-slate-400 font-medium">${tglMFormat} (${m.kategori.toUpperCase()})</p>
                     </div>
-                    <p class="font-black ${isM ? 'text-emerald-600' : 'text-red-500'}">
+                    <p class="font-black ${isM ? 'text-emerald-600' : 'text-red-500'} shrink-0">
                         ${isM ? '+' : '-'} ${m.nominal.toLocaleString('id-ID')}
                     </p>
                 </div>
@@ -293,7 +298,6 @@ async function prosesGantiPassword() {
         let res = await fetch(`${SCRIPT_URL}?action=gantiPassword&hp=${sessionWarga.hp}&passwordBaru=${encodeURIComponent(passBaru)}`, { method: "POST" });
         let json = await res.json();
         if(json.status === "success") {
-            // Update password di memori lokal browser
             localStorage.setItem('tuntas_warga_pw', passBaru);
             sessionWarga.password = passBaru;
             document.getElementById('newPass').value = "";
@@ -338,9 +342,7 @@ window.onload = async function() {
                 return;
             }
         }
-        // Jika data tidak cocok, bersihkan localStorage bermasalah
         localStorage.clear();
     }
-    // Jika tidak ada data auto-login, biarkan loading selesai dan tampilkan form login
     hideLoading();
 };
