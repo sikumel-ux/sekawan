@@ -8,12 +8,12 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS</title>
+    <title>TUNTAS - Warga Portal</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="gaya.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -30,17 +30,18 @@
 
 <div id="screen-login" class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6">
     
-    <div class="flex-1 flex flex-col justify-center w-full my-auto space-y-6">
+    <div class="flex-1 flex flex-col justify-center w-full my-auto">
         
-        <div class="flex flex-col items-center justify-center">
-            <img src="top.png" alt="Logo Tuntas" class="w-24 h-24 object-contain">
-            
-        </div>
-
         <div class="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center relative z-10">
+            
+            <div class="flex flex-col items-center justify-center pt-2 mb-2">
+                <img src="top.png" alt="Logo Tuntas" class="w-20 h-20 object-contain">
+                <p class="text-[10px] font-black text-emerald-900 uppercase tracking-[0.2em] mt-3">RT 04 Dongkelan</p>
+            </div>
+
             <div>
-                <h2 class="text-2xl font-black text-emerald-900">MEMBER AREA</h2>
-                <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan akun Anda</p>
+                <h2 class="text-2xl font-black text-emerald-900">Portal Warga</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan Akun Anda</p>
             </div>
             
             <div class="space-y-3 text-left">
@@ -58,7 +59,7 @@
                     </div>
                 </div>
             </div>
-            <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk</button>
+            <button onclick="prosesLoginWarga()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-transform">Masuk Aplikasi</button>
         </div>
     </div>
 
@@ -94,7 +95,7 @@
                 <p id="cardHp" class="text-[10px] opacity-70 font-semibold">-</p>
             </div>
             <div class="relative group cursor-pointer" onclick="document.getElementById('fileFoto').click()">
-                <img id="avatarWarga" src="logo_tuntas.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
+                <img id="avatarWarga" src="ninja.png" class="w-14 h-14 rounded-2xl bg-white/20 object-cover border-2 border-white/30" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=tuntas'">
                 <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span class="material-symbols-rounded text-white text-xs">photo_camera</span>
                 </div>
@@ -116,7 +117,7 @@
     <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-5 rounded-3xl text-white shadow-sm flex justify-between items-center">
         <div class="space-y-0.5">
             <p class="text-[9px] font-black tracking-wider text-slate-400 uppercase flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo (Real-time)
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Saldo Kas (Real-time)
             </p>
             <h3 id="widgetSaldoKas" class="text-lg font-black text-emerald-400">Rp 0</h3>
         </div>
@@ -126,7 +127,7 @@
     </div>
 
     <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Pembayaran</p>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Pembayaran Anda</p>
         <div id="statusBulanGrid" class="grid grid-cols-4 gap-2"></div>
     </div>
 
@@ -172,11 +173,11 @@
 <div id="mDetailKas" class="modal" onclick="if(event.target==this)closeModal('mDetailKas')">
     <div class="bg-white p-5 rounded-[2.5rem] w-full max-w-md max-h-[85vh] flex flex-col space-y-4 shadow-xl border border-slate-100">
         <div class="text-center">
-            <h3 class="font-black uppercase text-slate-800 text-xs tracking-wider">Laporan Transaksi Kas</h3>
+            <h3 class="font-black uppercase text-slate-800 text-xs tracking-wider">Laporan Transaksi</h3>
             <p class="text-[10px] text-slate-400 font-bold mt-0.5">Seluruh arus kas masuk dan keluar</p>
         </div>
         <div id="listMutasiKasMasyarakat" class="flex-1 overflow-y-auto pr-1 space-y-2 text-left max-h-[50vh]"></div>
-        <button onclick="closeModal('mDetailKas')" class="w-full bg-slate-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs">Tutup</button>
+        <button onclick="closeModal('mDetailKas')" class="w-full bg-slate-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs">Tutup Laporan</button>
     </div>
 </div>
 
