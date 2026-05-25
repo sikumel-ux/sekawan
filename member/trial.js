@@ -1,5 +1,5 @@
-// Menggunakan URL Web App Google Apps Script milikmu yang aktif, bro!
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_pu0GWwuLUr9uZFmtnakax4crnxUxCrtMIVAljiV1LPcy5c_MPSU44u8L7XlR9fNm/exec";
+// URL Web App Google Apps Script Terbaru yang Kamu Kirim, Bro!
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycb_pu0GWwuLUr9uZFmtnakax4crnxUxCrtMIVAljiV1LPcy5c_MPSU44u8L7XlR9fNm/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
@@ -52,7 +52,7 @@ function salinRekening() {
     });
 }
 
-// REQUEST AMBIL MASTER DATA UTAMA (GET METHOD)
+// SINKRONISASI DATA UTAMA (GET METHOD)
 async function ambilDataZSheets() {
     try {
         let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
@@ -104,7 +104,7 @@ async function prosesLoginWarga() {
     hideLoading();
 }
 
-// RENDER INFORMASI DATA KE DASHBOARD UI
+// RENDER DATA KE DASHBOARD
 function bukaDashboardWarga() {
     document.getElementById('screen-login').classList.add('hidden');
     document.getElementById('screen-dashboard').classList.remove('hidden');
@@ -117,7 +117,7 @@ function bukaDashboardWarga() {
 
     const namaUserUpper = (sessionWarga.nama || '').trim().toUpperCase();
 
-    // 1. DISTRIBUSI ARUS DATA PEMBAYARAN IURAN
+    // 1. DATA PEMBAYARAN IURAN WAKIL WARGA
     if(dbGlobal.pembayaran && Array.isArray(dbGlobal.pembayaran)) {
         dbGlobal.pembayaran.forEach(d => {
             const nominal = Number(d.nominal || 0);
@@ -143,7 +143,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 2. DISTRIBUSI ARUS DATA KAS UMUM
+    // 2. DATA MUTASI KAS UMUM TUNTAS
     if(dbGlobal.kas && Array.isArray(dbGlobal.kas)) {
         dbGlobal.kas.forEach(d => {
             const nominal = Number(d.nominal || 0);
@@ -206,7 +206,7 @@ function bukaDashboardWarga() {
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
-    // --- FORCE RENDERING FOTO PROFIL (DEFAULT avatar.png) ---
+    // --- PARSING FOTO PROFIL ---
     const avatar = document.getElementById('avatarWarga');
     let urlFoto = null;
     for (let key in sessionWarga) {
@@ -222,7 +222,7 @@ function bukaDashboardWarga() {
         avatar.src = "avatar.png"; 
     }
 
-    // 3. GENERATE GRID INDIKATOR BULANAN
+    // 3. GENERATE GRID BULANAN
     const gridBulan = document.getElementById('statusBulanGrid');
     gridBulan.innerHTML = '';
 
@@ -250,7 +250,7 @@ function bukaDashboardWarga() {
         }
     });
 
-    // 4. HISTORI TRANSAKSI MANDIRI
+    // 4. GENERATE HISTORI TRANSKSI PRIBADI
     const listPribadi = document.getElementById('listRiwayatPribadi');
     listPribadi.innerHTML = '';
 
@@ -277,7 +277,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 5. LAPORAN TRANSARAN MUTASI KAS MASYARAKAT
+    // 5. GENERATE MUTASI TOTAL KAS
     const listMutasi = document.getElementById('listMutasiKasMasyarakat');
     listMutasi.innerHTML = '';
 
@@ -303,7 +303,7 @@ function bukaDashboardWarga() {
 
 function bukaModalKas() { openModal('mDetailKas'); }
 
-// --- FITUR: UPLOAD FOTO (PURE JSON POST) ---
+// --- API HIT: DISPATCH UPLOAD GBAR (POST) ---
 async function uploadFotoProfil(input) {
     if (!input.files || !input.files[0]) return;
     
@@ -354,7 +354,7 @@ async function uploadFotoProfil(input) {
     reader.readAsDataURL(file);
 }
 
-// --- FITUR: GANTI PASSWORD (PURE JSON POST) ---
+// --- API HIT: UPDATE PASSWORD (POST) ---
 async function prosesGantiPassword() {
     const passBaru = document.getElementById('newPass').value.trim();
     if(!passBaru) {
@@ -402,7 +402,7 @@ function logoutWarga() {
     document.getElementById('lHp').value = "";
 }
 
-// MANAGEMENT OTO-LOGIN & SCREEN SHIELD
+// HANDLER WINDOW LOAD ANTI-FREEZE OVERLAY
 window.onload = async function() {
     showLoading();
     const savedHp = localStorage.getItem('tuntas_warga_hp');
@@ -431,4 +431,3 @@ window.onload = async function() {
     
     hideLoading();
 };
-        
