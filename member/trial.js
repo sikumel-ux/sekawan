@@ -1,5 +1,5 @@
-// URL Web App Google Apps Script Terbaru yang Kamu Kirim, Bro!
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycb_pu0GWwuLUr9uZFmtnakax4crnxUxCrtMIVAljiV1LPcy5c_MPSU44u8L7XlR9fNm/exec";
+// URL Web App GAS (Google Apps Script) TUNTAS
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
@@ -48,11 +48,11 @@ function kontfirmasiBayarWA() {
 function salinRekening() {
     const rek = document.getElementById('noRekText').innerText;
     navigator.clipboard.writeText(rek).then(() => {
-        tampilAlert("Berhasil Copas", "Nomor rekening BCA berhasil disalin!", true);
+        tampilAlert("Berhasil Copas", "Nomor rekening BCA berhasil disalin ke papan klip!", true);
     });
 }
 
-// SINKRONISASI DATA UTAMA (GET METHOD)
+// AMBIL DATA DARI SERVER (MEMASTIKAN PARSING DATA GLOBAL AMAN)
 async function ambilDataZSheets() {
     try {
         let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
@@ -61,11 +61,12 @@ async function ambilDataZSheets() {
             dbGlobal = json.data;
             return true;
         } else {
-            console.error("Server return error status:", json.message);
+            tampilAlert("Gagal", "Sistem gagal mengambil data dari database pusat.", false);
             return false;
         }
     } catch(e) {
-        console.error("Gagal Ambil Data Dari Script:", e);
+        console.error(e);
+        tampilAlert("Putus Koneksi", "Gagal terhubung ke server. Periksa jaringan internet, bro.", false);
         return false;
     }
 }
@@ -83,7 +84,6 @@ async function prosesLoginWarga() {
     let suksesAmbil = await ambilDataZSheets();
     if(!suksesAmbil) {
         hideLoading();
-        tampilAlert("Gagal Koneksi", "Gagal mengambil data dari cloud pusat. Coba lagi, bro.", false);
         return;
     }
 
@@ -104,7 +104,7 @@ async function prosesLoginWarga() {
     hideLoading();
 }
 
-// RENDER DATA KE DASHBOARD
+// SINKRONISASI DATASHEET KE DASHBOARD PORTAL
 function bukaDashboardWarga() {
     document.getElementById('screen-login').classList.add('hidden');
     document.getElementById('screen-dashboard').classList.remove('hidden');
@@ -117,11 +117,12 @@ function bukaDashboardWarga() {
 
     const namaUserUpper = (sessionWarga.nama || '').trim().toUpperCase();
 
-    // 1. DATA PEMBAYARAN IURAN WAKIL WARGA
+    // 1. SEDOT DATA PEMBAYARAN IURAN
     if(dbGlobal.pembayaran && Array.isArray(dbGlobal.pembayaran)) {
         dbGlobal.pembayaran.forEach(d => {
             const nominal = Number(d.nominal || 0);
             totalPemasukan += nominal;
+
             const namaPenyetor = (d.nama || '').trim().toUpperCase();
 
             mutasiKasGabungan.push({
@@ -143,7 +144,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 2. DATA MUTASI KAS UMUM TUNTAS
+    // 2. SEDOT DATA KAS UMUM
     if(dbGlobal.kas && Array.isArray(dbGlobal.kas)) {
         dbGlobal.kas.forEach(d => {
             const nominal = Number(d.nominal || 0);
@@ -166,10 +167,11 @@ function bukaDashboardWarga() {
 
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
-    // --- PARSING BULAN BERGABUNG SECARA AMAN ---
+    // --- 🛠️ DETEKSI BRUTAL KEY OBJECT BULAN BERGABUNG ---
     let txtBergabung = "JANUARI 2025"; 
     let mentahBergabung = null;
     
+    // Scan dynamic keys dari sheet agar anti salah nama properti objek
     for (let key in sessionWarga) {
         if (key.toLowerCase().replace(/\s+/g, '') === 'bulanbergabung' || key.toLowerCase() === 'bergabung') {
             mentahBergabung = sessionWarga[key];
@@ -177,52 +179,45 @@ function bukaDashboardWarga() {
         }
     }
     if(!mentahBergabung) {
-        mentahBergabung = sessionWarga['Bulan Bergabung'] || sessionWarga.bulanBergabung || sessionWarga.tanggal;
+        mentahBergabung = sessionWarga['Bulan Bergabung'] || sessionWarga.bulanBergabung || sessionWarga.bergabung || sessionWarga.tanggal;
     }
     
     if (mentahBergabung) {
-        let strData = mentahBergabung.toString().trim();
-        let objekTgl = new Date(strData);
-        
+        let objekTgl = new Date(mentahBergabung);
         if (!isNaN(objekTgl.getTime())) {
             txtBergabung = `${daftarBulan[objekTgl.getMonth()]} ${objekTgl.getFullYear()}`;
-        } else if (strData.includes('-') || strData.includes('/')) {
-            let pecah = strData.split(/[-/T ]/);
-            if(pecah.length >= 2) {
-                let blnIndex = parseInt(pecah[1], 10) - 1;
-                if(blnIndex >= 0 && blnIndex <= 11) {
-                    let thnSaja = pecah[0].length === 4 ? pecah[0] : pecah[2] || "2025";
-                    txtBergabung = `${daftarBulan[blnIndex]} ${thnSaja}`;
-                }
-            }
         } else {
-            txtBergabung = strData.toUpperCase();
+            txtBergabung = mentahBergabung.toString().toUpperCase();
         }
     }
 
+    // SUNTIK DATA UTAMA
     document.getElementById('cardNama').innerText = namaUserUpper;
     document.getElementById('cardHp').innerText = sessionWarga.hp || '-';
     document.getElementById('cardGabung').innerText = txtBergabung;
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
-    // --- PARSING FOTO PROFIL ---
+    // --- 🛠️ DETEKSI BRUTAL KEY OBJECT FOTO ---
     const avatar = document.getElementById('avatarWarga');
     let urlFoto = null;
     for (let key in sessionWarga) {
-        if (key.toLowerCase().replace(/\s+/g, '') === 'foto') { urlFoto = sessionWarga[key]; break; }
+        if (key.toLowerCase().replace(/\s+/g, '') === 'foto') {
+            urlFoto = sessionWarga[key];
+            break;
+        }
     }
     if(!urlFoto) {
         urlFoto = sessionWarga.Foto || sessionWarga.foto || sessionWarga['Foto Profil'];
     }
 
-    if(urlFoto && urlFoto.trim() !== "" && urlFoto.startsWith('http')) {
+    if(urlFoto && urlFoto.trim() !== "") {
         avatar.src = urlFoto;
     } else {
-        avatar.src = "avatar.png"; 
+        avatar.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(namaUserUpper)}&backgroundColor=064e3b`;
     }
 
-    // 3. GENERATE GRID BULANAN
+    // 3. GRID CETAK STATUS BULANAN
     const gridBulan = document.getElementById('statusBulanGrid');
     gridBulan.innerHTML = '';
 
@@ -250,7 +245,7 @@ function bukaDashboardWarga() {
         }
     });
 
-    // 4. GENERATE HISTORI TRANSKSI PRIBADI
+    // 4. HISTORI TRANSAKSI WARGA
     const listPribadi = document.getElementById('listRiwayatPribadi');
     listPribadi.innerHTML = '';
 
@@ -277,7 +272,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 5. GENERATE MUTASI TOTAL KAS
+    // 5. MUTASI TRANSAKSI KAS GABUNGAN
     const listMutasi = document.getElementById('listMutasiKasMasyarakat');
     listMutasi.innerHTML = '';
 
@@ -289,7 +284,7 @@ function bukaDashboardWarga() {
             let isM = m.kategori === 'masuk';
             let tglMFormat = m.tanggal ? new Date(m.tanggal).toLocaleDateString('id-ID') : '-';
             listMutasi.insertAdjacentHTML('beforeend', `
-                <div class="p-3 border-b border-slate-100 flex justify-between items-center text-[11px] animate-fade-in">
+                <div class="p-3 border-b border-slate-100 flex justify-between items-center text-[11px]">
                     <div class="max-w-[70%]">
                         <p class="font-bold text-slate-800 uppercase tracking-tight break-words">${m.keterangan}</p>
                         <p class="text-[8px] text-slate-400 font-medium">${tglMFormat} (${m.kategori.toUpperCase()})</p>
@@ -303,7 +298,7 @@ function bukaDashboardWarga() {
 
 function bukaModalKas() { openModal('mDetailKas'); }
 
-// --- API HIT: DISPATCH UPLOAD GBAR (POST) ---
+// --- FUNGSI MULTIPART FORM-DATA UNTUK UPLOAD FOTO BIAR JOS ---
 async function uploadFotoProfil(input) {
     if (!input.files || !input.files[0]) return;
     
@@ -315,38 +310,41 @@ async function uploadFotoProfil(input) {
     reader.onload = async function(e) {
         const base64Data = e.target.result.split(',')[1];
         try {
-            let dataPaket = {
-                action: "updateFoto",
-                hp: sessionWarga.hp.toString().trim(),
-                filename: file.name,
-                mimeType: file.type,
-                fileData: base64Data
-            };
+            // Menggunakan URLSearchParams Payload murni agar dicerna langsung oleh doPost(e) di Apps Script
+            let paramData = new URLSearchParams();
+            paramData.append('action', 'updateFoto');
+            paramData.append('hp', sessionWarga.hp);
+            paramData.append('filename', file.name);
+            paramData.append('mimeType', file.type);
+            paramData.append('fileData', base64Data);
 
             let res = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify(dataPaket)
+                body: paramData.toString(),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
             
             let json = await res.json();
-            
             if(json.status === "success" || json.url) {
-                let linkBaru = json.url;
+                let linkFotoBaru = json.url || json.fileUrl || json.videoUrl;
                 
-                sessionWarga.Foto = linkBaru;
-                sessionWarga.foto = linkBaru;
+                // Cari key foto dinamis di session lalu timpa nilainya
+                let keyKetemu = "Foto";
                 for (let key in sessionWarga) {
-                    if (key.toLowerCase().replace(/\s+/g, '') === 'foto') { sessionWarga[key] = linkBaru; }
+                    if (key.toLowerCase().replace(/\s+/g, '') === 'foto') { keyKetemu = key; break; }
                 }
-
+                sessionWarga[keyKetemu] = linkFotoBaru;
+                sessionWarga.foto = linkFotoBaru;
+                sessionWarga.Foto = linkFotoBaru;
+                
                 document.getElementById('avatarWarga').src = e.target.result; 
                 tampilAlert("Sukses", "Foto profil berhasil diperbarui, bro!", true);
             } else {
-                tampilAlert("Gagal", "Server gagal menyimpan berkas gambar.", false);
+                tampilAlert("Gagal", "Server Apps Script menolak menyimpan foto.", false);
             }
         } catch(err) {
             console.error(err);
-            tampilAlert("Error", "Gagal mengunggah foto profil.", false);
+            tampilAlert("Error", "Gagal mengunggah foto ke server.", false);
         } finally {
             hideLoading();
         }
@@ -354,27 +352,15 @@ async function uploadFotoProfil(input) {
     reader.readAsDataURL(file);
 }
 
-// --- API HIT: UPDATE PASSWORD (POST) ---
 async function prosesGantiPassword() {
     const passBaru = document.getElementById('newPass').value.trim();
     if(!passBaru) {
         tampilAlert("Gagal", "Kolom kata sandi baru tidak boleh kosong!", false);
         return;
     }
-    
     showLoading();
     try {
-        let dataPaketSandi = {
-            action: "gantiPassword",
-            hp: sessionWarga.hp.toString().trim(),
-            passwordBaru: passBaru
-        };
-
-        let res = await fetch(SCRIPT_URL, { 
-            method: "POST",
-            body: JSON.stringify(dataPaketSandi)
-        });
-        
+        let res = await fetch(`${SCRIPT_URL}?action=gantiPassword&hp=${sessionWarga.hp}&passwordBaru=${encodeURIComponent(passBaru)}`, { method: "POST" });
         let json = await res.json();
         if(json.status === "success") {
             localStorage.setItem('tuntas_warga_pw', passBaru);
@@ -383,11 +369,11 @@ async function prosesGantiPassword() {
             closeModal('mKeamanan');
             tampilAlert("Sandi Diperbarui", "Kata sandi sukses diubah, bro!", true);
         } else {
-            tampilAlert("Gagal", json.message || "Gagal memperbarui password.", false);
+            tampilAlert("Gagal", "Gagal merubah password di database.", false);
         }
     } catch(e) {
         console.error(e);
-        tampilAlert("Error", "Gagal mengirim permintaan perubahan password.", false);
+        tampilAlert("Error", "Gagal merubah password.", false);
     } finally {
         hideLoading();
     }
@@ -402,32 +388,28 @@ function logoutWarga() {
     document.getElementById('lHp').value = "";
 }
 
-// HANDLER WINDOW LOAD ANTI-FREEZE OVERLAY
+// --- INITIALIZATION SINKRON AMAN DATA KAS ---
 window.onload = async function() {
     showLoading();
     const savedHp = localStorage.getItem('tuntas_warga_hp');
     const savedPw = localStorage.getItem('tuntas_warga_pw');
 
-    try {
-        let suksesLoad = await ambilDataZSheets();
-        
-        if(suksesLoad && savedHp && savedPw) {
-            const cocok = dbGlobal.anggota.find(u => 
-                (u.hp || '').toString().trim() === savedHp && 
-                (u.password || '').toString().trim() === savedPw
-            );
-            if(cocok) {
-                sessionWarga = cocok;
-                bukaDashboardWarga();
-                hideLoading();
-                return;
-            } else {
-                localStorage.clear();
-            }
-        }
-    } catch(err) {
-        console.error("Gagal memuat inisialisasi awal:", err);
-    }
+    // Wajib ambil data sheet sampai selesai dulu, baru jalankan dashboard!
+    let suksesLoad = await ambilDataZSheets();
     
+    if(suksesLoad && savedHp && savedPw) {
+        const cocok = dbGlobal.anggota.find(u => 
+            (u.hp || '').toString().trim() === savedHp && 
+            (u.password || '').toString().trim() === savedPw
+        );
+        if(cocok) {
+            sessionWarga = cocok;
+            bukaDashboardWarga();
+            hideLoading();
+            return;
+        } else {
+            localStorage.clear();
+        }
+    }
     hideLoading();
 };
