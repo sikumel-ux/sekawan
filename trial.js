@@ -1,5 +1,5 @@
 // URL Web App GAS hasil Deploy Terbaru Milikmu, Bro
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6nahXWdM4pw09p8llnTo9Vrg49LYzJp5XMW6JiikwOGufIl6TU-Gw6nz6RTN1vS6m/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
