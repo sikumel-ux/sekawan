@@ -26,7 +26,6 @@ function closeAlert() { document.getElementById('customAlert').classList.remove(
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// Perbaikan Toggle Mata Password
 function togglePasswordLogin() {
     const pInput = document.getElementById('lPass');
     const eye = document.getElementById('eyeIcon');
@@ -102,7 +101,6 @@ async function prosesLoginWarga() {
     }
 }
 
-// SINKRONISASI DATASHEET KE DASHBOARD PORTAL
 function bukaDashboardWarga() {
     document.getElementById('screen-login').classList.add('hidden');
     document.getElementById('screen-dashboard').classList.remove('hidden');
@@ -163,15 +161,21 @@ function bukaDashboardWarga() {
 
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
-    // --- 🛠️ FIX SINKRONISASI TOTAL BULAN BERGABUNG (Mengakomodasi spasi label) ---
+    // --- 🛠️ FIX BRUTAL: SCAN SEMUA KEMUNGKIKAN NAMA KEY UNTUK "Bulan Bergabung" ---
     let txtBergabung = "JANUARI 2025"; 
-    let mentahBergabung = sessionWarga['Bulan Bergabung'] || sessionWarga.bulanBergabung || sessionWarga.bergabung;
+    let mentahBergabung = sessionWarga['Bulan Bergabung'] || 
+                          sessionWarga['bulan bergabung'] || 
+                          sessionWarga.bulanBergabung || 
+                          sessionWarga.bulanbergabung || 
+                          sessionWarga.bergabung || 
+                          sessionWarga.tanggal;
     
     if (mentahBergabung) {
         let objekTgl = new Date(mentahBergabung);
         if (!isNaN(objekTgl.getTime())) {
             txtBergabung = `${daftarBulan[objekTgl.getMonth()]} ${objekTgl.getFullYear()}`;
         } else {
+            // Jika isian berupa string teks manual dari sheet, langsung tampilkan
             txtBergabung = mentahBergabung.toString().toUpperCase();
         }
     }
@@ -182,16 +186,16 @@ function bukaDashboardWarga() {
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
-    // --- 🛠️ FIX TAMPILAN FOTO PROFIL (Membaca label kapital 'Foto') ---
+    // --- 🛠️ FIX BRUTAL: SCAN SEMUA KEMUNGKINAN KEY UNTUK "Foto" ---
     const avatar = document.getElementById('avatarWarga');
-    let urlFoto = sessionWarga.Foto || sessionWarga.foto;
+    let urlFoto = sessionWarga.Foto || sessionWarga.foto || sessionWarga.FOTO || sessionWarga['Foto Profil'];
     if(urlFoto && urlFoto.trim() !== "") {
         avatar.src = urlFoto;
     } else {
         avatar.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(namaUserUpper)}&backgroundColor=064e3b`;
     }
 
-    // 3. CETAK GRID BULANAN (MINIMALIS KOTAK HIJAU)
+    // 3. GRID BULANAN
     const gridBulan = document.getElementById('statusBulanGrid');
     gridBulan.innerHTML = '';
 
@@ -219,7 +223,7 @@ function bukaDashboardWarga() {
         }
     });
 
-    // 4. CETAK LIST HISTORI PRIBADI
+    // 4. LIST HISTORI PRIBADI
     const listPribadi = document.getElementById('listRiwayatPribadi');
     listPribadi.innerHTML = '';
 
@@ -246,7 +250,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 5. CETAK MUTASI TRANSAKSI GABUNGAN
+    // 5. MUTASI KAS
     const listMutasi = document.getElementById('listMutasiKasMasyarakat');
     listMutasi.innerHTML = '';
 
@@ -272,7 +276,7 @@ function bukaDashboardWarga() {
 
 function bukaModalKas() { openModal('mDetailKas'); }
 
-// --- 🛠️ FUNGSI BARU: PROSES UPLOAD FOTO KE GOOGLE SHEETS VIA BASE64 ---
+// --- 🛠️ RE-WRITE: OPTIMALISASI HIT FETCH UPLOAD FOTO BIAR DITERIMA GAS ---
 function uploadFotoProfil(input) {
     if (!input.files || !input.files[0]) return;
     
@@ -284,27 +288,24 @@ function uploadFotoProfil(input) {
     reader.onload = async function(e) {
         const base64Data = e.target.result.split(',')[1];
         try {
-            let formData = new URLSearchParams();
-            formData.append('action', 'updateFoto');
-            formData.append('hp', sessionWarga.hp);
-            formData.append('filename', file.name);
-            formData.append('mimeType', file.type);
-            formData.append('fileData', base64Data);
+            // Kita kirim pakai metode query parameters + POST payload standar agar kompatibel dengan doPost(e) di GAS
+            let urlTujuan = `${SCRIPT_URL}?action=updateFoto&hp=${sessionWarga.hp}&filename=${encodeURIComponent(file.name)}&mimeType=${encodeURIComponent(file.type)}`;
 
-            let res = await fetch(SCRIPT_URL, {
+            let res = await fetch(urlTujuan, {
                 method: 'POST',
-                body: formData,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                body: base64Data // Ambil raw string base64 ke dalam body
             });
             
             let json = await res.json();
             if(json.status === "success") {
-                // Update local session data dengan URL foto dari Drive yang baru
-                sessionWarga.Foto = json.videoUrl || json.url || json.fileUrl; 
-                document.getElementById('avatarWarga').src = e.target.result; // Tampilkan lokal preview langsung
+                let linkFotoBaru = json.url || json.fileUrl || json.videoUrl;
+                // Simpan perubahan ke session lokal agar saat pindah menu tidak hilang
+                sessionWarga.Foto = linkFotoBaru;
+                sessionWarga.foto = linkFotoBaru;
+                document.getElementById('avatarWarga').src = e.target.result; 
                 tampilAlert("Sukses", "Foto profil berhasil diperbarui, bro!", true);
             } else {
-                tampilAlert("Gagal", "Server gagal memproses penyimpanan foto.", false);
+                tampilAlert("Gagal", "Server gagal memproses penyimpanan foto. Cek script GAS-mu, bro.", false);
             }
         } catch(err) {
             console.error(err);
