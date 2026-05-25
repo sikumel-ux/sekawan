@@ -1,5 +1,5 @@
 // URL Web App GAS (Google Apps Script) TUNTAS
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmWiQWJr38aKsheoWhoB173XiSVYt06WZhDXz4TfkLmrOza8Q84KAZmeHu1fR9Fkh3/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
