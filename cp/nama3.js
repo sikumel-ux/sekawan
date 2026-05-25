@@ -52,6 +52,7 @@ function salinRekening() {
     });
 }
 
+// AMBIL DATA UTAMA DARI SHEET PUSAT (GET METHOD)
 async function ambilDataZSheets() {
     try {
         let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
@@ -103,6 +104,7 @@ async function prosesLoginWarga() {
     hideLoading();
 }
 
+// MAPPING DATA KE DASHBOARD UI
 function bukaDashboardWarga() {
     document.getElementById('screen-login').classList.add('hidden');
     document.getElementById('screen-dashboard').classList.remove('hidden');
@@ -115,6 +117,7 @@ function bukaDashboardWarga() {
 
     const namaUserUpper = (sessionWarga.nama || '').trim().toUpperCase();
 
+    // 1. SEDOT DATA PEMBAYARAN IURAN
     if(dbGlobal.pembayaran && Array.isArray(dbGlobal.pembayaran)) {
         dbGlobal.pembayaran.forEach(d => {
             const nominal = Number(d.nominal || 0);
@@ -140,6 +143,7 @@ function bukaDashboardWarga() {
         });
     }
 
+    // 2. SEDOT DATA KAS UMUM
     if(dbGlobal.kas && Array.isArray(dbGlobal.kas)) {
         dbGlobal.kas.forEach(d => {
             const nominal = Number(d.nominal || 0);
@@ -162,6 +166,7 @@ function bukaDashboardWarga() {
 
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
+    // --- PARSING BULAN BERGABUNG ---
     let txtBergabung = "JANUARI 2025"; 
     let mentahBergabung = null;
     
@@ -195,13 +200,14 @@ function bukaDashboardWarga() {
         }
     }
 
+    // SUNTIK TEKS UTAMA
     document.getElementById('cardNama').innerText = namaUserUpper;
     document.getElementById('cardHp').innerText = sessionWarga.hp || '-';
     document.getElementById('cardGabung').innerText = txtBergabung;
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
-    // --- 🛠️ FIX FOTO DEFAULT: GANTI JADI avatar.png ---
+    // --- PENANGANAN FOTO PROFIL & DEFAULT OPTION ---
     const avatar = document.getElementById('avatarWarga');
     let urlFoto = null;
     for (let key in sessionWarga) {
@@ -217,10 +223,10 @@ function bukaDashboardWarga() {
     if(urlFoto && urlFoto.trim() !== "" && urlFoto.startsWith('http')) {
         avatar.src = urlFoto;
     } else {
-        avatar.src = "avatar.png"; // Menggunakan avatar.png lokal yang kamu upload, bro!
+        avatar.src = "avatar.png"; // Mengarah ke aset gambar lokalmu, bro!
     }
 
-    // 3. GENERATE GRID BULANAN
+    // 3. GENERATE GRID STATUS BULANAN
     const gridBulan = document.getElementById('statusBulanGrid');
     gridBulan.innerHTML = '';
 
@@ -248,7 +254,7 @@ function bukaDashboardWarga() {
         }
     });
 
-    // 4. HISTORI KAS MANDIRI
+    // 4. RIWAYAT IURAN PRIBADI
     const listPribadi = document.getElementById('listRiwayatPribadi');
     listPribadi.innerHTML = '';
 
@@ -275,7 +281,7 @@ function bukaDashboardWarga() {
         });
     }
 
-    // 5. MUTASI TOTAL
+    // 5. MUTASI KAS UMUM
     const listMutasi = document.getElementById('listMutasiKasMasyarakat');
     listMutasi.innerHTML = '';
 
@@ -301,7 +307,7 @@ function bukaDashboardWarga() {
 
 function bukaModalKas() { openModal('mDetailKas'); }
 
-// --- 🛠️ RE-WRITE TOTAL: UPLOAD FOTO VIA JSON PAYLOAD (ANTI-FAIL & ANTI-SERVER ERROR) ---
+// --- UPLOAD FOTO VIA URLSearchParams POST METHOD ---
 async function uploadFotoProfil(input) {
     if (!input.files || !input.files[0]) return;
     
@@ -313,19 +319,17 @@ async function uploadFotoProfil(input) {
     reader.onload = async function(e) {
         const base64Data = e.target.result.split(',')[1];
         try {
-            // Kita bungkus data ke dalam JSON murni (Metode pengiriman paling aman untuk Apps Script)
-            let payloadJSON = {
-                action: "updateFoto",
-                hp: sessionWarga.hp.toString(),
-                filename: file.name,
-                mimeType: file.type,
-                fileData: base64Data
-            };
+            let parameterGas = new URLSearchParams();
+            parameterGas.append('action', 'updateFoto');
+            parameterGas.append('hp', sessionWarga.hp.toString().trim());
+            parameterGas.append('filename', file.name);
+            parameterGas.append('mimeType', file.type);
+            parameterGas.append('fileData', base64Data);
 
-            // Tembak menggunakan POST murni dengan stringify JSON
             let res = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify(payloadJSON)
+                body: parameterGas,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
             
             let json = await res.json();
@@ -342,7 +346,7 @@ async function uploadFotoProfil(input) {
                 document.getElementById('avatarWarga').src = e.target.result; 
                 tampilAlert("Sukses", "Foto profil berhasil diperbarui, bro!", true);
             } else {
-                tampilAlert("Gagal", "Server gagal memproses penyimpanan foto profil.", false);
+                tampilAlert("Gagal", "Server Apps Script menolak menyimpan foto profil.", false);
             }
         } catch(err) {
             console.error(err);
@@ -354,15 +358,27 @@ async function uploadFotoProfil(input) {
     reader.readAsDataURL(file);
 }
 
+// --- PROSES GANTI PASSWORD VIA URLSearchParams POST METHOD ---
 async function prosesGantiPassword() {
     const passBaru = document.getElementById('newPass').value.trim();
     if(!passBaru) {
         tampilAlert("Gagal", "Kolom kata sandi baru tidak boleh kosong!", false);
         return;
     }
+    
     showLoading();
     try {
-        let res = await fetch(`${SCRIPT_URL}?action=gantiPassword&hp=${sessionWarga.hp}&passwordBaru=${encodeURIComponent(passBaru)}`, { method: "POST" });
+        let parameterSandi = new URLSearchParams();
+        parameterSandi.append('action', 'gantiPassword');
+        parameterSandi.append('hp', sessionWarga.hp.toString().trim());
+        parameterSandi.append('passwordBaru', passBaru);
+
+        let res = await fetch(SCRIPT_URL, { 
+            method: "POST",
+            body: parameterSandi,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        
         let json = await res.json();
         if(json.status === "success") {
             localStorage.setItem('tuntas_warga_pw', passBaru);
@@ -371,11 +387,11 @@ async function prosesGantiPassword() {
             closeModal('mKeamanan');
             tampilAlert("Sandi Diperbarui", "Kata sandi sukses diubah, bro!", true);
         } else {
-            tampilAlert("Gagal", "Gagal merubah password di database.", false);
+            tampilAlert("Gagal", "Gagal merubah password di database script.", false);
         }
     } catch(e) {
         console.error(e);
-        tampilAlert("Error", "Gagal merubah password.", false);
+        tampilAlert("Error", "Gagal merubah password. Periksa koneksi backend.", false);
     } finally {
         hideLoading();
     }
@@ -390,6 +406,7 @@ function logoutWarga() {
     document.getElementById('lHp').value = "";
 }
 
+// AUTO-LOGIN INITIALIZATION ON LOAD
 window.onload = async function() {
     showLoading();
     const savedHp = localStorage.getItem('tuntas_warga_hp');
