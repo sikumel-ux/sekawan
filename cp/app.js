@@ -76,7 +76,7 @@ async function ambilDataZSheets() {
         tampilAlert("Putus Koneksi", "Gagal terhubung ke server. Periksa kuota/sinyal internetmu, bro.", false);
         return false;
     } finally {
-        hideLoading();
+        hideLoading(); // Selesai fetch, loading layar wajib hilang!
     }
 }
 
@@ -90,7 +90,9 @@ async function prosesLoginWarga() {
         return;
     }
 
-    await ambilDataZSheets();
+    // Ambil data terbaru dulu dari Sheets
+    let suksesAmbil = await ambilDataZSheets();
+    if(!suksesAmbil) return; // Stop jika koneksi gagal
 
     // Validasi data (mencocokkan no hp dan password dari database sheet Anggota)
     const cocok = dbGlobal.anggota.find(u => 
@@ -176,7 +178,7 @@ function bukaDashboardWarga() {
     // HITUNG REAL-TIME KAS RT
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
-    // --- 🛠️ FIXED: LOGIKA SEDOT BULAN BERGABUNG (Mendukung nama kolom 'Bulan Bergabung') ---
+    // --- LOGIKA SEDOT BULAN BERGABUNG ---
     let txtBergabung = "JANUARI 2025"; 
     let mentahBergabung = sessionWarga['Bulan Bergabung'] || sessionWarga.bulanBergabung || sessionWarga.bergabung || sessionWarga.tanggal;
     
@@ -198,7 +200,7 @@ function bukaDashboardWarga() {
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
-    // --- 🛠️ FIXED: PENANGANAN FOTO PROFIL AVATAR (Mendukung nama kolom 'Foto') ---
+    // --- PENANGANAN FOTO PROFIL AVATAR ---
     const avatar = document.getElementById('avatarWarga');
     let urlFoto = sessionWarga.Foto || sessionWarga.foto;
     
@@ -336,25 +338,33 @@ function logoutWarga() {
     document.getElementById('lHp').value = "";
 }
 
-// CEK AUTO LOGIN SAAT HALAMAN DIBUKA (FIRST INITIALIZATION)
+// --- 🛠️ FIXED TOTAL: INITIALIZATION UTK AUTO LOGIN ---
 window.onload = async function() {
+    // Tampilkan screen loading di awal biar aman
+    showLoading();
+    
     const savedHp = localStorage.getItem('tuntas_warga_hp');
     const savedPw = localStorage.getItem('tuntas_warga_pw');
 
-    if(savedHp && savedPw) {
-        let suksesLoad = await ambilDataZSheets();
-        if(suksesLoad) {
-            const cocok = dbGlobal.anggota.find(u => 
-                (u.hp || '').toString().trim() === savedHp && 
-                (u.password || '').toString().trim() === savedPw
-            );
-            if(cocok) {
-                sessionWarga = cocok;
-                bukaDashboardWarga();
-                return;
-            }
+    // Tarik basis data pusat secara mandiri terlebih dahulu
+    let suksesLoad = await ambilDataZSheets();
+    
+    if(suksesLoad && savedHp && savedPw) {
+        // Jika ada session tersimpan di browser, coba langsung auto-login
+        const cocok = dbGlobal.anggota.find(u => 
+            (u.hp || '').toString().trim() === savedHp && 
+            (u.password || '').toString().trim() === savedPw
+        );
+        if(cocok) {
+            sessionWarga = cocok;
+            bukaDashboardWarga();
+            hideLoading();
+            return; // Sukses auto login, hentikan proses di bawahnya
+        } else {
+            localStorage.clear(); // Bersihkan jika kredensial lawas tidak valid
         }
-        localStorage.clear();
     }
+
+    // Jika GAGAL auto-login atau TIDAK ADA data tersimpan, langsung paksa tutup screen loading biar form login terbuka
     hideLoading();
 };
