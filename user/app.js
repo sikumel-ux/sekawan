@@ -1,5 +1,5 @@
 // ISI DENGAN URL WEB APP GOOGLE APPS SCRIPT TERBARU KAMU, BRO!
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_pu0GWwuLUr9uZFmtnakax4crnxUxCrtMIVAljiV1LPcy5c_MPSU44u8L7XlR9fNm/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmWiQWJr38aKsheoWhoB173XiSVYt06WZhDXz4TfkLmrOza8Q84KAZmeHu1fR9Fkh3/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobal = { kas: [], pembayaran: [], anggota: [] };
