@@ -8,21 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 90px; }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 9999; display: none; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
-        .active-tab-btn { color: #059669 !important; }
-        .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; opacity: 0; transition: all 0.25s ease-out; }
-        .modal.active { display: flex; opacity: 1; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 24px; border-radius: 2rem; transform: scale(0.9); transition: all 0.25s ease-out; }
-        .modal.active .modal-content { transform: scale(1); }
-    </style>
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body class="bg-slate-50 text-slate-800">
 
 <div id="loadingAdmin" class="loading-overlay">Memproses Data Admin...</div>
 
-<div id="adminAlert" class="modal" style="z-index: 300;">
+<div id="adminAlert" class="modal">
     <div class="modal-content text-center space-y-4">
         <div id="alertIconBox" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600">
             <span class="material-symbols-rounded">check_circle</span>
@@ -39,13 +31,13 @@
             <div>
                 <span class="material-symbols-rounded text-emerald-800 !text-5xl">admin_panel_settings</span>
                 <h2 class="text-xl font-black text-slate-900 tracking-tight uppercase mt-2">PENGURUS / PETUGAS</h2>
-                <p class="text-xs text-slate-400 font-bold mt-1">Gunakan nomor admin & sandi Anda</p>
+                <p class="text-xs text-slate-400 font-bold mt-1">Masuk dengan akun khusus Petugas</p>
             </div>
             
             <div class="space-y-3 text-left">
                 <div>
-                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">No HP Admin</label>
-                    <input type="text" id="admHp" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="08xxxxxxxx">
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">No HP Petugas</label>
+                    <input type="text" id="admHp" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Contoh: 081234xxxx">
                 </div>
                 <div>
                     <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi</label>
