@@ -1,21 +1,21 @@
 // =========================================================================
-// KONFIGURASI FIREBASE (TEMPEL KODE KAMU DI SINI, BRO!)
+// KONFIGURASI FIREBASE RESMI PROJECT TUNTAS04
 // =========================================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    authDomain: "project-tuntas-rt.firebaseapp.com",
-    databaseURL: "https://project-tuntas-rt-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "project-tuntas-rt",
-    storageBucket: "project-tuntas-rt.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef1234567890"
+    apiKey: "AIzaSyAHXqxr7jh3BrRlYqLrIn-fqT0ys9AnRBU",
+    authDomain: "tuntas04.firebaseapp.com",
+    databaseURL: "https://tuntas04-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tuntas04",
+    storageBucket: "tuntas04.firebasestorage.app",
+    messagingSenderId: "208840175808",
+    appId: "1:208840175808:web:2ad07fdb8930845fbdbd25"
 };
 
-// Inisialisasi Firebase Core & Database
+// Inisialisasi Firebase Core & Realtime Database (Menggunakan SDK v8 di HTML)
 firebase.initializeApp(firebaseConfig);
 const dbFirebase = firebase.database();
 
-// URL Lama Web App GAS tetap digunakan untuk sedot rekap kas & iuran utama
+// URL Web App GAS untuk sedot data utama Kas & Iuran dari Google Sheets
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -109,16 +109,16 @@ async function prosesLoginWarga() {
         return;
     }
 
-    // Cari kecocokan data awal di Google Sheets
+    // Cari kecocokan data awal di Google Sheets berdasarkan No HP
     const cocok = dbGlobal.anggota.find(u => (u.hp || '').toString().trim() === inputHp);
 
     if(cocok) {
-        // Cek apakah user ini sudah punya password kustom baru di Firebase
+        // Cek apakah user ini sudah punya password kustom baru di Firebase Realtime Database
         dbFirebase.ref('users/' + inputHp).once('value').then((snapshot) => {
             let dataFb = snapshot.val();
-            let passwordValid = (cocok.password || '').toString().trim(); // Default password sheet
+            let passwordValid = (cocok.password || '').toString().trim(); // Default password dari sheet
 
-            // Jika di Firebase sudah pernah ganti password, pakai password dari Firebase
+            // Jika di Firebase sudah ada password kustom baru, pakai yang dari Firebase
             if (dataFb && dataFb.password) {
                 passwordValid = dataFb.password.toString().trim();
             }
@@ -128,7 +128,7 @@ async function prosesLoginWarga() {
                 localStorage.setItem('tuntas_warga_pw', inputPass);
                 sessionWarga = cocok;
                 
-                // Tempel data password ter-update ke session
+                // Tempel data password ter-update ke session objek
                 sessionWarga.password = passwordValid;
                 
                 document.getElementById('lPass').value = "";
@@ -206,14 +206,14 @@ function bukaDashboardWarga() {
 
     const saldoKasRealTime = totalPemasukan - totalPengeluaran;
 
-    // Suntik Data Utama
+    // Suntik Data Utama ke Card Profile
     document.getElementById('cardNama').innerText = namaUserUpper;
     document.getElementById('cardHp').innerText = sessionWarga.hp || '-';
     document.getElementById('cardTotalKontribusi').innerText = 'Rp ' + kontribusiSaya.toLocaleString('id-ID');
     document.getElementById('widgetSaldoKas').innerText = 'Rp ' + saldoKasRealTime.toLocaleString('id-ID');
 
     // =========================================================================
-    // CODE SCAN G BULAN GABUNG MILIKMU (SANGAT TANGGUH)
+    // CODE SCAN DYNAMIC BULAN GABUNG (ANTI SALAH KOLOM)
     // =========================================================================
     let txtBergabung = "JANUARI 2025"; 
     let mentahBergabung = null;
@@ -237,15 +237,15 @@ function bukaDashboardWarga() {
     document.getElementById('cardGabung').innerText = txtBergabung.toUpperCase();
 
     // =========================================================================
-    // LOAD FOTO PROFIL REAL-TIME DARI FIREBASE (BASE64)
+    // LOAD FOTO PROFIL REAL-TIME DARI FIREBASE REALTIME DATABASE (BASE64)
     // =========================================================================
     const avatarImg = document.getElementById('avatarWarga');
     dbFirebase.ref('users/' + sessionWarga.hp + '/fotoProfil').once('value').then((snapshot) => {
         let base64Foto = snapshot.val();
         if (base64Foto) {
-            avatarImg.src = base64Foto; // Ganti gambar default dengan Base64 dari Firebase
+            avatarImg.src = base64Foto; // Tempel data string Base64 dari Firebase
         } else {
-            avatarImg.src = "avatar.png"; // Fallback ke file lokal jika belum pernah upload
+            avatarImg.src = "avatar.png"; // Fallback ke file lokal jika belum pernah pasang foto
         }
     }).catch(() => {
         avatarImg.src = "avatar.png";
@@ -331,7 +331,7 @@ function bukaDashboardWarga() {
 function bukaModalKas() { openModal('mDetailKas'); }
 
 // =========================================================================
-// PROSES GANTI PASSWORD VIA FIREBASE (INSTAN & AMAN)
+// PROSES GANTI PASSWORD VIA FIREBASE (INSTAN RE-WRITE)
 // =========================================================================
 function prosesGantiPasswordFirebase() {
     const passBaru = document.getElementById('newPass').value.trim();
@@ -342,7 +342,7 @@ function prosesGantiPasswordFirebase() {
 
     showLoading();
     
-    // Update data password langsung ke node user berdasarkan nomor HP-nya
+    // Tembak lurus ke node user berdasarkan Nomor HP-nya masing-masing
     dbFirebase.ref('users/' + sessionWarga.hp).update({
         password: passBaru
     }).then(() => {
@@ -360,7 +360,7 @@ function prosesGantiPasswordFirebase() {
 }
 
 // =========================================================================
-// PROSES COMPRESS FOTO & UPLOAD SEBAGAI BASE64 KE FIREBASE
+// PROSES AUTO COMPRESS FOTO PROFIL & UPLOAD BASE64 (GRATIS & ENTENG)
 // =========================================================================
 function prosesUploadFotoFirebase(input) {
     if (!input.files || !input.files[0]) return;
@@ -374,11 +374,11 @@ function prosesUploadFotoFirebase(input) {
         img.src = e.target.result;
         
         img.onload = function() {
-            // Trik Canvas Compressor: Perkecil dimensi gambar agar ukuran Base64 sangat ramping (di bawah 50 KB)
+            // Menggunakan HTML5 Canvas untuk mengecilkan file foto kamera HP (di bawah 50 KB)
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            const MAX_WIDTH = 180; // Resolusi avatar ideal
+            const MAX_WIDTH = 180; // Ukuran resolusi avatar optimal
             const MAX_HEIGHT = 180;
             let width = img.width;
             let height = img.height;
@@ -399,10 +399,10 @@ function prosesUploadFotoFirebase(input) {
             canvas.height = height;
             ctx.drawImage(img, 0, 0, width, height);
             
-            // Konversi canvas menjadi format text Base64 dengan kualitas kompresi 75%
+            // Render hasil kompresi menjadi tipe teks string jpeg dengan kompresi 75%
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
             
-            // Simpan string teks gambar langsung ke Firebase
+            // Kirim string teks gambar tersebut ke database Firebase
             dbFirebase.ref('users/' + sessionWarga.hp).update({
                 fotoProfil: compressedBase64
             }).then(() => {
@@ -430,7 +430,7 @@ function logoutWarga() {
     document.getElementById('lHp').value = "";
 }
 
-// AUTO LOGIN HANDLER
+// AUTO LOGIN HANDLER DUA JALUR (SHEETS + FIREBASE)
 window.onload = async function() {
     showLoading();
     const savedHp = localStorage.getItem('tuntas_warga_hp');
@@ -441,7 +441,7 @@ window.onload = async function() {
         if(suksesLoad) {
             const cocok = dbGlobal.anggota.find(u => (u.hp || '').toString().trim() === savedHp);
             if(cocok) {
-                // Tarik kecocokan password dari Firebase jika ada kustomisasi
+                // Tarik record password dari Firebase untuk disinkronkan dengan data lokal
                 dbFirebase.ref('users/' + savedHp).once('value').then((snapshot) => {
                     let dataFb = snapshot.val();
                     let pwValid = (cocok.password || '').toString().trim();
