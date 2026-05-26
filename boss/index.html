@@ -41,17 +41,17 @@
             <div>
                 <span class="material-symbols-rounded text-emerald-800 !text-5xl">admin_panel_settings</span>
                 <h2 class="text-xl font-black text-slate-900 tracking-tight uppercase mt-2">LOGIN PETUGAS</h2>
-                
+                <p class="text-xs text-slate-400 font-bold mt-1">Gunakan info Nama & No HP sesuai tab Petugas di Google Sheets</p>
             </div>
             
             <div class="space-y-3 text-left">
                 <div>
-                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Username</label>
-                    <input type="text" id="admNama" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="admin">
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nama Petugas / Pengurus</label>
+                    <input type="text" id="admNama" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Contoh: PENGURUS">
                 </div>
                 <div>
-                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Password</label>
-                    <input type="text" id="admHp" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Apri">
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">No HP Petugas</label>
+                    <input type="text" id="admHp" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Contoh: 081211407667">
                 </div>
             </div>
             <button onclick="prosesLoginAdmin()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg tracking-wider active:scale-95 transition-all">Verifikasi Petugas</button>
@@ -155,7 +155,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const dbFirebase = firebase.database();
 
-// LINK KODE BARU KAMU SUDAH LANGSUNG AKU PASANG DI SINI, BRO:
+// URL APPS SCRIPT BARU UTUH MILIKMU
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZBn4bxYcPiXwT8LD1F15usZQESIWWFwxczEVLfnB7oWwl9FYbw8sAMwnORd2tNnuvLQ/exec";
 
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -189,7 +189,7 @@ function switchTabAdmin(tabId, btnElement) {
     if(btnElement) btnElement.classList.add('active-tab-btn');
 }
 
-// PROSES LOGIN MENEMBAK API ACTION loginAdmin
+// PROSES LOGIN AMAN DAN PREVENTIF MENGGUNAKAN URLSEARCHPARAMS
 async function prosesLoginAdmin() {
     const inputNama = document.getElementById('admNama').value.trim();
     const inputHp = document.getElementById('admHp').value.trim();
@@ -202,7 +202,14 @@ async function prosesLoginAdmin() {
     showAdminLoading();
     
     try {
-        let urlTarget = `${SCRIPT_URL}?action=loginAdmin&nama=${encodeURIComponent(inputNama)}&hp=${encodeURIComponent(inputHp)}`;
+        // Amankan parameter menggunakan URLSearchParams agar tidak kosong saat dibaca oleh Google Apps Script
+        const params = new URLSearchParams();
+        params.append('action', 'loginAdmin');
+        params.append('nama', inputNama);
+        params.append('hp', inputHp);
+
+        let urlTarget = `${SCRIPT_URL}?${params.toString()}`;
+        
         let res = await fetch(urlTarget, { method: "GET", mode: "cors" });
         let json = await res.json();
         
@@ -286,7 +293,7 @@ function adminSetelSampah(statusPilihan) {
     if(!hpTarget) return;
     showAdminLoading();
     const sekarang = new Date();
-    const tglHariIni = sekarang.getDate();
+    const tglHariIni = Thermal = sekarang.getDate();
     const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
     const jamMenit = sekarang.toTimeString().split(' ')[0].substring(0, 5);
     const teksWaktu = `${jamMenit} WIB`;
