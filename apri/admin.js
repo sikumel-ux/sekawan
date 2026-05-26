@@ -17,9 +17,8 @@ const dbFirebase = firebase.database();
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-let dbGlobalAdmin = { anggota: [] };
+let dbGlobalAdmin = { anggota: [], petugas: [] };
 let sessionAdmin = null;
-let dataSampahHariIniKomunitas = {};
 
 function showAdminLoading() { document.getElementById('loadingAdmin').style.display = 'flex'; }
 function hideAdminLoading() { document.getElementById('loadingAdmin').style.display = 'none'; }
@@ -46,10 +45,10 @@ function switchTabAdmin(tabId, btnElement) {
 
     const navButtons = document.querySelectorAll('nav button');
     navButtons.forEach(btn => btn.classList.remove('active-tab-btn'));
-    if(btnElement) btnElement.add('active-tab-btn');
+    if(btnElement) btnElement.classList.add('active-tab-btn');
 }
 
-// AMBIL DATA SEMUA ANGGOTA DARI GOOGLE SHEETS PUSAT
+// AMBIL DATA KESELURUHAN DARI GOOGLE SHEETS PUSAT
 async function ambilDataSheetsAdmin() {
     try {
         let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET", mode: "cors" });
@@ -65,7 +64,7 @@ async function ambilDataSheetsAdmin() {
     }
 }
 
-// PROSES AUTENTIKASI PENGURUS
+// PROSES AUTENTIKASI LOGIN PETUGAS
 async function prosesLoginAdmin() {
     const hp = document.getElementById('admHp').value.trim();
     const pass = document.getElementById('admPass').value.trim();
@@ -79,25 +78,34 @@ async function prosesLoginAdmin() {
     let sukses = await ambilDataSheetsAdmin();
     if(!sukses) {
         hideAdminLoading();
-        tampilAdminAlert("Error", "Gagal terhubung ke Google Sheets.", false);
+        tampilAdminAlert("Error", "Gagal terhubung ke Google Sheets pusat.", false);
         return;
     }
 
-    const cocok = dbGlobalAdmin.anggota.find(u => (u.hp || '').toString().trim() === hp);
+    // Validasi langsung diarahkan ke dalam sheet / properti "petugas"
+    if (!dbGlobalAdmin.petugas) {
+        hideAdminLoading();
+        tampilAdminAlert("Gagal", "Sheet 'Petugas' tidak terbaca di API Web App, bro.", false);
+        return;
+    }
+
+    const cocok = dbGlobalAdmin.petugas.find(u => (u.hp || '').toString().trim() === hp);
+    
     if(cocok) {
-        // Cek custom password di Firebase dulu
+        // Cek custom password di Firebase terupdate
         dbFirebase.ref('users/' + hp).once('value').then((snapshot) => {
             let dataFb = snapshot.val();
             let pwValid = (cocok.password || '').toString().trim();
             if(dataFb && dataFb.password) pwValid = dataFb.password.toString().trim();
 
             if(pass === pwValid) {
-                const peran = (cocok.status || cocok.peran || '').toLowerCase();
-                if(peran.includes('pengurus') || peran.includes('petugas') || peran.includes('ketua')) {
+                const peran = (cocok.peran || cocok.status || '').toLowerCase();
+                // Memastikan yang login memiliki label peran pengurus/petugas/ketua/admin
+                if(peran.includes('pengurus') || peran.includes('petugas') || peran.includes('ketua') || peran.includes('admin')) {
                     sessionAdmin = cocok;
                     bukaDashboardAdmin();
                 } else {
-                    tampilAdminAlert("Akses Ditolak", "Akun Anda bukan Pengurus/Petugas, bro.", false);
+                    tampilAdminAlert("Akses Ditolak", "Hak peran Anda di tabel Petugas tidak valid.", false);
                 }
             } else {
                 tampilAdminAlert("Gagal", "Kata Sandi salah!", false);
@@ -106,7 +114,7 @@ async function prosesLoginAdmin() {
         });
     } else {
         hideAdminLoading();
-        tampilAdminAlert("Ditolak", "Nomor HP tidak terdaftar.", false);
+        tampilAdminAlert("Ditolak", "Nomor HP Petugas tidak terdaftar.", false);
     }
 }
 
@@ -120,26 +128,28 @@ function bukaDashboardAdmin() {
     const sekarang = new Date();
     document.getElementById('infoTanggalHariIni').innerText = `Hari Ini: ${sekarang.getDate()} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
 
-    // Isi Dropdown Warga di Tab Sampah & Tab Kas
+    // Isi Dropdown Warga Penyetor di Tab Sampah & Tab Kas
     const selSampah = document.getElementById('admPilihWarga');
     const selKas = document.getElementById('kasPilihWarga');
     selSampah.innerHTML = '';
     selKas.innerHTML = '';
 
-    dbGlobalAdmin.anggota.forEach(w => {
-        let opt = `<option value="${w.hp}">${w.nama.toUpperCase()} (${w.hp})</option>`;
-        selSampah.insertAdjacentHTML('beforeend', opt);
-        selKas.insertAdjacentHTML('beforeend', opt);
-    });
+    if(dbGlobalAdmin.anggota) {
+        dbGlobalAdmin.anggota.forEach(w => {
+            let opt = `<option value="${w.hp}">${w.nama.toUpperCase()} (${w.hp})</option>`;
+            selSampah.insertAdjacentHTML('beforeend', opt);
+            selKas.insertAdjacentHTML('beforeend', opt);
+        });
+    }
 
-    // Jalankan Live Monitoring Log Sampah Se-Komunitas Hari Ini
+    // Jalankan Real-Time Feed Monitoring Log Sampah Hari Ini
     dengarStatusSampahHariIni();
 }
 
-// REAL-TIME LISTENER STATUS SAMPAH GLOBAL HARI INI
+// REAL-TIME FEED LISTENER STATUS SAMPAH GLOBAL HARI INI
 function dengarStatusSampahHariIni() {
     const sekarang = new Date();
-    const tglHariIni = sekarang.getDate();
+    const tglHariIni = ThermalDate = sekarang.getDate();
     const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
 
     dbFirebase.ref(`status_sampah`).on('value', (snapshot) => {
@@ -147,36 +157,36 @@ function dengarStatusSampahHariIni() {
         const listContainer = document.getElementById('listStatusSampahHariIni');
         listContainer.innerHTML = '';
 
-        let totalTerdata = 0;
+        if(dbGlobalAdmin.anggota) {
+            dbGlobalAdmin.anggota.forEach(w => {
+                let statusWarga = "Belum Diabsen";
+                let jamWaktu = "-";
+                let warnaBadge = "bg-slate-100 text-slate-500";
 
-        dbGlobalAdmin.anggota.forEach(w => {
-            let statusWarga = "Belum Diabsen";
-            let jamWaktu = "-";
-            let warnaBadge = "bg-slate-100 text-slate-500";
+                if(rootSampah[w.hp] && rootSampah[w.hp][thnBlnNode] && rootSampah[w.hp][thnBlnNode][tglHariIni]) {
+                    const dataHariIni = rootSampah[w.hp][thnBlnNode][tglHariIni];
+                    statusWarga = dataHariIni.status || "Kosong";
+                    jamWaktu = dataHariIni.waktu || "-";
 
-            if(rootSampah[w.hp] && rootSampah[w.hp][thnBlnNode] && rootSampah[w.hp][thnBlnNode][tglHariIni]) {
-                const dataHariIni = rootSampah[w.hp][thnBlnNode][tglHariIni];
-                statusWarga = dataHariIni.status || "Kosong";
-                jamWaktu = dataHariIni.waktu || "-";
+                    if(statusWarga === "Diambil") warnaBadge = "bg-emerald-100 text-emerald-700 font-bold";
+                    else if(statusWarga === "Tidak Diambil") warnaBadge = "bg-rose-100 text-rose-700 font-bold";
+                }
 
-                if(statusWarga === "Diambil") warnaBadge = "bg-emerald-100 text-emerald-700 font-bold";
-                else if(statusWarga === "Tidak Diambil") warnaBadge = "bg-rose-100 text-rose-700 font-bold";
-            }
-
-            listContainer.insertAdjacentHTML('beforeend', `
-                <div class="py-3 flex justify-between items-center text-xs">
-                    <div>
-                        <p class="font-black text-slate-700 uppercase leading-none">${w.nama}</p>
-                        <p class="text-[9px] text-slate-400 font-semibold mt-1">Waktu: ${jamWaktu}</p>
+                listContainer.insertAdjacentHTML('beforeend', `
+                    <div class="py-3 flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-black text-slate-700 uppercase leading-none">${w.nama}</p>
+                            <p class="text-[9px] text-slate-400 font-semibold mt-1">Waktu: ${jamWaktu}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg text-[9px] uppercase tracking-wider ${warnaBadge}">${statusWarga}</span>
                     </div>
-                    <span class="px-2.5 py-1 rounded-lg text-[9px] uppercase tracking-wider ${warnaBadge}">${statusWarga}</span>
-                </div>
-            `);
-        });
+                `);
+            });
+        }
     });
 }
 
-// UPDATE STATUS SAMPAH WARGA LEWAT PANEL ADMIN
+// UPDATE ABSEN STATUS SAMPAH WARGA
 function adminSetelSampah(statusPilihan) {
     const hpTarget = document.getElementById('admPilihWarga').value;
     if(!hpTarget) return;
@@ -185,7 +195,7 @@ function adminSetelSampah(statusPilihan) {
     const sekarang = new Date();
     const tglHariIni = sekarang.getDate();
     const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
-    const jamMenit = sekarang.toTimeString().split(' ')[0].substring(0, 5);
+    const jamMenit = ThermalTime = sekarang.toTimeString().split(' ')[0].substring(0, 5);
     const teksWaktu = `${jamMenit} WIB`;
 
     const targetNode = dbFirebase.ref(`status_sampah/${hpTarget}/${thnBlnNode}/${tglHariIni}`);
@@ -220,7 +230,6 @@ async function prosesSubmitIuranBaru() {
 
     showAdminLoading();
     
-    // Siapkan data penambahan baris iuran baru untuk dikirim ke API Web Apps Script
     const params = new URLSearchParams();
     params.append('action', 'addPembayaran');
     params.append('nama', wargaObj.nama);
