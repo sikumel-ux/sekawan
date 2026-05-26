@@ -11,22 +11,30 @@ const firebaseConfig = {
     appId: "1:208840175808:web:2ad07fdb8930845fbdbd25"
 };
 
+// Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 const dbFirebase = firebase.database();
 
+// URL Google Apps Script Web App
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
 let dbGlobalAdmin = { anggota: [], petugas: [] };
 let sessionAdmin = null;
 
-function showAdminLoading() { document.getElementById('loadingAdmin').style.display = 'flex'; }
-function hideAdminLoading() { document.getElementById('loadingAdmin').style.display = 'none'; }
+// FUNGSI UI (LOADING & ALERT)
+function showAdminLoading() { 
+    document.getElementById('loadingAdmin').style.display = 'flex'; 
+}
+function hideAdminLoading() { 
+    document.getElementById('loadingAdmin').style.display = 'none'; 
+}
 
 function tampilAdminAlert(title, msg, isSuccess = true) {
     document.getElementById('alertAdminTitle').innerText = title;
     document.getElementById('alertAdminMsg').innerText = msg;
     const iconBox = document.getElementById('alertIconBox');
+    
     if(isSuccess) {
         iconBox.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
         iconBox.innerHTML = '<span class="material-symbols-rounded">check_circle</span>';
@@ -36,7 +44,10 @@ function tampilAdminAlert(title, msg, isSuccess = true) {
     }
     document.getElementById('adminAlert').classList.add('active');
 }
-function closeAdminAlert() { document.getElementById('adminAlert').classList.remove('active'); }
+
+function closeAdminAlert() { 
+    document.getElementById('adminAlert').classList.remove('active'); 
+}
 
 function switchTabAdmin(tabId, btnElement) {
     const tabs = document.querySelectorAll('.tab-admin-content');
@@ -59,7 +70,7 @@ async function ambilDataSheetsAdmin() {
         }
         return false;
     } catch(e) {
-        console.error(e);
+        console.error("Error Fetch Sheets:", e);
         return false;
     }
 }
@@ -82,7 +93,7 @@ async function prosesLoginAdmin() {
         return;
     }
 
-    // Validasi langsung diarahkan ke dalam sheet / properti "petugas"
+    // Validasi pengecekan apakah properti/sheet 'petugas' ada
     if (!dbGlobalAdmin.petugas) {
         hideAdminLoading();
         tampilAdminAlert("Gagal", "Sheet 'Petugas' tidak terbaca di API Web App, bro.", false);
@@ -92,7 +103,7 @@ async function prosesLoginAdmin() {
     const cocok = dbGlobalAdmin.petugas.find(u => (u.hp || '').toString().trim() === hp);
     
     if(cocok) {
-        // Cek custom password di Firebase terupdate
+        // Cek password terupdate di Firebase
         dbFirebase.ref('users/' + hp).once('value').then((snapshot) => {
             let dataFb = snapshot.val();
             let pwValid = (cocok.password || '').toString().trim();
@@ -100,7 +111,7 @@ async function prosesLoginAdmin() {
 
             if(pass === pwValid) {
                 const peran = (cocok.peran || cocok.status || '').toLowerCase();
-                // Memastikan yang login memiliki label peran pengurus/petugas/ketua/admin
+                // Validasi hak akses khusus admin/pengurus/petugas/ketua
                 if(peran.includes('pengurus') || peran.includes('petugas') || peran.includes('ketua') || peran.includes('admin')) {
                     sessionAdmin = cocok;
                     bukaDashboardAdmin();
@@ -111,6 +122,10 @@ async function prosesLoginAdmin() {
                 tampilAdminAlert("Gagal", "Kata Sandi salah!", false);
             }
             hideAdminLoading();
+        }).catch((err) => {
+            console.error(err);
+            hideAdminLoading();
+            tampilAdminAlert("Error Firebase", "Gagal melakukan sinkronisasi data enkripsi.", false);
         });
     } else {
         hideAdminLoading();
@@ -128,7 +143,7 @@ function bukaDashboardAdmin() {
     const sekarang = new Date();
     document.getElementById('infoTanggalHariIni').innerText = `Hari Ini: ${sekarang.getDate()} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
 
-    // Isi Dropdown Warga Penyetor di Tab Sampah & Tab Kas
+    // Isi Dropdown Pilihan Rumah Warga
     const selSampah = document.getElementById('admPilihWarga');
     const selKas = document.getElementById('kasPilihWarga');
     selSampah.innerHTML = '';
@@ -142,14 +157,14 @@ function bukaDashboardAdmin() {
         });
     }
 
-    // Jalankan Real-Time Feed Monitoring Log Sampah Hari Ini
+    // Aktifkan pemantauan Log Angkutan Sampah Real-Time
     dengarStatusSampahHariIni();
 }
 
-// REAL-TIME FEED LISTENER STATUS SAMPAH GLOBAL HARI INI
+// FEED REAL-TIME LISTENER LOG SAMPAH WARGA
 function dengarStatusSampahHariIni() {
     const sekarang = new Date();
-    const tglHariIni = ThermalDate = sekarang.getDate();
+    const tglHariIni = sekarang.getDate();
     const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
 
     dbFirebase.ref(`status_sampah`).on('value', (snapshot) => {
@@ -186,7 +201,7 @@ function dengarStatusSampahHariIni() {
     });
 }
 
-// UPDATE ABSEN STATUS SAMPAH WARGA
+// EKSEKUSI UPDATE ABSEN SAMPAH KE FIREBASE
 function adminSetelSampah(statusPilihan) {
     const hpTarget = document.getElementById('admPilihWarga').value;
     if(!hpTarget) return;
@@ -195,7 +210,7 @@ function adminSetelSampah(statusPilihan) {
     const sekarang = new Date();
     const tglHariIni = sekarang.getDate();
     const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
-    const jamMenit = ThermalTime = sekarang.toTimeString().split(' ')[0].substring(0, 5);
+    const jamMenit = sekarang.toTimeString().split(' ')[0].substring(0, 5);
     const teksWaktu = `${jamMenit} WIB`;
 
     const targetNode = dbFirebase.ref(`status_sampah/${hpTarget}/${thnBlnNode}/${tglHariIni}`);
@@ -216,7 +231,7 @@ function adminSetelSampah(statusPilihan) {
     }
 }
 
-// PROSES SUBMIT INPUT IURAN MANUAL KE GOOGLE SHEETS
+// SUBMIT INPUT IURAN MANUAL KE GOOGLE SHEETS VIA POST
 async function prosesSubmitIuranBaru() {
     const hpTarget = document.getElementById('kasPilihWarga').value;
     const wargaObj = dbGlobalAdmin.anggota.find(u => u.hp == hpTarget);
