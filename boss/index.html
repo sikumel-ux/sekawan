@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TUNTAS - Panel Admin (Bypass)</title>
+    <title>TUNTAS - Panel Admin</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 90px; }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 9999; display: none; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
         .active-tab-btn { color: #059669 !important; }
         .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; opacity: 0; transition: all 0.25s ease-out; }
         .modal.active { display: flex; opacity: 1; }
@@ -22,7 +22,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-<div id="loadingAdmin" class="loading-overlay">Memuat Sistem Pengurus...</div>
+<div id="loadingAdmin" class="loading-overlay">Memproses Akses Pengurus...</div>
 
 <div id="adminAlert" class="modal">
     <div class="modal-content text-center space-y-4">
@@ -35,13 +35,37 @@
     </div>
 </div>
 
-<div id="screen-dashboard-admin" class="max-w-md mx-auto p-5 space-y-5">
+<div id="screen-login-admin" class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6">
+    <div class="flex-1 flex flex-col justify-center w-full my-auto">
+        <div class="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center">
+            <div>
+                <span class="material-symbols-rounded text-emerald-800 !text-5xl">admin_panel_settings</span>
+                <h2 class="text-xl font-black text-slate-900 tracking-tight uppercase mt-2">LOGIN PENGURUS</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">Gunakan info Nama & No HP sesuai baris Pengurus di Google Sheets</p>
+            </div>
+            
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nama Lengkap Pengurus</label>
+                    <input type="text" id="admNama" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Contoh: PENGURUS">
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">No HP Pengurus</label>
+                    <input type="text" id="admHp" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" placeholder="Contoh: 081211407667">
+                </div>
+            </div>
+            <button onclick="prosesLoginAdmin()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg tracking-wider active:scale-95 transition-all">Verifikasi Pengurus</button>
+        </div>
+    </div>
+</div>
+
+<div id="screen-dashboard-admin" class="max-w-md mx-auto p-5 space-y-5 hidden">
     <header class="flex justify-between items-center bg-white p-3 px-4 rounded-2xl border border-slate-100 shadow-2xs">
         <div class="flex items-center gap-2">
             <span class="material-symbols-rounded text-emerald-700">shield_person</span>
-            <h1 class="text-xs font-black text-slate-800 tracking-tight uppercase">PANEL PENGURUS TUNTAS</h1>
+            <h1 class="text-xs font-black text-slate-800 tracking-tight uppercase">ADMIN TUNTAS</h1>
         </div>
-        <p class="text-xs font-black text-emerald-700 uppercase">MODE CEPAT</p>
+        <p id="namaPetugasText" class="text-xs font-black text-emerald-700 uppercase">-</p>
     </header>
 
     <div id="tab-admin-sampah" class="tab-admin-content space-y-4">
@@ -68,7 +92,7 @@
         </div>
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
             <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Log Angkutan Sampah Hari Ini</p>
-            <div id="listStatusSampahHariIni" class="divide-y divide-slate-50 max-h-[45vh] overflow-y-auto pr-1"></div>
+            <div id="listStatusSampahHariIni" class="divide-y divide-slate-50 max-h-[40vh] overflow-y-auto pr-1"></div>
         </div>
     </div>
 
@@ -76,7 +100,7 @@
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
             <h3 class="font-black text-xs text-slate-800 uppercase tracking-tight border-b border-slate-50 pb-2">Catat Setoran Iuran Warga</h3>
             <p class="text-[10px] font-semibold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">
-                <i class="fa-solid fa-circle-info mr-1"></i> Data iuran langsung terkirim sinkron ke Google Sheets pusat.
+                <i class="fa-solid fa-circle-info mr-1"></i> Data iuran langsung tersimpan ke Google Sheets utama.
             </p>
             <div class="space-y-3">
                 <div>
@@ -97,7 +121,7 @@
     </div>
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-xl px-4 py-2.5 z-50">
-        <div class="max-w-md mx-auto grid grid-cols-2 text-center">
+        <div class="max-w-md mx-auto grid grid-cols-3 text-center">
             <button onclick="switchTabAdmin('tab-admin-sampah', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 active-tab-btn focus:outline-none">
                 <span class="material-symbols-rounded">delete_history</span>
                 <span class="text-[9px] font-black uppercase tracking-tight">Kontrol Sampah</span>
@@ -105,6 +129,10 @@
             <button onclick="switchTabAdmin('tab-admin-kas', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 focus:outline-none">
                 <span class="material-symbols-rounded">add_card</span>
                 <span class="text-[9px] font-black uppercase tracking-tight">Input Iuran</span>
+            </button>
+            <button onclick="logoutAdmin()" class="flex flex-col items-center justify-center gap-0.5 text-rose-400 focus:outline-none">
+                <span class="material-symbols-rounded">power_settings_new</span>
+                <span class="text-[9px] font-black uppercase tracking-tight">Keluar</span>
             </button>
         </div>
     </nav>
@@ -127,11 +155,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const dbFirebase = firebase.database();
 
-// Menggunakan link Apps Script milikmu yang sudah di-set ke Anyone
+// PENTING: ISI PAKAI LINK SCRIPT UTAMA WARGA KAMU YANG LAMA DAN SUDAH PASTI BISA KONEK
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmWiQWJr38aKsheoWhoB173XiSVYt06WZhDXz4TfkLmrOza8Q84KAZmeHu1fR9Fkh3/exec";
-const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
+const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 let dbGlobalAdmin = { anggota: [] };
+let sessionAdmin = null;
 
 function showAdminLoading() { document.getElementById('loadingAdmin').style.display = 'flex'; }
 function hideAdminLoading() { document.getElementById('loadingAdmin').style.display = 'none'; }
@@ -160,40 +189,95 @@ function switchTabAdmin(tabId, btnElement) {
     if(btnElement) btnElement.classList.add('active-tab-btn');
 }
 
-// OTOMATIS JALAN SAAT HALAMAN DIBUKA (BYPASS LOGIN)
-window.onload = async function() {
-    const sekarang = new Date();
-    document.getElementById('infoTanggalHariIni').innerText = `Hari Ini: ${sekarang.getDate()} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
-    
+// AMBIL DATA KESELURUHAN DARI TAB ANGGOTA 
+async function ambilDataSheetsAdmin() {
     try {
         let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET", mode: "cors" });
         let json = await res.json();
-        
-        if(json.status === "success" && json.data.anggota) {
-            dbGlobalAdmin = json.data;
-            
-            // Isi dropdown list warga
-            const selSampah = document.getElementById('admPilihWarga');
-            const selKas = document.getElementById('kasPilihWarga');
-            selSampah.innerHTML = ''; selKas.innerHTML = '';
-            
-            dbGlobalAdmin.anggota.forEach(w => {
-                let opt = `<option value="${w.hp}">${w.nama.toUpperCase()} (${w.hp})</option>`;
-                selSampah.insertAdjacentHTML('beforeend', opt);
-                selKas.insertAdjacentHTML('beforeend', opt);
-            });
-            
-            // Aktifkan feed absensi real-time Firebase
-            dengarStatusSampahHariIni();
-            hideAdminLoading();
-        } else {
-            tampilAdminAlert("Gagal", "Respon Sheets kosong atau data anggota tidak terbaca.", false);
+        if(json.status === "success") {
+            if(json.data && json.data.anggota) {
+                dbGlobalAdmin.anggota = json.data.anggota;
+            } else if(Array.isArray(json.data)) {
+                dbGlobalAdmin.anggota = json.data;
+            }
+            return true;
         }
+        return false;
     } catch(e) {
         console.error(e);
-        tampilAdminAlert("Koneksi Error", "Gagal fetch data Google Sheets. Cek status deployment 'Anyone' kamu, bro.", false);
+        return false;
     }
-};
+}
+
+// PROSES LOGIN BERDASARKAN KOLOM STATUS PENGURUS
+async function prosesLoginAdmin() {
+    const inputNama = document.getElementById('admNama').value.trim().toLowerCase();
+    const inputHp = document.getElementById('admHp').value.trim();
+
+    if(!inputNama || !inputHp) { 
+        tampilAdminAlert("Gagal", "Nama dan No HP wajib diisi, bro!", false); 
+        return; 
+    }
+
+    showAdminLoading();
+    let sukses = await ambilDataSheetsAdmin();
+    
+    if(!sukses || dbGlobalAdmin.anggota.length === 0) { 
+        hideAdminLoading(); 
+        tampilAdminAlert("Error", "Gagal menyambung ke API Google Sheets utama.", false); 
+        return; 
+    }
+
+    // Cocokkan No Hp terlebih dahulu
+    const cocok = dbGlobalAdmin.anggota.find(u => (u.hp || u.nohp || '').toString().trim() === inputHp);
+
+    if(cocok) {
+        const namaDiSheet = (cocok.nama || '').toString().trim().toLowerCase();
+        // Membaca Kolom F di fotomu ("Status")
+        const statusDiSheet = (cocok.status || cocok.peran || '').toString().trim().toLowerCase();
+
+        if(inputNama === namaDiSheet) {
+            // Jika kolom Status di sheet mengandung kata 'pengurus'
+            if(statusDiSheet.includes('pengurus') || statusDiSheet.includes('admin')) {
+                sessionAdmin = cocok;
+                bukaDashboardAdmin();
+            } else {
+                tampilAdminAlert("Akses Ditolak", "Nomor HP ini terdaftar sebagai warga biasa (Bukan Pengurus).", false);
+            }
+        } else {
+            tampilAdminAlert("Gagal Verifikasi", "Nama Pengurus tidak cocok dengan pemilik No HP ini, bro.", false);
+        }
+    } else {
+        tampilAdminAlert("Ditolak", "Nomor HP Pengurus tidak terdaftar dalam tabel Anggota.", false);
+    }
+    hideAdminLoading();
+}
+
+function bukaDashboardAdmin() {
+    document.getElementById('screen-login-admin').classList.add('hidden');
+    document.getElementById('screen-dashboard-admin').classList.remove('hidden');
+    document.getElementById('namaPetugasText').innerText = sessionAdmin.nama.toUpperCase();
+    switchTabAdmin('tab-admin-sampah', document.querySelectorAll('nav button')[0]);
+    
+    const sekarang = new Date();
+    document.getElementById('infoTanggalHariIni').innerText = `Hari Ini: ${sekarang.getDate()} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
+    
+    const selSampah = document.getElementById('admPilihWarga');
+    const selKas = document.getElementById('kasPilihWarga');
+    selSampah.innerHTML = ''; selKas.innerHTML = '';
+    
+    // Dropdown list hanya memuat warga biasa (Baris Pengurus disembunyikan agar tidak ikut terabsen)
+    dbGlobalAdmin.anggota.forEach(w => {
+        const statusWarga = (w.status || w.peran || '').toString().trim().toLowerCase();
+        if(!statusWarga.includes('pengurus')) {
+            let opt = `<option value="${w.hp || w.nohp}">${w.nama.toUpperCase()} (${w.hp || w.nohp})</option>`;
+            selSampah.insertAdjacentHTML('beforeend', opt);
+            selKas.insertAdjacentHTML('beforeend', opt);
+        }
+    });
+    
+    dengarStatusSampahHariIni();
+}
 
 function dengarStatusSampahHariIni() {
     const sekarang = new Date();
@@ -205,14 +289,17 @@ function dengarStatusSampahHariIni() {
         const listContainer = document.getElementById('listStatusSampahHariIni');
         listContainer.innerHTML = '';
         
-        if(dbGlobalAdmin.anggota) {
-            dbGlobalAdmin.anggota.forEach(w => {
+        dbGlobalAdmin.anggota.forEach(w => {
+            const statusWargaTabel = (w.status || w.peran || '').toString().trim().toLowerCase();
+            // Tampilkan list log warga di luar pengurus
+            if(!statusWargaTabel.includes('pengurus')) {
                 let statusWarga = "Belum Diabsen";
                 let jamWaktu = "-";
                 let warnaBadge = "bg-slate-100 text-slate-500";
+                const userHp = w.hp || w.nohp;
                 
-                if(rootSampah[w.hp] && rootSampah[w.hp][thnBlnNode] && rootSampah[w.hp][thnBlnNode][tglHariIni]) {
-                    const dataHariIni = rootSampah[w.hp][thnBlnNode][tglHariIni];
+                if(rootSampah[userHp] && rootSampah[userHp][thnBlnNode] && rootSampah[userHp][thnBlnNode][tglHariIni]) {
+                    const dataHariIni = rootSampah[userHp][thnBlnNode][tglHariIni];
                     statusWarga = dataHariIni.status || "Kosong";
                     jamWaktu = dataHariIni.waktu || "-";
                     if(statusWarga === "Diambil") warnaBadge = "bg-emerald-100 text-emerald-700 font-bold";
@@ -227,8 +314,8 @@ function dengarStatusSampahHariIni() {
                         <span class="px-2.5 py-1 rounded-lg text-[9px] uppercase tracking-wider ${warnaBadge}">${statusWarga}</span>
                     </div>
                 `);
-            });
-        }
+            }
+        });
     });
 }
 
@@ -252,7 +339,7 @@ function adminSetelSampah(statusPilihan) {
 
 async function prosesSubmitIuranBaru() {
     const hpTarget = document.getElementById('kasPilihWarga').value;
-    const wargaObj = dbGlobalAdmin.anggota.find(u => u.hp == hpTarget);
+    const wargaObj = dbGlobalAdmin.anggota.find(u => (u.hp || u.nohp) == hpTarget);
     const nominal = document.getElementById('kasNominal').value.trim();
     const keterangan = document.getElementById('kasKeterangan').value.trim();
     if(!nominal || !keterangan) { tampilAdminAlert("Gagal", "Nominal & Keterangan Bulan wajib diisi!", false); return; }
@@ -271,6 +358,13 @@ async function prosesSubmitIuranBaru() {
         if(json.status === 'success') { document.getElementById('kasKeterangan').value = ''; tampilAdminAlert("Transaksi Sukses", "Data disimpan!", true); }
         else { tampilAdminAlert("Gagal", "Gagal menyimpan ke Sheets.", false); }
     } catch(e) { hideAdminLoading(); tampilAdminAlert("Koneksi Putus", "Gagal mengirim data.", false); }
+}
+
+function logoutAdmin() {
+    sessionAdmin = null; dbFirebase.ref(`status_sampah`).off();
+    document.getElementById('screen-dashboard-admin').classList.add('hidden');
+    document.getElementById('screen-login-admin').classList.remove('hidden');
+    document.getElementById('admNama').value = ''; document.getElementById('admHp').value = '';
 }
 </script>
 </body>
