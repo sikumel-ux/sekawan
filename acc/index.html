@@ -8,7 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="admin.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 90px; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 9999; display: none; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; letter-spacing: 0.05em; }
+        .active-tab-btn { color: #059669 !important; }
+        .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; opacity: 0; transition: all 0.25s ease-out; }
+        .modal.active { display: flex; opacity: 1; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 24px; border-radius: 2rem; transform: scale(0.9); transition: all 0.25s ease-out; }
+        .modal.active .modal-content { transform: scale(1); }
+        #listStatusSampahHariIni::-webkit-scrollbar { width: 4px; }
+        #listStatusSampahHariIni::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
@@ -67,12 +77,10 @@
                 </div>
                 <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[8px] font-black uppercase">Real-Time</span>
             </div>
-
             <div class="space-y-1">
                 <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Pilih Rumah / Warga</label>
                 <select id="admPilihWarga" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600"></select>
             </div>
-
             <div class="space-y-2 pt-2">
                 <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Setel Status Hari Ini</label>
                 <div class="grid grid-cols-3 gap-2">
@@ -82,22 +90,18 @@
                 </div>
             </div>
         </div>
-
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
             <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Log Angkutan Sampah Hari Ini</p>
-            <div id="listStatusSampahHariIni" class="divide-y divide-slate-50 max-h-[40vh] overflow-y-auto pr-1">
-                </div>
+            <div id="listStatusSampahHariIni" class="divide-y divide-slate-50 max-h-[40vh] overflow-y-auto pr-1"></div>
         </div>
     </div>
 
     <div id="tab-admin-kas" class="tab-admin-content space-y-4 hidden">
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
             <h3 class="font-black text-xs text-slate-800 uppercase tracking-tight border-b border-slate-50 pb-2">Catat Setoran Iuran Warga</h3>
-            
             <p class="text-[10px] font-semibold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">
                 <i class="fa-solid fa-circle-info mr-1"></i> Data iuran ini akan otomatis terkirim dan disinkronkan ke Google Sheets pusat.
             </p>
-
             <div class="space-y-3">
                 <div>
                     <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Warga Penyetor</label>
@@ -112,7 +116,6 @@
                     <input type="number" id="kasNominal" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600 mt-1" value="20000">
                 </div>
             </div>
-
             <button onclick="prosesSubmitIuranBaru()" class="w-full bg-emerald-900 text-white p-3.5 rounded-xl font-black uppercase text-xs tracking-wider shadow-md active:scale-95 transition-all">Simpan Transaksi</button>
         </div>
     </div>
@@ -138,6 +141,207 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script src="admin.js"></script>
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAHXqxr7jh3BrRlYqLrIn-fqT0ys9AnRBU",
+    authDomain: "tuntas04.firebaseapp.com",
+    databaseURL: "https://tuntas04-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tuntas04",
+    storageBucket: "tuntas04.firebasestorage.app",
+    messagingSenderId: "208840175808",
+    appId: "1:208840175808:web:2ad07fdb8930845fbdbd25"
+};
+
+firebase.initializeApp(firebaseConfig);
+const dbFirebase = firebase.database();
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+let dbGlobalAdmin = { anggota: [], petugas: [] };
+let sessionAdmin = null;
+
+function showAdminLoading() { document.getElementById('loadingAdmin').style.display = 'flex'; }
+function hideAdminLoading() { document.getElementById('loadingAdmin').style.display = 'none'; }
+
+function tampilAdminAlert(title, msg, isSuccess = true) {
+    document.getElementById('alertAdminTitle').innerText = title;
+    document.getElementById('alertAdminMsg').innerText = msg;
+    const iconBox = document.getElementById('alertIconBox');
+    if(isSuccess) {
+        iconBox.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
+        iconBox.innerHTML = '<span class="material-symbols-rounded">check_circle</span>';
+    } else {
+        iconBox.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-red-50 text-red-600";
+        iconBox.innerHTML = '<span class="material-symbols-rounded">cancel</span>';
+    }
+    document.getElementById('adminAlert').classList.add('active');
+}
+function closeAdminAlert() { document.getElementById('adminAlert').classList.remove('active'); }
+
+function switchTabAdmin(tabId, btnElement) {
+    const tabs = document.querySelectorAll('.tab-admin-content');
+    tabs.forEach(t => t.classList.add('hidden'));
+    document.getElementById(tabId).classList.remove('hidden');
+    const navButtons = document.querySelectorAll('nav button');
+    navButtons.forEach(btn => btn.classList.remove('active-tab-btn'));
+    if(btnElement) btnElement.classList.add('active-tab-btn');
+}
+
+async function ambilDataSheetsAdmin() {
+    try {
+        let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET", mode: "cors" });
+        let json = await res.json();
+        if(json.status === "success") {
+            dbGlobalAdmin = json.data;
+            return true;
+        }
+        return false;
+    } catch(e) {
+        console.error(e);
+        return false;
+    }
+}
+
+async function prosesLoginAdmin() {
+    const hp = document.getElementById('admHp').value.trim();
+    const pass = document.getElementById('admPass').value.trim();
+    if(!hp || !pass) { tampilAdminAlert("Gagal", "Semua form wajib diisi, bro!", false); return; }
+
+    showAdminLoading();
+    let sukses = await ambilDataSheetsAdmin();
+    if(!sukses) { hideAdminLoading(); tampilAdminAlert("Error", "Gagal terhubung ke Google Sheets.", false); return; }
+
+    if (!dbGlobalAdmin.petugas) {
+        hideAdminLoading();
+        tampilAdminAlert("Gagal", "Sheet 'Petugas' tidak terbaca di API Web App, bro.", false);
+        return;
+    }
+
+    const cocok = dbGlobalAdmin.petugas.find(u => (u.hp || '').toString().trim() === hp);
+    if(cocok) {
+        dbFirebase.ref('users/' + hp).once('value').then((snapshot) => {
+            let dataFb = snapshot.val();
+            let pwValid = (cocok.password || '').toString().trim();
+            if(dataFb && dataFb.password) pwValid = dataFb.password.toString().trim();
+
+            if(pass === pwValid) {
+                const peran = (cocok.peran || cocok.status || '').toLowerCase();
+                if(peran.includes('pengurus') || peran.includes('petugas') || peran.includes('ketua') || peran.includes('admin')) {
+                    sessionAdmin = cocok;
+                    bukaDashboardAdmin();
+                } else {
+                    tampilAdminAlert("Akses Ditolak", "Hak peran Anda di tabel Petugas tidak valid.", false);
+                }
+            } else {
+                tampilAdminAlert("Gagal", "Kata Sandi salah!", false);
+            }
+            hideAdminLoading();
+        });
+    } else {
+        hideAdminLoading();
+        tampilAdminAlert("Ditolak", "Nomor HP Petugas tidak terdaftar.", false);
+    }
+}
+
+function bukaDashboardAdmin() {
+    document.getElementById('screen-login-admin').classList.add('hidden');
+    document.getElementById('screen-dashboard-admin').classList.remove('hidden');
+    document.getElementById('namaPetugasText').innerText = sessionAdmin.nama.toUpperCase();
+    switchTabAdmin('tab-admin-sampah', document.querySelectorAll('nav button')[0]);
+    const sekarang = new Date();
+    document.getElementById('infoTanggalHariIni').innerText = `Hari Ini: ${sekarang.getDate()} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
+    const selSampah = document.getElementById('admPilihWarga');
+    const selKas = document.getElementById('kasPilihWarga');
+    selSampah.innerHTML = ''; selKas.innerHTML = '';
+    if(dbGlobalAdmin.anggota) {
+        dbGlobalAdmin.anggota.forEach(w => {
+            let opt = `<option value="${w.hp}">${w.nama.toUpperCase()} (${w.hp})</option>`;
+            selSampah.insertAdjacentHTML('beforeend', opt);
+            selKas.insertAdjacentHTML('beforeend', opt);
+        });
+    }
+    dengarStatusSampahHariIni();
+}
+
+function dengarStatusSampahHariIni() {
+    const sekarang = new Date();
+    const tglHariIni = sekarang.getDate();
+    const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
+    dbFirebase.ref(`status_sampah`).on('value', (snapshot) => {
+        const rootSampah = snapshot.val() || {};
+        const listContainer = document.getElementById('listStatusSampahHariIni');
+        listContainer.innerHTML = '';
+        if(dbGlobalAdmin.anggota) {
+            dbGlobalAdmin.anggota.forEach(w => {
+                let statusWarga = "Belum Diabsen";
+                let jamWaktu = "-";
+                let warnaBadge = "bg-slate-100 text-slate-500";
+                if(rootSampah[w.hp] && rootSampah[w.hp][thnBlnNode] && rootSampah[w.hp][thnBlnNode][tglHariIni]) {
+                    const dataHariIni = rootSampah[w.hp][thnBlnNode][tglHariIni];
+                    statusWarga = dataHariIni.status || "Kosong";
+                    jamWaktu = dataHariIni.waktu || "-";
+                    if(statusWarga === "Diambil") warnaBadge = "bg-emerald-100 text-emerald-700 font-bold";
+                    else if(statusWarga === "Tidak Diambil") warnaBadge = "bg-rose-100 text-rose-700 font-bold";
+                }
+                listContainer.insertAdjacentHTML('beforeend', `
+                    <div class="py-3 flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-black text-slate-700 uppercase leading-none">${w.nama}</p>
+                            <p class="text-[9px] text-slate-400 font-semibold mt-1">Waktu: ${jamWaktu}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg text-[9px] uppercase tracking-wider ${warnaBadge}">${statusWarga}</span>
+                    </div>
+                `);
+            });
+        }
+    });
+}
+
+function adminSetelSampah(statusPilihan) {
+    const hpTarget = document.getElementById('admPilihWarga').value;
+    if(!hpTarget) return;
+    showAdminLoading();
+    const sekarang = new Date();
+    const tglHariIni = sekarang.getDate();
+    const thnBlnNode = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
+    const jamMenit = sekarang.toTimeString().split(' ')[0].substring(0, 5);
+    const teksWaktu = `${jamMenit} WIB`;
+    const targetNode = dbFirebase.ref(`status_sampah/${hpTarget}/${thnBlnNode}/${tglHariIni}`);
+    if (statusPilihan === "Kosong") {
+        targetNode.remove().then(() => { hideAdminLoading(); tampilAdminAlert("Sukses", "Data status direset.", true); });
+    } else {
+        targetNode.update({ status: statusPilihan, waktu: teksWaktu }).then(() => { hideAdminLoading(); tampilAdminAlert("Berhasil", "Absen diperbarui.", true); });
+    }
+}
+
+async function prosesSubmitIuranBaru() {
+    const hpTarget = document.getElementById('kasPilihWarga').value;
+    const wargaObj = dbGlobalAdmin.anggota.find(u => u.hp == hpTarget);
+    const nominal = document.getElementById('kasNominal').value.trim();
+    const keterangan = document.getElementById('kasKeterangan').value.trim();
+    if(!nominal || !keterangan) { tampilAdminAlert("Gagal", "Nominal & Keterangan Bulan wajib diisi!", false); return; }
+    showAdminLoading();
+    const params = new URLSearchParams();
+    params.append('action', 'addPembayaran');
+    params.append('nama', wargaObj.nama);
+    params.append('nominal', nominal);
+    params.append('keterangan', keterangan);
+    try {
+        let res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: params, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+        let json = await res.json();
+        hideAdminLoading();
+        if(json.status === 'success') { document.getElementById('kasKeterangan').value = ''; tampilAdminAlert("Transaksi Sukses", "Data disimpan!", true); }
+        else { tampilAdminAlert("Gagal", "Gagal menyimpan ke Sheets.", false); }
+    } catch(e) { hideAdminLoading(); tampilAdminAlert("Koneksi Putus", "Gagal mengirim data.", false); }
+}
+
+function logoutAdmin() {
+    sessionAdmin = null; dbFirebase.ref(`status_sampah`).off();
+    document.getElementById('screen-dashboard-admin').classList.add('hidden');
+    document.getElementById('screen-login-admin').classList.remove('hidden');
+    document.getElementById('admHp').value = ''; document.getElementById('admPass').value = '';
+}
+</script>
 </body>
 </html>
