@@ -16,9 +16,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 110px; }
         .sticky-col { position: sticky; left: 0; background: white; z-index: 10; border-right: 2px solid #F1F5F9; min-width: 120px; }
@@ -168,23 +165,47 @@
     </div>
 
     <div id="screen-sampah" class="tab-content space-y-4">
-        <div class="flex justify-between items-center px-1">
-            <h3 class="font-black text-emerald-900 uppercase text-lg">Monitoring Sampah</h3>
-            <span id="labelTglHariIni" class="px-3 py-1 bg-emerald-50 text-emerald-800 text-[10px] font-black rounded-lg border border-emerald-100 uppercase"></span>
-        </div>
-        
-        <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
-            <div id="listMonitoringSampah" class="divide-y divide-slate-100 space-y-1 max-h-[60vh] overflow-y-auto">
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
+            <h3 class="font-black text-emerald-900 text-center uppercase tracking-widest">Laporan Sampah</h3>
+            
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Tanggal Operasional</label>
+                <input type="date" id="sTgl" class="modern-in">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Pilih Nama Warga / RT</label>
+                <select id="sNama" class="modern-in font-bold uppercase"></select>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1">Status Pengambilan</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="relative block">
+                        <input type="radio" name="sStatus" value="Diambil" checked class="hidden peer">
+                        <div class="cursor-pointer text-[10px] font-black py-3 text-center border rounded-xl bg-white text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white uppercase transition-all">Diambil</div>
+                    </label>
+                    <label class="relative block">
+                        <input type="radio" name="sStatus" value="Tidak Diambil" class="hidden peer">
+                        <div class="cursor-pointer text-[10px] font-black py-3 text-center border rounded-xl bg-white text-slate-400 peer-checked:bg-rose-500 peer-checked:text-white uppercase transition-all">Lewat</div>
+                    </label>
+                    <label class="relative block">
+                        <input type="radio" name="sStatus" value="Kosong" class="hidden peer">
+                        <div class="cursor-pointer text-[10px] font-black py-3 text-center border rounded-xl bg-white text-slate-400 peer-checked:bg-slate-500 peer-checked:text-white uppercase transition-all">Kosong</div>
+                    </label>
                 </div>
+            </div>
+
+            <button onclick="simpanLaporanSampah()" class="w-full bg-emerald-900 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-md tracking-wider active:scale-95 transition-all">Kirim Laporan Sampah</button>
         </div>
     </div>
 
     <nav class="fixed bottom-0 inset-x-0 h-20 bg-white border-t flex justify-around items-center px-2 z-50">
-        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1"><span class="material-symbols-rounded">dashboard</span><span class="text-[8px] font-black uppercase">HOME</span></button>
-        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">group</span><span class="text-[8px] font-black uppercase">WARGA</span></button>
-        <button onclick="st('rekap')" id="n-rekap" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">analytics</span><span class="text-[8px] font-black uppercase">REKAP</span></button>
-        <button onclick="st('bayar')" id="n-bayar" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">payments</span><span class="text-[8px] font-black uppercase">BAYAR</span></button>
-        <button onclick="st('sampah')" id="n-sampah" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">delete_history</span><span class="text-[8px] font-black uppercase">SAMPAH</span></button>
+        <button onclick="st('home')" id="n-home" class="active flex flex-col items-center gap-1"><span class="material-symbols-rounded">dashboard</span><span class="text-[9px] font-bold">HOME</span></button>
+        <button onclick="st('warga')" id="n-warga" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">group</span><span class="text-[9px] font-bold">WARGA</span></button>
+        <button onclick="st('rekap')" id="n-rekap" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">analytics</span><span class="text-[9px] font-bold">REKAP</span></button>
+        <button onclick="st('bayar')" id="n-bayar" class="flex flex-col items-center gap-1"><span class="material-symbols-rounded">payments</span><span class="text-[9px] font-bold">BAYAR</span></button>
+        <button onclick="st('sampah')" id="n-sampah" class="flex flex-col items-center gap-1 text-rose-700"><span class="material-symbols-rounded">delete</span><span class="text-[9px] font-bold">SAMPAH</span></button>
     </nav>
 </div>
 
@@ -220,21 +241,7 @@
 </div>
 
 <script>
-    // --- KONFIGURASI REAL-TIME DATABASE & SCRIPT URL ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
-    
-    const firebaseConfig = {
-        apiKey: "AIzaSyAHXqxr7jh3BrRlYqLrIn-fqT0ys9AnRBU",
-        authDomain: "tuntas04.firebaseapp.com",
-        databaseURL: "https://tuntas04-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "tuntas04",
-        storageBucket: "tuntas04.firebasestorage.app",
-        messagingSenderId: "208840175808",
-        appId: "1:208840175808:web:2ad07fdb8930845fbdbd25"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const dbFirebase = firebase.database();
 
     const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     
@@ -282,6 +289,7 @@
         document.getElementById('fSelesai').value = now.toISOString().split('T')[0];
         document.getElementById('iTgl').value = now.toISOString().split('T')[0];
         document.getElementById('kTgl').value = now.toISOString().split('T')[0];
+        document.getElementById('sTgl').value = now.toISOString().split('T')[0];
         
         const grid = document.getElementById('gridBulan');
         const thr = document.getElementById('th-rekap');
@@ -305,8 +313,6 @@
             if(json.status === "success") {
                 dbGlobal = json.data;
                 renderDataTabel();
-                // Jalankan monitoring real-time setelah data warga dari Sheets termuat
-                initMonitoringSampahRealtime();
             } else { tuntasAlert("Gagal", "Gagal mengambil database!", "error"); }
         } catch(e) { console.error(e); tuntasAlert("Koneksi Error", "Periksa jaringan internet Anda", "error"); }
         hideLoading();
@@ -323,10 +329,13 @@
         let totalsBln = {}; daftarBulan.forEach(b => totalsBln[b] = 0);
 
         const listR = document.getElementById('listRiwayat');
-        const ti = document.getElementById('tBodyWarga'), tr = document.getElementById('tb-rekap'), sel = document.getElementById('iNama');
+        const ti = document.getElementById('tBodyWarga'), tr = document.getElementById('tb-rekap');
+        const selBayar = document.getElementById('iNama');
+        const selSampah = document.getElementById('sNama');
         
         listR.innerHTML = ''; ti.innerHTML = ''; tr.innerHTML = ''; 
-        sel.innerHTML = '<option value="">PILIH WARGA</option>';
+        selBayar.innerHTML = '<option value="">PILIH WARGA</option>';
+        selSampah.innerHTML = '<option value="">PILIH WARGA</option>';
 
         let allSource = [];
         
@@ -397,7 +406,8 @@
                 if(!n) return;
                 
                 dataWarga[n] = hpWarga;
-                sel.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
+                selBayar.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
+                selSampah.insertAdjacentHTML('beforeend', `<option value="${n}">${n}</option>`);
                 ti.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div><p class="font-black text-xs uppercase text-slate-700">${n}</p><p class="text-[9px] text-slate-400 font-bold">${hpWarga || '-'}</p></div><button onclick="hapusTrx('anggota','${n}')" class="text-red-200"><span class="material-symbols-rounded">delete</span></button></div>`);
 
                 let row = `<tr><td class="sticky-col p-4 font-bold text-slate-700 bg-white border-b border-slate-50 uppercase">${n}</td>`;
@@ -440,63 +450,6 @@
         let frow = `<tr><td class="sticky-col p-4 font-black bg-emerald-50 text-emerald-900 uppercase">TOTAL</td>`;
         daftarBulan.forEach(bln => frow += `<td class="text-center p-4 bg-emerald-50 text-emerald-800 font-black">${(totalsBln[bln]/1000).toFixed(0)}K</td>`);
         document.getElementById('tf-rekap').innerHTML = frow + `<td class="bg-emerald-50"></td></tr>`;
-    }
-
-    // 🟢 FITUR BARU: MONITORING REAL-TIME ABSENSI SAMPAH WARGA HARI INI
-    function initMonitoringSampahRealtime() {
-        const sekarang = new Date();
-        const tglHariIni = sekarang.getDate();
-        const nodeBlnThn = `${sekarang.getFullYear()}-${String(sekarang.getMonth() + 1).padStart(2, '0')}`;
-        
-        document.getElementById('labelTglHariIni').innerText = `${tglHariIni} ${daftarBulan[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
-        
-        // Baca trigger perubahan data di node 'status_sampah' Firebase
-        dbFirebase.ref('status_sampah').on('value', (snapshot) => {
-            const dataSampah = snapshot.val() || {};
-            const container = document.getElementById('listMonitoringSampah');
-            container.innerHTML = '';
-            
-            if (!dbGlobal.anggota || dbGlobal.anggota.length === 0) {
-                container.innerHTML = '<p class="text-center text-[11px] text-slate-400 font-bold py-4">Belum ada data warga terdaftar.</p>';
-                return;
-            }
-
-            dbGlobal.anggota.forEach(warga => {
-                const namaMurni = (warga.nama || '').trim().toUpperCase();
-                const hpMurni = (warga.hp || '').toString().trim();
-                if (!namaMurni) return;
-
-                let status = "Kosong";
-                let waktu = "Belum Diabsen";
-                let badgeClass = "bg-slate-100 text-slate-400 border border-slate-200";
-
-                // Ambil record berdasarkan nomor HP warga
-                if (dataSampah[hpMurni] && dataSampah[hpMurni][nodeBlnThn] && dataSampah[hpMurni][nodeBlnThn][tglHariIni]) {
-                    const logHariIni = dataSampah[hpMurni][nodeBlnThn][tglHariIni];
-                    status = logHariIni.status || "Kosong";
-                    waktu = logHariIni.waktu || "00:00";
-
-                    if (status === "Diambil") {
-                        badgeClass = "bg-emerald-50 text-emerald-700 font-black border border-emerald-200";
-                    } else if (status === "Tidak Diambil") {
-                        badgeClass = "bg-red-50 text-red-700 font-black border border-red-200";
-                    }
-                }
-
-                let listHtml = `
-                    <div class="py-3 flex justify-between items-center">
-                        <div>
-                            <p class="text-xs font-black text-slate-700 uppercase tracking-tight">${namaMurni}</p>
-                            <p class="text-[9px] text-slate-400 font-semibold mt-0.5 flex items-center gap-1">
-                                <span class="material-symbols-rounded !text-[11px]">schedule</span> ${waktu}
-                            </p>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider ${badgeClass}">${status}</span>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', listHtml);
-            });
-        });
     }
 
     function bukaDetailIuranWarga(namaWarga) {
@@ -566,6 +519,27 @@
         window.open(`https://wa.me/${(dataWarga[n]||'').toString().replace(/^0/,'62')}?text=${msg}`);
         document.getElementById('iNom').value = '';
         document.querySelectorAll('input[name="blnCek"]').forEach(c => c.checked = false);
+    }
+
+    // FUNGSI BARU: Mengirim data status pengambilan sampah harian ke Google Sheets / Firebase
+    async function simpanLaporanSampah() {
+        const tgl = document.getElementById('sTgl').value;
+        const nama = document.getElementById('sNama').value;
+        const status = document.querySelector('input[name="sStatus"]:checked').value;
+
+        if(!tgl || !nama) {
+            return tuntasAlert("Lengkapi Data", "Silakan tentukan tanggal operasional dan nama warga terlebih dahulu!", "error");
+        }
+
+        // Payload dikirim menggunakan format action terstandarisasi web-app Apps Script Anda
+        await kirimKeSheets({
+            action: "simpanSampah", 
+            tgl: tgl,
+            nama: nama,
+            status: status
+        });
+
+        tuntasAlert("Berhasil", `Status sampah ${nama} diatur: ${status}`);
     }
 
     async function simpanKas() {
