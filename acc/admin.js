@@ -16,7 +16,7 @@ firebase.initializeApp(firebaseConfig);
 const dbFirebase = firebase.database();
 
 // URL Google Apps Script Web App
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrlsCnA3JJVgAfn5ZlZTfUOSp3ykWvJ40oxx0G0qKLqEzqFOM1S4A9FNUakBcZhypl/exec";
 const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
 let dbGlobalAdmin = { anggota: [], petugas: [] };
