@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tuntas. - Masuk Akun</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="login-style.css">
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl space-y-6">
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-900 flex items-center justify-center text-white mx-auto shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-black text-emerald-900 tracking-tight mt-3">Tuntas.</h1>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sistem Informasi Warga & Sampah</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1 tracking-wider">Nomor WhatsApp Warga</label>
+                <input type="number" id="loginHp" class="modern-in" placeholder="Contoh: 6281234xxx" required>
+            </div>
+            
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase px-1 tracking-wider">Password / Kata Sandi</label>
+                <input type="password" id="loginPassword" class="modern-in" placeholder="••••••••" required>
+            </div>
+
+            <div id="errorMsg" class="hidden text-xs bg-red-50 text-red-600 font-bold p-3 rounded-xl text-center border border-red-100"></div>
+
+            <button id="btnLogin" class="w-full bg-emerald-900 text-white p-5 rounded-2xl font-black shadow-lg uppercase text-xs tracking-wider active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                Masuk ke Aplikasi
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="login-script.js"></script>
+</body>
+</html>
