@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tuntas. - Dashboard Warga</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 80px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        nav button.active { color: #064E3B; transform: translateY(-3px); }
+        nav button { color: #94A3B8; transition: all 0.3s; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; transition: all 0.2s; }
+        .modern-in:focus { border-color: #064E3B; background: white; }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="fixed inset-0 bg-white/80 z-50 flex items-center justify-center font-bold text-emerald-900 hidden">Memuat Data...</div>
+
+    <div class="max-w-md mx-auto p-5 space-y-6">
+        
+        <header class="flex justify-between items-center bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <img id="userAvatar" src="" onerror="this.src='https://ui-avatars.com/api/?name=Warga&background=064E3B&color=fff'" class="w-11 h-11 rounded-full object-cover border">
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Selamat Datang,</p>
+                    <h2 id="userNama" class="text-sm font-black text-slate-800 uppercase tracking-tight">Memuat...</h2>
+                </div>
+            </div>
+            <button id="btnLogout" class="w-8 h-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center active:scale-90 transition-transform">
+                <span class="material-symbols-rounded text-sm">logout</span>
+            </button>
+        </header>
+
+        <div id="screen-iuran" class="tab-content active space-y-5">
+            <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm flex justify-between items-center">
+                <div>
+                    <h3 class="text-xs font-black text-slate-700 uppercase tracking-tight">Status Sampah Anda</h3>
+                    <p id="txtTglSampah" class="text-[9px] text-slate-400 font-bold mt-0.5">Hari ini</p>
+                </div>
+                <span id="badgeSampahUser" class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-400">Mengecek...</span>
+            </div>
+
+            <div class="p-6 bg-emerald-900 rounded-[2.5rem] text-white shadow-xl">
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Pembayaran Iuran Anda</p>
+                <h2 id="totalIuranUser" class="text-3xl font-black mt-1">Rp 0</h2>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-black text-xs text-slate-400 uppercase tracking-tight px-1">Riwayat Pembayaran Anda</h3>
+                <div id="listIuranUser" class="space-y-2">
+                    </div>
+            </div>
+        </div>
+
+        <div id="screen-kas" class="tab-content space-y-4">
+            <div class="bg-emerald-950 p-6 rounded-[2rem] text-white space-y-2">
+                <p class="text-[9px] font-bold opacity-60 uppercase tracking-wider">Saldo Kas Transparan RT</p>
+                <h3 id="saldoUmumRT" class="text-2xl font-black">Rp 0</h3>
+            </div>
+            <div class="space-y-3">
+                <h3 class="font-black text-xs text-slate-400 uppercase tracking-tight px-1">Arus Kas RT (Google Sheets)</h3>
+                <div id="listKasUmum" class="space-y-2">
+                    </div>
+            </div>
+        </div>
+
+        <div id="screen-profil" class="tab-content space-y-5">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm text-center space-y-4">
+                <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider">Ganti Foto Profil</h3>
+                <div class="flex flex-col items-center gap-2">
+                    <input type="file" id="fileAvatar" accept="image/*" class="hidden">
+                    <button onclick="document.getElementById('fileAvatar').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition-all">
+                        Pilih Foto Baru
+                    </button>
+                    <p id="avatarStatus" class="text-[10px] text-slate-400 font-medium"></p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+                <h3 class="text-xs font-black text-slate-700 uppercase tracking-wider text-center">Ganti Password</h3>
+                <div class="space-y-3">
+                    <input type="password" id="newPassword" class="modern-in" placeholder="Masukkan Password Baru">
+                    <button id="btnGantiPass" class="w-full bg-emerald-900 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-md">
+                        Simpan Password Baru
+                    </button>
+                    <p id="passStatus" class="text-center text-[11px] font-bold hidden"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="fixed bottom-0 inset-x-0 h-16 bg-white border-t flex justify-around items-center px-6 z-50">
+        <button id="nav-iuran" class="active flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">receipt_long</span>
+            <span class="text-[8px] font-black uppercase">Iuran Saya</span>
+        </button>
+        <button id="nav-kas" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">account_balance_wallet</span>
+            <span class="text-[8px] font-black uppercase">Kas Umum</span>
+        </button>
+        <button id="nav-profil" class="flex flex-col items-center gap-1">
+            <span class="material-symbols-rounded">person</span>
+            <span class="text-[8px] font-black uppercase">Akun</span>
+        </button>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updatePassword, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
+
+        // Konfigurasi milikmu
+        const firebaseConfig = {
+            apiKey: "AIzaSyCzz0INhgBUARAxqLlMnCC8vyCciI9jpJk",
+            authDomain: "tuntas-04.firebaseapp.com",
+            projectId: "tuntas-04",
+            storageBucket: "tuntas-04.firebasestorage.app",
+            messagingSenderId: "509433415219",
+            appId: "1:509433415219:web:e485a0eab1a612fda64546"
+        };
+
+        // URL Google Sheets kamu untuk Kas Umum
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+        let userDataGlobal = null;
+
+        function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+
+        // --- PROTEKSI & CEK SESSION WARGA ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "../login.html";
+            } else {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().role === 'warga') {
+                    userDataGlobal = userDoc.data();
+                    document.getElementById('userNama').innerText = userDataGlobal.nama;
+                    if (userDataGlobal.avatar_url) {
+                        document.getElementById('userAvatar').src = userDataGlobal.avatar_url;
+                    }
+                    loadDashboardWarga();
+                } else {
+                    window.location.href = "../login.html";
+                }
+            }
+        });
+
+        // --- AMBIL SEMUA DATA DASHBOARD ---
+        async function loadDashboardWarga() {
+            showLoading();
+            const hpUser = userDataGlobal.hp;
+            const hariIni = new Date().toISOString().split('T')[0];
+
+            try {
+                // 1. Ambil Log Sampah Hari Ini dari Firestore
+                const logSampahRef = doc(db, "log_sampah", `${hariIni}_${hpUser}`);
+                const logSampahSnap = await getDoc(logSampahRef);
+                const badge = document.getElementById('badgeSampahUser');
+                
+                if (logSampahSnap.exists()) {
+                    const sData = logSampahSnap.data();
+                    badge.innerText = `${sData.status} (${sData.waktu})`;
+                    badge.className = sData.status === "Diambil" 
+                        ? "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-100"
+                        : "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase bg-red-50 text-red-700 border border-red-100";
+                } else {
+                    badge.innerText = "Belum Diabsen";
+                    badge.className = "px-3 py-1.5 rounded-xl text-[10px] font-black uppercase bg-slate-100 text-slate-400 border border-slate-200";
+                }
+
+                // 2. Ambil Histori Pembayaran Iuran Warga dari Firestore
+                const iuranQ = query(collection(db, "pembayaran_iuran"), where("hp_anggota", "==", hpUser));
+                const iuranSnap = await getDocs(iuranQ);
+                
+                const containerIuran = document.getElementById('listIuranUser');
+                containerIuran.innerHTML = '';
+                let totalIuran = 0;
+
+                if (iuranSnap.empty) {
+                    containerIuran.innerHTML = '<p class="text-center text-[11px] text-slate-400 py-4 font-bold">Belum ada riwayat iuran.</p>';
+                } else {
+                    iuranSnap.forEach((doc) => {
+                        const d = doc.data();
+                        totalIuran += Number(d.nominal);
+                        containerIuran.insertAdjacentHTML('beforeend', `
+                            <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                                <div>
+                                    <p class="text-xs font-black uppercase text-slate-700">Iuran Bulan: ${d.bulan_dibayar}</p>
+                                    <p class="text-[8px] text-slate-300 font-bold mt-0.5">${new Date(d.tanggal_bayar).toLocaleDateString('id-ID')}</p>
+                                </div>
+                                <p class="font-black text-xs text-emerald-700">+ Rp ${Number(d.nominal).toLocaleString('id-ID')}</p>
+                            </div>
+                        `);
+                    });
+                }
+                document.getElementById('totalIuranUser').innerText = 'Rp ' + totalIuran.toLocaleString('id-ID');
+
+                // 3. Ambil Kas Umum RT dari Google Sheets
+                let resSheets = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
+                let jsonSheets = await resSheets.json();
+                if (jsonSheets.status === "success") {
+                    renderKasUmutSheets(jsonSheets.data.kas || [], jsonSheets.data.pembayaran || []);
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+            hideLoading();
+        }
+
+        function renderKasUmutSheets(dataKas, dataIuranGlobal) {
+            let totalMasuk = 0, totalKeluar = 0;
+            let gabungan = [];
+
+            dataKas.forEach(k => {
+                let nom = Number(k.nominal || 0);
+                if (k.kategori.toLowerCase() === 'masuk') totalMasuk += nom; else totalKeluar += nom;
+                gabungan.push({ tgl: new Date(k.tanggal), ket: k.keterangan, nom: nom, tipe: k.kategori.toLowerCase() });
+            });
+
+            dataIuranGlobal.forEach(i => {
+                let nom = Number(i.nominal || 0);
+                totalMasuk += nom;
+                gabungan.push({ tgl: new Date(i.tanggal), ket: `IURAN: ${i.nama.toUpperCase()} (${i.keterangan})`, nom: nom, tipe: 'masuk' });
+            });
+
+            document.getElementById('saldoUmumRT').innerText = 'Rp ' + (totalMasuk - totalKeluar).toLocaleString('id-ID');
+            
+            const containerKas = document.getElementById('listKasUmum');
+            containerKas.innerHTML = '';
+            gabungan.sort((a,b) => b.tgl - a.tgl).slice(0, 10).forEach(t => {
+                const isMasuk = t.tipe === 'masuk';
+                containerKas.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm">
+                        <div>
+                            <p class="text-[11px] font-black uppercase text-slate-700 max-w-[220px] truncate">${t.ket}</p>
+                            <p class="text-[8px] text-slate-300 font-bold">${t.tgl.toLocaleDateString('id-ID')}</p>
+                        </div>
+                        <p class="font-black text-xs ${isMasuk ? 'text-emerald-700' : 'text-red-600'}">${isMasuk ? '+' : '-'} Rp ${t.nom.toLocaleString('id-ID')}</p>
+                    </div>
+                `);
+            });
+        }
+
+        // --- FITUR GANTI FOTO PROFIL (FIREBASE STORAGE) ---
+        document.getElementById('fileAvatar').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusTxt = document.getElementById('avatarStatus');
+            statusTxt.innerText = "Mengunggah foto...";
+            showLoading();
+
+            try {
+                // Upload ke Firebase Storage di folder avatar_warga/
+                const storageRef = ref(storage, `avatar_warga/${currentUser.uid}_${file.name}`);
+                await uploadBytes(storageRef, file);
+                
+                // Ambil URL publik foto tersebut
+                const downloadURL = await getDownloadURL(storageRef);
+                
+                // Update URL Foto ke Firestore Dokument User
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    avatar_url: downloadURL
+                });
+
+                document.getElementById('userAvatar').src = downloadURL;
+                statusTxt.innerText = "Foto profil berhasil diperbarui!";
+            } catch (err) {
+                console.error(err);
+                statusTxt.innerText = "Gagal mengunggah foto.";
+            }
+            hideLoading();
+        });
+
+        // --- FITUR GANTI PASSWORD ---
+        document.getElementById('btnGantiPass').addEventListener('click', async () => {
+            const newPass = document.getElementById('newPassword').value.trim();
+            const statusTxt = document.getElementById('passStatus');
+
+            if (newPass.length < 6) {
+                statusTxt.innerText = "Password minimal harus 6 karakter!";
+                statusTxt.className = "text-center text-[11px] font-bold text-red-600 block";
+                return;
+            }
+
+            showLoading();
+            try {
+                await updatePassword(currentUser, newPass);
+                statusTxt.innerText = "Password Anda berhasil diubah!";
+                statusTxt.className = "text-center text-[11px] font-bold text-emerald-700 block";
+                document.getElementById('newPassword').value = '';
+            } catch (err) {
+                console.error(err);
+                statusTxt.innerText = "Gagal mengubah password. Silakan login ulang lalu coba lagi.";
+                statusTxt.className = "text-center text-[11px] font-bold text-red-600 block";
+            }
+            hideLoading();
+        });
+
+        // --- NAVIGASI SAKLAR TAB ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('screen-' + tabName).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('nav-' + tabName).classList.add('active');
+        }
+        document.getElementById('nav-iuran').addEventListener('click', () => switchTab('iuran'));
+        document.getElementById('nav-kas').addEventListener('click', () => switchTab('kas'));
+        document.getElementById('nav-profil').addEventListener('click', () => switchTab('profil'));
+
+        // --- LOGOUT ---
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                localStorage.removeItem('user_session');
+                window.location.href = "../login.html";
+            });
+        });
+
+    </script>
+</body>
+</html>
