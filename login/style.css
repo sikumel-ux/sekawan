@@ -1,0 +1,23 @@
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: #F8FAFC; 
+}
+
+.modern-in { 
+    width: 100%; 
+    padding: 16px; 
+    background: #F1F5F9; 
+    border: 1px solid #E2E8F0; 
+    border-radius: 1.25rem; 
+    outline: none; 
+    font-size: 14px; 
+    font-weight: 600; 
+    color: #1E293B; 
+    transition: all 0.2s ease; 
+}
+
+.modern-in:focus { 
+    border-color: #064E3B; 
+    background: white; 
+    box-shadow: 0 0 0 4px rgba(6, 78, 59, 0.05); 
+}
