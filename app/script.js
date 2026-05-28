@@ -34,7 +34,7 @@ function hideLoading() { loadingEl.classList.add('hidden'); }
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         // Jika tidak ada session auth, kembalikan ke gerbang root login.html
-        window.location.href = "../login.html";
+        window.location.href = "../login";
     } else {
         currentUser = user;
         // Ambil data detail role dari Firestore
