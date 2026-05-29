@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Admin Panel</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="gaya.css">
+    <style>
+        body { padding-bottom: 90px; }
+        .active-tab-btn { color: #059669 !important; }
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; animation: popUp 0.2s ease-out; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+        .loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.7); z-index:200; align-items:center; justify-content:center; font-weight:bold; color:#064E3B; }
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+<div id="loading" class="loading-overlay">Menghubungkan ke server...</div>
+
+<div id="customAlert" class="modal" style="z-index: 300;">
+    <div class="modal-content text-center space-y-4">
+        <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-rounded">check_circle</span>
+        </div>
+        <h4 id="alertTitle" class="font-black text-slate-800 uppercase text-sm">SUKSES</h4>
+        <p id="alertMsg" class="text-xs font-semibold text-slate-500 leading-relaxed"></p>
+        <button onclick="closeAlert()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs tracking-wider">Oke</button>
+    </div>
+</div>
+
+<div id="screen-login" class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6">
+    <div class="flex-1 flex flex-col justify-center w-full my-auto">
+        <div class="space-y-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center relative z-10">
+            <div class="flex flex-col items-center justify-center pt-2 mb-2">
+                <img src="top.png" alt="Logo Login" class="w-64 h-32 object-contain" onerror="this.src='logo.png'">
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-black text-emerald-900 tracking-tight">ADMIN PANEL</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">Petugas & Pengurus TUNTAS</p>
+            </div>
+            
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kode Petugas / HP</label>
+                    <input type="text" id="lAdminHp" class="modern-in mt-1" placeholder="Masukkan kode petugas">
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi</label>
+                    <div class="relative flex items-center">
+                        <input type="password" id="lAdminPass" class="modern-in mt-1 pr-12" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordLogin()" class="absolute right-4 top-[calc(50%-4px)] text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                            <i id="eyeIcon" class="fa-solid fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="prosesLoginAdmin()" class="w-full bg-emerald-950 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all tracking-wider">Masuk sebagai Admin</button>
+        </div>
+    </div>
+    <div class="text-center py-4">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">&copy; 2026 TUNTAS. Admin Area.</p>
+    </div>
+</div>
+
+<div id="screen-dashboard" class="max-w-md mx-auto p-5 space-y-5 hidden">
+    <header class="flex justify-between items-center bg-white p-3 px-4 rounded-2xl border border-slate-100 shadow-xs">
+        <div class="flex items-center gap-2">
+            <img src="logo.png" alt="Logo Header" class="w-7 h-7 object-contain">
+            <h1 class="text-sm font-black text-emerald-900 tracking-tight">TUNTAS <span class="text-[10px] text-rose-500 font-bold">ADMIN</span></h1>
+        </div>
+        <div class="text-right">
+            <p id="topNamaAdmin" class="text-xs font-black text-slate-700 uppercase leading-none">PENGURUS</p>
+            <p id="topRoleAdmin" class="text-[9px] text-rose-500 font-bold mt-0.5">Petugas Lapangan</p>
+        </div>
+    </header>
+
+    <div id="tab-input-sampah" class="tab-content active-tab space-y-4">
+        <div class="px-1 flex items-center gap-1.5 text-slate-400">
+            <i class="fa-solid fa-truck-garbage text-xs"></i>
+            <h3 class="font-black text-[10px] uppercase tracking-wider">Update Operasional Sampah Warga</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Pilih Rumah / Nama Warga</label>
+                <select id="pilihWargaSampah" onchange="loadKalenderWargaTerpilih()" class="w-full mt-1.5 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600">
+                    <option value="">-- Pilih Warga --</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Pilih Tanggal Pengambilan</label>
+                <input type="date" id="tglAktivitas" class="w-full mt-1.5 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-600">
+            </div>
+
+            <div class="space-y-1.5 pt-2">
+                <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Aksi Status Log</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="updateStatusSampahAdmin('Diambil')" class="py-3.5 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-wide shadow-sm active:scale-95 transition-all">Diambil</button>
+                    <button onclick="updateStatusSampahAdmin('Tidak Diambil')" class="py-3.5 bg-rose-500 text-white rounded-xl text-[10px] font-black uppercase tracking-wide shadow-sm active:scale-95 transition-all">Lewat</button>
+                    <button onclick="updateStatusSampahAdmin('Kosong')" class="py-3.5 bg-slate-500 text-white rounded-xl text-[10px] font-black uppercase tracking-wide shadow-sm active:scale-95 transition-all">Kosong</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider" id="judulKalenderAdmin">Live Preview Kalender Warga</p>
+                <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-500 font-bold" id="namaWargaPreview">-</span>
+            </div>
+            <div id="gridAngkaKalenderAdmin" class="grid grid-cols-7 gap-1.5 text-center opacity-60">
+                </div>
+        </div>
+    </div>
+
+    <div id="tab-kelola-kas" class="tab-content space-y-4">
+        <div class="px-1 flex items-center gap-1.5 text-slate-400">
+            <i class="fa-solid fa-money-bill-transfer text-xs"></i>
+            <h3 class="font-black text-[10px] uppercase tracking-wider">Input Keuangan & Konfirmasi Iuran</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <p class="text-[11px] font-black text-emerald-900 uppercase tracking-wider border-b border-slate-50 pb-2"><i class="fa-solid fa-plus-circle mr-1"></i> Log Transaksi Kas Utama</p>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Jenis</label>
+                    <select id="kasJenis" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700">
+                        <option value="pemasukan">PEMASUKAN (+)</option>
+                        <option value="pengeluaran">PENGELUARAN (-)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Jumlah (Rupiah)</label>
+                    <input type="number" id="kasNominal" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700" placeholder="100000">
+                </div>
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Keterangan Catatan</label>
+                <input type="text" id="kasKeterangan" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700" placeholder="Contoh: Iuran Kas Warga, Beli Sapu, dll">
+            </div>
+            <button onclick="simpanMutasiKas()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs tracking-wider">Simpan Transaksi Kas</button>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <p class="text-[11px] font-black text-amber-600 uppercase tracking-wider border-b border-slate-50 pb-2"><i class="fa-solid fa-address-card mr-1"></i> Update Status Iuran Warga</p>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Pilih Warga</label>
+                <select id="pilihWargaIuran" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700"></select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Bulan</label>
+                    <select id="pilihBulanIuran" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700">
+                        <option value="Jan">Januari</option>
+                        <option value="Feb">Februari</option>
+                        <option value="Mar">Maret</option>
+                        <option value="Apr">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Jun">Juni</option>
+                        <option value="Jul">Juli</option>
+                        <option value="Agu">Agustus</option>
+                        <option value="Sep">September</option>
+                        <option value="Okt">Oktober</option>
+                        <option value="Nov">November</option>
+                        <option value="Des">Desember</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Status</label>
+                    <select id="statusBulanIuran" class="w-full mt-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700">
+                        <option value="Lunas">Lunas</option>
+                        <option value="Belum">Belum Bayar</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="updateStatusIuranWarga()" class="w-full bg-emerald-900 text-white p-3 rounded-xl font-black uppercase text-xs tracking-wider">Update Iuran</button>
+        </div>
+    </div>
+
+    <div id="tab-admin-info" class="tab-content space-y-4">
+        <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm text-center space-y-2">
+            <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <h3 class="font-black text-slate-800 text-base">Sistem Admin TUNTAS v2.1</h3>
+            <p class="text-xs text-slate-400 font-semibold leading-normal mx-auto max-w-xs">Gunakan panel ini dengan bijak. Semua perubahan status data sampah dan kas langsung tersinkronisasi ke aplikasi warga secara real-time.</p>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-xl px-4 py-2.5 z-50">
+        <div class="max-w-md mx-auto grid grid-cols-4 text-center">
+            <button onclick="switchTabAdmin('tab-input-sampah', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 active-tab-btn focus:outline-none">
+                <i class="fa-solid fa-dumpster text-lg"></i>
+                <span class="text-[9px] font-black uppercase tracking-tight">Input Sampah</span>
+            </button>
+            <button onclick="switchTabAdmin('tab-kelola-kas', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 focus:outline-none">
+                <i class="fa-solid fa-money-bill-trend-up text-lg"></i>
+                <span class="text-[9px] font-black uppercase tracking-tight">Keluar/Masuk Kas</span>
+            </button>
+            <button onclick="switchTabAdmin('tab-admin-info', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 focus:outline-none">
+                <i class="fa-solid fa-gears text-lg"></i>
+                <span class="text-[9px] font-black uppercase tracking-tight">Sistem</span>
+            </button>
+            <button onclick="logoutAdmin()" class="flex flex-col items-center justify-center gap-0.5 text-rose-400 hover:text-rose-600 focus:outline-none">
+                <i class="fa-solid fa-power-off text-lg"></i>
+                <span class="text-[9px] font-black uppercase tracking-tight">Keluar</span>
+            </button>
+        </div>
+    </nav>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="index7.js"></script> 
+
+<script>
+    // KONFIGURASI FIREBASE (Sama persis dengan anggota.html)
+    const firebaseConfigAdmin = {
+        apiKey: "AIzaSy...",
+        authDomain: "tuntas-xxxxx.firebaseapp.com",
+        databaseURL: "https://tuntas-xxxxx-default-rtdb.firebaseio.com",
+        projectId: "tuntas-xxxxx",
+        storageBucket: "tuntas-xxxxx.appspot.com",
+        messagingSenderId: "xxxxxx",
+        appId: "1:xxxxxx"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfigAdmin);
+    }
+    const dbFirebaseAdmin = firebase.database();
+
+    let cacheDataSampahWargaPilihan = {};
+    let daftarWargaLokal = [];
+
+    // Mengatur tanggal bawaan (default) hari ini ke input type="date"
+    window.addEventListener('DOMContentLoaded', () => {
+        const hariIni = new Date().toISOString().split('T')[0];
+        if(document.getElementById('tglAktivitas')) {
+            document.getElementById('tglAktivitas').value = hariIni;
+        }
+        
+        // Memeriksa session login admin di localStorage
+        if(localStorage.getItem('tuntas_admin_logged') === 'true') {
+            tampilkanDashboardAdmin();
+        }
+    });
+
+    function prosesLoginAdmin() {
+        const kode = document.getElementById('lAdminHp').value.trim();
+        const pass = document.getElementById('lAdminPass').value;
+
+        // Gantilah baris validasi statis ini atau hubungkan ke node admin Firebase di dalam index7.js jika diperlukan
+        if(kode === "admin1" && pass === "admin123") {
+            localStorage.setItem('tuntas_admin_logged', 'true');
+            tampilkanDashboardAdmin();
+            showAlert("SUKSES", "Selamat Datang Pengurus TUNTAS!", "check_circle", "emerald");
+        } else {
+            showAlert("GAGAL", "Kode Petugas atau Kata Sandi Salah.", "error", "rose");
+        }
+    }
+
+    function tampilkanDashboardAdmin() {
+        document.getElementById('screen-login').classList.add('hidden');
+        document.getElementById('screen-dashboard').classList.remove('hidden');
+        
+        // Ambil list nama warga secara dinamis dari database node warga
+        fetchDaftarWargaUntukDropdown();
+    }
+
+    function fetchDaftarWargaUntukDropdown() {
+        showLoading(true);
+        // Mengambil dari node daftar_warga / pengguna di Firebase
+        dbFirebaseAdmin.ref('warga').once('value', (snapshot) => {
+            showLoading(false);
+            const selectSampah = document.getElementById('pilihWargaSampah');
+            const selectIuran = document.getElementById('pilihWargaIuran');
+            
+            if(!selectSampah) return;
+            
+            selectSampah.innerHTML = '<option value="">-- Pilih Warga --</option>';
+            selectIuran.innerHTML = '<option value="">-- Pilih Warga --</option>';
+
+            if(snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    const dataWarga = child.val();
+                    const namaUpper = dataWarga.nama.trim().toUpperCase();
+                    
+                    const opt = document.createElement('option');
+                    opt.value = namaUpper;
+                    opt.innerText = namaUpper;
+                    
+                    selectSampah.appendChild(opt.cloneNode(true));
+                    selectIuran.appendChild(opt);
+                });
+            } else {
+                // Fallback contoh statis jika node 'warga' belum terisi
+                const dataDummy = ["OPICK", "HAIDAR ABICANDRA", "APRIYANTO"];
+                dataDummy.forEach(nama => {
+                    const opt = document.createElement('option');
+                    opt.value = nama; opt.innerText = nama;
+                    selectSampah.appendChild(opt.cloneNode(true));
+                    selectIuran.appendChild(opt);
+                });
+            }
+        });
+    }
+
+    // Meload preview Kalender Sampah Real-Time dari warga yang sedang dipilih
+    function loadKalenderWargaTerpilih() {
+        const warga = document.getElementById('pilihWargaSampah').value;
+        const gridBox = document.getElementById('gridAngkaKalenderAdmin');
+        const txtPreview = document.getElementById('namaWargaPreview');
+
+        if(!warga) {
+            gridBox.innerHTML = '';
+            txtPreview.innerText = "-";
+            return;
+        }
+
+        txtPreview.innerText = warga;
+        const now = new Date();
+        document.getElementById('judulKalenderAdmin').innerText = `Preview Kalender (${now.getMonth()+1}/${now.getFullYear()})`;
+
+        // Listener Real-Time khusus memantau perubahan data sampah warga tersebut
+        dbFirebaseAdmin.ref(`data_sampah/${warga}`).on('value', (snapshot) => {
+            if(snapshot.exists()) {
+                cacheDataSampahWargaPilihan = snapshot.val();
+            } else {
+                cacheDataSampahWargaPilihan = {};
+            }
+            renderPreviewKalenderAdmin();
+        });
+    }
+
+    function renderPreviewKalenderAdmin() {
+        const gridBox = document.getElementById('gridAngkaKalenderAdmin');
+        if (!gridBox) return;
+        gridBox.innerHTML = '';
+        gridBox.style.opacity = "1";
+
+        const sekarang = new Date();
+        const thn = sekarang.getFullYear();
+        const bln = sekarang.getMonth(); 
+
+        const pathBulanIni = `${thn}-${(bln + 1).toString().padStart(2, '0')}`;
+        const dataBulanIni = cacheDataSampahWargaPilihan[pathBulanIni] || {};
+        const jumlahHari = new Date(thn, bln + 1, 0).getDate();
+
+        for (let hari = 1; hari <= jumlahHari; hari++) {
+            const detailHari = dataBulanIni[hari] || null;
+            const status = detailHari ? detailHari.status : "Belum Ada";
+
+            let bgStyle = "bg-slate-100 text-slate-400 border border-slate-200/40";
+
+            if (status === "Diambil") bgStyle = "bg-emerald-500 text-white";
+            else if (status === "Tidak Diambil") bgStyle = "bg-rose-500 text-white";
+            else if (status === "Kosong") bgStyle = "bg-slate-400 text-white";
+
+            const htmlKotak = `
+                <div class="p-1 py-2 rounded-lg text-center h-10 flex flex-col justify-center items-center ${bgStyle}">
+                    <span class="text-[11px] font-black">${hari}</span>
+                </div>
+            `;
+            gridBox.insertAdjacentHTML('beforeend', htmlKotak);
+        }
+    }
+
+    // Fungsi Utama Eksekusi Update Status Sampah dari Sisi Admin
+    function updateStatusSampahAdmin(statusBaru) {
+        const warga = document.getElementById('pilihWargaSampah').value;
+        const tglInput = document.getElementById('tglAktivitas').value;
+
+        if(!warga) {
+            showAlert("PERINGATAN", "Silakan pilih nama warga terlebih dahulu!", "warning", "amber");
+            return;
+        }
+        if(!tglInput) {
+            showAlert("PERINGATAN", "Silakan tentukan tanggal operasional!", "warning", "amber");
+            return;
+        }
+
+        const dateObj = new Date(tglInput);
+        const thn = dateObj.getFullYear();
+        const bln = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+        const hari = dateObj.getDate();
+
+        const pathBulan = `${thn}-${bln}`;
+        const jamSekarang = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+
+        showLoading(true);
+        // Melakukan penyimpanan langsung ke objek rute Firebase yang disinkronkan dengan anggota.html
+        dbFirebaseAdmin.ref(`data_sampah/${warga}/${pathBulan}/${hari}`).set({
+            status: statusBaru,
+            waktu: jamSekarang
+        }, (error) => {
+            showLoading(false);
+            if(error) {
+                showAlert("GAGAL", "Gagal memperbarui data ke server.", "error", "rose");
+            } else {
+                showAlert("BERHASIL", `Status tanggal ${hari} diset ke [${statusBaru.toUpperCase()}]`, "check_circle", "emerald");
+            }
+        });
+    }
+
+    // Tambah Transaksi Buku Kas Utama (Pemasukan/Pengeluaran global)
+    function simpanMutasiKas() {
+        const jenis = document.getElementById('kasJenis').value;
+        const nominal = parseInt(document.getElementById('kasNominal').value);
+        const ket = document.getElementById('kasKeterangan').value.trim();
+
+        if(!nominal || !ket) {
+            showAlert("PERINGATAN", "Nominal dan Keterangan wajib diisi!", "warning", "amber");
+            return;
+        }
+
+        showLoading(true);
+        const newRef = dbFirebaseAdmin.ref('mutasi_kas').push();
+        newRef.set({
+            jenis: jenis,
+            nominal: nominal,
+            keterangan: ket,
+            waktu: new Date().toLocaleString('id-ID')
+        }, (err) => {
+            showLoading(false);
+            if(!err) {
+                document.getElementById('kasNominal').value = '';
+                document.getElementById('kasKeterangan').value = '';
+                showAlert("SUKSES", "Catatan Buku Kas Utama Berhasil Disimpan!", "check_circle", "emerald");
+            }
+        });
+    }
+
+    // Update Status Pembayaran Iuran Warga per Bulan
+    function updateStatusIuranWarga() {
+        const warga = document.getElementById('pilihWargaIuran').value;
+        const bulan = document.getElementById('pilihBulanIuran').value;
+        const status = document.getElementById('statusBulanIuran').value;
+
+        if(!warga) {
+            showAlert("PERINGATAN", "Silakan pilih nama warga!", "warning", "amber");
+            return;
+        }
+
+        showLoading(true);
+        dbFirebaseAdmin.ref(`status_iuran/${warga}/${bulan}`).set(status, (err) => {
+            showLoading(false);
+            if(!err) {
+                showAlert("SUKSES", `Iuran ${warga} bulan ${bulan} diupdate ke: ${status.toUpperCase()}`, "check_circle", "emerald");
+            }
+        });
+    }
+
+    function switchTabAdmin(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+        document.getElementById(tabId).classList.add('active-tab');
+        
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab-btn'));
+        btn.classList.add('active-tab-btn');
+    }
+
+    function togglePasswordLogin() {
+        const p = document.getElementById('lAdminPass');
+        const icon = document.getElementById('eyeIcon');
+        if(p.type === 'password') {
+            p.type = 'text';
+            icon.className = "fa-solid fa-eye text-sm";
+        } else {
+            p.type = 'password';
+            icon.className = "fa-solid fa-eye-slash text-sm";
+        }
+    }
+
+    function showLoading(state) {
+        document.getElementById('loading').style.display = state ? 'flex' : 'none';
+    }
+
+    function showAlert(title, msg, icon, color) {
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMsg').innerText = msg;
+        const iconBox = document.getElementById('alertIcon');
+        iconBox.innerHTML = `<span class="material-symbols-rounded">${icon}</span>`;
+        
+        if(color === "rose") {
+            iconBox.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-rose-50 text-rose-600";
+        } else {
+            iconBox.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
+        }
+        document.getElementById('customAlert').style.display = 'flex';
+    }
+
+    function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+    
+    function logoutAdmin() {
+        localStorage.removeItem('tuntas_admin_logged');
+        window.location.reload();
+    }
+</script>
+</body>
+</html>
