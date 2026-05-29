@@ -1,1 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Admin (Sheets)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; padding-bottom: 90px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        nav button.active { color: #059669; border-color: #059669; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; }
+        .modern-in { width:100%; padding:12px 14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size:13px; font-weight:600; color:#1E293B; transition:all 0.2s; }
+        .modern-in:focus { background:white; border-color:#059669; box-shadow: 0 0 0 4px rgba(5,150,105,0.08); }
+    </style>
+</head>
+<body>
+
+<div id="loading" class="fixed inset-0 bg-emerald-950/95 text-white z-[9999] flex items-center justify-center font-extrabold text-xs uppercase tracking-widest">Memproses Database...</div>
+
+<div id="customAlert" class="modal">
+    <div class="modal-content text-center space-y-4">
+        <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-rounded">check_circle</span>
+        </div>
+        <h4 id="alertTitle" class="font-black text-slate-800 uppercase text-xs"></h4>
+        <p id="alertMsg" class="text-[11px] font-semibold text-slate-400 leading-relaxed"></p>
+        <button onclick="document.getElementById('customAlert').style.display='none'" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-[10px] tracking-wider">Selesai</button>
+    </div>
+</div>
+
+<div class="max-w-md mx-auto p-4 space-y-5">
+    <header class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <img src="logo.png" alt="Logo Tuntas" class="w-9 h-9 object-contain" onerror="this.src='avatar.png'">
+            <h1 class="text-xl font-black text-emerald-900 tracking-tight">Tuntas.</h1>
+        </div>
+        <button onclick="loadDataDariSheets()" class="text-slate-400 font-bold text-[9px] uppercase bg-slate-100 px-3 py-1.5 rounded-xl border flex items-center gap-1 active:scale-95 transition-transform">
+            <span class="material-symbols-rounded !text-xs">sync</span> Reload Data
+        </button>
+    </header>
+
+    <div id="screen-iuran" class="tab-content active space-y-4">
+        <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-xs space-y-4">
+            <div class="border-b pb-2">
+                <h3 class="font-black text-xs text-slate-800 uppercase tracking-wide">Pencatatan Iuran Bulanan Warga</h3>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Pilih Anggota / Kepala Keluarga</label>
+                    <select id="iNama" class="modern-in mt-1 select-custom"></select>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Tanggal Bayar</label>
+                    <input type="date" id="iTgl" class="modern-in mt-1">
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nominal Iuran (Rp)</label>
+                    <input type="number" id="iNom" class="modern-in mt-1" placeholder="Contoh: 20000">
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1 block mb-1">Pilih Alokasi Bulan Tagihan</label>
+                    <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-2xl border text-[11px] font-bold text-slate-600">
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Jan"> Jan</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Feb"> Feb</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Mar"> Mar</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Apr"> Apr</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Mei"> Mei</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Jun"> Jun</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Jul"> Jul</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Agu"> Agu</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Sep"> Sep</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Okt"> Okt</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Nov"> Nov</label>
+                        <label class="flex items-center gap-1"><input type="checkbox" name="blnCek" value="Des"> Des</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="simpanIuran()" class="w-full bg-emerald-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs tracking-wider shadow-md shadow-emerald-900/10 active:scale-95 transition-all">
+                Simpan & Kirim Kuitansi WA
+            </button>
+        </div>
+    </div>
+
+    <div id="screen-kas" class="tab-content space-y-4">
+        <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-xs space-y-4">
+            <div class="border-b pb-2"><h3 class="font-black text-xs text-slate-800 uppercase tracking-wide">Entri Kas Operasional Keluar/Masuk</h3></div>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Kategori Transaksi</label>
+                    <select id="kKat" class="modern-in mt-1"><option value="Masuk">KAS MASUK (IN)</option><option value="Keluar">KAS KELUAR (OUT)</option></select>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Tanggal Transaksi</label>
+                    <input type="date" id="kTgl" class="modern-in mt-1">
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Deskripsi / Keterangan Kebutuhan</label>
+                    <input type="text" id="kKet" class="modern-in mt-1" placeholder="Contoh: Beli bensin motor sampah roda 3">
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase ml-1">Nominal Rupiah (Rp)</label>
+                    <input type="number" id="kNom" class="modern-in mt-1" placeholder="Contoh: 50000">
+                </div>
+            </div>
+            <button onclick="simpanKasUmum()" class="w-full bg-slate-900 text-white p-3.5 rounded-2xl font-black uppercase text-xs tracking-wider active:scale-95 transition-all">Simpan Log Transaksi</button>
+        </div>
+    </div>
+
+    <div id="screen-rekap" class="tab-content space-y-4">
+        <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-xs space-y-4">
+            <div class="border-b pb-2"><h3 class="font-black text-xs text-slate-800 uppercase tracking-wide">Eksportasi Laporan Jurnal Pembukuan</h3></div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase">Dari Tanggal</label>
+                    <input type="date" id="fMulai" class="modern-in mt-1">
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-slate-400 uppercase">Sampai Tanggal</label>
+                    <input type="date" id="fSelesai" class="modern-in mt-1">
+                </div>
+            </div>
+            <button onclick="downloadPDF()" class="w-full bg-rose-700 text-white p-3 rounded-xl font-black uppercase text-[10px] tracking-wider flex items-center justify-center gap-1 shadow-sm"><span class="material-symbols-rounded !text-sm">picture_as_pdf</span> Unduh Berkas PDF Berwarna</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-2xl px-2 py-2.5 z-50">
+        <div class="max-w-md mx-auto grid grid-cols-3 text-center text-[10px] font-black uppercase tracking-tight">
+            <button id="n-iuran" onclick="st('iuran')" class="py-2 active border-b-2 border-transparent flex flex-col items-center gap-0.5 text-slate-400 focus:outline-none"><span class="material-symbols-rounded">payments</span>Iuran Warga</button>
+            <button id="n-kas" onclick="st('kas')" class="py-2 border-b-2 border-transparent flex flex-col items-center gap-0.5 text-slate-400 focus:outline-none"><span class="material-symbols-rounded">account_balance_wallet</span>Kas Umum</button>
+            <button id="n-rekap" onclick="st('rekap')" class="py-2 border-b-2 border-transparent flex flex-col items-center gap-0.5 text-slate-400 focus:outline-none"><span class="material-symbols-rounded">analytics</span>Cetak Laporan</button>
+        </div>
+    </nav>
+</div>
+
+<script>
+    const CONFIG_API = "https://script.google.com/macros/s/AKfycbzpZZt53kE0d5y7xXfsPFI21NKMx9MLh8N7NXkgtZV_u5QPg9ldAQApH4NzpGOShFDs/exec";
+    let dataWarga = {};
+    let cacheAllTrx = [];
+
+    async function loadDataDariSheets() {
+        showLoad(true);
+        try {
+            const res = await fetch(`${CONFIG_API}?action=loadAll`);
+            const responseJson = await res.json();
+            if (responseJson.status === "success") {
+                const select = document.getElementById('iNama');
+                select.innerHTML = '';
+                dataWarga = {};
+                
+                responseJson.data.anggota.forEach(w => {
+                    dataWarga[w.nama] = w.hp;
+                    select.insertAdjacentHTML('beforeend', `<option value="${w.nama}">${w.nama.toUpperCase()} [${w.blok || 'RT 04'}]</option>`);
+                });
+
+                cacheAllTrx = [];
+                if(responseJson.data.kas) responseJson.data.kas.forEach(k => cacheAllTrx.push({tgl: new Date(k.tanggal), ket: k.keterangan, kat: k.kategori, nom: Number(k.nominal)}));
+                if(responseJson.data.pembayaran) responseJson.data.pembayaran.forEach(p => cacheAllTrx.push({tgl: new Date(p.tanggal), ket: `IURAN ${p.nama} (${p.keterangan})`, kat: 'Masuk', nom: Number(p.nominal)}));
+            }
+        } catch(e) {
+            tuntasAlert("Gagal Sinkronisasi", "Koneksi jaringan internet terputus.", "error");
+        } finally {
+            showLoad(false);
+        }
+    }
+
+    // ==========================================
+    // CUSTOM MESSAGING SYSTEM (WHATSAPP DRIVEN)
+    // ==========================================
+    async function simpanIuran() {
+        const n = document.getElementById('iNama').value;
+        const nmn = Number(document.getElementById('iNom').value);
+        const tglVal = document.getElementById('iTgl').value;
+        const blns = Array.from(document.querySelectorAll('input[name="blnCek"]:checked')).map(c => c.value);
+        
+        if(!n || !nmn || blns.length === 0 || !tglVal) {
+            return tuntasAlert("Form Belum Lengkap", "Silakan isi tanggal, nominal, dan centang bulan iuran!", "error");
+        }
+        
+        // Pembuatan Token Referensi Kuitansi T-6 Angka Acak Sesuai Instruksi
+        const nomorAcak = Math.floor(100000 + Math.random() * 900000);
+        const kode = "T-" + nomorAcak; 
+        const txtKeterangan = blns.join(", ");
+        
+        showLoad(true);
+        
+        // 1. Eksekusi Kirim Data Transaksi Ke Google Spreadsheet Cloud
+        await kirimKeSheets({ 
+            action: "simpanIuran", 
+            kode: kode,
+            nama: n,
+            tgl: tglVal,
+            ket: txtKeterangan, 
+            nom: nmn 
+        });
+        
+        // 2. Kontruksi Struktur Pesan WhatsApp Persis Sesuai Pesanan Anda
+        const linkKuitansi = `https://tuntas.sekawan.my.id/kuitansi.html?id=${kode}`;
+        
+        const stringPesan = `Halo, pak/bu *${n}*..\n` +
+                            `Pembayaran Anda telah kami terima dengan no referensi *${kode}*.\n\n` +
+                            `---\n\n` +
+                            `Cek e-Kuitansi Anda di:\n${linkKuitansi}\n\n` +
+                            `Terimakasih atas partisipasinya.\n\n` +
+                            `Pengurus TUNTAS,\n\n*APRIYANTO*`;
+        
+        const urlEncodeMsg = encodeURIComponent(stringPesan);
+        
+        let noHpTarget = (dataWarga[n] || '').toString().replace(/\D/g, '');
+        if (noHpTarget.startsWith('0')) {
+            noHpTarget = '62' + noHpTarget.slice(1);
+        }
+        
+        showLoad(false);
+        
+        // Jalankan Web Intent WhatsApp Api
+        window.open(`https://wa.me/${noHpTarget}?text=${urlEncodeMsg}`);
+        
+        // Reset state input form iuran
+        document.getElementById('iNom').value = '';
+        document.querySelectorAll('input[name="blnCek"]').forEach(c => c.checked = false);
+        tuntasAlert("Tersimpan", "Data iuran tersimpan. Mengalihkan ke WhatsApp...");
+        loadDataDariSheets();
+    }
+
+    async function simpanKasUmum() {
+        const kat = document.getElementById('kKat').value;
+        const tgl = document.getElementById('kTgl').value;
+        const ket = document.getElementById('kKet').value.trim();
+        const nom = Number(document.getElementById('kNom').value);
+
+        if(!tgl || !ket || !nom) return tuntasAlert("Gagal", "Lengkapi seluruh form kas umum!", "error");
+
+        showLoad(true);
+        await kirimKeSheets({ action: "simpanKas", kategori: kat, tanggal: tgl, keterangan: ket, nominal: nom });
+        showLoad(false);
+        
+        document.getElementById('kKet').value = '';
+        document.getElementById('kNom').value = '';
+        tuntasAlert("Sukses", "Arus kas operasional berhasil dibukukan.");
+        loadDataDariSheets();
+    }
+
+    async function kirimKeSheets(payload) {
+        try {
+            await fetch(CONFIG_API, { method: "POST", body: JSON.stringify(payload) });
+        } catch(e) {
+            console.error("Fetch background network failure.");
+        }
+    }
+
+    function st(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('screen-'+t).classList.add('active');
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('n-'+t).classList.add('active');
+    }
+
+    function showLoad(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+    
+    function tuntasAlert(title, msg, type='success') {
+        const icon = document.getElementById('alertIcon');
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMsg').innerText = msg;
+        icon.className = type === 'error' ? "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-red-50 text-red-600" : "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
+        icon.innerHTML = type === 'error' ? '<span class="material-symbols-rounded">gpp_maybe</span>' : '<span class="material-symbols-rounded">check_circle</span>';
+        document.getElementById('customAlert').style.display = 'flex';
+    }
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const tglAwal = document.getElementById('fMulai').value || 'Awal';
+        const fSelesai = document.getElementById('fSelesai').value || 'Akhir';
+        doc.setFontSize(22); doc.setTextColor(6, 78, 59); doc.setFont("helvetica", "bold");
+        doc.text("TUNTAS.", 14, 20);
+        doc.setFontSize(10); doc.setTextColor(100); doc.text(`Laporan Jurnal Kas: ${tglAwal} s/d ${fSelesai}`, 14, 28);
+        
+        doc.autoTable({
+            startY: 40,
+            head: [['Tanggal', 'Keterangan', 'Tipe', 'Nominal']],
+            body: cacheAllTrx.map(t => [t.tgl.toLocaleDateString('id-ID'), t.ket.toUpperCase(), t.kat.toUpperCase(), 'Rp ' + t.nom.toLocaleString()]),
+            headStyles: { fillColor: [6, 78, 59] }
+        });
+        doc.save(`Laporan_Kas_TUNTAS_${tglAwal}_ke_${fSelesai}.pdf`);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const d = new Date().toISOString().split('T')[0];
+        document.getElementById('iTgl').value = d;
+        document.getElementById('kTgl').value = d;
+        loadDataDariSheets();
+    });
+</script>
+</body>
+</html>
