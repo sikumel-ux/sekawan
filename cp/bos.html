@@ -33,6 +33,7 @@
 
 <div id="loading" class="loading-overlay">Menghubungkan ke server...</div>
 
+<!-- Custom Alert Modal -->
 <div id="customAlert" class="modal" style="z-index: 300;">
     <div class="modal-content text-center space-y-4">
         <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600">
@@ -44,6 +45,7 @@
     </div>
 </div>
 
+<!-- MAIN DASHBOARD ADMIN -->
 <div id="screen-dashboard" class="max-w-md mx-auto p-5 space-y-5">
     <header class="flex justify-between items-center bg-white p-3 px-4 rounded-2xl border border-slate-100 shadow-xs">
         <div class="flex items-center gap-2">
@@ -56,6 +58,7 @@
         </div>
     </header>
 
+    <!-- TAB 1: INPUT STATUS SAMPAH -->
     <div id="tab-input-sampah" class="tab-content active-tab space-y-4">
         <div class="px-1 flex items-center gap-1.5 text-slate-400">
             <i class="fa-solid fa-truck-garbage text-xs"></i>
@@ -85,6 +88,7 @@
             </div>
         </div>
 
+        <!-- Preview Kalender Warga -->
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
             <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider" id="judulKalenderAdmin">Live Preview Kalender Warga</p>
@@ -94,12 +98,14 @@
         </div>
     </div>
 
+    <!-- TAB 2: KELOLA KAS & IURAN -->
     <div id="tab-kelola-kas" class="tab-content space-y-4">
         <div class="px-1 flex items-center gap-1.5 text-slate-400">
             <i class="fa-solid fa-money-bill-transfer text-xs"></i>
             <h3 class="font-black text-[10px] uppercase tracking-wider">Input Keuangan & Konfirmasi Iuran</h3>
         </div>
 
+        <!-- Form Tambah Mutasi Kas -->
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
             <p class="text-[11px] font-black text-emerald-900 uppercase tracking-wider border-b border-slate-50 pb-2"><i class="fa-solid fa-plus-circle mr-1"></i> Log Transaksi Kas Utama</p>
             <div class="grid grid-cols-2 gap-2">
@@ -122,6 +128,7 @@
             <button onclick="simpanMutasiKas()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs tracking-wider">Simpan Transaksi Kas</button>
         </div>
 
+        <!-- Update Status Iuran Bulanan -->
         <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
             <p class="text-[11px] font-black text-amber-600 uppercase tracking-wider border-b border-slate-50 pb-2"><i class="fa-solid fa-address-card mr-1"></i> Update Status Iuran Warga</p>
             <div>
@@ -158,6 +165,7 @@
         </div>
     </div>
 
+    <!-- TAB 3: INFORMASI SYSTEM -->
     <div id="tab-admin-info" class="tab-content space-y-4">
         <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm text-center space-y-2">
             <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
@@ -168,6 +176,7 @@
         </div>
     </div>
 
+    <!-- BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-xl px-4 py-2.5 z-50">
         <div class="max-w-md mx-auto grid grid-cols-3 text-center">
             <button onclick="switchTabAdmin('tab-input-sampah', this)" class="flex flex-col items-center justify-center gap-0.5 text-slate-400 active-tab-btn focus:outline-none">
@@ -211,16 +220,13 @@
     let cacheDataSampahWargaPilihan = {};
 
     window.addEventListener('DOMContentLoaded', () => {
-        // Set otomatis tanggal input ke hari ini
         const hariIni = new Date().toISOString().split('T')[0];
         if(document.getElementById('tglAktivitas')) {
             document.getElementById('tglAktivitas').value = hariIni;
         }
-        
-        // Langsung muat daftar dropdown warga dari Firebase saat aplikasi dibuka
         fetchDaftarWargaUntukDropdown();
-    </script>
-</head>
+    });
+
     function fetchDaftarWargaUntukDropdown() {
         showLoading(true);
         dbFirebaseAdmin.ref('warga').once('value', (snapshot) => {
@@ -404,6 +410,7 @@
         btn.classList.add('active-tab-btn');
     }
 
+    // Fungsi utilitas modal loader dan alert
     function showLoading(state) {
         document.getElementById('loading').style.display = state ? 'flex' : 'none';
     }
