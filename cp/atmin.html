@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuntas. - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #F8FAFA;
+            --bg-card: #FFFFFF;
+            --color-primary: #004D36; /* Hijau botol gelap khas Tuntas */
+            --color-primary-light: #E6EEEC;
+            --text-main: #1E293B;
+            --text-muted: #94A3B8;
+            --color-income: #008559;
+            --color-expense: #DC2626;
+            --shadow-soft: 0 8px 24px rgba(148, 163, 184, 0.12);
+            --shadow-sm: 0 4px 12px rgba(148, 163, 184, 0.06);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Pembatas mockup biar pas di tengah kalau dibuka di PC, tapi full di HP */
+        .app-container {
+            width: 100%;
+            max-width: 480px; 
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 90px; /* Space biar ga ketutup bottom nav */
+        }
+
+        /* --- APP HEADER --- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 1.25rem 1rem 1.25rem;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background-color: var(--color-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .logout-btn {
+            width: 42px;
+            height: 42px;
+            background-color: var(--bg-card);
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #EF4444;
+            text-decoration: none;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* --- CONTENT WRAPPER --- */
+        .content {
+            padding: 0 1.25rem;
+        }
+
+        /* --- CARD SALDO UTAMA (HIJAU BESAR) --- */
+        .main-balance-card {
+            background-color: var(--color-primary);
+            color: #FFFFFF;
+            padding: 2rem 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.25rem;
+            box-shadow: 0 12px 24px rgba(0, 77, 54, 0.2);
+        }
+
+        .balance-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .balance-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        /* --- CARD FILTER TANGGAL --- */
+        .filter-card {
+            background-color: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 1.25rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .filter-action {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #00A870;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .filter-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .filter-select {
+            width: 100%;
+            background-color: #F1F5F9;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #475569;
+            outline: none;
+            appearance: none; /* Hilangkan panah bawaan browser */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23475569' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 15px) center;
+        }
+
+        /* --- GRID TOTAL MASUK & KELUAR --- */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            background-color: var(--bg-card);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .summary-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .summary-label.in { color: #00A870; }
+        .summary-label.out { color: #EF4444; }
+
+        .summary-amount {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0F172A;
+            margin-top: 0.25rem;
+        }
+
+        /* --- TOMBOL CATAT KAS UMUM --- */
+        .btn-action-main {
+            width: 100%;
+            background-color: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 0.85rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+
+        .btn-action-main:hover {
+            background-color: var(--color-primary-light);
+        }
+
+        /* --- SECTION HISTORI --- */
+        .section-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-item {
+            background-color: var(--bg-card);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .history-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Badge IN / OUT bulat kotak tipis */
+        .badge-type {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .badge-type.out { background-color: #FEE2E2; color: #EF4444; }
+        .badge-type.in { background-color: #D1FAE5; color: #065F46; }
+
+        .history-info .title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1E293B;
+            text-transform: uppercase;
+        }
+
+        .history-info .date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.1rem;
+        }
+
+        .history-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .history-amount {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .history-amount.out { color: #EF4444; }
+        .history-amount.in { color: #008559; }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #CBD5E1;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .delete-btn:hover { color: #94A3B8; }
+
+        /* --- BOTTOM NAVIGATION BAR --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-card);
+            border-top: 1px solid #E2E8F0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 0.6rem 0;
+            box-shadow: 0 -4px 12px rgba(148, 163, 184, 0.08);
+            z-index: 200;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94A3B8;
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-weight: 700;
+            gap: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+        }
+
+        .nav-item.active {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header class="app-header">
+            <div class="brand-wrapper">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span class="brand-name">Tuntas.</span>
+            </div>
+            <a href="logout.html" class="logout-btn" title="Keluar">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </header>
+
+        <div class="content">
+            
+            <div class="main-balance-card">
+                <div class="balance-label">Total Saldo Bersih</div>
+                <div class="balance-amount">Rp 771.800</div>
+            </div>
+
+            <div class="filter-card">
+                <div class="filter-header">
+                    <span class="filter-label">Filter Tanggal</span>
+                    <button type="button" class="filter-action">Terapkan</button>
+                </div>
+                <div class="filter-inputs">
+                    <select class="filter-select">
+                        <option>Mulai Dari...</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Sampai Dengan...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-label in">Total Masuk</div>
+                    <div class="summary-amount">Rp 4.248.800</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label out">Total Keluar</div>
+                    <div class="summary-amount">Rp 3.477.000</div>
+                </div>
+            </div>
+
+            <a href="input.html" class="btn-action-main">Catat Kas Umum</a>
+
+            <div class="section-header">Histori (Terbaru di Atas)</div>
+            
+            <div class="history-list">
+                <div class="history-item">
+                    <div class="history-left">
+                        <div class="badge-type out">OUT</div>
+                        <div class="history-info">
+                            <div class="title">Semen</div>
+                            <div class="date">18/5/2026</div>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="history-amount out">- 48,000</div>
+                        <button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-left">
+                        <div class="badge-type in">IN</div>
+                        <div class="history-info">
+                            <div class="title">Donasi Bambang Tri</div>
+                            <div class="date">13/5/2026</div>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="history-amount in">+ 25,000</div>
+                        <button class="delete-btn"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-table-cells-large"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Warga</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span>Rekap</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Bayar</span>
+            </a>
+        </nav>
+
+    </div>
+
+</body>
+</html>
