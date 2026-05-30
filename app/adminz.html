@@ -74,9 +74,14 @@
            </div>
             <h1 class="text-xl font-black text-emerald-900">Tuntas.</h1>
         </div>
-        <button onclick="loadDataDariSheets()" class="text-slate-400 font-bold text-[9px] uppercase bg-slate-100 px-3 py-1.5 rounded-xl border flex items-center gap-1 active:scale-95 transition-transform">
-            <span class="material-symbols-rounded !text-xs">sync</span> Reload Data
-        </button>
+        <div class="flex items-center gap-1.5">
+            <button onclick="loadDataDariSheets()" class="text-slate-500 font-bold text-[9px] uppercase bg-slate-100 px-3 py-2 rounded-xl border flex items-center gap-1 active:scale-95 transition-transform">
+                <span class="material-symbols-rounded !text-xs">sync</span> Reload
+            </button>
+            <button onclick="logoutAdmin()" class="text-rose-600 bg-rose-50 border border-rose-100 p-1.5 rounded-xl flex items-center justify-center active:scale-95 transition-transform" title="Logout">
+                <span class="material-symbols-rounded !text-base">logout</span>
+            </button>
+        </div>
     </header>
 
     <div id="screen-home" class="tab-content active space-y-4">
@@ -248,7 +253,7 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script Baru
+    // URL Web App Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfO1n4pRZW-h3hJXcN4mqSR9vEbxNPhHBxxw0WWi748YoFX6LRXOIZpqltBfBCApvsew/exec";
 
     // ==========================================
@@ -323,7 +328,6 @@
         });
         thr.innerHTML += '<th class="text-center p-3 font-bold text-slate-400">AKSI</th>';
         
-        // Listen Perubahan Data Warga dari Firebase Secar Live
         listenWargaFirebase();
     }
 
@@ -435,7 +439,6 @@
             listR.insertAdjacentHTML('beforeend', `<div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-50 shadow-sm"><div class="flex gap-3 items-center"><div class="w-8 h-8 rounded-lg ${isM?'bg-emerald-50 text-emerald-600':'bg-red-50 text-red-600'} flex items-center justify-center font-black text-[9px]">${isM?'IN':'OUT'}</div><div><p class="text-xs font-black uppercase text-slate-700 tracking-tighter">${tx.ket}</p><p class="text-[8px] text-slate-300 font-bold">${tx.tgl.toLocaleDateString('id-ID')}</p></div></div><div class="text-right flex items-center gap-2"><p class="font-black text-xs ${isM?'text-emerald-700':'text-red-600'}">${isM?'+':'-'} ${tx.nom.toLocaleString()}</p><button onclick="hapusTrx(${paramHapus})" class="text-slate-200"><span class="material-symbols-rounded text-sm">delete</span></button></div></div>`);
         });
 
-        // RENDER DATA WARGA LIVE DARI FIREBASE REALTIME DATABASE
         if(dbWargaFirebase) {
             dbWargaFirebase.forEach(d => {
                 const n = (d.nama || '').trim().toUpperCase();
@@ -558,7 +561,6 @@
         document.querySelectorAll('input[name="blnCek"]').forEach(c => c.checked = false);
     }
 
-    // SIMPAN WARGA BARU KE FIREBASE (Username, Password, Nama, HP)
     async function simpanAnggota() {
         const u = document.getElementById('aUsername').value.trim().toLowerCase();
         const p = document.getElementById('aPassword').value.trim();
@@ -587,7 +589,6 @@
         hideLoading();
     }
 
-    // HAPUS PERMANENT WARGA DARI FIREBASE
     function hapusWargaFirebase(key, nama) {
         tuntasConfirm(`Hapus permanent data warga ${nama} dari Firebase?`, async function() {
             showLoading();
@@ -630,7 +631,6 @@
         });
     }
 
-    // SIMPAN OPERASIONAL SAMPAH KE FIREBASE REALTIME DATABASE
     async function simpanLaporanSampah() {
         const tgl = document.getElementById('sTgl').value;
         const nama = document.getElementById('sNama').value;
@@ -648,6 +648,18 @@
             tuntasAlert("Berhasil", `Status sampah ${nama} diatur: ${status}`);
         } catch (e) { tuntasAlert("Gagal", "Gagal menyimpan laporan sampah ke Firebase", "error"); }
         hideLoading();
+    }
+
+    // FUNGSI LOGOUT ADMIN
+    function logoutAdmin() {
+        tuntasConfirm("Apakah Anda yakin ingin keluar dari halaman Admin?", function() {
+            // Hapus session/localStorage login jika ada
+            localStorage.removeItem("adminLogin"); 
+            sessionStorage.clear();
+            
+            // Redirect ke halaman utama / login (sesuaikan nama filenya)
+            window.location.href = "index.html"; 
+        });
     }
 
     function st(t) {
