@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Panel Pengurus RT 04</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="gaya.css">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:24px; border-radius:2rem; width:100%; max-width:400px; animation: popUp 0.2s ease-out; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+        .loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.8); z-index:200; align-items:center; justify-content:center; font-weight:bold; color:#064E3B; backdrop-filter: blur(4px); }
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<!-- LOADING OVERLAY -->
+<div id="loading" class="loading-overlay">
+    <div class="text-center space-y-2">
+        <div class="w-8 h-8 border-4 border-emerald-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-950">Memproses Data...</p>
+    </div>
+</div>
+
+<!-- MODAL ALERT KUSTOM -->
+<div id="customAlert" class="modal" style="z-index: 300;">
+    <div class="modal-content text-center space-y-4">
+        <div id="alertIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center"></div>
+        <h4 id="alertTitle" class="font-black text-slate-800 uppercase text-sm"></h4>
+        <p id="alertMsg" class="text-xs font-semibold text-slate-500 leading-relaxed"></p>
+        <button id="btnAlertClose" class="w-full bg-slate-900 text-white p-3 rounded-xl font-black uppercase text-xs tracking-wider">Oke</button>
+    </div>
+</div>
+
+<!-- TOP NAVIGATION BAR -->
+<div class="bg-emerald-900 text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-md mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <span class="material-symbols-rounded text-2xl text-emerald-300">admin_panel_settings</span>
+            <div>
+                <h1 class="text-sm font-black uppercase tracking-wider">PANEL PENGURUS</h1>
+                <p class="text-[10px] text-emerald-200 font-bold">RT 04 Dongkelan Bantul</p>
+            </div>
+        </div>
+        <button id="btnKeluar" class="bg-emerald-800 hover:bg-red-700 p-2.5 rounded-xl transition-colors flex items-center justify-center">
+            <span class="material-symbols-rounded text-sm">logout</span>
+        </button>
+    </div>
+</div>
+
+<!-- MAIN CONTENT CONTAINER -->
+<div class="max-w-md mx-auto p-6 space-y-6 mb-24">
+    
+    <!-- KARTU AMAN UTAMA -->
+    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+        <div class="flex items-center space-x-2 text-emerald-900">
+            <span class="material-symbols-rounded">person_add</span>
+            <h3 class="text-xs font-black uppercase tracking-wider">Tambah Warga Baru</h3>
+        </div>
+        
+        <!-- FORM DATA WARGA -->
+        <div class="space-y-3">
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nama Lengkap Warga</label>
+                <input type="text" id="wNama" class="modern-in mt-1" placeholder="Masukkan nama sesuai KTP">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Nomor WhatsApp / HP</label>
+                <input type="number" id="wHp" class="modern-in mt-1" placeholder="Contoh: 081234xxxx">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-slate-400 ml-2 uppercase">Kata Sandi / Password Akun</label>
+                <input type="text" id="wPass" class="modern-in mt-1" placeholder="Buat kata sandi akun warga">
+            </div>
+            <button id="btnSimpanWarga" class="w-full bg-emerald-900 hover:bg-emerald-950 text-white p-4 rounded-2xl font-black uppercase text-xs tracking-wider shadow-md transition-all active:scale-95 mt-2">
+                Simpan Data Warga
+            </button>
+        </div>
+    </div>
+
+    <!-- KARTU LIST WARGA -->
+    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center space-x-2 text-slate-800">
+                <span class="material-symbols-rounded">group</span>
+                <h3 class="text-xs font-black uppercase tracking-wider">Daftar Warga Terdaftar (<span id="totalWarga">0</span>)</h3>
+            </div>
+            <button id="btnRefreshList" class="text-emerald-800 font-bold text-xs flex items-center space-x-1 hover:underline">
+                <span class="material-symbols-rounded text-sm">refresh</span>
+            </button>
+        </div>
+
+        <!-- LIST CONTAINER -->
+        <div id="listWargaContainer" class="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+            <p class="text-center text-xs font-bold text-slate-400 py-6">Memuat data warga...</p>
+        </div>
+    </div>
+</div>
+
+<!-- FLOATING BACK TO APPLICATION -->
+<div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto px-6 z-40">
+    <a href="index.html" class="flex items-center justify-center space-x-2 bg-slate-900 text-white p-4 rounded-2xl shadow-xl font-black uppercase text-xs tracking-wider text-center active:scale-95 transition-all">
+        <span class="material-symbols-rounded text-sm">home</span>
+        <span>Kembali ke Log In</span>
+    </a>
+</div>
+
+<!-- FIREBASE SDK V12 MODULAR -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+    // Firebase Config milikmu
+    const firebaseConfig = {
+        apiKey: "AIzaSyCzz0INhgBUARAxqLlMnCC8vyCciI9jpJk",
+        authDomain: "tuntas-04.firebaseapp.com",
+        databaseURL: "https://tuntas-04-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "tuntas-04",
+        storageBucket: "tuntas-04.firebasestorage.app",
+        messagingSenderId: "509433415219",
+        appId: "1:509433415219:web:e485a0eab1a612fda64546"
+    };
+
+    // Inisialisasi Firebase
+    const app = initializeApp(firebaseConfig);
+    const dbFirebase = getDatabase(app);
+
+    // =========================================================================
+    // PROTEKSI DINONAKTIFKAN SEMENTARA AGAR TIDAK AKSES ILEGAL SAAT DI-COPAs
+    // =========================================================================
+    // if (localStorage.getItem('tuntas_role') !== 'admin') {
+    //     alert("Akses ilegal! Halaman ini khusus Pengurus RT 04.");
+    //     window.location.href = "index.html";
+    // }
+
+    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+    function tuntasAlert(title, message, type = 'success') {
+        const el = document.getElementById('customAlert');
+        const icon = document.getElementById('alertIcon');
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMsg').innerText = message;
+        
+        if (type === 'error') {
+            icon.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-red-50 text-red-600";
+            icon.innerHTML = '<span class="material-symbols-rounded">gpp_maybe</span>';
+        } else {
+            icon.className = "w-12 h-12 mx-auto rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600";
+            icon.innerHTML = '<span class="material-symbols-rounded">check_circle</span>';
+        }
+        el.style.display = 'flex';
+    }
+
+    window.closeAlert = function() {
+        document.getElementById('customAlert').style.display = 'none';
+    }
+
+    // FUNGSI 1: AMBIL & TAMPILKAN DAFTAR WARGA
+    function muatDaftarWarga() {
+        const dbRef = ref(dbFirebase, 'warga');
+        const container = document.getElementById('listWargaContainer');
+        
+        get(dbRef).then((snapshot) => {
+            container.innerHTML = "";
+            let counter = 0;
+
+            if (snapshot.exists()) {
+                snapshot.forEach((childSnapshot) => {
+                    counter++;
+                    const keyId = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    
+                    const card = document.createElement('div');
+                    card.className = "flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-slate-100/50 transition-all";
+                    card.innerHTML = `
+                        <div class="space-y-1">
+                            <h4 class="text-xs font-black uppercase text-slate-800">${data.nama}</h4>
+                            <p class="text-[10px] text-slate-500 font-semibold flex items-center gap-1">
+                                <i class="fa-brands fa-whatsapp text-emerald-600"></i> ${data.hp}
+                            </p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Pass: <span class="bg-slate-200 px-1 rounded text-slate-700">${data.password}</span></p>
+                        </div>
+                        <button onclick="hapusWargaData('${keyId}', '${data.nama}')" class="text-red-500 hover:bg-red-50 p-2 rounded-xl transition-colors flex items-center justify-center">
+                            <span class="material-symbols-rounded text-lg">delete</span>
+                        </button>
+                    `;
+                    container.appendChild(card);
+                });
+                document.getElementById('totalWarga').innerText = counter;
+            } else {
+                container.innerHTML = `<p class="text-center text-xs font-bold text-slate-400 py-6">Belum ada warga terdaftar.</p>`;
+                document.getElementById('totalWarga').innerText = "0";
+            }
+        }).catch((err) => {
+            console.error(err);
+            container.innerHTML = `<p class="text-center text-xs font-bold text-red-500 py-6">Gagal memuat data database.</p>`;
+        });
+    }
+
+    // FUNGSI 2: TAMBAH WARGA BARU KE FIREBASE
+    function simpanWargaBaru() {
+        const inputNama = document.getElementById('wNama').value.trim();
+        let inputHp = document.getElementById('wHp').value.trim();
+        const inputPass = document.getElementById('wPass').value.trim();
+
+        if (!inputNama || !inputHp || !inputPass) {
+            tuntasAlert("Gagal", "Semua kolom input data warga wajib diisi!", "error");
+            return;
+        }
+
+        if (inputHp.startsWith('0')) {
+            inputHp = '62' + inputHp.slice(1);
+        }
+
+        showLoading();
+
+        const dbRef = ref(dbFirebase, 'warga');
+        
+        get(dbRef).then((snapshot) => {
+            let sudahAda = false;
+            if (snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    if (child.val().hp === inputHp) {
+                        sudahAda = true;
+                        return true;
+                    }
+                });
+            }
+
+            if (sudahAda) {
+                hideLoading();
+                tuntasAlert("Gagal", "Nomor HP/WhatsApp tersebut sudah terdaftar di sistem!", "error");
+            } else {
+                const newWargaRef = push(dbRef);
+                set(newWargaRef, {
+                    nama: inputNama,
+                    hp: inputHp,
+                    password: inputPass
+                }).then(() => {
+                    hideLoading();
+                    tuntasAlert("Berhasil", `${inputNama.toUpperCase()} berhasil ditambahkan ke database warga!`);
+                    
+                    document.getElementById('wNama').value = "";
+                    document.getElementById('wHp').value = "";
+                    document.getElementById('wPass').value = "";
+                    
+                    muatDaftarWarga();
+                }).catch((error) => {
+                    hideLoading();
+                    tuntasAlert("Error", "Gagal menyimpan data.", "error");
+                });
+            }
+        });
+    }
+
+    // FUNGSI 3: HAPUS DATA WARGA
+    window.hapusWargaData = function(keyId, namaWarga) {
+        if (confirm(`Apakah Anda yakin ingin menghapus warga: ${namaWarga.toUpperCase()}?`)) {
+            showLoading();
+            const targetRef = ref(dbFirebase, `warga/${keyId}`);
+            remove(targetRef).then(() => {
+                hideLoading();
+                tuntasAlert("Terhapus", "Data warga berhasil dihapus dari sistem.");
+                muatDaftarWarga();
+            }).catch((err) => {
+                hideLoading();
+                tuntasAlert("Error", "Gagal menghapus data.", "error");
+            });
+        }
+    }
+
+    // LOGOUT ACTION
+    document.getElementById('btnKeluar').addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = "index.html";
+    });
+
+    document.getElementById('btnSimpanWarga').addEventListener('click', simpanWargaBaru);
+    document.getElementById('btnRefreshList').addEventListener('click', muatDaftarWarga);
+    document.getElementById('btnAlertClose').addEventListener('click', window.closeAlert);
+
+    window.addEventListener('DOMContentLoaded', () => {
+        muatDaftarWarga();
+    });
+</script>
+</body>
+</html>
