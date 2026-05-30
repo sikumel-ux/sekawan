@@ -131,7 +131,6 @@
         el.style.display = 'flex';
     }
 
-    // Sambungkan fungsi ke window object agar bisa dipanggil dari HTML element
     window.closeAlert = function() {
         document.getElementById('customAlert').style.display = 'none';
     }
@@ -148,7 +147,7 @@
         }
     }
 
-    // Fungsi Utama Autentikasi Menggunakan Struktur SDK Baru
+    // Fungsi Utama Autentikasi
     function prosesAutentikasiLogin() {
         let inputHp = document.getElementById('lHp').value.trim();
         const inputPass = document.getElementById('lPass').value.trim();
@@ -158,7 +157,6 @@
             return;
         }
 
-        // Standarisasi format input No HP
         if (inputHp.startsWith('0')) {
             inputHp = '62' + inputHp.slice(1);
         }
@@ -212,18 +210,13 @@
         });
     }
 
-    // Set event listener tombol secara modular
     document.getElementById('btnMasukApp').addEventListener('click', prosesAutentikasiLogin);
     document.getElementById('btnTogglePass').addEventListener('click', window.togglePasswordLogin);
     document.getElementById('btnAlertClose').addEventListener('click', window.closeAlert);
 
-    // Auto-login checking session
-    const role = localStorage.getItem('tuntas_role');
-    const nama = localStorage.getItem('tuntas_nama_warga');
-    if (role && nama && nama !== "-") {
-        if (role === 'admin') window.location.href = "adminz.html";
-        if (role === 'warga') window.location.href = "anggota.html";
-    }
+    // =========================================================================
+    // SKRIP AUTO-LOGIN DIHAPUS BIAR TIDAK TERJADI KEDIP / LOOP REDIRECT LAGI
+    // =========================================================================
 </script>
 </body>
 </html>
