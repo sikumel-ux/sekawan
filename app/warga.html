@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#064E3B">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TUNTAS - Ruang Warga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; padding-bottom: 40px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .modern-in { width:100%; padding:14px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:1rem; outline:none; font-size: 13px; font-weight: 600; color: #1E293B; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        ::-webkit-scrollbar { display: none; }
+        .loading-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.8); z-index:200; align-items:center; justify-content:center; font-weight:bold; color:#064E3B; backdrop-filter: blur(4px); }
+        
+        nav button.active { color: #064E3B; background: #ECFDF5; border-radius: 1rem; }
+        nav button { color: #94A3B8; transition: all 0.2s; }
+    </style>
+</head>
+<body>
+
+<div id="loading" class="loading-overlay">
+    <div class="text-center space-y-2">
+        <div class="w-8 h-8 border-4 border-emerald-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p class="text-xs font-black uppercase tracking-wider">Memuat Data...</p>
+    </div>
+</div>
+
+<div id="wargaApp" class="max-w-md mx-auto p-5 space-y-6">
+    
+    <header class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <img src="logo.png" alt="Logo" class="w-9 h-9 object-contain" onerror="this.src='logo.png'">
+            <div>
+                <h1 class="text-lg font-black text-emerald-900 leading-none">Tuntas.</h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Ruang Pantau Warga</p>
+            </div>
+        </div>
+        <span class="text-[9px] font-black bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-xl border border-emerald-100 uppercase tracking-wider">RT 04 Dongkelan</span>
+    </header>
+
+    <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-2">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-1">Silakan Pilih Nama Anda:</label>
+        <select id="pilihWarga" onchange="gantiWarga()" class="modern-in font-bold uppercase text-slate-700">
+            <option value="">-- PILIH NAMA ANDA --</option>
+        </select>
+    </div>
+
+    <div id="areaDataWarga" class="space-y-5 hidden">
+        
+        <nav class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 text-center text-xs font-black">
+            <button onclick="switchTab('sampah')" id="btn-tab-sampah" class="active py-3 uppercase tracking-wider flex items-center justify-center gap-1">
+                <span class="material-symbols-rounded !text-sm">delete</span> Sampah
+            </button>
+            <button onclick="switchTab('iuran')" id="btn-tab-iuran" class="py-3 uppercase tracking-wider flex items-center justify-center gap-1">
+                <span class="material-symbols-rounded !text-sm">payments</span> Kas & Iuran
+            </button>
+        </nav>
+
+        <div id="tab-sampah" class="tab-content active space-y-4">
+            <div class="glass-card p-5 rounded-[2rem] space-y-3">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Ambil Terakhir</p>
+                <div id="boxStatusSampah" class="p-6 rounded-2xl text-center space-y-1">
+                    </div>
+            </div>
+
+            <div>
+                <h3 class="font-black text-xs text-slate-400 uppercase ml-2 mb-2 tracking-wider">Histori Penjemputan Sampah</h3>
+                <div id="listHistoriSampah" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+                    </div>
+            </div>
+        </div>
+
+        <div id="tab-iuran" class="tab-content space-y-4">
+            <div class="bg-emerald-900 p-6 rounded-[2.2rem] text-white shadow-xl relative overflow-hidden">
+                <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Total Kontribusi Anda</p>
+                <h2 id="wargaTotalBayar" class="text-3xl font-black mt-1">Rp 0</h2>
+                <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-[10px]">
+                     <p class="font-bold opacity-50 uppercase">Status Tahun Ini:</p>
+                     <p id="labelStatusLunas" class="font-black bg-white/20 px-3 py-1 rounded-lg uppercase"></p>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-black text-xs text-slate-400 uppercase ml-2 mb-2 tracking-wider">Status Iuran Bulanan (2026)</h3>
+                <div id="gridBulanWarga" class="grid grid-cols-3 gap-2">
+                    </div>
+            </div>
+
+            <div class="pt-2">
+                <h3 class="font-black text-xs text-slate-400 uppercase ml-2 mb-2 tracking-wider">Riwayat Pembayaran Sheet</h3>
+                <div id="listHistoriIuran" class="space-y-2">
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="text-center pt-4 border-t border-slate-100">
+        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Tuntas Apps • Sinergi Warga RT 04</p>
+    </footer>
+
+</div>
+
+<script>
+    // URL Web App Google Apps Script Utama
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfO1n4pRZW-h3hJXcN4mqSR9vEbxNPhHBxxw0WWi748YoFX6LRXOIZpqltBfBCApvsew/exec";
+
+    // ==========================================
+    // KONFIGURASI FIREBASE REALTIME DATABASE
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSy...",
+        authDomain: "project-anda.firebaseapp.com",
+        databaseURL: "https://project-anda-default-rtdb.firebaseio.com",
+        projectId: "project-anda"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const dbFirebase = firebase.database();
+
+    const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "item_desember"];
+    const namaBulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    let dbGlobalSheets = { kas: [], pembayaran: [] };
+    let dbWargaFirebase = [];
+    let dbSampahFirebase = [];
+    let namaTerpilih = "";
+
+    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+    window.onload = function() {
+        showLoading();
+        // 1. Ambil data warga secara live dari Firebase untuk dropdown
+        dbFirebase.ref('warga').on('value', snapshot => {
+            dbWargaFirebase = [];
+            const sel = document.getElementById('pilihWarga');
+            sel.innerHTML = '<option value="">-- PILIH NAMA ANDA --</option>';
+            
+            snapshot.forEach(child => {
+                let w = child.val();
+                if(w.nama) {
+                    dbWargaFirebase.push(w.nama.toUpperCase());
+                }
+            });
+
+            // Urutkan nama warga biar rapi
+            dbWargaFirebase.sort().forEach(nama => {
+                sel.insertAdjacentHTML('beforeend', `<option value="${nama}">${nama}</option>`);
+            });
+            hideLoading();
+        });
+
+        // 2. Ambil data sampah secara live dari Firebase
+        dbFirebase.ref('sampah').on('value', snapshot => {
+            dbSampahFirebase = [];
+            snapshot.forEach(child => {
+                dbSampahFirebase.push(child.val());
+            });
+            if(namaTerpilih) prosesDataWarga();
+        });
+
+        // 3. Ambil data transaksi dari Google Sheets via API GAS
+        loadDataDariSheets();
+    };
+
+    async function loadDataDariSheets() {
+        try {
+            let res = await fetch(`${SCRIPT_URL}?action=loadAll`, { method: "GET" });
+            let json = await res.json();
+            if(json.status === "success") {
+                dbGlobalSheets.kas = json.data.kas || [];
+                dbGlobalSheets.pembayaran = json.data.pembayaran || [];
+                if(namaTerpilih) prosesDataWarga();
+            }
+        } catch(e) { console.error("Gagal load data Google Sheets", e); }
+    }
+
+    function gantiWarga() {
+        namaTerpilih = document.getElementById('pilihWarga').value.toUpperCase();
+        const area = document.getElementById('areaDataWarga');
+        
+        if(!namaTerpilih) {
+            area.classList.add('hidden');
+            return;
+        }
+        
+        area.classList.remove('hidden');
+        prosesDataWarga();
+    }
+
+    function prosesDataWarga() {
+        // ==========================================
+        // PROSES DATA SAMPAH (FIREBASE)
+        // ==========================================
+        const filterSampah = dbSampahFirebase
+            .filter(s => (s.nama || '').toUpperCase() === namaTerpilih)
+            .sort((a,b) => new Date(b.tgl) - new Date(a.tgl));
+
+        const boxStatus = document.getElementById('boxStatusSampah');
+        const listSampah = document.getElementById('listHistoriSampah');
+        listSampah.innerHTML = '';
+
+        if(filterSampah.length > 0) {
+            const terakhir = filterSampah[0];
+            let tglIndo = new Date(terakhir.tgl).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            let bg = "bg-slate-100 text-slate-700";
+            let icon = "pending";
+            if(terakhir.status === "Diambil") { bg = "bg-emerald-50 text-emerald-700 border border-emerald-100"; icon = "local_shipping"; }
+            if(terakhir.status === "Tidak Diambil") { bg = "bg-rose-50 text-rose-600 border border-rose-100"; icon = "block"; }
+            if(terakhir.status === "Kosong") { bg = "bg-amber-50 text-amber-700 border border-amber-100"; icon = "hourglass_empty"; }
+
+            boxStatus.className = `p-5 rounded-2xl text-center space-y-1 ${bg}`;
+            boxStatus.innerHTML = `
+                <span class="material-symbols-rounded !text-3xl">${icon}</span>
+                <p class="text-lg font-black uppercase tracking-wide">${terakhir.status}</p>
+                <p class="text-[10px] font-bold opacity-70">Terakhir dicek pada: ${tglIndo}</p>
+            `;
+
+            filterSampah.forEach(s => {
+                let t = new Date(s.tgl).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                let cStatus = s.status === 'Diambil' ? 'text-emerald-600 bg-emerald-50' : (s.status === 'Kosong' ? 'text-amber-600 bg-amber-50' : 'text-rose-500 bg-rose-50');
+                listSampah.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center"><span class="material-symbols-rounded !text-sm">calendar_month</span></div>
+                            <div>
+                                <p class="text-xs font-black text-slate-700">${t}</p>
+                                <p class="text-[9px] text-slate-400 font-bold">Petugas Kebersihan RT 04</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase ${cStatus}">${s.status}</span>
+                    </div>
+                `);
+            });
+        } else {
+            boxStatus.className = "p-6 rounded-2xl text-center bg-slate-50 text-slate-400 font-bold text-xs";
+            boxStatus.innerHTML = "Belum ada histori operasional sampah untuk nama Anda.";
+            listSampah.innerHTML = '<p class="text-center text-[11px] text-slate-400 py-4 font-bold">Kosong</p>';
+        }
+
+        // ==========================================
+        // PROSES DATA IURAN (GOOGLE SHEETS)
+        // ==========================================
+        const filterIuran = (dbGlobalSheets.pembayaran || [])
+            .filter(p => (p.nama || '').toUpperCase() === namaTerpilih);
+
+        let totalSumbangan = 0;
+        const listIuran = document.getElementById('listHistoriIuran');
+        const gridBulan = document.getElementById('gridBulanWarga');
+        listIuran.innerHTML = '';
+        gridBulan.innerHTML = '';
+
+        // Hitung total bayar warga
+        filterIuran.forEach(p => {
+            totalSumbangan += Number(p.nominal || 0);
+            let tglB = new Date(p.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            listIuran.insertAdjacentHTML('beforeend', `
+                <div class="bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm">
+                    <div>
+                        <p class="text-xs font-black text-slate-700 uppercase">${p.keterangan}</p>
+                        <p class="text-[8px] text-slate-300 font-bold">${tglB} • Ref: ${p.kode || '-'}</p>
+                    </div>
+                    <p class="text-xs font-black text-emerald-700">+ Rp ${Number(p.nominal).toLocaleString('id-ID')}</p>
+                </div>
+            `);
+        });
+        document.getElementById('wargaTotalBayar').innerText = 'Rp ' + totalSumbangan.toLocaleString('id-ID');
+
+        // Render status Grid Bulanan 12 bulan
+        let bulanLunasCount = 0;
+        namaBulanIndo.forEach(bln => {
+            const lunas = filterIuran.some(k => {
+                let blnDb = (k.keterangan || "").trim().toLowerCase();
+                let arrayBulanDb = blnDb.split(',').map(b => b.trim());
+                
+                let bCariPanjang = bln.toLowerCase();
+                let bCariPendek = bln.substring(0,3).toLowerCase();
+                return arrayBulanDb.some(b => b.includes(bCariPanjang) || b.includes(bCariPendek) || bCariPanjang.includes(b));
+            });
+
+            if(lunas) {
+                bulanLunasCount++;
+                gridBulan.insertAdjacentHTML('beforeend', `
+                    <div class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-center">
+                        <p class="text-[10px] font-black uppercase">${bln.substring(0, 3)}</p>
+                        <p class="text-[8px] font-bold opacity-80 mt-0.5">LUNAS</p>
+                    </div>
+                `);
+            } else {
+                gridBulan.insertAdjacentHTML('beforeend', `
+                    <div class="p-3 bg-white border border-slate-100 text-slate-300 rounded-xl text-center">
+                        <p class="text-[10px] font-black uppercase">${bln.substring(0, 3)}</p>
+                        <p class="text-[8px] font-bold opacity-60 mt-0.5">BELUM</p>
+                    </div>
+                `);
+            }
+        });
+
+        // Tentukan label lunas tahunan
+        const labelLunas = document.getElementById('labelStatusLunas');
+        if(bulanLunasCount >= 12) {
+            labelLunas.innerText = "LUNAS TAHUNAN 🎉";
+            labelLunas.className = "font-black bg-emerald-500 text-white px-3 py-1 rounded-lg uppercase text-[9px]";
+        } else {
+            labelLunas.innerText = `${bulanLunasCount} / 12 BULAN`;
+            labelLunas.className = "font-black bg-white/20 text-white px-3 py-1 rounded-lg uppercase text-[9px]";
+        }
+
+        if(filterIuran.length === 0) {
+            listIuran.innerHTML = '<p class="text-center text-[11px] text-slate-400 py-4 font-bold">Belum ada riwayat pembayaran di sheet.</p>';
+        }
+    }
+
+    function switchTab(t) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-'+t).classList.add('active');
+        
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-tab-'+t).classList.add('active');
+    }
+</script>
+</body>
+</html>
